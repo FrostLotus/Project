@@ -153,7 +153,7 @@ namespace PLC_Data_Access
         private void Dgv_ReadDataGrid_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
         {
             //Read - 去撈Arraylist裡面所有的資料=>DataGridView
-            //if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
+            ///if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
             {
                 switch (dgv_ReadDataGrid.Columns[e.ColumnIndex].Name)
                 {
