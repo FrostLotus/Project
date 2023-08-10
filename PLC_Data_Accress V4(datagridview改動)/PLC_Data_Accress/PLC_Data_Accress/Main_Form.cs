@@ -650,7 +650,7 @@ namespace PLC_Data_Access
             #region 下載讀取
             for (int i = 0; i < TParameter.DeviceData.Read_SN.Count; i++)//SN_count
             {
-                if (TParameter.DeviceData.Read_IsUse[i] == "1")//表示有使用
+                if (TParameter.DeviceData.Read_IsUse[i] == "1")//表示有使用err
                 {
                     //若為軟元件區間
                     if (TParameter.DeviceData.Read_Address[i].Contains("~"))
