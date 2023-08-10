@@ -42,29 +42,31 @@ namespace PLC_Data_Access
         public string[] arrDeviceDataGrid_Read;
         public string[] arrDeviceDataGrid_Write;
         public string[] arrDeviceModel_List;
-        ///軟元件列表
-        //讀列表
-        //List<ABC> ls = new List<ABC>();
-        public List<string> Read_SN             = new List<string>();//序號
-        public List<string> Read_Label          = new List<string>();//名稱
-        public List<string> Read_Address        = new List<string>();//軟元件地址
-        public List<string> Read_DataType       = new List<string>();//資料類型
-        public List<string> Read_Data           = new List<string>();//資料包格式
-        public List<string> Read_IsUse          = new List<string>();//是否使用
-        public List<string> Read_DeviceValueGet = new List<string>();//讀取值
+        List<ABC> ls = new List<ABC>();
+        //軟元件列表
+        ///讀列表
+        //僅保管原值
+        public ArrayList Read_SN             = new ArrayList();//序號-0
+        public ArrayList Read_Label          = new ArrayList();//名稱-1
+        public ArrayList Read_Address        = new ArrayList();//軟元件地址-2
+        public ArrayList Read_DataType       = new ArrayList();//資料類型-3
+        public ArrayList Read_Data           = new ArrayList();//資料包格式-4
+        public ArrayList Read_IsUse          = new ArrayList();//是否使用-5
+        public ArrayList Read_DeviceValueGet = new ArrayList();//讀取值-6
 
-        public DataGridViewRow[] ReadGridRow;//下載DataGridview
-        //寫列表
-        public List<string> Write_SN = new List<string>();//序號
-        public List<string> Write_Label = new List<string>();//名稱
-        public List<string> Write_Address = new List<string>();//軟元件地址
-        public List<string> Write_DataType = new List<string>();//資料類型
-        public List<string> Write_Data = new List<string>();//資料包格式
-        public List<string> Write_IsUse = new List<string>();//是否使用
-        public List<string> Write_DeviceValueGet = new List<string>();//讀取值
-        public List<string> Write_DeviceValueSet = new List<string>();//寫入值
+        public DataGridViewRow[] ReadGridRow;//下載DataGridview 當List用
+        ///寫列表
+        //僅保管原值
+        public ArrayList Write_SN             = new ArrayList();//序號-0
+        public ArrayList Write_Label          = new ArrayList();//名稱-1
+        public ArrayList Write_Address        = new ArrayList();//軟元件地址-2
+        public ArrayList Write_DataType       = new ArrayList();//資料類型-3
+        public ArrayList Write_Data           = new ArrayList();//資料包格式-4
+        public ArrayList Write_IsUse          = new ArrayList();//是否使用-5
+        public ArrayList Write_DeviceValueGet = new ArrayList();//讀取值-6
+        public ArrayList Write_DeviceValueSet = new ArrayList();//寫入值-7
 
-        public DataGridViewRow[] WriteGridRow;//上傳DataGridview
+        public DataGridViewRow[] WriteGridRow;//上傳DataGridview 當List用
 
         public int iModelChange = 0;//模式轉換  0=編輯 1=運作中
         public int iPLCConnect = 1;//連線中
@@ -267,6 +269,57 @@ namespace PLC_Data_Access
         }
         ///---------------
         //寫入對應資料表
+        public void SaveData_GridRow()
+        {
+            DiviceDataArrClear();
+            if (ReadGridRow.Length > 0)//Read
+            {
+                for (int i = 0; i < ReadGridRow.Length - 1; i++)//會多一隔空的
+                {
+                    if (ReadGridRow[i].Cells[0].Value != null && ReadGridRow[i].Cells[1].Value != null && ReadGridRow[i].Cells[2].Value != null && ReadGridRow[i].Cells[3].Value != null && ReadGridRow[i].Cells[4].Value != null)//若值未為NULL(不能與NULL)
+                    {
+                        if (ReadGridRow[i].Cells[0].Value.ToString() != "" && ReadGridRow[i].Cells[1].Value.ToString() != "" && ReadGridRow[i].Cells[2].Value.ToString() != "" && ReadGridRow[i].Cells[3].Value.ToString() != "" && ReadGridRow[i].Cells[4].Value.ToString() != "")//若值未為""(至少為N/A)
+                        {
+                            Read_SN.Add(ReadGridRow[i].Cells[0].Value.ToString());//展示可無
+                            Read_Label.Add(ReadGridRow[i].Cells[1].Value.ToString());//展示可無
+                            Read_Address.Add(ReadGridRow[i].Cells[2].Value.ToString());//軟元件位置
+                            Read_DataType.Add(ReadGridRow[i].Cells[3].Value.ToString());//展示可無
+                            Read_Data.Add(ReadGridRow[i].Cells[4].Value.ToString());//展示可無
+                            Read_IsUse.Add(BoolToValue(ReadGridRow[i].Cells[5].Value));//是否使用
+                        }
+                        else
+                        {
+                            MessageBox.Show("下載資料填充有誤.\n請確認是否未輸入資料\n(不採計請用N/A表示)", "SaveData_ModChange", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            return;
+                        }
+                    }
+                }
+            }
+            if (WriteGridRow.Length > 0)//Write
+            {
+                for (int i = 0; i < WriteGridRow.Length - 1; i++)//會多一隔空的
+                {
+                    if (WriteGridRow[i].Cells[0].Value != null && WriteGridRow[i].Cells[1].Value != null && WriteGridRow[i].Cells[2].Value != null && WriteGridRow[i].Cells[3].Value != null && WriteGridRow[i].Cells[4].Value != null)//若值未為NULL(不能與NULL)
+                    {
+                        if (WriteGridRow[i].Cells[0].Value.ToString() != "" && WriteGridRow[i].Cells[1].Value.ToString() != "" && WriteGridRow[i].Cells[2].Value.ToString() != "" && WriteGridRow[i].Cells[3].Value.ToString() != "" && WriteGridRow[i].Cells[4].Value.ToString() != "")//若值未為""(至少為N/A)
+                        {
+                            Write_SN.Add(WriteGridRow[i].Cells[0].Value.ToString());//展示可無
+                            Write_Label.Add(WriteGridRow[i].Cells[1].Value.ToString());//展示可無
+                            Write_Address.Add(WriteGridRow[i].Cells[2].Value.ToString());//軟元件位置
+                            Write_DataType.Add(WriteGridRow[i].Cells[3].Value.ToString());//展示可無
+                            Write_Data.Add(WriteGridRow[i].Cells[4].Value.ToString());//展示可無
+                            Write_IsUse.Add(BoolToValue(WriteGridRow[i].Cells[5].Value));//是否使用
+                        }
+                        else
+                        {
+                            MessageBox.Show("下載資料填充有誤.\n請確認是否未輸入資料\n(不採計請用N/A表示)", "SaveData_ModChange", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            return;
+                        }
+                    }
+                }
+            }
+
+        }
         public void SaveData_ReadWrite()
         {
             if (!File.Exists(DeviceDataGrid_Path))//判斷是不是有這檔案
@@ -334,6 +387,7 @@ namespace PLC_Data_Access
                 writer.Close();
             }
         }
+        
         public void SaveData_ModChange(DataGridView dgv_Read, DataGridView dgv_Write)
         {
             if (iModelChange == 0)//修改=>執行
@@ -385,7 +439,7 @@ namespace PLC_Data_Access
             Write_IsUse.Clear();
         }
         //判斷"0"為bool=>false
-        public bool ZeroToBool(string isUse)
+        public bool ValueToBool(string isUse)
         {
             bool re;
             if (isUse == "0")//"0"=false
@@ -398,7 +452,7 @@ namespace PLC_Data_Access
             }
             return re;
         }
-        public string BoolToZero(object CellsValue)
+        public string BoolToValue(object CellsValue)
         {
             string re = "0";
             if (CellsValue != null)//會遇到值未設定的情況 =null
@@ -820,8 +874,7 @@ namespace PLC_Data_Access
         }
         public void ProgSetDevice(string sDevice, string sInValue)
         {
-            int Data = 0;
-            Data = Convert.ToInt32(sInValue);
+            int Data = Convert.ToInt32(sInValue);
             try
             {
                 iReturnCode = Prog_Connect.SetDevice(sDevice, Data);//從軟元件開頭 讀出資料
