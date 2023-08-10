@@ -322,8 +322,6 @@ namespace PLC_Data_Access
         }
         private void MDeviceGet()
         {
-
-
             string sOutPutCell;
 
             Stopwatch sw = new Stopwatch();
@@ -448,7 +446,7 @@ namespace PLC_Data_Access
             int iOutPut;
 
             Stopwatch sw = new Stopwatch();
-            sw.Start();
+            sw.Restart();
             //下載讀取
             #region 下載讀取
             for (int i = 0; i < TParameter.DeviceData.Read_SN.Count; i++)//SN_count
@@ -565,8 +563,8 @@ namespace PLC_Data_Access
             }
             #endregion
             //餵回去顯示用dataGridView
-            this.BeginInvoke(new UpdateDataGridView(Update_DataGridView), new object[] { this.dgv_ReadDataGrid, TParameter.DeviceData.ReadGridRow });
-            this.BeginInvoke(new UpdateDataGridView(Update_DataGridView), new object[] { this.dgv_WriteDataGrid, TParameter.DeviceData.WriteGridRow});
+            //this.BeginInvoke(new UpdateDataGridView(Update_DataGridView), new object[] { this.dgv_ReadDataGrid, TParameter.DeviceData.ReadGridRow });
+            //this.BeginInvoke(new UpdateDataGridView(Update_DataGridView), new object[] { this.dgv_WriteDataGrid, TParameter.DeviceData.WriteGridRow});
             sw.Stop();
             TimeSpan trim = sw.Elapsed;
             Console.WriteLine("迴圈1次時間: " + trim + "\n目前時間: " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
