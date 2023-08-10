@@ -13,8 +13,9 @@ namespace PLC_Data_Access
 {
     public class TParameter
     {
-        public static MX_Component Mx_Connect = new MX_Component();
-        public static TDeviceData DeviceData = new TDeviceData();
+        public static CMX_Component Mx_Connect = new CMX_Component();
+        public static CDeviceData DeviceData = new CDeviceData();
+        public static CError_Info Error_Info = new CError_Info();
 
         public static void init()
         {
@@ -23,7 +24,7 @@ namespace PLC_Data_Access
             TParameter.Mx_Connect.iReturnCode = TParameter.Mx_Connect.ProgOpen();//連線測試
         }
     }
-    public class TDeviceData
+    public class CDeviceData
     {
         class ABC
         {
@@ -69,7 +70,7 @@ namespace PLC_Data_Access
         public int iPLCConnect = 1;//連線中
 
         //=================================================================
-        public TDeviceData()
+        public CDeviceData()
         {
 
         }
@@ -427,7 +428,7 @@ namespace PLC_Data_Access
             }
         }
     }
-    public class MX_Component
+    public class CMX_Component
     {
         public ActProgTypeClass Prog_Connect = new ActProgTypeClass();//Program
         public ActSupportMsgClass SpMsg_Connect = new ActSupportMsgClass();//Message
@@ -473,7 +474,7 @@ namespace PLC_Data_Access
         public int ActCpuTimeOut = 0;
         #endregion
         //-------------------------
-        public MX_Component()
+        public CMX_Component()
         {
 
         }
@@ -805,16 +806,16 @@ namespace PLC_Data_Access
 
         public void ProgGetDevice(string sDevice, out string sOutValue)
         {
-            int Data=0;
+            int iData=0;
             try
             {
-                iReturnCode = Prog_Connect.GetDevice(sDevice,out Data) ;//從軟元件開頭 讀出資料
+                iReturnCode = Prog_Connect.GetDevice(sDevice,out iData) ;//從軟元件開頭 讀出資料
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message + "\n是否為string[]之軟元件名稱錯誤", "ProgGetDevice", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            sOutValue = Data.ToString();
+            sOutValue = iData.ToString();
 
         }
         public void ProgSetDevice(string sDevice, string sInValue)
@@ -829,7 +830,38 @@ namespace PLC_Data_Access
             {
                 MessageBox.Show(ex.Message + "\n是否為string[]之軟元件名稱錯誤", "ProgGetDevice", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            //sInValue = Data.ToString();
+        }
+    }
+
+    public class CError_Info
+    {
+        public CError_Info()
+        {
+
+        }
+
+        public string ErrorStrSend()
+        {
+            string sOutStr;
+            int iErrorCode = TParameter.Mx_Connect.iReturnCode;
+
+            sOutStr = "ErCode: " + String.Format("0x{0:x8} [HEX]", iErrorCode);
+
+            return sOutStr;
+        }
+
+        public void ErrorMessageBox_Time()
+        {
+            MessageBox.Show("回傳時間設定錯誤\n請確認是否為空值或負值且不為文字\n改為預設值2000ms", "ModelChange", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+
+        public void ErrorMessageBox_DeviceBlock(Exception ex)
+        {
+            MessageBox.Show("系統訊息:" + ex.Message + "\n建議: 是否為之軟元件名稱錯誤", "ProgGetBlockCombine", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+        public void ErrorMessageBox_DeviceValue(Exception ex)
+        {
+            MessageBox.Show("系統訊息:" + ex.Message + "\n建議: 是否為之軟元件名稱錯誤", "ProgGetDevice", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }

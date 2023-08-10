@@ -22,14 +22,15 @@ namespace PLC_Data_Access
         delegate void UpdateLabel(Label lab, string Msg);
         delegate void UpdateDataGridView(DataGridView view, DataGridViewRow[] data);
         private object _objLock = new object();
+        public Stopwatch swStopwatch = new Stopwatch();
 
 
         public Main_Form()
         {
             InitializeComponent();
-            
+
             TParameter.init();//初始化 然後連線
-            
+
             txt_ReadTime.Text = TParameter.Mx_Connect.iReciveTime.ToString();
             //直接路徑連結
             if (TParameter.Mx_Connect.iReturnCode == 0)
@@ -45,13 +46,13 @@ namespace PLC_Data_Access
             //DeviceGet事件
             Timer_DeviceGet.Stop();
             Timer_DeviceGet.Interval = TParameter.Mx_Connect.iReciveTime;
-            
+
 
             //DataGridLabelFlash();//DataGridview 第一次刷新
-            DataDataGridValueNeeded();//DataGridview 第一次刷新
+            DataGridValueFlash();//DataGridview 第一次刷新
 
-        } 
-        
+        }
+
         private void Mi_DataGridLoad_Click(object sender, EventArgs e)
         {
             if (TParameter.DeviceData.iModelChange != 1)
@@ -79,7 +80,7 @@ namespace PLC_Data_Access
                     dgv_ReadDataGrid.Rows.Clear();
                     dgv_WriteDataGrid.Rows.Clear();
                     //DataGridLabelFlash();
-                    DataDataGridValueNeeded();
+                    DataGridValueFlash();
 
                 }
             }
@@ -148,7 +149,7 @@ namespace PLC_Data_Access
         {
             DataUpdate();
         }
-        
+
         private void Dgv_ReadDataGrid_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
         {
             //Read - 去撈Arraylist裡面所有的資料=>DataGridView
@@ -158,31 +159,31 @@ namespace PLC_Data_Access
                 {
                     case "Read_SN":
                         if (e.RowIndex < TParameter.DeviceData.Read_SN.Count)
-                        e.Value = TParameter.DeviceData.Read_SN[e.RowIndex];
+                            e.Value = TParameter.DeviceData.Read_SN[e.RowIndex];
                         break;
                     case "Read_Label":
                         if (e.RowIndex < TParameter.DeviceData.Read_Label.Count)
-                        e.Value = TParameter.DeviceData.Read_Label[e.RowIndex];
+                            e.Value = TParameter.DeviceData.Read_Label[e.RowIndex];
                         break;
                     case "Read_Address":
                         if (e.RowIndex < TParameter.DeviceData.Read_Address.Count)
-                        e.Value = TParameter.DeviceData.Read_Address[e.RowIndex];
+                            e.Value = TParameter.DeviceData.Read_Address[e.RowIndex];
                         break;
                     case "Read_DataType":
                         if (e.RowIndex < TParameter.DeviceData.Read_DataType.Count)
-                        e.Value = TParameter.DeviceData.Read_DataType[e.RowIndex];
+                            e.Value = TParameter.DeviceData.Read_DataType[e.RowIndex];
                         break;
                     case "Read_Data":
                         if (e.RowIndex < TParameter.DeviceData.Read_Data.Count)
-                        e.Value = TParameter.DeviceData.Read_Data[e.RowIndex].ToString();
+                            e.Value = TParameter.DeviceData.Read_Data[e.RowIndex].ToString();
                         break;
                     case "Read_IsUse":
                         if (e.RowIndex < TParameter.DeviceData.Read_IsUse.Count)
-                        e.Value = TParameter.DeviceData.ZeroToBool(TParameter.DeviceData.Read_IsUse[e.RowIndex]);
+                            e.Value = TParameter.DeviceData.ZeroToBool(TParameter.DeviceData.Read_IsUse[e.RowIndex]);
                         break;
                     case "Read_DeviceValueGet":
                         if (e.RowIndex < TParameter.DeviceData.Read_DeviceValueGet.Count)
-                        e.Value = TParameter.DeviceData.Read_DeviceValueGet[e.RowIndex];
+                            e.Value = TParameter.DeviceData.Read_DeviceValueGet[e.RowIndex];
                         break;
                 }
             }
@@ -454,7 +455,7 @@ namespace PLC_Data_Access
                                     TParameter.Mx_Connect.ProgSetBlockCombine(TParameter.DeviceData.Write_Address[i], TParameter.DeviceData.Write_DeviceValueSet[i]);
                                     if (TParameter.Mx_Connect.iReturnCode == 0)
                                     {
-                                        Console.WriteLine(TParameter.DeviceData.Write_Address[i]+" SetOK");
+                                        Console.WriteLine(TParameter.DeviceData.Write_Address[i] + " SetOK");
                                     }
                                 }
                                 catch (Exception ex)
@@ -467,24 +468,24 @@ namespace PLC_Data_Access
                             {
                                 try
                                 {
-                                    TParameter.Mx_Connect.ProgSetDevice(TParameter.DeviceData.Write_Address[i],TParameter.DeviceData.Write_DeviceValueSet[i]);
+                                    TParameter.Mx_Connect.ProgSetDevice(TParameter.DeviceData.Write_Address[i], TParameter.DeviceData.Write_DeviceValueSet[i]);
                                     if (TParameter.Mx_Connect.iReturnCode == 0)
                                     {
                                         TParameter.Mx_Connect.ProgGetDevice(TParameter.DeviceData.Write_Address[i].ToString(), out sOutPutCell);
-                                        Console.WriteLine(TParameter.DeviceData.Write_Address[i]+": " + sOutPutCell);
+                                        Console.WriteLine(TParameter.DeviceData.Write_Address[i] + ": " + sOutPutCell);
                                     }
                                 }
                                 catch (Exception ex)
                                 {
-                                    MessageBox.Show(ex.Message + "\n上傳寫入資料填充有誤.\n請確認是否未輸入資料\n","DataUpload",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                                    MessageBox.Show(ex.Message + "\n上傳寫入資料填充有誤.\n請確認是否未輸入資料\n", "DataUpload", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                                     Timer_DeviceGet.Start();
-                               }
+                                }
                             }
 
-                        } 
+                        }
                     }
                 }
-            
+
             }
             //上傳讀取
             for (int i = 0; i < TParameter.DeviceData.Write_SN.Count; i++)
@@ -511,7 +512,7 @@ namespace PLC_Data_Access
                     }
                     else//其他軟元件
                     {
-                        
+
                         try
                         {
                             TParameter.Mx_Connect.ProgGetDevice(TParameter.DeviceData.Write_Address[i].ToString(), out sOutPutCell);
@@ -520,7 +521,7 @@ namespace PLC_Data_Access
                                 TParameter.DeviceData.Write_DeviceValueGet[i] = sOutPutCell;
                             }
 
-                            
+
                         }
                         catch (Exception ex)
                         {
@@ -534,7 +535,7 @@ namespace PLC_Data_Access
             Console.WriteLine("上傳成功");
             Timer_DeviceGet.Start();
         }
-        public void DataDataGridValueNeeded()
+        public void DataGridValueFlash()
         {
             //餵入資料畫面DataGridView刷新
             #region 下載
@@ -547,52 +548,6 @@ namespace PLC_Data_Access
             dgv_WriteDataGrid.RowCount = TParameter.DeviceData.Write_SN.Count + 1;
             #endregion
         }
-        public void DataGridLabelFlash()
-        {
-            //餵入資料畫面DataGridView刷新
-            #region 下載
-            dgv_ReadDataGrid.Rows.Clear();//清除原本的
-            //TParameter.DeviceData.ReadGridRow = new DataGridViewRow[TParameter.DeviceData.Read_SN.Count];//以DataGridViewRow加入較快
-            if (TParameter.DeviceData.Read_SN.Count != 0)
-            {
-                for (int i = 0; i < TParameter.DeviceData.Read_SN.Count; i++)
-                {
-                    TParameter.DeviceData.ReadGridRow[i] = new DataGridViewRow();
-                    TParameter.DeviceData.ReadGridRow[i].CreateCells(dgv_ReadDataGrid);//以下載的datagridview座基底新增料表元素
-                    TParameter.DeviceData.ReadGridRow[i].Cells[0].Value = TParameter.DeviceData.Read_SN[i].ToString();
-                    TParameter.DeviceData.ReadGridRow[i].Cells[1].Value = TParameter.DeviceData.Read_Label[i].ToString();
-                    TParameter.DeviceData.ReadGridRow[i].Cells[2].Value = TParameter.DeviceData.Read_Address[i].ToString();
-                    TParameter.DeviceData.ReadGridRow[i].Cells[3].Value = TParameter.DeviceData.Read_DataType[i].ToString();
-                    TParameter.DeviceData.ReadGridRow[i].Cells[4].Value = TParameter.DeviceData.Read_Data[i].ToString();
-                    TParameter.DeviceData.ReadGridRow[i].Cells[5].Value = TParameter.DeviceData.ZeroToBool(TParameter.DeviceData.Read_IsUse[i].ToString());
-                    TParameter.DeviceData.ReadGridRow[i].Cells[6].Value = "";
-                }
-            }
-            //dgv_ReadDataGrid.Rows.AddRange(TParameter.DeviceData.ReadGridRow);//貼回下載datagridview
-            #endregion
-
-            #region 上傳
-            dgv_WriteDataGrid.Rows.Clear();//清除原本的
-            TParameter.DeviceData.WriteGridRow = new DataGridViewRow[TParameter.DeviceData.Write_SN.Count];//以DataGridViewRow加入較快
-            if (TParameter.DeviceData.Write_SN.Count != 0)
-            {
-                for (int i = 0; i < TParameter.DeviceData.Write_SN.Count; i++)
-                {
-                    TParameter.DeviceData.WriteGridRow[i] = new DataGridViewRow();
-                    TParameter.DeviceData.WriteGridRow[i].CreateCells(dgv_WriteDataGrid);//以上傳的datagridview座基底新增料表元素
-                    TParameter.DeviceData.WriteGridRow[i].Cells[0].Value = TParameter.DeviceData.Write_SN[i].ToString();
-                    TParameter.DeviceData.WriteGridRow[i].Cells[1].Value = TParameter.DeviceData.Write_Label[i].ToString();
-                    TParameter.DeviceData.WriteGridRow[i].Cells[2].Value = TParameter.DeviceData.Write_Address[i].ToString();
-                    TParameter.DeviceData.WriteGridRow[i].Cells[3].Value = TParameter.DeviceData.Write_DataType[i].ToString();
-                    TParameter.DeviceData.WriteGridRow[i].Cells[4].Value = TParameter.DeviceData.Write_Data[i].ToString();
-                    TParameter.DeviceData.WriteGridRow[i].Cells[5].Value = TParameter.DeviceData.ZeroToBool(TParameter.DeviceData.Write_IsUse[i].ToString());
-                    TParameter.DeviceData.WriteGridRow[i].Cells[6].Value = "";
-                    TParameter.DeviceData.WriteGridRow[i].Cells[7].Value = "";
-                }
-            }
-            dgv_WriteDataGrid.Rows.AddRange(TParameter.DeviceData.WriteGridRow);//貼回上傳datagridview
-            #endregion
-        }
         public void ModelChange()
         {
             TParameter.DeviceData.SaveData_ModChange(dgv_ReadDataGrid, dgv_WriteDataGrid);
@@ -600,28 +555,33 @@ namespace PLC_Data_Access
             switch (TParameter.DeviceData.iModelChange)
             {
                 case 0: //修改
-
                     p_ModelChange.BackColor = Color.LightBlue;
                     btn_ModelChange.Text = "格式修改模式中";
-                    txt_ReadTime.Enabled = true;
-                    Timer_DeviceGet.Stop();
-                    Timer_DeviceGet.Elapsed -= On_DeviceGet;
                     Lb_Status.Text = "進入修改模式";
+
+                    txt_ReadTime.Enabled = true;
+                    Timer_DeviceGet.Elapsed -= On_DeviceGet;
+                    Timer_DeviceGet.Stop();
+                    
+                    
                     break;
                 case 1: //執行
                     p_ModelChange.BackColor = Color.OrangeRed;
                     btn_ModelChange.Text = "運作模式中";
-                    try
+
+                    if (txt_ReadTime.Text != "" && Convert.ToInt32(txt_ReadTime.Text) > 0)
                     {
-                        TParameter.Mx_Connect.iReciveTime = Convert.ToInt32(txt_ReadTime.Text);
                         Timer_DeviceGet.Interval = TParameter.Mx_Connect.iReciveTime = Convert.ToInt32(txt_ReadTime.Text);
                     }
-                    catch
+                    else
                     {
-                        MessageBox.Show("回傳時間設定錯誤\n請確認是否為空值或負值且不為文字\n改為預設值2000ms", "ModelChange", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        //超出範圍預設值
+                        TParameter.Error_Info.ErrorMessageBox_Time();
                         TParameter.Mx_Connect.iReciveTime = 2000;//兩秒
+                        Timer_DeviceGet.Interval = 2000;
                         txt_ReadTime.Text = "2000";
                     }
+
                     txt_ReadTime.Enabled = false;
                     Timer_DeviceGet.Elapsed += On_DeviceGet;
                     Timer_DeviceGet.Start();
@@ -632,20 +592,11 @@ namespace PLC_Data_Access
         {
             Timer_DeviceGet.Stop();
             Cycle_DeviceGet();
-            //this.BeginInvoke(new UpdateLabel(Update_Label), new object[] { this.Lb_Status, "目前時間為: " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt") });
             Timer_DeviceGet.Start();
         }
-       
-
-
         private void Cycle_DeviceGet()
         {
-            string sOutPutCell;
-            int iOutPut;
-            string sOutPut;
-
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
+            swStopwatch.Restart();
             //下載讀取
             #region 下載讀取
             for (int i = 0; i < TParameter.DeviceData.Read_SN.Count; i++)//SN_count
@@ -657,53 +608,36 @@ namespace PLC_Data_Access
                     {
                         try
                         {
-                            TParameter.Mx_Connect.ProgGetBlockCombine(TParameter.DeviceData.Read_Address[i], out sOutPutCell);
-
-                            if (TParameter.Mx_Connect.iReturnCode == 0)
-                            {
-                                TParameter.DeviceData.Read_DeviceValueGet[i] = sOutPutCell;
-                            }
-                            else
-                            {
-                                //顯示errorcode於輸出值當中
-                                TParameter.DeviceData.Read_DeviceValueGet[i] = "ErCode: " + String.Format("0x{0:x8} [HEX]", TParameter.Mx_Connect.iReturnCode);
-                            }
-                            dgv_ReadDataGrid.InvalidateCell(6, i);
+                            TParameter.Mx_Connect.ProgGetBlockCombine(TParameter.DeviceData.Read_Address[i], out string sOutPutCell);
+                            //TParameter.DeviceData.Read_DeviceValueGet[i] = (TParameter.Mx_Connect.iReturnCode == 0) ? sOutPutCell : TParameter.Error_Info.ErrorStrSend();
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show(ex.Message + "\n是否為string[]之軟元件名稱錯誤" + "\n" + TParameter.DeviceData.Read_Address[i].ToString(), "Cycle_DeviceGet", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            TParameter.Error_Info.ErrorMessageBox_DeviceBlock(ex);
                             ModelChange();//強制切換
+                            return;
                         }
                     }
                     else//其他軟元件
                     {
                         try
                         {
-                            TParameter.Mx_Connect.ProgGetDevice(TParameter.DeviceData.Read_Address[i], out sOutPut);
-                            if (TParameter.Mx_Connect.iReturnCode == 0)
-                            {
-                                TParameter.DeviceData.Read_DeviceValueGet[i] = sOutPut;
-                            }
-                            else
-                            {
-                                //顯示errorcode於輸出值當中
-                                TParameter.DeviceData.Read_DeviceValueGet[i] = "ErCode: " + String.Format("0x{0:x8} [HEX]", TParameter.Mx_Connect.iReturnCode);
-                            }
+                            TParameter.Mx_Connect.ProgGetDevice(TParameter.DeviceData.Read_Address[i], out string sOutPut);
+                            //TParameter.DeviceData.Read_DeviceValueGet[i] = (TParameter.Mx_Connect.iReturnCode == 0) ? sOutPut : TParameter.Error_Info.ErrorStrSend();
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show(ex.Message + "\n是否為string[]之軟元件名稱錯誤(GetDevice)", "Cycle_DeviceGet_Read", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            TParameter.Error_Info.ErrorMessageBox_DeviceValue(ex);
                             ModelChange();//強制切換
+                            return;
                         }
                     }
-                    dgv_ReadDataGrid.InvalidateCell(6, i);
+                    //dgv_ReadDataGrid.InvalidateCell(6, i);
                 }
             }
             #endregion
             //上傳讀取
             #region 上傳讀取
-            
             for (int i = 0; i < TParameter.DeviceData.Write_SN.Count; i++)
             {
                 if (TParameter.DeviceData.Write_IsUse[i].ToString() == "1")//表示有使用
@@ -713,90 +647,38 @@ namespace PLC_Data_Access
                     {
                         try
                         {
-                            TParameter.Mx_Connect.ProgGetBlockCombine(TParameter.DeviceData.Write_Address[i].ToString(), out sOutPutCell);
-
-                            if (TParameter.Mx_Connect.iReturnCode == 0)
-                            {
-                                TParameter.DeviceData.Write_DeviceValueGet[i] = sOutPutCell;
-                            }
-                            else
-                            {
-                                TParameter.DeviceData.Write_DeviceValueGet[i] = "ErCode: " + String.Format("0x{0:x8} [HEX]", TParameter.Mx_Connect.iReturnCode);
-                            }
+                            TParameter.Mx_Connect.ProgGetBlockCombine(TParameter.DeviceData.Write_Address[i].ToString(), out string sOutPutCell);
+                            //TParameter.DeviceData.Write_DeviceValueGet[i] = (TParameter.Mx_Connect.iReturnCode == 0) ? sOutPutCell : TParameter.Error_Info.ErrorStrSend();
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show(ex.Message + "\n是否為string[]之軟元件名稱錯誤", "Cycle_DeviceGet_Write", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            TParameter.Error_Info.ErrorMessageBox_DeviceBlock(ex);
                             ModelChange();//強制切換
+                            return;
                         }
                     }
                     else//其他軟元件
                     {
                         try
                         {
-                            TParameter.Mx_Connect.iReturnCode = TParameter.Mx_Connect.Prog_Connect.GetDevice(TParameter.DeviceData.Write_Address[i], out iOutPut);
-                            if (TParameter.Mx_Connect.iReturnCode == 0)
-                            {
-                                TParameter.DeviceData.Write_DeviceValueGet[i] = iOutPut.ToString();
-                            }
-                            else
-                            {
-                                TParameter.DeviceData.Write_DeviceValueGet[i] = "ErCode: " + String.Format("0x{0:x8} [HEX]", TParameter.Mx_Connect.iReturnCode);
-                            }
+                            TParameter.Mx_Connect.ProgGetDevice(TParameter.DeviceData.Write_Address[i], out string sOutPutCell);
+                            TParameter.DeviceData.Write_DeviceValueGet[i] = (TParameter.Mx_Connect.iReturnCode == 0) ? sOutPutCell : TParameter.Error_Info.ErrorStrSend();
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show(ex.Message + "\n是否為string[]之軟元件名稱錯誤(GetDevice)", "Cycle_DeviceGet", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            TParameter.Error_Info.ErrorMessageBox_DeviceValue(ex);
                             ModelChange();//強制切換
+                            return;
                         }
                     }
-                    dgv_WriteDataGrid.InvalidateCell(6, i);
+                    //dgv_WriteDataGrid.InvalidateCell(6, i);
                 }
             }
             #endregion
+            swStopwatch.Stop();
+            TimeSpan trim = swStopwatch.Elapsed;
 
-            sw.Stop();
-            TimeSpan trim = sw.Elapsed;
             Console.WriteLine("迴圈1次時間: " + trim + "\n目前時間: " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
         }
-
-
-
-        //委派更新
-        void Update_DataGridView(DataGridView View, DataGridViewRow[] Data)
-        {
-            lock (this._objLock)
-            {
-                View.Rows.Clear();
-                View.Rows.AddRange(Data);
-            }
-        }
-        void Update_Label(Label lab, string Msg)
-        {
-            lock (this._objLock)
-            {
-                if (lab is Label)
-                    ((Label)lab).Text = Msg;
-            }
-        }
-
-        
-
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-
     }
 }
