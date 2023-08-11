@@ -45,12 +45,12 @@ namespace PLC_Data_Access
         ///軟元件列表
         //讀列表
         //List<ABC> ls = new List<ABC>();
-        public List<string> Read_SN = new List<string>();//序號
-        public List<string> Read_Label = new List<string>();//名稱
-        public List<string> Read_Address = new List<string>();//軟元件地址
-        public List<string> Read_DataType = new List<string>();//資料類型
-        public List<string> Read_Data = new List<string>();//資料包格式
-        public List<string> Read_IsUse = new List<string>();//是否使用
+        public List<string> Read_SN             = new List<string>();//序號
+        public List<string> Read_Label          = new List<string>();//名稱
+        public List<string> Read_Address        = new List<string>();//軟元件地址
+        public List<string> Read_DataType       = new List<string>();//資料類型
+        public List<string> Read_Data           = new List<string>();//資料包格式
+        public List<string> Read_IsUse          = new List<string>();//是否使用
         public List<string> Read_DeviceValueGet = new List<string>();//讀取值
 
         public DataGridViewRow[] ReadGridRow;//下載DataGridview

@@ -609,7 +609,7 @@ namespace PLC_Data_Access
                         try
                         {
                             TParameter.Mx_Connect.ProgGetBlockCombine(TParameter.DeviceData.Read_Address[i], out string sOutPutCell);
-                            //TParameter.DeviceData.Read_DeviceValueGet[i] = (TParameter.Mx_Connect.iReturnCode == 0) ? sOutPutCell : TParameter.Error_Info.ErrorStrSend();
+                            TParameter.DeviceData.Read_DeviceValueGet[i] = (TParameter.Mx_Connect.iReturnCode == 0) ? sOutPutCell : TParameter.Error_Info.ErrorStrSend();
                         }
                         catch (Exception ex)
                         {
@@ -623,7 +623,7 @@ namespace PLC_Data_Access
                         try
                         {
                             TParameter.Mx_Connect.ProgGetDevice(TParameter.DeviceData.Read_Address[i], out string sOutPut);
-                            //TParameter.DeviceData.Read_DeviceValueGet[i] = (TParameter.Mx_Connect.iReturnCode == 0) ? sOutPut : TParameter.Error_Info.ErrorStrSend();
+                            TParameter.DeviceData.Read_DeviceValueGet[i] = (TParameter.Mx_Connect.iReturnCode == 0) ? sOutPut : TParameter.Error_Info.ErrorStrSend();
                         }
                         catch (Exception ex)
                         {
@@ -632,7 +632,7 @@ namespace PLC_Data_Access
                             return;
                         }
                     }
-                    //dgv_ReadDataGrid.InvalidateCell(6, i);
+                    dgv_ReadDataGrid.InvalidateCell(6, i);
                 }
             }
             #endregion
@@ -640,7 +640,7 @@ namespace PLC_Data_Access
             #region 上傳讀取
             for (int i = 0; i < TParameter.DeviceData.Write_SN.Count; i++)
             {
-                if (TParameter.DeviceData.Write_IsUse[i].ToString() == "1")//表示有使用
+                if (TParameter.DeviceData.Write_IsUse[i] == "1")//表示有使用
                 {
                     //若為軟元件區間
                     if (TParameter.DeviceData.Write_Address[i].ToString().Contains("~"))
@@ -648,7 +648,7 @@ namespace PLC_Data_Access
                         try
                         {
                             TParameter.Mx_Connect.ProgGetBlockCombine(TParameter.DeviceData.Write_Address[i].ToString(), out string sOutPutCell);
-                            //TParameter.DeviceData.Write_DeviceValueGet[i] = (TParameter.Mx_Connect.iReturnCode == 0) ? sOutPutCell : TParameter.Error_Info.ErrorStrSend();
+                            TParameter.DeviceData.Write_DeviceValueGet[i] = (TParameter.Mx_Connect.iReturnCode == 0) ? sOutPutCell : TParameter.Error_Info.ErrorStrSend();
                         }
                         catch (Exception ex)
                         {
@@ -671,7 +671,7 @@ namespace PLC_Data_Access
                             return;
                         }
                     }
-                    //dgv_WriteDataGrid.InvalidateCell(6, i);
+                    dgv_WriteDataGrid.InvalidateCell(6, i);
                 }
             }
             #endregion
