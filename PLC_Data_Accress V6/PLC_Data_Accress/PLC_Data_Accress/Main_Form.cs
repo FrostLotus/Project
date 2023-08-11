@@ -562,8 +562,8 @@ namespace PLC_Data_Access
                     txt_ReadTime.Enabled = true;
                     Timer_DeviceGet.Elapsed -= On_DeviceGet;
                     Timer_DeviceGet.Stop();
-                    
-                    
+
+
                     break;
                 case 1: //執行
                     p_ModelChange.BackColor = Color.OrangeRed;
@@ -591,7 +591,8 @@ namespace PLC_Data_Access
         private void On_DeviceGet(object sender, EventArgs e)
         {
             Timer_DeviceGet.Stop();
-            Cycle_DeviceGet();
+            //Cycle_DeviceGet();
+            DeviceGet();
             Timer_DeviceGet.Start();
         }
         private void Cycle_DeviceGet()
@@ -687,7 +688,9 @@ namespace PLC_Data_Access
             //下載上傳讀取
             //目前未發生字串溢位問題
             string arrGetData = "";
-            int iItemvalue = 0;
+            int iTotalItem = 0;//全總數
+            int iReadItem = 0;
+            int iWriteItem = 0;
             //先進行全部字串讀取
             for (int i = 0; i < TParameter.DeviceData.Read_SN.Count; i++)//SN_count
             {
@@ -697,18 +700,20 @@ namespace PLC_Data_Access
                     {
                         TParameter.DeviceData.GetCombineArray_str(TParameter.DeviceData.Read_Address[i].ToString(), out int iItemCount, out string sItemStr);
                         //增加軟元件總數
-                        iItemvalue += iItemCount;
+                        iTotalItem += iItemCount;
+                        iReadItem += iItemCount;
                         //串Random用字串
-                        arrGetData += (arrGetData == "")?sItemStr: "\n" + sItemStr;
-                        
+                        arrGetData += (arrGetData == "") ? sItemStr : "\n" + sItemStr;
+
                     }
                     else//其餘單一元件
                     {
                         //增加軟元件總數
-                        iItemvalue += 1;
+                        iTotalItem += 1;
+                        iReadItem += 1;
                         //串Random用字串
-                        arrGetData += (arrGetData == "")? TParameter.DeviceData.Read_Address[i].ToString(): "\n" + TParameter.DeviceData.Read_Address[i].ToString();
-                        
+                        arrGetData += (arrGetData == "") ? TParameter.DeviceData.Read_Address[i].ToString() : "\n" + TParameter.DeviceData.Read_Address[i].ToString();
+
                     }
                 }
             }
@@ -720,7 +725,8 @@ namespace PLC_Data_Access
                     {
                         TParameter.DeviceData.GetCombineArray_str(TParameter.DeviceData.Write_Address[i].ToString(), out int iItemCount, out string sItemStr);
                         //增加軟元件總數
-                        iItemvalue += iItemCount;
+                        iTotalItem += iItemCount;
+                        iWriteItem += iItemCount;
                         //串Random用字串
                         arrGetData += (arrGetData == "") ? sItemStr : "\n" + sItemStr;
 
@@ -728,7 +734,8 @@ namespace PLC_Data_Access
                     else//其餘單一元件
                     {
                         //增加軟元件總數
-                        iItemvalue += 1;
+                        iTotalItem += 1;
+                        iWriteItem += 1;
                         //串Random用字串
                         arrGetData += (arrGetData == "") ? TParameter.DeviceData.Write_Address[i].ToString() : "\n" + TParameter.DeviceData.Write_Address[i].ToString();
 
@@ -736,8 +743,69 @@ namespace PLC_Data_Access
                 }
             }
             //取全部元件的值(ReadRandom)
+            TParameter.Mx_Connect.ProgGetDeviceRandom(arrGetData, iTotalItem, out int[] arrDeviceData);
+            //餵回去
+            int iOrderCount = 0;
+            //read
+            for (int i = 0; i < TParameter.DeviceData.Read_SN.Count; i++)//SN_count
+            {
+                if (TParameter.DeviceData.Read_IsUse[i] == "1")//表示有觸發
+                {
+                    if (TParameter.DeviceData.Read_Address[i].ToString().Contains("~"))//若為軟元件區間
+                    {
+                        //取得軟元件範圍與
+                        TParameter.DeviceData.GetCombineSize_int(TParameter.DeviceData.Read_Address[i].ToString(), out int iDeviceCount);
+                        //iOrderCount += iDeviceCount;
+                        string sTmp = "";
+                        for (int j = 0; j < iDeviceCount; j++)
+                        {
+                            sTmp += Convert.ToString(string.Format("{0:00}", arrDeviceData[iOrderCount]));
+                            iOrderCount++;//每抓一參數進下一位
+                        }
+                        TParameter.DeviceData.Read_DeviceValueGet[i] = sTmp;
+                    }
+                    else//其餘單一元件
+                    {
+                        TParameter.DeviceData.Read_DeviceValueGet[i] = string.Format("{0:00}", arrDeviceData[iOrderCount]);
+                        iOrderCount++;
+                    }
+                    dgv_ReadDataGrid.InvalidateCell(6, i);
+                }
+            }
+            //Write
+            for (int i = 0; i < TParameter.DeviceData.Write_SN.Count; i++)//SN_count
+            {
+                if (TParameter.DeviceData.Write_IsUse[i] == "1")//表示有觸發
+                {
+                    if (TParameter.DeviceData.Write_Address[i].ToString().Contains("~"))//若為軟元件區間
+                    {
+                        //取得軟元件範圍與
+                        TParameter.DeviceData.GetCombineSize_int(TParameter.DeviceData.Write_Address[i].ToString(), out int iDeviceCount);
+                        //iOrderCount += iDeviceCount;
+                        string sTmp = "";
+                        for (int j = 0; j < iDeviceCount; j++)
+                        {
+                            sTmp += string.Format("{0:00}", arrDeviceData[iOrderCount]);
+                            iOrderCount++;//每抓一參數進下一位
+                        }
+                        TParameter.DeviceData.Write_DeviceValueGet[i] = sTmp;
+                    }
+                    else//其餘單一元件
+                    {
+                        TParameter.DeviceData.Write_DeviceValueGet[i] = string.Format("{0:00}", arrDeviceData[iOrderCount]);
+                        iOrderCount++;
+                    }
+                    dgv_WriteDataGrid.InvalidateCell(6, i);
+                }
+            }
+            if(iOrderCount!= iTotalItem)
+            {
+                Console.WriteLine("填值有問題");
+            }
+            swStopwatch.Stop();
+            TimeSpan trim = swStopwatch.Elapsed;
 
-
+            Console.WriteLine("迴圈1次時間: " + trim + "\n目前時間: " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
         }
     }
 }

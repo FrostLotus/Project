@@ -414,6 +414,21 @@ namespace PLC_Data_Access
                 }
             }
         }
+
+        public void GetCombineSize_int(string sDevice, out int iSize)
+        {
+            ArrayList arrCombine = new ArrayList();
+            string sStart;//軟元件開頭
+            string sEnd;//軟元件結尾
+
+            TParameter.DeviceData.Break_String(sDevice, "~", ref arrCombine);//以"~"斷字:D700~D705 =>[D700][D705]
+            sStart = arrCombine[0].ToString();//軟元件開頭
+            sEnd = arrCombine[1].ToString();//軟元件結尾
+
+            int iStart = Convert.ToInt32(sStart.Replace("D", ""));//軟元件開頭 改數字
+            int iEnd = Convert.ToInt32(sEnd.Replace("D", ""));//軟元件結尾 改數字
+            iSize = Math.Abs(iEnd - iStart) + 1;//換算總軟元件數量
+        }
         //工具
         public void DiviceDataArrClear()
         {
@@ -852,7 +867,18 @@ namespace PLC_Data_Access
             }
         }
 
-        
+        public void ProgGetDeviceRandom(string arrsDevice,int iSize,out int[] arrDeviceData)
+        {
+            arrDeviceData = new int[iSize];
+            try
+            {
+                iReturnCode = Prog_Connect.ReadDeviceRandom(arrsDevice, iSize, out arrDeviceData[0]);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message + "\n是否為string[]之軟元件名稱錯誤", ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
         public void ProgGetDevice(string sDevice, out string sOutValue)
         {
