@@ -215,7 +215,7 @@ namespace PLC_Data_Access
                     }
                     else
                     {
-                        TParameter.DeviceData.Read_SN[e.RowIndex] = e.Value.ToString();
+                        TParameter.DeviceData.Read_SN[e.RowIndex] = (e.Value != null) ? e.Value.ToString() : "";
                     }
                     break;
                 case "Read_Label":
@@ -225,7 +225,7 @@ namespace PLC_Data_Access
                     }
                     else
                     {
-                        TParameter.DeviceData.Read_Label[e.RowIndex] = e.Value.ToString();
+                        TParameter.DeviceData.Read_Label[e.RowIndex] = (e.Value != null) ? e.Value.ToString() : "";
                     }
                     break;
                 case "Read_Address":
@@ -235,7 +235,7 @@ namespace PLC_Data_Access
                     }
                     else
                     {
-                        TParameter.DeviceData.Read_Address[e.RowIndex] = e.Value.ToString();
+                        TParameter.DeviceData.Read_Address[e.RowIndex] = (e.Value != null) ? e.Value.ToString() : "";
                     }
                     break;
                 case "Read_DataType":
@@ -245,7 +245,7 @@ namespace PLC_Data_Access
                     }
                     else
                     {
-                        TParameter.DeviceData.Read_DataType[e.RowIndex] = e.Value.ToString();
+                        TParameter.DeviceData.Read_DataType[e.RowIndex] = (e.Value != null) ? e.Value.ToString() : "";
                     }
                     break;
                 case "Read_Data":
@@ -255,12 +255,13 @@ namespace PLC_Data_Access
                     }
                     else
                     {
-                        TParameter.DeviceData.Read_Data[e.RowIndex] = e.Value.ToString();
+                        TParameter.DeviceData.Read_Data[e.RowIndex] = (e.Value != null) ? e.Value.ToString() : "";
                     }
                     break;
                 case "Read_IsUse":
                     if (e.RowIndex >= TParameter.DeviceData.Read_IsUse.Count)
                     {
+
                         TParameter.DeviceData.Read_IsUse.Add(e.Value.ToString());
                     }
                     else
@@ -275,7 +276,7 @@ namespace PLC_Data_Access
                     }
                     else
                     {
-                        TParameter.DeviceData.Read_DeviceValueGet[e.RowIndex] = e.Value.ToString();
+                        TParameter.DeviceData.Read_DeviceValueGet[e.RowIndex] = (e.Value != null) ? e.Value.ToString() : "";
                     }
                     break;
             }
@@ -351,7 +352,7 @@ namespace PLC_Data_Access
                     }
                     else
                     {
-                        TParameter.DeviceData.Write_SN[e.RowIndex] = e.Value.ToString();
+                        TParameter.DeviceData.Write_SN[e.RowIndex] = (e.Value != null) ? e.Value.ToString() : "";
                     }
                     break;
                 case "Write_Label":
@@ -361,7 +362,7 @@ namespace PLC_Data_Access
                     }
                     else
                     {
-                        TParameter.DeviceData.Write_Label[e.RowIndex] = e.Value.ToString();
+                        TParameter.DeviceData.Write_Label[e.RowIndex] = (e.Value != null) ? e.Value.ToString() : "";
                     }
                     break;
                 case "Write_Address":
@@ -371,7 +372,7 @@ namespace PLC_Data_Access
                     }
                     else
                     {
-                        TParameter.DeviceData.Write_Address[e.RowIndex] = e.Value.ToString();
+                        TParameter.DeviceData.Write_Address[e.RowIndex] = (e.Value != null) ? e.Value.ToString() : "";
                     }
                     break;
                 case "Write_DataType":
@@ -381,7 +382,7 @@ namespace PLC_Data_Access
                     }
                     else
                     {
-                        TParameter.DeviceData.Write_DataType[e.RowIndex] = e.Value.ToString();
+                        TParameter.DeviceData.Write_DataType[e.RowIndex] = (e.Value != null) ? e.Value.ToString() : "";
                     }
                     break;
                 case "Write_Data":
@@ -391,7 +392,7 @@ namespace PLC_Data_Access
                     }
                     else
                     {
-                        TParameter.DeviceData.Write_Data[e.RowIndex] = e.Value.ToString();
+                        TParameter.DeviceData.Write_Data[e.RowIndex] = (e.Value != null) ? e.Value.ToString() : "";
                     }
                     break;
                 case "Write_IsUse":
@@ -411,7 +412,7 @@ namespace PLC_Data_Access
                     }
                     else
                     {
-                        TParameter.DeviceData.Write_DeviceValueGet[e.RowIndex] = e.Value.ToString();
+                        TParameter.DeviceData.Write_DeviceValueGet[e.RowIndex] = (e.Value != null) ? e.Value.ToString() : "";
                     }
                     break;
                 case "Write_DeviceValueSet":
@@ -421,7 +422,7 @@ namespace PLC_Data_Access
                     }
                     else
                     {
-                        TParameter.DeviceData.Write_DeviceValueSet[e.RowIndex] = e.Value.ToString();
+                        TParameter.DeviceData.Write_DeviceValueSet[e.RowIndex] = (e.Value != null) ? e.Value.ToString() : "";
                     }
                     break;
             }
@@ -436,7 +437,7 @@ namespace PLC_Data_Access
         public void DataUpdate()
         {
             Timer_DeviceGet.Stop();//岔斷運行模式
-
+            swStopwatch.Restart();
             string sOutPutCell;
             //上傳寫入
             for (int i = 0; i < TParameter.DeviceData.Write_SN.Count; i++)
@@ -512,7 +513,6 @@ namespace PLC_Data_Access
                     }
                     else//其他軟元件
                     {
-
                         try
                         {
                             TParameter.Mx_Connect.ProgGetDevice(TParameter.DeviceData.Write_Address[i].ToString(), out sOutPutCell);
@@ -520,8 +520,6 @@ namespace PLC_Data_Access
                             {
                                 TParameter.DeviceData.Write_DeviceValueGet[i] = sOutPutCell;
                             }
-
-
                         }
                         catch (Exception ex)
                         {
@@ -533,18 +531,19 @@ namespace PLC_Data_Access
                 }
             }
             Console.WriteLine("上傳成功");
+            TimeSpan trim = swStopwatch.Elapsed;
+
+            Console.WriteLine("上傳1次時間: " + trim);
             Timer_DeviceGet.Start();
         }
         public void DataGridValueFlash()
         {
-            //餵入資料畫面DataGridView刷新
+            //餵入資料畫面DataGridView刷新 =>更新陣列
             #region 下載
-            //dgv_ReadDataGrid.Rows.Clear();//清除原本的
             dgv_ReadDataGrid.RowCount = TParameter.DeviceData.Read_SN.Count + 1;
             #endregion
 
             #region 上傳
-            //dgv_WriteDataGrid.Rows.Clear();//清除原本的
             dgv_WriteDataGrid.RowCount = TParameter.DeviceData.Write_SN.Count + 1;
             #endregion
         }
@@ -557,13 +556,10 @@ namespace PLC_Data_Access
                 case 0: //修改
                     p_ModelChange.BackColor = Color.LightBlue;
                     btn_ModelChange.Text = "格式修改模式中";
-                    Lb_Status.Text = "進入修改模式";
 
                     txt_ReadTime.Enabled = true;
                     Timer_DeviceGet.Elapsed -= On_DeviceGet;
                     Timer_DeviceGet.Stop();
-
-
                     break;
                 case 1: //執行
                     p_ModelChange.BackColor = Color.OrangeRed;
@@ -690,6 +686,7 @@ namespace PLC_Data_Access
             string arrGetData = "";
             int iTotalItem = 0;//全總數
             //先進行全部字串讀取
+            //讀
             for (int i = 0; i < TParameter.DeviceData.Read_SN.Count; i++)//SN_count
             {
                 if (TParameter.DeviceData.Read_IsUse[i] == "1")//表示有觸發
@@ -713,6 +710,7 @@ namespace PLC_Data_Access
                     }
                 }
             }
+            //寫
             for (int i = 0; i < TParameter.DeviceData.Write_SN.Count; i++)//SN_count
             {
                 if (TParameter.DeviceData.Write_IsUse[i] == "1")//表示有觸發
@@ -740,7 +738,7 @@ namespace PLC_Data_Access
             TParameter.Mx_Connect.ProgGetDeviceRandom(arrGetData, iTotalItem, out int[] arrDeviceData);
             //餵回去
             int iOrderCount = 0;
-            //read
+            //讀
             for (int i = 0; i < TParameter.DeviceData.Read_SN.Count; i++)//SN_count
             {
                 if (TParameter.DeviceData.Read_IsUse[i] == "1")//表示有觸發
@@ -753,7 +751,7 @@ namespace PLC_Data_Access
                         string sTmp = "";
                         for (int j = 0; j < iDeviceCount; j++)
                         {
-                            sTmp += Convert.ToString(string.Format("{0:00}", arrDeviceData[iOrderCount]));
+                            sTmp += arrDeviceData[iOrderCount].ToString();
                             iOrderCount++;//每抓一參數進下一位
                         }
                         TParameter.DeviceData.Read_DeviceValueGet[i] = sTmp;
@@ -766,7 +764,7 @@ namespace PLC_Data_Access
                     dgv_ReadDataGrid.InvalidateCell(6, i);
                 }
             }
-            //Write
+            //寫
             for (int i = 0; i < TParameter.DeviceData.Write_SN.Count; i++)//SN_count
             {
                 if (TParameter.DeviceData.Write_IsUse[i] == "1")//表示有觸發
@@ -779,7 +777,7 @@ namespace PLC_Data_Access
                         string sTmp = "";
                         for (int j = 0; j < iDeviceCount; j++)
                         {
-                            sTmp += string.Format("{0:00}", arrDeviceData[iOrderCount]);
+                            sTmp += arrDeviceData[iOrderCount].ToString();
                             iOrderCount++;//每抓一參數進下一位
                         }
                         TParameter.DeviceData.Write_DeviceValueGet[i] = sTmp;
@@ -792,10 +790,12 @@ namespace PLC_Data_Access
                     dgv_WriteDataGrid.InvalidateCell(6, i);
                 }
             }
-            if(iOrderCount!= iTotalItem)
+
+            if (iOrderCount != iTotalItem)
             {
                 Console.WriteLine("填值有問題");
             }
+
             swStopwatch.Stop();
             TimeSpan trim = swStopwatch.Elapsed;
 
