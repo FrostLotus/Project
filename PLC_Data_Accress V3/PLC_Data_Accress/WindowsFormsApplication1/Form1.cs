@@ -12,6 +12,11 @@ namespace WindowsFormsApplication1
 {
     public partial class Form1 : Form
     {
+	public enum ABC
+	{
+		A=1,
+		B=2
+	}	
         public Form1()
         {
             InitializeComponent();
