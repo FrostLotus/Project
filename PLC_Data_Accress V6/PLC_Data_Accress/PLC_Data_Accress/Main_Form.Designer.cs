@@ -144,7 +144,7 @@
             this.mi_PLCSet});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1748, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1507, 24);
             this.menuStrip1.TabIndex = 2;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -294,9 +294,15 @@
             // 
             // btn_DataUpload
             // 
+<<<<<<< HEAD
             this.btn_DataUpload.Location = new System.Drawing.Point(1326, 493);
             this.btn_DataUpload.Name = "btn_DataUpload";
             this.btn_DataUpload.Size = new System.Drawing.Size(163, 45);
+=======
+            this.btn_DataUpload.Location = new System.Drawing.Point(1345, 493);
+            this.btn_DataUpload.Name = "btn_DataUpload";
+            this.btn_DataUpload.Size = new System.Drawing.Size(144, 45);
+>>>>>>> 7aeba850b553c9600d7e097c81227bf1189030bf
             this.btn_DataUpload.TabIndex = 74;
             this.btn_DataUpload.Text = "上傳資料上傳";
             this.btn_DataUpload.UseVisualStyleBackColor = true;
@@ -312,7 +318,11 @@
             // 
             // txt_ReadTime
             // 
+<<<<<<< HEAD
             this.txt_ReadTime.Location = new System.Drawing.Point(32, 605);
+=======
+            this.txt_ReadTime.Location = new System.Drawing.Point(205, 512);
+>>>>>>> 7aeba850b553c9600d7e097c81227bf1189030bf
             this.txt_ReadTime.Name = "txt_ReadTime";
             this.txt_ReadTime.Size = new System.Drawing.Size(123, 22);
             this.txt_ReadTime.TabIndex = 1;
@@ -320,7 +330,11 @@
             // 
             // label2
             // 
+<<<<<<< HEAD
             this.label2.Location = new System.Drawing.Point(30, 586);
+=======
+            this.label2.Location = new System.Drawing.Point(203, 493);
+>>>>>>> 7aeba850b553c9600d7e097c81227bf1189030bf
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(125, 16);
             this.label2.TabIndex = 50;
@@ -330,7 +344,11 @@
             // 
             this.p_MxOpenStatus.BackColor = System.Drawing.Color.Lime;
             this.p_MxOpenStatus.Controls.Add(this.btn_MxOpen);
+<<<<<<< HEAD
             this.p_MxOpenStatus.Location = new System.Drawing.Point(1342, 596);
+=======
+            this.p_MxOpenStatus.Location = new System.Drawing.Point(630, 500);
+>>>>>>> 7aeba850b553c9600d7e097c81227bf1189030bf
             this.p_MxOpenStatus.Name = "p_MxOpenStatus";
             this.p_MxOpenStatus.Size = new System.Drawing.Size(147, 38);
             this.p_MxOpenStatus.TabIndex = 5;
@@ -348,7 +366,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+<<<<<<< HEAD
             this.ClientSize = new System.Drawing.Size(1748, 826);
+=======
+            this.ClientSize = new System.Drawing.Size(1507, 584);
+>>>>>>> 7aeba850b553c9600d7e097c81227bf1189030bf
             this.Controls.Add(this.txt_ReadTime);
             this.Controls.Add(this.btn_DataUpload);
             this.Controls.Add(this.p_MxOpenStatus);

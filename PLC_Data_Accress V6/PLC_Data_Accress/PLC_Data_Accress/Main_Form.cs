@@ -437,7 +437,7 @@ namespace PLC_Data_Access
         public void DataUpdate()
         {
             Timer_DeviceGet.Stop();//岔斷運行模式
-
+            swStopwatch.Restart();
             string sOutPutCell;
             //上傳寫入
             for (int i = 0; i < TParameter.DeviceData.Write_SN.Count; i++)
@@ -457,6 +457,7 @@ namespace PLC_Data_Access
                                     if (TParameter.Mx_Connect.iReturnCode == 0)
                                     {
                                         Console.WriteLine(TParameter.DeviceData.Write_Address[i] + " SetOK");
+
                                     }
                                 }
                                 catch (Exception ex)
@@ -513,7 +514,6 @@ namespace PLC_Data_Access
                     }
                     else//其他軟元件
                     {
-
                         try
                         {
                             TParameter.Mx_Connect.ProgGetDevice(TParameter.DeviceData.Write_Address[i].ToString(), out sOutPutCell);
@@ -521,8 +521,6 @@ namespace PLC_Data_Access
                             {
                                 TParameter.DeviceData.Write_DeviceValueGet[i] = sOutPutCell;
                             }
-
-
                         }
                         catch (Exception ex)
                         {
@@ -534,6 +532,9 @@ namespace PLC_Data_Access
                 }
             }
             Console.WriteLine("上傳成功");
+            TimeSpan trim = swStopwatch.Elapsed;
+
+            Console.WriteLine("上傳1次時間: " + trim);
             Timer_DeviceGet.Start();
         }
         public void DataGridValueFlash()
