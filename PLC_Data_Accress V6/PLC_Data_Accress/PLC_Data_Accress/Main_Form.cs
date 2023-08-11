@@ -457,6 +457,7 @@ namespace PLC_Data_Access
                                     if (TParameter.Mx_Connect.iReturnCode == 0)
                                     {
                                         Console.WriteLine(TParameter.DeviceData.Write_Address[i] + " SetOK");
+
                                     }
                                 }
                                 catch (Exception ex)
