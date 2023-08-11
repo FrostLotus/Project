@@ -459,7 +459,6 @@ namespace PLC_Data_Access
                         try
                         {
                             TParameter.Mx_Connect.ProgReadBlockCombine(TParameter.DeviceData.Read_Address[i].ToString(), out sOutPutCell);
-
                             if (TParameter.Mx_Connect.iReturnCode == 0)
                             {
 
@@ -520,7 +519,6 @@ namespace PLC_Data_Access
                         try
                         {
                             TParameter.Mx_Connect.ProgReadBlockCombine(TParameter.DeviceData.Write_Address[i].ToString(), out sOutPutCell);
-
                             if (TParameter.Mx_Connect.iReturnCode == 0)
                             {
                                 //dgv_WriteDataGrid.Rows[i].Cells[6].Value = sOutPutCell;
@@ -541,9 +539,9 @@ namespace PLC_Data_Access
                     {
                         try
                         {
+                            TParameter.Mx_Connect.iReturnCode = TParameter.Mx_Connect.Prog_Connect.GetDevice(TParameter.DeviceData.Write_Address[i].ToString(), out iOutPut);
                             if (TParameter.Mx_Connect.iReturnCode == 0)
                             {
-                                TParameter.Mx_Connect.iReturnCode = TParameter.Mx_Connect.Prog_Connect.GetDevice(TParameter.DeviceData.Write_Address[i].ToString(), out iOutPut);
                                 //sOutPutCell = iOutPut.ToString();
                                 //dgv_WriteDataGrid.Rows[i].Cells[6].Value = sOutPutCell;
                                 TParameter.DeviceData.WriteGridRow[i].Cells[6].Value = iOutPut.ToString();
@@ -563,8 +561,8 @@ namespace PLC_Data_Access
             }
             #endregion
             //餵回去顯示用dataGridView
-            //this.BeginInvoke(new UpdateDataGridView(Update_DataGridView), new object[] { this.dgv_ReadDataGrid, TParameter.DeviceData.ReadGridRow });
-            //this.BeginInvoke(new UpdateDataGridView(Update_DataGridView), new object[] { this.dgv_WriteDataGrid, TParameter.DeviceData.WriteGridRow});
+            this.BeginInvoke(new UpdateDataGridView(Update_DataGridView), new object[] { this.dgv_ReadDataGrid, TParameter.DeviceData.ReadGridRow });
+            this.BeginInvoke(new UpdateDataGridView(Update_DataGridView), new object[] { this.dgv_WriteDataGrid, TParameter.DeviceData.WriteGridRow});
             sw.Stop();
             TimeSpan trim = sw.Elapsed;
             Console.WriteLine("迴圈1次時間: " + trim + "\n目前時間: " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
