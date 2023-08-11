@@ -1,1 +1,4 @@
 TEST1
+Test2
+add 修改加入索引
+commit 記錄索引的狀態
