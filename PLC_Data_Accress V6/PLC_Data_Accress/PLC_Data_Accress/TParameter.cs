@@ -17,7 +17,7 @@ namespace PLC_Data_Access
         public static CDeviceData DeviceData = new CDeviceData();
         public static CError_Info Error_Info = new CError_Info();
 
-        public static void init()
+        public static void Init()
         {
             DeviceData.LoadData_Full();//先進行參數餵入
             Mx_Connect.SetPLCProperty(Mx_Connect.CpuName);//再進行PLC連線(不論有無連線成功)
@@ -366,6 +366,54 @@ namespace PLC_Data_Access
             return;
         }
         ///---------------------------------------------
+        ///
+        public void GetCombineArray_str(string sDevice,out int iSize, out string sOutCombimeArray)
+        {
+            ArrayList arrCombine = new ArrayList();
+            string sStart;//軟元件開頭
+            string sEnd;//軟元件結尾
+
+            TParameter.DeviceData.Break_String(sDevice, "~", ref arrCombine);//以"~"斷字:D700~D705 =>[D700][D705]
+            sStart = arrCombine[0].ToString();//軟元件開頭
+            sEnd = arrCombine[1].ToString();//軟元件結尾
+
+            int iStart = Convert.ToInt32(sStart.Replace("D", ""));//軟元件開頭 改數字
+            int iEnd = Convert.ToInt32(sEnd.Replace("D", ""));//軟元件結尾 改數字
+            iSize = Math.Abs(iEnd - iStart)+1;//換算總軟元件數量
+            //int[] arrData = new int[iSize];//標籤總數量(矩陣)
+
+            sOutCombimeArray = "";
+            if (iEnd > iStart)
+            {                //D700        D705
+                for (int i = iStart; i <= iEnd; i++)
+                {
+                    if(sOutCombimeArray == "")//放第一個不加換行
+                    {
+                        sOutCombimeArray += "D" + i.ToString();
+                    }
+                    else
+                    {
+                        sOutCombimeArray += "\nD" + i.ToString();
+                    }
+                    
+                }
+            }
+            if (iEnd < iStart)
+            {
+                for (int i = iEnd; i <= iStart; i++)
+                {
+                    if (sOutCombimeArray == "")//放第一個不加換行
+                    {
+                        sOutCombimeArray += "D" + i.ToString();
+                    }
+                    else
+                    {
+                        sOutCombimeArray += "\nD" + i.ToString();
+                    }
+
+                }
+            }
+        }
         //工具
         public void DiviceDataArrClear()
         {
@@ -804,6 +852,8 @@ namespace PLC_Data_Access
             }
         }
 
+        
+
         public void ProgGetDevice(string sDevice, out string sOutValue)
         {
             int iData=0;
@@ -820,8 +870,7 @@ namespace PLC_Data_Access
         }
         public void ProgSetDevice(string sDevice, string sInValue)
         {
-            int Data = 0;
-            Data = Convert.ToInt32(sInValue);
+            int Data = Convert.ToInt32(sInValue);
             try
             {
                 iReturnCode = Prog_Connect.SetDevice(sDevice, Data);//從軟元件開頭 讀出資料

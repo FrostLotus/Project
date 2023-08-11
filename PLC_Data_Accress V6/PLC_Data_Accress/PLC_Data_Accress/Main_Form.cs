@@ -17,11 +17,11 @@ namespace PLC_Data_Access
 {
     public partial class Main_Form : Form
     {
-        private System.Timers.Timer Timer_DeviceGet = new System.Timers.Timer();
+        public System.Timers.Timer Timer_DeviceGet = new System.Timers.Timer();
 
         delegate void UpdateLabel(Label lab, string Msg);
         delegate void UpdateDataGridView(DataGridView view, DataGridViewRow[] data);
-        private object _objLock = new object();
+        //private object _objLock = new object();
         public Stopwatch swStopwatch = new Stopwatch();
 
 
@@ -29,7 +29,7 @@ namespace PLC_Data_Access
         {
             InitializeComponent();
 
-            TParameter.init();//初始化 然後連線
+            TParameter.Init();//初始化 然後連線
 
             txt_ReadTime.Text = TParameter.Mx_Connect.iReciveTime.ToString();
             //直接路徑連結
@@ -679,6 +679,65 @@ namespace PLC_Data_Access
             TimeSpan trim = swStopwatch.Elapsed;
 
             Console.WriteLine("迴圈1次時間: " + trim + "\n目前時間: " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
+        }
+
+        private void DeviceGet()
+        {
+            swStopwatch.Restart();
+            //下載上傳讀取
+            //目前未發生字串溢位問題
+            string arrGetData = "";
+            int iItemvalue = 0;
+            //先進行全部字串讀取
+            for (int i = 0; i < TParameter.DeviceData.Read_SN.Count; i++)//SN_count
+            {
+                if (TParameter.DeviceData.Read_IsUse[i] == "1")//表示有觸發
+                {
+                    if (TParameter.DeviceData.Read_Address[i].ToString().Contains("~"))//若為軟元件區間
+                    {
+                        TParameter.DeviceData.GetCombineArray_str(TParameter.DeviceData.Read_Address[i].ToString(), out int iItemCount, out string sItemStr);
+                        //增加軟元件總數
+                        iItemvalue += iItemCount;
+                        //串Random用字串
+                        arrGetData += (arrGetData == "")?sItemStr: "\n" + sItemStr;
+                        
+                    }
+                    else//其餘單一元件
+                    {
+                        //增加軟元件總數
+                        iItemvalue += 1;
+                        //串Random用字串
+                        arrGetData += (arrGetData == "")? TParameter.DeviceData.Read_Address[i].ToString(): "\n" + TParameter.DeviceData.Read_Address[i].ToString();
+                        
+                    }
+                }
+            }
+            for (int i = 0; i < TParameter.DeviceData.Write_SN.Count; i++)//SN_count
+            {
+                if (TParameter.DeviceData.Write_IsUse[i] == "1")//表示有觸發
+                {
+                    if (TParameter.DeviceData.Write_Address[i].ToString().Contains("~"))//若為軟元件區間
+                    {
+                        TParameter.DeviceData.GetCombineArray_str(TParameter.DeviceData.Write_Address[i].ToString(), out int iItemCount, out string sItemStr);
+                        //增加軟元件總數
+                        iItemvalue += iItemCount;
+                        //串Random用字串
+                        arrGetData += (arrGetData == "") ? sItemStr : "\n" + sItemStr;
+
+                    }
+                    else//其餘單一元件
+                    {
+                        //增加軟元件總數
+                        iItemvalue += 1;
+                        //串Random用字串
+                        arrGetData += (arrGetData == "") ? TParameter.DeviceData.Write_Address[i].ToString() : "\n" + TParameter.DeviceData.Write_Address[i].ToString();
+
+                    }
+                }
+            }
+            //取全部元件的值(ReadRandom)
+
+
         }
     }
 }
