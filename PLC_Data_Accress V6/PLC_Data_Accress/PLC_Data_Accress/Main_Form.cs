@@ -689,8 +689,6 @@ namespace PLC_Data_Access
             //目前未發生字串溢位問題
             string arrGetData = "";
             int iTotalItem = 0;//全總數
-            int iReadItem = 0;
-            int iWriteItem = 0;
             //先進行全部字串讀取
             for (int i = 0; i < TParameter.DeviceData.Read_SN.Count; i++)//SN_count
             {
@@ -701,7 +699,6 @@ namespace PLC_Data_Access
                         TParameter.DeviceData.GetCombineArray_str(TParameter.DeviceData.Read_Address[i].ToString(), out int iItemCount, out string sItemStr);
                         //增加軟元件總數
                         iTotalItem += iItemCount;
-                        iReadItem += iItemCount;
                         //串Random用字串
                         arrGetData += (arrGetData == "") ? sItemStr : "\n" + sItemStr;
 
@@ -710,7 +707,6 @@ namespace PLC_Data_Access
                     {
                         //增加軟元件總數
                         iTotalItem += 1;
-                        iReadItem += 1;
                         //串Random用字串
                         arrGetData += (arrGetData == "") ? TParameter.DeviceData.Read_Address[i].ToString() : "\n" + TParameter.DeviceData.Read_Address[i].ToString();
 
@@ -726,7 +722,6 @@ namespace PLC_Data_Access
                         TParameter.DeviceData.GetCombineArray_str(TParameter.DeviceData.Write_Address[i].ToString(), out int iItemCount, out string sItemStr);
                         //增加軟元件總數
                         iTotalItem += iItemCount;
-                        iWriteItem += iItemCount;
                         //串Random用字串
                         arrGetData += (arrGetData == "") ? sItemStr : "\n" + sItemStr;
 
@@ -735,7 +730,6 @@ namespace PLC_Data_Access
                     {
                         //增加軟元件總數
                         iTotalItem += 1;
-                        iWriteItem += 1;
                         //串Random用字串
                         arrGetData += (arrGetData == "") ? TParameter.DeviceData.Write_Address[i].ToString() : "\n" + TParameter.DeviceData.Write_Address[i].ToString();
 

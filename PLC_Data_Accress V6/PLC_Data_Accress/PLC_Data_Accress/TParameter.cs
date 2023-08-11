@@ -815,7 +815,7 @@ namespace PLC_Data_Access
 
             int iStart = Convert.ToInt32(sStart.Replace("D", ""));//軟元件開頭 改數字
             int iEnd = Convert.ToInt32(sEnd.Replace("D", ""));//軟元件結尾 改數字
-            int iSize = Math.Abs(iEnd - iStart);//換算總軟元件數量
+            int iSize = Math.Abs(iEnd - iStart)+1;//換算總軟元件數量
             int[] arrData = new int[iSize];//標籤總數量(矩陣)
 
             sOutCombimeValue = "";
@@ -848,7 +848,7 @@ namespace PLC_Data_Access
 
             int iStart = Convert.ToInt32(sStart.Replace("D", ""));//軟元件開頭 改數字
             int iEnd = Convert.ToInt32(sEnd.Replace("D", ""));//軟元件結尾 改數字
-            int iSize = Math.Abs(iEnd - iStart);//換算總軟元件數量
+            int iSize = Math.Abs(iEnd - iStart)+1;//換算總軟元件數量
             int[] arrData = new int[iSize];//標籤總數量(矩陣)
 
             //確認寫入資料有無問題  Substring
