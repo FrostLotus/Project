@@ -29,6 +29,13 @@
         private void InitializeComponent()
         {
             this.dgv_ReadDataGrid = new System.Windows.Forms.DataGridView();
+            this.Read_SN = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Read_Label = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Read_Address = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Read_DataType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Read_Data = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Read_IsUse = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Read_DeviceValueGet = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.檔案ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mi_DataGridLoad = new System.Windows.Forms.ToolStripMenuItem();
@@ -37,15 +44,6 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.dgv_WriteDataGrid = new System.Windows.Forms.DataGridView();
-            this.btn_ModelChange = new System.Windows.Forms.Button();
-            this.p_ModelChange = new System.Windows.Forms.Panel();
-            this.btn_DataUpload = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.txt_ReadTime = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.p_MxOpenStatus = new System.Windows.Forms.Panel();
-            this.btn_MxOpen = new System.Windows.Forms.Button();
-            this.Lb_Status = new System.Windows.Forms.Label();
             this.Write_SN = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Write_Label = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Write_Address = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -54,13 +52,14 @@
             this.Write_IsUse = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Write_DeviceValueGet = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Write_DeviceValueSet = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Read_SN = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Read_Label = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Read_Address = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Read_DataType = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Read_Data = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Read_IsUse = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.Read_DeviceValueGet = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btn_ModelChange = new System.Windows.Forms.Button();
+            this.p_ModelChange = new System.Windows.Forms.Panel();
+            this.btn_DataUpload = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.txt_ReadTime = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.p_MxOpenStatus = new System.Windows.Forms.Panel();
+            this.btn_MxOpen = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_ReadDataGrid)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -90,6 +89,53 @@
             this.dgv_ReadDataGrid.VirtualMode = true;
             this.dgv_ReadDataGrid.CellValueNeeded += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.Dgv_ReadDataGrid_CellValueNeeded);
             this.dgv_ReadDataGrid.CellValuePushed += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.Dgv_ReadDataGrid_CellValuePushed);
+            // 
+            // Read_SN
+            // 
+            this.Read_SN.HeaderText = "序号";
+            this.Read_SN.Name = "Read_SN";
+            this.Read_SN.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Read_SN.Width = 60;
+            // 
+            // Read_Label
+            // 
+            this.Read_Label.HeaderText = "名称";
+            this.Read_Label.Name = "Read_Label";
+            this.Read_Label.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Read_Label.Width = 160;
+            // 
+            // Read_Address
+            // 
+            this.Read_Address.HeaderText = "地址";
+            this.Read_Address.Name = "Read_Address";
+            this.Read_Address.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Read_DataType
+            // 
+            this.Read_DataType.HeaderText = "数据类型";
+            this.Read_DataType.Name = "Read_DataType";
+            this.Read_DataType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Read_DataType.Width = 60;
+            // 
+            // Read_Data
+            // 
+            this.Read_Data.HeaderText = "变量";
+            this.Read_Data.Name = "Read_Data";
+            this.Read_Data.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Read_Data.Width = 80;
+            // 
+            // Read_IsUse
+            // 
+            this.Read_IsUse.HeaderText = "是否使用";
+            this.Read_IsUse.Name = "Read_IsUse";
+            this.Read_IsUse.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Read_IsUse.Width = 60;
+            // 
+            // Read_DeviceValueGet
+            // 
+            this.Read_DeviceValueGet.HeaderText = "軟元件當前值";
+            this.Read_DeviceValueGet.Name = "Read_DeviceValueGet";
+            this.Read_DeviceValueGet.Width = 150;
             // 
             // menuStrip1
             // 
@@ -174,6 +220,59 @@
             this.dgv_WriteDataGrid.CellValueNeeded += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.Dgv_WriteDataGrid_CellValueNeeded);
             this.dgv_WriteDataGrid.CellValuePushed += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.Dgv_WriteDataGrid_CellValuePushed);
             // 
+            // Write_SN
+            // 
+            this.Write_SN.HeaderText = "序号";
+            this.Write_SN.Name = "Write_SN";
+            this.Write_SN.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Write_SN.Width = 40;
+            // 
+            // Write_Label
+            // 
+            this.Write_Label.HeaderText = "名称";
+            this.Write_Label.Name = "Write_Label";
+            this.Write_Label.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Write_Label.Width = 130;
+            // 
+            // Write_Address
+            // 
+            this.Write_Address.HeaderText = "地址";
+            this.Write_Address.Name = "Write_Address";
+            this.Write_Address.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Write_DataType
+            // 
+            this.Write_DataType.HeaderText = "数据类型";
+            this.Write_DataType.Name = "Write_DataType";
+            this.Write_DataType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Write_DataType.Width = 60;
+            // 
+            // Write_Data
+            // 
+            this.Write_Data.HeaderText = "变量";
+            this.Write_Data.Name = "Write_Data";
+            this.Write_Data.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Write_Data.Width = 80;
+            // 
+            // Write_IsUse
+            // 
+            this.Write_IsUse.HeaderText = "是否使用";
+            this.Write_IsUse.Name = "Write_IsUse";
+            this.Write_IsUse.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Write_IsUse.Width = 60;
+            // 
+            // Write_DeviceValueGet
+            // 
+            this.Write_DeviceValueGet.HeaderText = "軟元件當前值";
+            this.Write_DeviceValueGet.Name = "Write_DeviceValueGet";
+            this.Write_DeviceValueGet.Width = 150;
+            // 
+            // Write_DeviceValueSet
+            // 
+            this.Write_DeviceValueSet.HeaderText = "修改值(可監視中易值)";
+            this.Write_DeviceValueSet.Name = "Write_DeviceValueSet";
+            this.Write_DeviceValueSet.Width = 145;
+            // 
             // btn_ModelChange
             // 
             this.btn_ModelChange.Location = new System.Drawing.Point(20, 6);
@@ -245,122 +344,11 @@
             this.btn_MxOpen.Text = "PLC連結中";
             this.btn_MxOpen.UseVisualStyleBackColor = true;
             // 
-            // Lb_Status
-            // 
-            this.Lb_Status.AutoSize = true;
-            this.Lb_Status.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.Lb_Status.Location = new System.Drawing.Point(682, 506);
-            this.Lb_Status.Name = "Lb_Status";
-            this.Lb_Status.Size = new System.Drawing.Size(51, 16);
-            this.Lb_Status.TabIndex = 75;
-            this.Lb_Status.Text = "Status";
-            // 
-            // Write_SN
-            // 
-            this.Write_SN.HeaderText = "序号";
-            this.Write_SN.Name = "Write_SN";
-            this.Write_SN.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Write_SN.Width = 40;
-            // 
-            // Write_Label
-            // 
-            this.Write_Label.HeaderText = "名称";
-            this.Write_Label.Name = "Write_Label";
-            this.Write_Label.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Write_Label.Width = 130;
-            // 
-            // Write_Address
-            // 
-            this.Write_Address.HeaderText = "地址";
-            this.Write_Address.Name = "Write_Address";
-            this.Write_Address.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // Write_DataType
-            // 
-            this.Write_DataType.HeaderText = "数据类型";
-            this.Write_DataType.Name = "Write_DataType";
-            this.Write_DataType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Write_DataType.Width = 60;
-            // 
-            // Write_Data
-            // 
-            this.Write_Data.HeaderText = "变量";
-            this.Write_Data.Name = "Write_Data";
-            this.Write_Data.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Write_Data.Width = 80;
-            // 
-            // Write_IsUse
-            // 
-            this.Write_IsUse.HeaderText = "是否使用";
-            this.Write_IsUse.Name = "Write_IsUse";
-            this.Write_IsUse.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.Write_IsUse.Width = 60;
-            // 
-            // Write_DeviceValueGet
-            // 
-            this.Write_DeviceValueGet.HeaderText = "軟元件當前值";
-            this.Write_DeviceValueGet.Name = "Write_DeviceValueGet";
-            this.Write_DeviceValueGet.Width = 150;
-            // 
-            // Write_DeviceValueSet
-            // 
-            this.Write_DeviceValueSet.HeaderText = "修改值(可監視中易值)";
-            this.Write_DeviceValueSet.Name = "Write_DeviceValueSet";
-            this.Write_DeviceValueSet.Width = 145;
-            // 
-            // Read_SN
-            // 
-            this.Read_SN.HeaderText = "序号";
-            this.Read_SN.Name = "Read_SN";
-            this.Read_SN.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Read_SN.Width = 60;
-            // 
-            // Read_Label
-            // 
-            this.Read_Label.HeaderText = "名称";
-            this.Read_Label.Name = "Read_Label";
-            this.Read_Label.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Read_Label.Width = 160;
-            // 
-            // Read_Address
-            // 
-            this.Read_Address.HeaderText = "地址";
-            this.Read_Address.Name = "Read_Address";
-            this.Read_Address.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // Read_DataType
-            // 
-            this.Read_DataType.HeaderText = "数据类型";
-            this.Read_DataType.Name = "Read_DataType";
-            this.Read_DataType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Read_DataType.Width = 60;
-            // 
-            // Read_Data
-            // 
-            this.Read_Data.HeaderText = "变量";
-            this.Read_Data.Name = "Read_Data";
-            this.Read_Data.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Read_Data.Width = 80;
-            // 
-            // Read_IsUse
-            // 
-            this.Read_IsUse.HeaderText = "是否使用";
-            this.Read_IsUse.Name = "Read_IsUse";
-            this.Read_IsUse.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.Read_IsUse.Width = 60;
-            // 
-            // Read_DeviceValueGet
-            // 
-            this.Read_DeviceValueGet.HeaderText = "軟元件當前值";
-            this.Read_DeviceValueGet.Name = "Read_DeviceValueGet";
-            this.Read_DeviceValueGet.Width = 150;
-            // 
             // Main_Form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1748, 826);
-            this.Controls.Add(this.Lb_Status);
             this.Controls.Add(this.txt_ReadTime);
             this.Controls.Add(this.btn_DataUpload);
             this.Controls.Add(this.p_MxOpenStatus);
@@ -406,7 +394,6 @@
         internal System.Windows.Forms.Label label2;
         private System.Windows.Forms.Panel p_MxOpenStatus;
         private System.Windows.Forms.Button btn_MxOpen;
-        private System.Windows.Forms.Label Lb_Status;
         private System.Windows.Forms.DataGridViewTextBoxColumn Read_SN;
         private System.Windows.Forms.DataGridViewTextBoxColumn Read_Label;
         private System.Windows.Forms.DataGridViewTextBoxColumn Read_Address;

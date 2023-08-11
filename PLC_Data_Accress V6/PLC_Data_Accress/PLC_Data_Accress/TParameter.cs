@@ -802,7 +802,6 @@ namespace PLC_Data_Access
             iReturnCode = Prog_Connect.Close();
             return iReturnCode;
         }
-
         public void ProgGetBlockCombine(string sDevice, out string sOutCombimeValue)
         {
             ArrayList arrCombine = new ArrayList();
@@ -866,7 +865,6 @@ namespace PLC_Data_Access
                 MessageBox.Show(ex.Message + "\n是否為string[]之軟元件名稱錯誤", "ProgSetBlockCombime", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         public void ProgGetDeviceRandom(string arrsDevice,int iSize,out int[] arrDeviceData)
         {
             arrDeviceData = new int[iSize];
@@ -879,7 +877,6 @@ namespace PLC_Data_Access
                 MessageBox.Show(ex.Message + "\n是否為string[]之軟元件名稱錯誤", ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         public void ProgGetDevice(string sDevice, out string sOutValue)
         {
             int iData=0;
