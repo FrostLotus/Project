@@ -366,9 +366,9 @@ namespace PLC_Data_Access
             return;
         }
         ///---------------------------------------------
-        ///
         public void GetCombineArray_str(string sDevice,out int iSize, out string sOutCombimeArray)
         {
+            //僅以D值做目標
             ArrayList arrCombine = new ArrayList();
             string sStart;//軟元件開頭
             string sEnd;//軟元件結尾
@@ -380,41 +380,25 @@ namespace PLC_Data_Access
             int iStart = Convert.ToInt32(sStart.Replace("D", ""));//軟元件開頭 改數字
             int iEnd = Convert.ToInt32(sEnd.Replace("D", ""));//軟元件結尾 改數字
             iSize = Math.Abs(iEnd - iStart)+1;//換算總軟元件數量
-            //int[] arrData = new int[iSize];//標籤總數量(矩陣)
 
             sOutCombimeArray = "";
             if (iEnd > iStart)
             {                //D700        D705
                 for (int i = iStart; i <= iEnd; i++)
                 {
-                    if(sOutCombimeArray == "")//放第一個不加換行
-                    {
-                        sOutCombimeArray += "D" + i.ToString();
-                    }
-                    else
-                    {
-                        sOutCombimeArray += "\nD" + i.ToString();
-                    }
-                    
+                    //放第一個不加換行
+                    sOutCombimeArray += (sOutCombimeArray == "") ? "D" + i.ToString() : "\nD" + i.ToString();
                 }
             }
             if (iEnd < iStart)
             {
                 for (int i = iEnd; i <= iStart; i++)
                 {
-                    if (sOutCombimeArray == "")//放第一個不加換行
-                    {
-                        sOutCombimeArray += "D" + i.ToString();
-                    }
-                    else
-                    {
-                        sOutCombimeArray += "\nD" + i.ToString();
-                    }
-
+                    //放第一個不加換行
+                    sOutCombimeArray += (sOutCombimeArray == "") ? "D" + i.ToString() : "\nD" + i.ToString();
                 }
             }
         }
-
         public void GetCombineSize_int(string sDevice, out int iSize)
         {
             ArrayList arrCombine = new ArrayList();
