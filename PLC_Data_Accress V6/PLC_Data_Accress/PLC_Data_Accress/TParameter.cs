@@ -26,11 +26,16 @@ namespace PLC_Data_Access
     }
     public class CDeviceData
     {
-        class ABC
+        public class CDataStruct
         {
             public string SN { get; set; }
             public string Label { get; set; }
-            //....
+            public string Address { get; set; }
+            public string DataType { get; set; }
+            public string Data { get; set; }
+            public string IsUse { get; set; }
+            public string DeviceValueGet { get; set; }
+            public string DeviceValueSet { get; set; }
         }
         //路徑
         public string DefaultPath = System.Windows.Forms.Application.StartupPath + @"\Datatext";
@@ -44,7 +49,7 @@ namespace PLC_Data_Access
         public string[] arrDeviceModel_List;
         ///軟元件列表
         //讀列表
-        //List<ABC> ls = new List<ABC>();
+        List<CDataStruct> lReadData = new List<CDataStruct>();
         public List<string> Read_SN             = new List<string>();//序號
         public List<string> Read_Label          = new List<string>();//名稱
         public List<string> Read_Address        = new List<string>();//軟元件地址
@@ -55,12 +60,13 @@ namespace PLC_Data_Access
 
         public DataGridViewRow[] ReadGridRow;//下載DataGridview
         //寫列表
-        public List<string> Write_SN = new List<string>();//序號
-        public List<string> Write_Label = new List<string>();//名稱
-        public List<string> Write_Address = new List<string>();//軟元件地址
-        public List<string> Write_DataType = new List<string>();//資料類型
-        public List<string> Write_Data = new List<string>();//資料包格式
-        public List<string> Write_IsUse = new List<string>();//是否使用
+        List<CDataStruct> lWriteData = new List<CDataStruct>();
+        public List<string> Write_SN             = new List<string>();//序號
+        public List<string> Write_Label          = new List<string>();//名稱
+        public List<string> Write_Address        = new List<string>();//軟元件地址
+        public List<string> Write_DataType       = new List<string>();//資料類型
+        public List<string> Write_Data           = new List<string>();//資料包格式
+        public List<string> Write_IsUse          = new List<string>();//是否使用
         public List<string> Write_DeviceValueGet = new List<string>();//讀取值
         public List<string> Write_DeviceValueSet = new List<string>();//寫入值
 
@@ -828,7 +834,7 @@ namespace PLC_Data_Access
             TParameter.DeviceData.Break_String(sDevice, "~", ref arrCombine);//以"~"斷字:D700~D705 =>[D700][D705]
             sStart = arrCombine[0].ToString();//軟元件開頭
             sEnd = arrCombine[1].ToString();//軟元件結尾
-
+            
             int iStart = Convert.ToInt32(sStart.Replace("D", ""));//軟元件開頭 改數字
             int iEnd = Convert.ToInt32(sEnd.Replace("D", ""));//軟元件結尾 改數字
             int iSize = Math.Abs(iEnd - iStart)+1;//換算總軟元件數量
