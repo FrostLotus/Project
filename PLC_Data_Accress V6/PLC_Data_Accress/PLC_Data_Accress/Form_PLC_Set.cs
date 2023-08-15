@@ -19,33 +19,33 @@ namespace PLC_Data_Access
             InitializeComponent();
 
             //將對應PLC_Connect的值填入txtbox中
-            txt_ActBaudRate.Text = TParameter.Mx_Connect.ActBaudRate.ToString();
-            txt_ActControl.Text = TParameter.Mx_Connect.ActControl.ToString();
-            txt_ActCpuType.Text = TParameter.Mx_Connect.ActCpuType.ToString();
-            txt_ActDataBits.Text = TParameter.Mx_Connect.ActDataBits.ToString();
-            txt_ActDestinationIONumber.Text = TParameter.Mx_Connect.ActDestinationIONumber.ToString();
-            txt_ActDestinationPortNumber.Text = TParameter.Mx_Connect.ActDestinationPortNumber.ToString();
-            txt_ActDidPropertyBit.Text = TParameter.Mx_Connect.ActDidPropertyBit.ToString();
-            txt_ActDsidPropertyBit.Text = TParameter.Mx_Connect.ActDsidPropertyBit.ToString();
-            txt_ActIntelligentPreferenceBit.Text = TParameter.Mx_Connect.ActIntelligentPreferenceBit.ToString();
-            txt_ActIONumber.Text = TParameter.Mx_Connect.ActIONumber.ToString();
-            txt_ActNetworkNumber.Text = TParameter.Mx_Connect.ActNetworkNumber.ToString();
-            txt_ActMultiDropChannelNumber.Text = TParameter.Mx_Connect.ActMultiDropChannelNumber.ToString();
-            txt_ActSourceNetworkNumber.Text = TParameter.Mx_Connect.ActSourceNetworkNumber.ToString();
-            txt_ActPacketType.Text = TParameter.Mx_Connect.ActPacketType.ToString();
-            txt_ActPassword.Text = TParameter.Mx_Connect.ActPassword;
-            txt_ActPortNumber.Text = TParameter.Mx_Connect.ActPortNumber.ToString();
-            txt_ActProtocolType.Text = TParameter.Mx_Connect.ActProtocolType.ToString();
-            txt_ActSourceStationNumber.Text = TParameter.Mx_Connect.ActSourceStationNumber.ToString();
-            txt_ActStationNumber.Text = TParameter.Mx_Connect.ActStationNumber.ToString();
-            txt_ActStopBits.Text = TParameter.Mx_Connect.ActStopBits.ToString();
-            txt_ActSumCheck.Text = TParameter.Mx_Connect.ActSumCheck.ToString();
-            txt_ActThoughNetworkType.Text = TParameter.Mx_Connect.ActThoughNetworkType.ToString();
-            txt_ActTimeOut.Text = TParameter.Mx_Connect.ActTimeOut.ToString();
-            txt_ActUnitNumber.Text = TParameter.Mx_Connect.ActUnitNumber.ToString();
-            txt_ActUnitType.Text = TParameter.Mx_Connect.ActUnitType.ToString();
-            txt_ActParity.Text = TParameter.Mx_Connect.ActParity.ToString();
-            txt_ActCpuTimeOut.Text = TParameter.Mx_Connect.ActCpuTimeOut.ToString();
+            txt_ActBaudRate.Text = TParameter.Mx_Connect._ActBaudRate.ToString();
+            txt_ActControl.Text = TParameter.Mx_Connect._ActControl.ToString();
+            txt_ActCpuType.Text = TParameter.Mx_Connect._ActCpuType.ToString();
+            txt_ActDataBits.Text = TParameter.Mx_Connect._ActDataBits.ToString();
+            txt_ActDestinationIONumber.Text = TParameter.Mx_Connect._ActDestinationIONumber.ToString();
+            txt_ActDestinationPortNumber.Text = TParameter.Mx_Connect._ActDestinationPortNumber.ToString();
+            txt_ActDidPropertyBit.Text = TParameter.Mx_Connect._ActDidPropertyBit.ToString();
+            txt_ActDsidPropertyBit.Text = TParameter.Mx_Connect._ActDsidPropertyBit.ToString();
+            txt_ActIntelligentPreferenceBit.Text = TParameter.Mx_Connect._ActIntelligentPreferenceBit.ToString();
+            txt_ActIONumber.Text = TParameter.Mx_Connect._ActIONumber.ToString();
+            txt_ActNetworkNumber.Text = TParameter.Mx_Connect._ActNetworkNumber.ToString();
+            txt_ActMultiDropChannelNumber.Text = TParameter.Mx_Connect._ActMultiDropChannelNumber.ToString();
+            txt_ActSourceNetworkNumber.Text = TParameter.Mx_Connect._ActSourceNetworkNumber.ToString();
+            txt_ActPacketType.Text = TParameter.Mx_Connect._ActPacketType.ToString();
+            txt_ActPassword.Text = TParameter.Mx_Connect._ActPassword;
+            txt_ActPortNumber.Text = TParameter.Mx_Connect._ActPortNumber.ToString();
+            txt_ActProtocolType.Text = TParameter.Mx_Connect._ActProtocolType.ToString();
+            txt_ActSourceStationNumber.Text = TParameter.Mx_Connect._ActSourceStationNumber.ToString();
+            txt_ActStationNumber.Text = TParameter.Mx_Connect._ActStationNumber.ToString();
+            txt_ActStopBits.Text = TParameter.Mx_Connect._ActStopBits.ToString();
+            txt_ActSumCheck.Text = TParameter.Mx_Connect._ActSumCheck.ToString();
+            txt_ActThoughNetworkType.Text = TParameter.Mx_Connect._ActThoughNetworkType.ToString();
+            txt_ActTimeOut.Text = TParameter.Mx_Connect._ActTimeOut.ToString();
+            txt_ActUnitNumber.Text = TParameter.Mx_Connect._ActUnitNumber.ToString();
+            txt_ActUnitType.Text = TParameter.Mx_Connect._ActUnitType.ToString();
+            txt_ActParity.Text = TParameter.Mx_Connect._ActParity.ToString();
+            txt_ActCpuTimeOut.Text = TParameter.Mx_Connect._ActCpuTimeOut.ToString();
 
         }
         //--------------------------------------------------------
@@ -53,7 +53,7 @@ namespace PLC_Data_Access
         {
             DialogResult = System.Windows.Forms.DialogResult.OK;
             TParameter.Mx_Connect.CpuName = cb_CPUType.Text;
-            TParameter.Mx_Connect.ActHostAddress = txt_Address.Text;
+            TParameter.Mx_Connect._ActHostAddress = txt_Address.Text;
         }
         private void Btn_Cancel_Click(object sender, EventArgs e)
         {
@@ -91,33 +91,33 @@ namespace PLC_Data_Access
             TParameter.Mx_Connect.SetPLCProperty(cb_CPUType.SelectedItem.ToString());//設定全屬性
 
             //將對應的值填入txtbox中
-            txt_ActBaudRate.Text = TParameter.Mx_Connect.ActBaudRate.ToString();
-            txt_ActControl.Text = TParameter.Mx_Connect.ActControl.ToString();
-            txt_ActCpuType.Text = TParameter.Mx_Connect.ActCpuType.ToString();
-            txt_ActDataBits.Text = TParameter.Mx_Connect.ActDataBits.ToString();
-            txt_ActDestinationIONumber.Text = TParameter.Mx_Connect.ActDestinationIONumber.ToString();
-            txt_ActDestinationPortNumber.Text = TParameter.Mx_Connect.ActDestinationPortNumber.ToString();
-            txt_ActDidPropertyBit.Text = TParameter.Mx_Connect.ActDidPropertyBit.ToString();
-            txt_ActDsidPropertyBit.Text = TParameter.Mx_Connect.ActDsidPropertyBit.ToString();
-            txt_ActIntelligentPreferenceBit.Text = TParameter.Mx_Connect.ActIntelligentPreferenceBit.ToString();
-            txt_ActIONumber.Text = TParameter.Mx_Connect.ActIONumber.ToString();
-            txt_ActNetworkNumber.Text = TParameter.Mx_Connect.ActNetworkNumber.ToString();
-            txt_ActMultiDropChannelNumber.Text = TParameter.Mx_Connect.ActMultiDropChannelNumber.ToString();
-            txt_ActSourceNetworkNumber.Text = TParameter.Mx_Connect.ActSourceNetworkNumber.ToString();
-            txt_ActPacketType.Text = TParameter.Mx_Connect.ActPacketType.ToString();
-            txt_ActPassword.Text = TParameter.Mx_Connect.ActPassword;
-            txt_ActPortNumber.Text = TParameter.Mx_Connect.ActPortNumber.ToString();
-            txt_ActProtocolType.Text = TParameter.Mx_Connect.ActProtocolType.ToString();
-            txt_ActSourceStationNumber.Text = TParameter.Mx_Connect.ActSourceStationNumber.ToString();
-            txt_ActStationNumber.Text = TParameter.Mx_Connect.ActStationNumber.ToString();
-            txt_ActStopBits.Text = TParameter.Mx_Connect.ActStopBits.ToString();
-            txt_ActSumCheck.Text = TParameter.Mx_Connect.ActSumCheck.ToString();
-            txt_ActThoughNetworkType.Text = TParameter.Mx_Connect.ActThoughNetworkType.ToString();
-            txt_ActTimeOut.Text = TParameter.Mx_Connect.ActTimeOut.ToString();
-            txt_ActUnitNumber.Text = TParameter.Mx_Connect.ActUnitNumber.ToString();
-            txt_ActUnitType.Text = TParameter.Mx_Connect.ActUnitType.ToString();
-            txt_ActParity.Text = TParameter.Mx_Connect.ActParity.ToString();
-            txt_ActCpuTimeOut.Text = TParameter.Mx_Connect.ActCpuTimeOut.ToString();
+            txt_ActBaudRate.Text = TParameter.Mx_Connect._ActBaudRate.ToString();
+            txt_ActControl.Text = TParameter.Mx_Connect._ActControl.ToString();
+            txt_ActCpuType.Text = TParameter.Mx_Connect._ActCpuType.ToString();
+            txt_ActDataBits.Text = TParameter.Mx_Connect._ActDataBits.ToString();
+            txt_ActDestinationIONumber.Text = TParameter.Mx_Connect._ActDestinationIONumber.ToString();
+            txt_ActDestinationPortNumber.Text = TParameter.Mx_Connect._ActDestinationPortNumber.ToString();
+            txt_ActDidPropertyBit.Text = TParameter.Mx_Connect._ActDidPropertyBit.ToString();
+            txt_ActDsidPropertyBit.Text = TParameter.Mx_Connect._ActDsidPropertyBit.ToString();
+            txt_ActIntelligentPreferenceBit.Text = TParameter.Mx_Connect._ActIntelligentPreferenceBit.ToString();
+            txt_ActIONumber.Text = TParameter.Mx_Connect._ActIONumber.ToString();
+            txt_ActNetworkNumber.Text = TParameter.Mx_Connect._ActNetworkNumber.ToString();
+            txt_ActMultiDropChannelNumber.Text = TParameter.Mx_Connect._ActMultiDropChannelNumber.ToString();
+            txt_ActSourceNetworkNumber.Text = TParameter.Mx_Connect._ActSourceNetworkNumber.ToString();
+            txt_ActPacketType.Text = TParameter.Mx_Connect._ActPacketType.ToString();
+            txt_ActPassword.Text = TParameter.Mx_Connect._ActPassword;
+            txt_ActPortNumber.Text = TParameter.Mx_Connect._ActPortNumber.ToString();
+            txt_ActProtocolType.Text = TParameter.Mx_Connect._ActProtocolType.ToString();
+            txt_ActSourceStationNumber.Text = TParameter.Mx_Connect._ActSourceStationNumber.ToString();
+            txt_ActStationNumber.Text = TParameter.Mx_Connect._ActStationNumber.ToString();
+            txt_ActStopBits.Text = TParameter.Mx_Connect._ActStopBits.ToString();
+            txt_ActSumCheck.Text = TParameter.Mx_Connect._ActSumCheck.ToString();
+            txt_ActThoughNetworkType.Text = TParameter.Mx_Connect._ActThoughNetworkType.ToString();
+            txt_ActTimeOut.Text = TParameter.Mx_Connect._ActTimeOut.ToString();
+            txt_ActUnitNumber.Text = TParameter.Mx_Connect._ActUnitNumber.ToString();
+            txt_ActUnitType.Text = TParameter.Mx_Connect._ActUnitType.ToString();
+            txt_ActParity.Text = TParameter.Mx_Connect._ActParity.ToString();
+            txt_ActCpuTimeOut.Text = TParameter.Mx_Connect._ActCpuTimeOut.ToString();
         }
     }
 }
