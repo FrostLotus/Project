@@ -283,17 +283,6 @@ namespace PLC_Data_Access
     }
     public class CDeviceData
     {
-        //public class CDataStruct
-        //{
-        //    public string SN { get; set; }
-        //    public string Label { get; set; }
-        //    public string Address { get; set; }
-        //    public string DataType { get; set; }
-        //    public string Data { get; set; }
-        //    public string IsUse { get; set; }
-        //    public string DeviceGet { get; set; }
-        //    public string DeviceSet { get; set; }
-        //}
         //路徑
         public string DefaultPath = System.Windows.Forms.Application.StartupPath + @"\Datatext";
         //檔案
@@ -420,7 +409,7 @@ namespace PLC_Data_Access
                     Break_String(sData, "!!\r\n", ref DataList);//Read & Write & 參數(以!!分隔)
                     Break_String(DataList[0].ToString(), "&&\r\n", ref ReadList);//Read解為單行(以&&分行)
                     Break_String(DataList[1].ToString(), "&&\r\n", ref WriteList);//Write解為單行(以&&分行)
-                    CDataStruct cData = new CDataStruct();
+                    
                     //           DataList[2] 目前單參數
                     #region 下載
                     if (ReadList.Count != 0)//若有資料
@@ -430,12 +419,13 @@ namespace PLC_Data_Access
                             if (single_Data != "")
                             {
                                 Break_String(single_Data, "$", ref SigleData_List);//Read單行解成單一資料(以$分隔)
+                                CDataStruct cData = new CDataStruct();
                                 cData.SN = SigleData_List[0].ToString();
                                 cData.Label = SigleData_List[1].ToString();
                                 cData.Address = SigleData_List[2].ToString();
                                 cData.DataType = SigleData_List[3].ToString();
                                 cData.Data = SigleData_List[4].ToString();
-                                cData.IsUse = single_Data[5].ToString();
+                                cData.IsUse = SigleData_List[5].ToString();
                                 cData.DeviceValueGet = "N/A";
                                 cData.DeviceValueSet = "";
                                 lReadData.Add(cData);
@@ -452,13 +442,13 @@ namespace PLC_Data_Access
                             if (single_Data != "")
                             {
                                 Break_String(single_Data, "$", ref SigleData_List);//Write單行解成單一資料(以$分隔)
-
+                                CDataStruct cData = new CDataStruct();
                                 cData.SN = SigleData_List[0].ToString();
                                 cData.Label = SigleData_List[1].ToString();
                                 cData.Address = SigleData_List[2].ToString();
                                 cData.DataType = SigleData_List[3].ToString();
                                 cData.Data = SigleData_List[4].ToString();
-                                cData.IsUse = single_Data[5].ToString();
+                                cData.IsUse = SigleData_List[5].ToString();
                                 cData.DeviceValueGet = "N/A";
                                 cData.DeviceValueSet = "";
                                 lWriteData.Add(cData);
