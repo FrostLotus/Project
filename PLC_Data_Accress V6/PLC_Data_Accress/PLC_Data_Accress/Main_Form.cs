@@ -654,7 +654,7 @@ namespace PLC_Data_Access
                         string sTmp = "";
                         for (int j = 0; j < iDeviceCount; j++)
                         {
-                            sTmp += arrDeviceData[iOrderCount].ToString();
+                            sTmp += string.Format("{0:00}", arrDeviceData[iOrderCount]);//單值補為滿位
                             iOrderCount++;//每抓一參數進下一位
                         }
                         TParameter.DeviceData.lReadData[i].DeviceValueGet = sTmp;
@@ -678,7 +678,7 @@ namespace PLC_Data_Access
                         string sTmp = "";
                         for (int j = 0; j < iDeviceCount; j++)
                         {
-                            sTmp += arrDeviceData[iOrderCount].ToString();
+                            sTmp += string.Format("{0:00}", arrDeviceData[iOrderCount]);//單值補為滿位
                             iOrderCount++;//每抓一參數進下一位
                         }
                         TParameter.DeviceData.lWriteData[i].DeviceValueGet = sTmp;

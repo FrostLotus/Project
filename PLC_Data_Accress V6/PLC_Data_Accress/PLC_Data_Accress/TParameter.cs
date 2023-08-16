@@ -535,7 +535,7 @@ namespace PLC_Data_Access
                                    lReadData[i].Address   + "$" +
                                    lReadData[i].DataType  + "$" +
                                    lReadData[i].Data      + "$" +
-                                   lReadData[i].DeviceValueGet + "&&";
+                                   lReadData[i].IsUse + "&&";
                         writer.WriteLine(LineData);//寫入
                     }
                 }
@@ -550,7 +550,7 @@ namespace PLC_Data_Access
                                    lWriteData[i].Address + "$" +
                                    lWriteData[i].DataType + "$" +
                                    lWriteData[i].Data + "$" +
-                                   lWriteData[i].DeviceValueGet + "&&";
+                                   lWriteData[i].IsUse + "&&";
                         writer.WriteLine(LineData);//寫入
                     }
                 }
@@ -783,7 +783,11 @@ namespace PLC_Data_Access
             int iEnd = Convert.ToInt32(sEnd.Replace("D", ""));//軟元件結尾 改數字
             int iSize = Math.Abs(iEnd - iStart)+1;//換算總軟元件數量
             int[] arrData = new int[iSize];//標籤總數量(矩陣)
-
+            //換算
+            while (sInCombimeValue.Length < iSize*2)//若值不為 軟元件數*元件容量則需補值 超過不管
+            {
+                sInCombimeValue += "0";//沒有就補0
+            }
             //確認寫入資料有無問題  Substring
             for (int i = 0, j = 0; i < iSize; i++, j += 2)
             {
