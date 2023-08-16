@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ActProgTypeLib;
-using ActSupportMsgLib;
 using System.IO;
 using System.Collections;
 using System.Windows.Forms;
@@ -14,11 +13,11 @@ namespace PLC_Data_Access
     
     public class TParameter
     {
-        
         public static CMX_Component Mx_Connect = new CMX_Component();
         public static CDeviceData DeviceData = new CDeviceData();
         public static CError_Info Error_Info = new CError_Info();
-        
+
+
         public static void Init()
         {
             DeviceData.LoadData_Full();//先進行參數餵入
@@ -271,19 +270,30 @@ namespace PLC_Data_Access
             }
         }
     }
+    public class CDataStruct
+    {
+        public string SN { get; set; }
+        public string Label { get; set; }
+        public string Address { get; set; }
+        public string DataType { get; set; }
+        public string Data { get; set; }
+        public string IsUse { get; set; }
+        public string DeviceValueGet { get; set; }
+        public string DeviceValueSet { get; set; }
+    }
     public class CDeviceData
     {
-        public class CDataStruct
-        {
-            public string SN { get; set; }
-            public string Label { get; set; }
-            public string Address { get; set; }
-            public string DataType { get; set; }
-            public string Data { get; set; }
-            public string IsUse { get; set; }
-            public string DeviceValueGet { get; set; }
-            public string DeviceValueSet { get; set; }
-        }
+        //public class CDataStruct
+        //{
+        //    public string SN { get; set; }
+        //    public string Label { get; set; }
+        //    public string Address { get; set; }
+        //    public string DataType { get; set; }
+        //    public string Data { get; set; }
+        //    public string IsUse { get; set; }
+        //    public string DeviceGet { get; set; }
+        //    public string DeviceSet { get; set; }
+        //}
         //路徑
         public string DefaultPath = System.Windows.Forms.Application.StartupPath + @"\Datatext";
         //檔案
@@ -296,26 +306,11 @@ namespace PLC_Data_Access
         public string[] arrDeviceModel_List;
         ///軟元件列表
         //讀列表
-        List<CDataStruct> lReadData = new List<CDataStruct>();
-        public List<string> Read_SN             = new List<string>();//序號
-        public List<string> Read_Label          = new List<string>();//名稱
-        public List<string> Read_Address        = new List<string>();//軟元件地址
-        public List<string> Read_DataType       = new List<string>();//資料類型
-        public List<string> Read_Data           = new List<string>();//資料包格式
-        public List<string> Read_IsUse          = new List<string>();//是否使用
-        public List<string> Read_DeviceValueGet = new List<string>();//讀取值
+        public List<CDataStruct> lReadData      = new List<CDataStruct>();
 
         public DataGridViewRow[] ReadGridRow;//下載DataGridview
         //寫列表
-        List<CDataStruct> lWriteData = new List<CDataStruct>();
-        public List<string> Write_SN             = new List<string>();//序號
-        public List<string> Write_Label          = new List<string>();//名稱
-        public List<string> Write_Address        = new List<string>();//軟元件地址
-        public List<string> Write_DataType       = new List<string>();//資料類型
-        public List<string> Write_Data           = new List<string>();//資料包格式
-        public List<string> Write_IsUse          = new List<string>();//是否使用
-        public List<string> Write_DeviceValueGet = new List<string>();//讀取值
-        public List<string> Write_DeviceValueSet = new List<string>();//寫入值
+        public List<CDataStruct> lWriteData      = new List<CDataStruct>();
 
         public DataGridViewRow[] WriteGridRow;//上傳DataGridview
 
@@ -425,6 +420,7 @@ namespace PLC_Data_Access
                     Break_String(sData, "!!\r\n", ref DataList);//Read & Write & 參數(以!!分隔)
                     Break_String(DataList[0].ToString(), "&&\r\n", ref ReadList);//Read解為單行(以&&分行)
                     Break_String(DataList[1].ToString(), "&&\r\n", ref WriteList);//Write解為單行(以&&分行)
+                    CDataStruct cData = new CDataStruct();
                     //           DataList[2] 目前單參數
                     #region 下載
                     if (ReadList.Count != 0)//若有資料
@@ -434,13 +430,15 @@ namespace PLC_Data_Access
                             if (single_Data != "")
                             {
                                 Break_String(single_Data, "$", ref SigleData_List);//Read單行解成單一資料(以$分隔)
-                                Read_SN.Add(SigleData_List[0].ToString());//序號
-                                Read_Label.Add(SigleData_List[1].ToString());//名稱
-                                Read_Address.Add(SigleData_List[2].ToString());//地址
-                                Read_DataType.Add(SigleData_List[3].ToString());//數據類型
-                                Read_Data.Add(SigleData_List[4].ToString());//值
-                                Read_IsUse.Add(SigleData_List[5].ToString());//是否使用
-                                Read_DeviceValueGet.Add("N/A");
+                                cData.SN = SigleData_List[0].ToString();
+                                cData.Label = SigleData_List[1].ToString();
+                                cData.Address = SigleData_List[2].ToString();
+                                cData.DataType = SigleData_List[3].ToString();
+                                cData.Data = SigleData_List[4].ToString();
+                                cData.IsUse = single_Data[5].ToString();
+                                cData.DeviceValueGet = "N/A";
+                                cData.DeviceValueSet = "";
+                                lReadData.Add(cData);
                             }
                         }
                     }
@@ -454,14 +452,16 @@ namespace PLC_Data_Access
                             if (single_Data != "")
                             {
                                 Break_String(single_Data, "$", ref SigleData_List);//Write單行解成單一資料(以$分隔)
-                                Write_SN.Add(SigleData_List[0].ToString());//序號
-                                Write_Label.Add(SigleData_List[1].ToString());//名稱
-                                Write_Address.Add(SigleData_List[2].ToString());//地址
-                                Write_DataType.Add(SigleData_List[3].ToString());//數據類型
-                                Write_Data.Add(SigleData_List[4].ToString());//值
-                                Write_IsUse.Add(SigleData_List[5].ToString());//是否使用
-                                Write_DeviceValueGet.Add("N/A");
-                                Write_DeviceValueSet.Add("");
+
+                                cData.SN = SigleData_List[0].ToString();
+                                cData.Label = SigleData_List[1].ToString();
+                                cData.Address = SigleData_List[2].ToString();
+                                cData.DataType = SigleData_List[3].ToString();
+                                cData.Data = SigleData_List[4].ToString();
+                                cData.IsUse = single_Data[5].ToString();
+                                cData.DeviceValueGet = "N/A";
+                                cData.DeviceValueSet = "";
+                                lWriteData.Add(cData);
                             }
                         }
                     }
@@ -535,33 +535,33 @@ namespace PLC_Data_Access
                 writer.Write("");//清除
                 string LineData;
                 //序號$名稱$地址$數據類型$值$是否使用(0/1)&&
-                if (Read_SN.Count != 0)
+                if (lReadData.Count != 0)
                 {
-                    for (int i = 0; i < Read_SN.Count; i++)//Read
+                    for (int i = 0; i < lReadData.Count; i++)//Read
                     {
                         //串起來
-                        LineData = Read_SN[i] + "$" +
-                                   Read_Label[i] + "$" +
-                                   Read_Address[i] + "$" +
-                                   Read_DataType[i] + "$" +
-                                   Read_Data[i] + "$" +
-                                   Read_IsUse[i] + "&&";
+                        LineData = lReadData[i].SN        + "$" +
+                                   lReadData[i].Label     + "$" +
+                                   lReadData[i].Address   + "$" +
+                                   lReadData[i].DataType  + "$" +
+                                   lReadData[i].Data      + "$" +
+                                   lReadData[i].DeviceValueGet + "&&";
                         writer.WriteLine(LineData);//寫入
                     }
                 }
                 writer.WriteLine("!!");//分隔Read/Write
-                if (Write_SN.Count != 0)
+                if (lWriteData.Count != 0)
                 {
-                    for (int i = 0; i < Write_SN.Count; i++)//Write
+                    for (int i = 0; i < lWriteData.Count; i++)//Write
                     {
                         //串起來
-                        LineData = Write_SN[i] + "$" +
-                                   Write_Label[i] + "$" +
-                                   Write_Address[i] + "$" +
-                                   Write_DataType[i] + "$" +
-                                   Write_Data[i] + "$" +
-                                   Write_IsUse[i] + "&&";
-                        writer.WriteLine(LineData);
+                        LineData = lWriteData[i].SN + "$" +
+                                   lWriteData[i].Label + "$" +
+                                   lWriteData[i].Address + "$" +
+                                   lWriteData[i].DataType + "$" +
+                                   lWriteData[i].Data + "$" +
+                                   lWriteData[i].DeviceValueGet + "&&";
+                        writer.WriteLine(LineData);//寫入
                     }
                 }
                 writer.WriteLine("!!");//分隔Write/參數
@@ -670,19 +670,9 @@ namespace PLC_Data_Access
         public void DiviceDataArrClear()
         {
             //Read
-            Read_SN.Clear();
-            Read_Label.Clear();
-            Read_Address.Clear();
-            Read_DataType.Clear();
-            Read_Data.Clear();
-            Read_IsUse.Clear();
+            lReadData.Clear();
             //Write
-            Write_SN.Clear();
-            Write_Label.Clear();
-            Write_Address.Clear();
-            Write_DataType.Clear();
-            Write_Data.Clear();
-            Write_IsUse.Clear();
+            lWriteData.Clear();
         }
         //判斷"0"為bool=>false
         public bool ZeroToBool(string isUse)
@@ -730,8 +720,6 @@ namespace PLC_Data_Access
     }
     public class CMX_Component : ActProgTypeClass
     {
-        
-        //public ActSupportMsgClass SpMsg_Connect = new ActSupportMsgClass();//Message
 
         #region Property 連線參數
 
@@ -741,37 +729,6 @@ namespace PLC_Data_Access
         public string CpuName = "FX5UCPU";//CPU名稱
         public int CPUType = 528;//CPU名稱:代碼
         public string _ActHostAddress = "192.168.2.12";//IP
-        // 預設值走FX5U-32M 以
-
-        
-        //public int _ActConnectUnitNumber = 0;
-        //public int _ActBaudRate = 0;
-        //public int _ActControl = 0;
-        //public int _ActCpuType = 528;
-        //public int _ActDataBits = 0;
-        //public int _ActDestinationIONumber = 0;
-        //public int _ActDestinationPortNumber = 5562;
-        //public int _ActDidPropertyBit = 1;
-        //public int _ActDsidPropertyBit = 1;
-        //public int _ActIntelligentPreferenceBit = 0;
-        //public int _ActIONumber = 1023;
-        //public int _ActNetworkNumber = 0;
-        //public int _ActMultiDropChannelNumber = 0;
-        //public int _ActSourceNetworkNumber = 0;
-        //public int _ActPacketType = 1;
-        //public string _ActPassword = "";
-        //public int _ActPortNumber = 0;
-        //public int _ActProtocolType = 5;
-        //public int _ActSourceStationNumber = 5;
-        //public int _ActStationNumber = 255;
-        //public int _ActStopBits = 0;
-        //public int _ActSumCheck = 0;
-        //public int _ActThoughNetworkType = 1;
-        //public int _ActTimeOut = 100;
-        //public int _ActUnitNumber = 0;
-        //public int _ActUnitType = 8193;
-        //public int _ActParity = 0;
-        //public int _ActCpuTimeOut = 0;
         #endregion
         //-------------------------
         public CMX_Component()
