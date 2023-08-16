@@ -1,7 +1,7 @@
 ﻿
 namespace ShareMemoryTest
 {
-    partial class Form1
+    partial class Form_A
     {
         /// <summary>
         /// 設計工具所需的變數。

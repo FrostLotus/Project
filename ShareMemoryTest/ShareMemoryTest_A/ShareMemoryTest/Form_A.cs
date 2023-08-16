@@ -10,11 +10,20 @@ using System.Windows.Forms;
 using System.IO.MemoryMappedFiles;
 using System.IO;
 using System.Threading;
+using System.Runtime.InteropServices;
 
 namespace ShareMemoryTest
 {
-    public partial class Form1 : Form
+    public partial class Form_A : Form
     {
+        [DllImport("user32.dll", EntryPoint = "SendMessage")]
+        private static extern int SendMessage(int hWnd, int wMsg, int wParam, ref COPYDATASTRUCT lPAram);
+        [DllImport("user32.dll", EntryPoint = "FindWindow")]
+        private static extern int FindWindow(string lpClassName, string lpWindowName);
+        const int WM_COPYDAYA = 0x004A;
+        string sConnectDeviceForm = "程式2";
+
+
         int iTotalSize = 2048;
         int iStart = 1024;
         int iSize = 1024;
@@ -25,7 +34,7 @@ namespace ShareMemoryTest
         string sMutexShareMemory = "MutShareMemoryInAB";
         //                1024                               1024                 = 2048
         //[       ...       A       ...      ][      ...       B        ...      ]
-        public Form1()
+        public Form_A()
         {
             InitializeComponent();
             //ShareMemory
@@ -57,9 +66,10 @@ namespace ShareMemoryTest
         }
         private void btn_Write_Click(object sender, EventArgs e)
         {
+
             if (mMutex.WaitOne() == true)
             {
-                //再寫入資料
+                //寫入資料
                 iStart = 0;
                 iSize = 0;//寫入先不給大小
                 using (MemoryMappedViewStream mmvsStream = mmFile.CreateViewStream(iStart, iSize))
@@ -71,6 +81,25 @@ namespace ShareMemoryTest
                         bwWriter.Write(bMessageWrite); //再寫byte[]
                     }
                 }
+
+                
+                try
+                {
+                    int hWnd = FindWindow(null, sConnectDeviceForm);//找TestB的IntPtr 用來代表指標或控制代碼
+                    COPYDATASTRUCT cds;
+                    cds.dwData =0;
+                    cds.cbData = System.Text.Encoding.Default.GetBytes(textBox1.Text).Length + 1;
+                    cds.lpData = textBox1.Text;
+                    //send
+                    SendMessage(hWnd, WM_COPYDAYA, 0, ref cds);
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+
+
                 mMutex.ReleaseMutex();//釋放對mMutex的控制權
             }
         }
@@ -78,7 +107,7 @@ namespace ShareMemoryTest
         {
             if (mMutex.WaitOne() == true)
             {
-                //先讀B丟到ShareMemory中的資料(文字資料)
+                //讀B丟到ShareMemory中的資料(文字資料)
                 iStart = 1024;
                 iSize = 1204;
                 using (MemoryMappedViewStream mmvsStream = mmFile.CreateViewStream(iStart, iSize))
@@ -93,6 +122,14 @@ namespace ShareMemoryTest
                 }
                 mMutex.ReleaseMutex();//釋放對mMutex的控制權
             }
+        }
+
+        public struct COPYDATASTRUCT
+        {
+            public int dwData;
+            public int cbData;
+            [MarshalAs(UnmanagedType.LPStr)]
+            public string lpData;
         }
     }
 }

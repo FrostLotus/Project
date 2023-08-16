@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,8 +14,13 @@ using System.Windows.Forms;
 
 namespace ShareMemoryTest_B
 {
-    public partial class Form1 : Form
+    public partial class Form_B : Form
     {
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        static extern uint RegisterWindowMessage(string lpString);
+        uint MSG_SHOW = RegisterWindowMessage("Show Message");
+        const int WM_COPYDAYA = 0x004A;
+
         int iTotalSize = 2048;
         int iStart = 0;
         int iSize = 0;//因為當作未知長度
@@ -22,7 +28,7 @@ namespace ShareMemoryTest_B
         Mutex mMutex;
         string sShareMemory = "ShareMemoryInAB";
         string sMutexShareMemory = "MutShareMemoryInAB";
-        public Form1()
+        public Form_B()
         {
             InitializeComponent();
             try
@@ -49,6 +55,24 @@ namespace ShareMemoryTest_B
                 mMutex = Mutex.OpenExisting(sMutexShareMemory);
             }
 
+        }
+
+        
+        protected override void DefWndProc(ref System.Windows.Forms.Message m)
+        {
+            switch (m.Msg)
+            {
+                case WM_COPYDAYA:
+                    COPYDATASTRUCT myStr = new COPYDATASTRUCT();
+                    Type tType = myStr.GetType();
+                    myStr = (COPYDATASTRUCT)m.GetLParam(tType);
+                    label1.Text = myStr.lpData;
+                    break;
+                default:
+                    base.DefWndProc(ref m);
+                    break;
+
+            }
         }
         private void btn_Write_Click(object sender, EventArgs e)
         {
@@ -89,6 +113,13 @@ namespace ShareMemoryTest_B
                 }
                 mMutex.ReleaseMutex();//放掉控制權
             }
+        }
+        public struct COPYDATASTRUCT
+        {
+            public int dwData;
+            public int cbData;
+            [MarshalAs(UnmanagedType.LPStr)]
+            public string lpData;
         }
     }
 }
