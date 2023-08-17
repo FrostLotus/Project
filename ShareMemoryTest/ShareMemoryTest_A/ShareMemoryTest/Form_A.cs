@@ -12,17 +12,20 @@ using System.IO;
 using System.Threading;
 using System.Runtime.InteropServices;
 
-namespace ShareMemoryTest
+namespace ShareMemory_A
 {
     public partial class Form_A : Form
     {
         [DllImport("user32.dll", EntryPoint = "SendMessage")]
-        private static extern int SendMessage(int hWnd, int wMsg, int wParam, ref COPYDATASTRUCT lPAram);
-        [DllImport("user32.dll", EntryPoint = "FindWindow")]
-        private static extern int FindWindow(string lpClassName, string lpWindowName);
-        const int WM_COPYDAYA = 0x004A;
-        string sConnectDeviceForm = "程式2";
+        public static extern int SendMessage(int hWnd, int Msg, int wParam, ref COPYDATASTRUCT lParam);
 
+
+        [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
+        public static extern int FindWindow(string lpClassName, string lpWindowName);
+
+        private static int WM_COPYDATA = 0x004A;
+
+        public string FormClient = "FormB";
 
         int iTotalSize = 2048;
         int iStart = 1024;
@@ -64,9 +67,25 @@ namespace ShareMemoryTest
             }
             //-------------------------------------------------------------------------------
         }
+
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == WM_COPYDATA)
+            {
+                COPYDATASTRUCT cds = (COPYDATASTRUCT)m.GetLParam(typeof(COPYDATASTRUCT));
+
+                if (cds.cbData > 0 && cds.lpData != null)
+                {
+                    label2.Text = cds.lpData;
+                    Console.WriteLine(cds.lpData);
+                }
+
+            }
+            base.WndProc(ref m);
+        }
+
         private void btn_Write_Click(object sender, EventArgs e)
         {
-
             if (mMutex.WaitOne() == true)
             {
                 //寫入資料
@@ -81,25 +100,6 @@ namespace ShareMemoryTest
                         bwWriter.Write(bMessageWrite); //再寫byte[]
                     }
                 }
-
-                
-                try
-                {
-                    int hWnd = FindWindow(null, sConnectDeviceForm);//找TestB的IntPtr 用來代表指標或控制代碼
-                    COPYDATASTRUCT cds;
-                    cds.dwData =0;
-                    cds.cbData = System.Text.Encoding.Default.GetBytes(textBox1.Text).Length + 1;
-                    cds.lpData = textBox1.Text;
-                    //send
-                    SendMessage(hWnd, WM_COPYDAYA, 0, ref cds);
-
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-
-
                 mMutex.ReleaseMutex();//釋放對mMutex的控制權
             }
         }
@@ -123,13 +123,39 @@ namespace ShareMemoryTest
                 mMutex.ReleaseMutex();//釋放對mMutex的控制權
             }
         }
+        private void btn_Send_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int hwndReceiver = FindWindow(null, FormClient);//找TestB的IntPtr 用來代表指標或控制代碼
+                if (hwndReceiver != 0)
+                {
+                    COPYDATASTRUCT cds = new COPYDATASTRUCT();
+                    cds.dwData = (IntPtr)0;
+                    cds.cbData = Encoding.Unicode.GetBytes(textBox2.Text).Length;//有中文字長度上要注意
+                    cds.lpData = textBox2.Text;
+                    SendMessage(hwndReceiver, WM_COPYDATA, 0, ref cds);
+                }
+                else
+                {
+                    MessageBox.Show("指定Form: " + FormClient + " 未發現");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
 
+        [StructLayout(LayoutKind.Sequential)]
         public struct COPYDATASTRUCT
         {
-            public int dwData;
+            public IntPtr dwData;
             public int cbData;
             [MarshalAs(UnmanagedType.LPStr)]
             public string lpData;
         }
+
+        
     }
 }

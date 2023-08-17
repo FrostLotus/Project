@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 
-namespace ShareMemoryTest.Properties
+namespace ShareMemory_A.Properties
 {
     /// <summary>
     ///   用於查詢當地語系化字串等的強類型資源類別

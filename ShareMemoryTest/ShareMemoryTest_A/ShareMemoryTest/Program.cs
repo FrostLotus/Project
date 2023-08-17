@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ShareMemoryTest
+namespace ShareMemory_A
 {
     static class Program
     {
