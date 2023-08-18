@@ -27,6 +27,9 @@ namespace DataBaseTest
         string sTable_orders = "Table_orders";
         string sTable_Products = "Table_Products";
 
+        enum Customers
+        {
+        }
 
         public Form1()
         {
@@ -65,15 +68,20 @@ namespace DataBaseTest
                 string squery = $"SELECT address FROM {sTable_Customers}";
                 using (SqlCommand command = new SqlCommand(squery,cnn))
                 {
+
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
+                        int address = reader.GetOrdinal("Address");
+
                         while (reader.Read())
                         {
-                            string address = reader["Address"].ToString();
-                            Console.WriteLine(address);
+                            //string address = reader["Address"].ToString();
+                            //Console.WriteLine(address);
+                            Console.WriteLine(reader.GetString(address));
                         }
                     }
                 }
+
                 cnn.Close();//可不用 using會藉由 IDisposable 清除
             }
         }
