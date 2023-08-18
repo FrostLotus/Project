@@ -75,13 +75,10 @@ namespace DataBaseTest
 
                         while (reader.Read())
                         {
-                            //string address = reader["Address"].ToString();
-                            //Console.WriteLine(address);
                             Console.WriteLine(reader.GetString(address));
                         }
                     }
                 }
-
                 cnn.Close();//可不用 using會藉由 IDisposable 清除
             }
         }
