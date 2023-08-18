@@ -23,18 +23,18 @@ namespace ShareMemory_A
         [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
         public static extern int FindWindow(string lpClassName, string lpWindowName);
 
-        private static int WM_COPYDATA = 0x004A;
+        private static readonly int WM_COPYDATA = 0x004A;
 
         public string FormClient = "FormB";
 
-        int iTotalSize = 2048;
-        int iStart = 1024;
-        int iSize = 1024;
+        public int iTotalSize = 2048;
+        public int iStart = 1024;
+        public int iSize = 1024;
 
-        MemoryMappedFile mmFile;
-        Mutex mMutex;
-        string sShareMemory = "ShareMemoryInAB";
-        string sMutexShareMemory = "MutShareMemoryInAB";
+        public MemoryMappedFile mmFile;
+        public Mutex mMutex;
+        private static readonly string sShareMemory = "ShareMemoryInAB";
+        private static readonly string sMutexShareMemory = "MutShareMemoryInAB";
         //                1024                               1024                 = 2048
         //[       ...       A       ...      ][      ...       B        ...      ]
         public Form_A()
@@ -84,7 +84,7 @@ namespace ShareMemory_A
             base.WndProc(ref m);
         }
 
-        private void btn_Write_Click(object sender, EventArgs e)
+        private void Btn_Write_Click(object sender, EventArgs e)
         {
             if (mMutex.WaitOne() == true)
             {
@@ -103,7 +103,7 @@ namespace ShareMemory_A
                 mMutex.ReleaseMutex();//釋放對mMutex的控制權
             }
         }
-        private void btn_Read_Click(object sender, EventArgs e)
+        private void Btn_Read_Click(object sender, EventArgs e)
         {
             if (mMutex.WaitOne() == true)
             {
@@ -123,17 +123,19 @@ namespace ShareMemory_A
                 mMutex.ReleaseMutex();//釋放對mMutex的控制權
             }
         }
-        private void btn_Send_Click(object sender, EventArgs e)
+        private void Btn_Send_Click(object sender, EventArgs e)
         {
             try
             {
                 int hwndReceiver = FindWindow(null, FormClient);//找TestB的IntPtr 用來代表指標或控制代碼
                 if (hwndReceiver != 0)
                 {
-                    COPYDATASTRUCT cds = new COPYDATASTRUCT();
-                    cds.dwData = (IntPtr)0;
-                    cds.cbData = Encoding.Unicode.GetBytes(textBox2.Text).Length;//有中文字長度上要注意
-                    cds.lpData = textBox2.Text;
+                    COPYDATASTRUCT cds = new COPYDATASTRUCT
+                    {
+                        dwData = (IntPtr)0,
+                        cbData = Encoding.Unicode.GetBytes(textBox2.Text).Length,//有中文字長度上要注意
+                        lpData = textBox2.Text
+                    };
                     SendMessage(hwndReceiver, WM_COPYDATA, 0, ref cds);
                 }
                 else

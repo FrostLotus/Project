@@ -58,7 +58,7 @@ namespace ShareMemory_A
             this.button1.TabIndex = 0;
             this.button1.Text = "傳送資料至ShareMemory";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.btn_Write_Click);
+            this.button1.Click += new System.EventHandler(this.Btn_Write_Click);
             // 
             // label1
             // 
@@ -86,7 +86,7 @@ namespace ShareMemory_A
             this.button2.TabIndex = 0;
             this.button2.Text = "從ShareMemory讀取資料";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.btn_Read_Click);
+            this.button2.Click += new System.EventHandler(this.Btn_Read_Click);
             // 
             // groupBox1
             // 
@@ -172,7 +172,7 @@ namespace ShareMemory_A
             this.button3.TabIndex = 0;
             this.button3.Text = "傳送資料至SendMessage";
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.btn_Send_Click);
+            this.button3.Click += new System.EventHandler(this.Btn_Send_Click);
             // 
             // textBox2
             // 
