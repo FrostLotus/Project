@@ -26,7 +26,8 @@ namespace DataBaseTest
         public string sTable_Orders = "Table_orders";
         public string sTable_Product = "Table_Products";
 
-        
+        public DataSet SQLDataSet = new DataSet();
+
         public class CustomersDB
         {
             public string Id { get; set; }
@@ -83,98 +84,30 @@ namespace DataBaseTest
 
         private void All_dgv_ReFlash()
         {
-            Dgv_Customers_ReFlash();
-            Dgv_Orderdetail_ReFlash();
-            Dgv_Orders_ReFlash();
-            Dgv_Product_ReFlash();
+            Dgv_Flash_By_DataSet(Dgv_Customers,   sTable_Customers,   SQLDataSet);
+            Dgv_Flash_By_DataSet(Dgv_Orderdetail, sTable_Orderdetail, SQLDataSet);
+            Dgv_Flash_By_DataSet(Dgv_Orders,      sTable_Orders,      SQLDataSet);
+            Dgv_Flash_By_DataSet(Dgv_Product,     sTable_Product,     SQLDataSet);
         }
-        private void Dgv_Customers_ReFlash()
+        private void Dgv_Flash_By_DataSet(DataGridView dgv,string tableName,DataSet dataset)
         {
             using (SqlConnection cnn = new SqlConnection(sConnB.ConnectionString))
             {
                 cnn.Open();
 
-                string squery = $"SELECT * FROM {sTable_Customers}";
-                using (SqlCommand command = new SqlCommand(squery, cnn))
+                string squery = $"SELECT * FROM {tableName}";
+                using (SqlCommand command = new SqlCommand(squery,cnn))
                 {
                     using (SqlDataAdapter adapter = new SqlDataAdapter(command))
                     {
-                        //DataTable dataTable = new DataTable();
-                        DataSet dataSet = new DataSet();
-                        adapter.Fill(dataSet, "Customers");
-                        Dgv_Customers.DataSource = dataSet;
-                        Dgv_Customers.DataMember = "Customers";
+                        adapter.Fill(dataset, tableName);
+                        dgv.DataSource = dataset.Tables[tableName];
                     }
                 }
                 cnn.Close();//可不用 using會藉由 IDisposable 清除
                 cnn.Dispose();
             }
         }
-        private void Dgv_Orderdetail_ReFlash()
-        {
-            using (SqlConnection cnn = new SqlConnection(sConnB.ConnectionString))
-            {
-                cnn.Open();
-
-                string squery = $"SELECT * FROM {sTable_Orderdetail}";
-                using (SqlCommand command = new SqlCommand(squery, cnn))
-                {
-                    using (SqlDataAdapter adapter = new SqlDataAdapter(command))
-                    {
-                        DataSet dataSet = new DataSet();
-                        adapter.Fill(dataSet, "Orderdetail");
-                        Dgv_Orderdetail.DataSource = dataSet;
-                        Dgv_Orderdetail.DataMember = "Orderdetail";
-                    }
-                }
-                cnn.Close();//可不用 using會藉由 IDisposable 清除
-                cnn.Dispose();
-            }
-        }
-        private void Dgv_Orders_ReFlash()
-        {
-            using (SqlConnection cnn = new SqlConnection(sConnB.ConnectionString))
-            {
-                cnn.Open();
-
-                string squery = $"SELECT * FROM {sTable_Orders}";
-                using (SqlCommand command = new SqlCommand(squery, cnn))
-                {
-                    using (SqlDataAdapter adapter = new SqlDataAdapter(command))
-                    {
-                        DataSet dataSet = new DataSet();
-                        adapter.Fill(dataSet, "Orders");
-                        Dgv_Orders.DataSource = dataSet;
-                        Dgv_Orders.DataMember = "Orders";
-                    }
-                }
-                cnn.Close();//可不用 using會藉由 IDisposable 清除
-                cnn.Dispose();
-            }
-        }
-        private void Dgv_Product_ReFlash()
-        {
-            using (SqlConnection cnn = new SqlConnection(sConnB.ConnectionString))
-            {
-                cnn.Open();
-
-                string squery = $"SELECT * FROM {sTable_Product}";
-                using (SqlCommand command = new SqlCommand(squery, cnn))
-                {
-                    using (SqlDataAdapter adapter = new SqlDataAdapter(command))
-                    {
-                        DataSet dataSet = new DataSet();
-                        adapter.Fill(dataSet, "Product");
-                        Dgv_Product.DataSource = dataSet;
-                        Dgv_Product.DataMember = "Product";
-                    }
-                }
-                cnn.Close();//可不用 using會藉由 IDisposable 清除
-                cnn.Dispose();
-            }
-        }
-
-
         private void Btn_Connect_Click(object sender, EventArgs e)
         {
             try
