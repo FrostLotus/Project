@@ -24,6 +24,7 @@ namespace ShareMemory_A
         public static extern int FindWindow(string lpClassName, string lpWindowName);
 
         private static readonly int WM_COPYDATA = 0x004A;
+        private static readonly int WM_COPYMEMORY = 0x004B;
 
         public string FormClient = "FormB";
 
@@ -81,6 +82,33 @@ namespace ShareMemory_A
                 }
 
             }
+            if(m.Msg == WM_COPYMEMORY)
+            {
+                //COPYDATASTRUCT cds = (COPYDATASTRUCT)m.GetLParam(typeof(COPYDATASTRUCT));
+
+                //if (cds.cbData > 0 && cds.lpData != null)
+                //{
+                //    label3.Text = cds.lpData;
+                //    Console.WriteLine(cds.lpData);
+                //}
+
+                if (mMutex.WaitOne() == true)
+                {
+                    //讀B丟到ShareMemory中的資料(文字資料)
+                    iStart = 1024;
+                    iSize = 1024;
+                    using (MemoryMappedViewStream mmvsStream = mmFile.CreateViewStream(iStart, iSize))
+                    {
+                        using (BinaryReader brReader = new BinaryReader(mmvsStream))
+                        {
+                            int ilength = brReader.ReadInt32();
+                            string sMessageRead = Encoding.UTF8.GetString(brReader.ReadBytes(ilength), 0, ilength);
+                            label3.Text = $"訊息＝{sMessageRead}";
+                        }
+                    }
+                    mMutex.ReleaseMutex();//釋放對mMutex的控制權
+                }
+            }
             base.WndProc(ref m);
         }
 
@@ -109,7 +137,7 @@ namespace ShareMemory_A
             {
                 //讀B丟到ShareMemory中的資料(文字資料)
                 iStart = 1024;
-                iSize = 1204;
+                iSize = 1024;
                 using (MemoryMappedViewStream mmvsStream = mmFile.CreateViewStream(iStart, iSize))
                 {
                     using (BinaryReader brReader = new BinaryReader(mmvsStream))
@@ -152,12 +180,19 @@ namespace ShareMemory_A
         [StructLayout(LayoutKind.Sequential)]
         public struct COPYDATASTRUCT
         {
+            /// <summary>
+            /// 資料類型
+            /// </summary>
             public IntPtr dwData;
+            /// <summary>
+            /// lpData之資料的大小
+            /// </summary>
             public int cbData;
+            /// <summary>
+            /// 接收應用程式的資料
+            /// </summary>
             [MarshalAs(UnmanagedType.LPStr)]
             public string lpData;
         }
-
-        
     }
 }

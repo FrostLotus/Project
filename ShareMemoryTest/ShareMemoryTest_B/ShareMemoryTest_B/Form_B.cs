@@ -22,7 +22,8 @@ namespace ShareMemory_B
         [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
         public static extern int FindWindow(string lpClassName, string lpWindowName);
 
-        private static int WM_COPYDATA = 0x004A;
+        private static readonly int WM_COPYDATA = 0x004A;
+        private static readonly int WM_COPYMEMORY = 0x004B;
 
         public string FormClient = "FormA";
 
@@ -85,7 +86,6 @@ namespace ShareMemory_B
 
             if (mMutex.WaitOne() == true)
             {
-                //再丟入資料(文字資料)進ShareMemory 供A使用
                 iStart = 1024;
                 iSize = 1024;
                 using (MemoryMappedViewStream mmvsStream = mmFile.CreateViewStream(iStart, iSize))
@@ -96,7 +96,6 @@ namespace ShareMemory_B
                         brWriter.Write(bMessageWrite.Length);//先寫長度
                         brWriter.Write(bMessageWrite);
                     }
-                    
                 }
                 mMutex.ReleaseMutex();//放掉控制權
             }
@@ -154,6 +153,45 @@ namespace ShareMemory_B
             public string lpData;
         }
 
-       
+        private void Btn_SendToFormMemory_Click(object sender, EventArgs e)
+        {
+            if (mMutex.WaitOne() == true)
+            {
+                //再丟入資料(文字資料)進ShareMemory 供A使用
+                iStart = 1024;
+                iSize = 1024;
+                using (MemoryMappedViewStream mmvsStream = mmFile.CreateViewStream(iStart, iSize))
+                {
+                    using (BinaryWriter brWriter = new BinaryWriter(mmvsStream))
+                    {
+                        byte[] bMessageWrite = Encoding.UTF8.GetBytes(textBox1.Text);
+                        brWriter.Write(bMessageWrite.Length);//先寫長度
+                        brWriter.Write(bMessageWrite);
+                    }
+                }
+                mMutex.ReleaseMutex();//放掉控制權
+            }
+            try
+            {
+                int hwndReceiver = FindWindow(null, FormClient);//找TestB的IntPtr 用來代表指標或控制代碼
+
+                if (hwndReceiver != 0)
+                {
+                    COPYDATASTRUCT cds = new COPYDATASTRUCT();
+                    cds.dwData = (IntPtr)0;
+                    cds.cbData = 0;//無
+                    cds.lpData = "";
+                    SendMessage(hwndReceiver, WM_COPYMEMORY, 0, ref cds);
+                }
+                else
+                {
+                    MessageBox.Show("指定Form: " + FormClient + " 未發現");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
     }
 }

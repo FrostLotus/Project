@@ -42,12 +42,15 @@ namespace ShareMemory_B
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.button3 = new System.Windows.Forms.Button();
             this.textBox2 = new System.Windows.Forms.TextBox();
+            this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.Btn_SendToFormMemory = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            this.groupBox7.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -124,10 +127,11 @@ namespace ShareMemory_B
             // groupBox5
             // 
             this.groupBox5.Controls.Add(this.groupBox6);
+            this.groupBox5.Controls.Add(this.groupBox7);
             this.groupBox5.Controls.Add(this.groupBox4);
             this.groupBox5.Location = new System.Drawing.Point(12, 154);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(587, 141);
+            this.groupBox5.Size = new System.Drawing.Size(587, 250);
             this.groupBox5.TabIndex = 7;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "SendMessage";
@@ -182,11 +186,31 @@ namespace ShareMemory_B
             this.textBox2.TabIndex = 2;
             this.textBox2.Text = "to A Message";
             // 
+            // groupBox7
+            // 
+            this.groupBox7.Controls.Add(this.Btn_SendToFormMemory);
+            this.groupBox7.Location = new System.Drawing.Point(6, 134);
+            this.groupBox7.Name = "groupBox7";
+            this.groupBox7.Size = new System.Drawing.Size(186, 107);
+            this.groupBox7.TabIndex = 4;
+            this.groupBox7.TabStop = false;
+            this.groupBox7.Text = "傳送Message 撈記憶體區塊";
+            // 
+            // Btn_SendToFormMemory
+            // 
+            this.Btn_SendToFormMemory.Location = new System.Drawing.Point(38, 39);
+            this.Btn_SendToFormMemory.Name = "Btn_SendToFormMemory";
+            this.Btn_SendToFormMemory.Size = new System.Drawing.Size(101, 41);
+            this.Btn_SendToFormMemory.TabIndex = 0;
+            this.Btn_SendToFormMemory.Text = "傳送資料至FormA";
+            this.Btn_SendToFormMemory.UseVisualStyleBackColor = true;
+            this.Btn_SendToFormMemory.Click += new System.EventHandler(this.Btn_SendToFormMemory_Click);
+            // 
             // Form_B
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(611, 310);
+            this.ClientSize = new System.Drawing.Size(611, 430);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox3);
             this.Name = "Form_B";
@@ -201,6 +225,7 @@ namespace ShareMemory_B
             this.groupBox6.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            this.groupBox7.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -220,6 +245,8 @@ namespace ShareMemory_B
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.GroupBox groupBox7;
+        private System.Windows.Forms.Button Btn_SendToFormMemory;
     }
 }
 
