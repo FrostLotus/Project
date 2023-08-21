@@ -81,7 +81,6 @@ namespace DataBaseTest
             TimeSpan trim = swStopwatch.Elapsed;
             Console.WriteLine("迴圈1次時間: " + trim + "\n目前時間: " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
         }
-
         private void All_dgv_ReFlash()
         {
             Dgv_Flash_By_DataSet(Dgv_Customers,   sTable_Customers,   SQLDataSet);
@@ -94,7 +93,6 @@ namespace DataBaseTest
             using (SqlConnection cnn = new SqlConnection(sConnB.ConnectionString))
             {
                 cnn.Open();
-
                 string squery = $"SELECT * FROM {tableName}";
                 using (SqlCommand command = new SqlCommand(squery,cnn))
                 {
