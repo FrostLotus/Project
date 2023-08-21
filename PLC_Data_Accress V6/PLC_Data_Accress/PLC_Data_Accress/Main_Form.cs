@@ -15,14 +15,15 @@ using System.Collections;
 
 namespace PLC_Data_Access
 {
+
     public partial class Main_Form : Form
     {
         public System.Timers.Timer Timer_DeviceGet = new System.Timers.Timer();
 
         delegate void UpdateLabel(Label lab, string Msg);
         delegate void UpdateDataGridView(DataGridView view, DataGridViewRow[] data);
-        //private object _objLock = new object();
         public Stopwatch swStopwatch = new Stopwatch();
+        public ValueStatus valueStatus = ValueStatus.IsEmpty;
 
         public Main_Form()
         {
@@ -30,9 +31,9 @@ namespace PLC_Data_Access
 
             TParameter.Init();//初始化 然後連線
 
-            txt_ReadTime.Text = TParameter.Mx_Connect.iReciveTime.ToString();
+            txt_ReadTime.Text = TParameter.MxConnect.iReciveTime.ToString();
             //直接路徑連結
-            if (TParameter.Mx_Connect.iReturnCode == 0)
+            if (TParameter.MxConnect.iReturnCode == 0)
             {
                 p_MxOpenStatus.BackColor = Color.Lime;
                 btn_MxOpen.Text = "PLC連結中";
@@ -44,12 +45,11 @@ namespace PLC_Data_Access
             }
             //DeviceGet事件
             Timer_DeviceGet.Stop();
-            Timer_DeviceGet.Interval = TParameter.Mx_Connect.iReciveTime;
+            Timer_DeviceGet.Interval = TParameter.MxConnect.iReciveTime;
 
             DataGridValueFlash();//DataGridview 第一次刷新
 
         }
-
         private void Mi_DataGridLoad_Click(object sender, EventArgs e)
         {
             if (TParameter.DeviceData.iModelChange != 1)
@@ -63,13 +63,13 @@ namespace PLC_Data_Access
                     {
                         path = DataFileForm.FileName.ToString() + ".txt";
                     }
-                    TParameter.DeviceData.DeviceDataGrid_Path = path;
+                    TParameter.DeviceData.DeviceFileDataPath = path;
                     //取代預設路徑檔案中的指定資料表路徑
                     using (StreamWriter writer = new StreamWriter(TParameter.DeviceData.DataFile_Path))
                     {
                         writer.Write("");//清除
-                        writer.WriteLine(TParameter.DeviceData.DeviceDataGrid_Path);
-                        writer.WriteLine(TParameter.DeviceData.DeviceModelList_Path);
+                        writer.WriteLine(TParameter.DeviceData.DeviceFileDataPath);
+                        writer.WriteLine(TParameter.DeviceData.DeviceFilePLCPath);
                         writer.Close();
                     }
 
@@ -102,13 +102,13 @@ namespace PLC_Data_Access
                 {
                     path = DataFileForm.FileName.ToString() + ".txt";
                 }
-                TParameter.DeviceData.DeviceDataGrid_Path = path;
+                TParameter.DeviceData.DeviceFileDataPath = path;
                 //取代預設路徑檔案中的指定資料表路徑
                 using (StreamWriter writer = new StreamWriter(TParameter.DeviceData.DataFile_Path))
                 {
                     writer.Write("");//清除
-                    writer.WriteLine(TParameter.DeviceData.DeviceDataGrid_Path);
-                    writer.WriteLine(TParameter.DeviceData.DeviceModelList_Path);
+                    writer.WriteLine(TParameter.DeviceData.DeviceFileDataPath);
+                    writer.WriteLine(TParameter.DeviceData.DeviceFilePLCPath);
                     writer.Close();
                 }
 
@@ -119,25 +119,24 @@ namespace PLC_Data_Access
         }
         private void Mi_PLCSet_Click(object sender, EventArgs e)
         {
-            TParameter.Mx_Connect.ProgClose();//先關閉
+            TParameter.MxConnect.ProgClose();//先關閉
             Form_PLC_Set form = new Form_PLC_Set();
             if (form.ShowDialog() == DialogResult.OK)
             {
                 Console.WriteLine("完成PLC設定");
                 TParameter.DeviceData.SaveData_Model();//儲存PLC連線資料
-                if (TParameter.Mx_Connect.iReturnCode == 0)
+                if (TParameter.MxConnect.iReturnCode == 0)
                 {
                     p_MxOpenStatus.BackColor = Color.Lime;
                     btn_MxOpen.Text = "PLC連結中";
                 }
-                if (TParameter.Mx_Connect.iReturnCode != 0)
+                if (TParameter.MxConnect.iReturnCode != 0)
                 {
                     p_MxOpenStatus.BackColor = Color.Red;
                     btn_MxOpen.Text = "PLC連結失敗";
                 }
             }
         }
-
         private void Btn_ModelChange_Click(object sender, EventArgs e)
         {
             ModelChange();
@@ -146,7 +145,6 @@ namespace PLC_Data_Access
         {
             DataUpdate();
         }
-
         private void Dgv_ReadDataGrid_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
         {
             //Read - 去撈list<>裡面所有的資料=>DataGridView
@@ -155,25 +153,25 @@ namespace PLC_Data_Access
                 switch (dgv_ReadDataGrid.Columns[e.ColumnIndex].Name)
                 {
                     case "Read_SN":
-                            e.Value = TParameter.DeviceData.lReadData[e.RowIndex].SN.ToString();
+                        e.Value = TParameter.DeviceData.lReadData[e.RowIndex].SN.ToString();
                         break;
                     case "Read_Label":
-                            e.Value = TParameter.DeviceData.lReadData[e.RowIndex].Label.ToString();
+                        e.Value = TParameter.DeviceData.lReadData[e.RowIndex].Label.ToString();
                         break;
                     case "Read_Address":
-                            e.Value = TParameter.DeviceData.lReadData[e.RowIndex].Address.ToString();
+                        e.Value = TParameter.DeviceData.lReadData[e.RowIndex].Address.ToString();
                         break;
                     case "Read_DataType":
-                            e.Value = TParameter.DeviceData.lReadData[e.RowIndex].DataType.ToString();
+                        e.Value = TParameter.DeviceData.lReadData[e.RowIndex].DataType.ToString();
                         break;
                     case "Read_Data":
-                            e.Value = TParameter.DeviceData.lReadData[e.RowIndex].Data.ToString();
+                        e.Value = TParameter.DeviceData.lReadData[e.RowIndex].Data.ToString();
                         break;
                     case "Read_IsUse":
-                            e.Value = TParameter.DeviceData.ZeroToBool(TParameter.DeviceData.lReadData[e.RowIndex].IsUse.ToString());
+                        e.Value = TParameter.DeviceData.ZeroToBool(TParameter.DeviceData.lReadData[e.RowIndex].IsUse.ToString());
                         break;
                     case "Read_DeviceValueGet":
-                            e.Value = TParameter.DeviceData.lReadData[e.RowIndex].DeviceValueGet.ToString();
+                        e.Value = TParameter.DeviceData.lReadData[e.RowIndex].DeviceValueGet.ToString();
                         break;
                 }
             }
@@ -455,10 +453,9 @@ namespace PLC_Data_Access
             }
             dgv_WriteDataGrid.InvalidateRow(e.RowIndex);
         }
-
         private void Main_Form_FormClosing(object sender, FormClosingEventArgs e)
         {
-            TParameter.Mx_Connect.ProgClose();
+            TParameter.MxConnect.ProgClose();
         }
         //===============================================
         public void DataUpdate()
@@ -467,68 +464,64 @@ namespace PLC_Data_Access
             //上傳寫入
             for (int i = 0; i < TParameter.DeviceData.lWriteData.Count; i++)
             {
-                if (TParameter.DeviceData.lWriteData[i].IsUse.ToString() == "1")//有使用的檢索
+                valueStatus = TParameter.DeviceData.SetDataStatus(i, "Write", "Set");
+                switch (valueStatus)
                 {
-                    if (TParameter.DeviceData.lWriteData[i].DeviceValueSet != null)//上傳寫入值不為null
-                    {
-                        if (TParameter.DeviceData.lWriteData[i].DeviceValueSet != "")//上傳寫入值不為""
+                    case ValueStatus.IsEmpty:
+                        break;
+                    case ValueStatus.IsArray:
+                        try
                         {
-                            if (TParameter.DeviceData.lWriteData[i].Address.Contains("~"))//若為軟元件區間(帶區間"~")
-                            {
-                                try
-                                {
-                                    TParameter.Mx_Connect.ProgSetBlockCombine(TParameter.DeviceData.lWriteData[i].Address, TParameter.DeviceData.lWriteData[i].DeviceValueSet);
-                                }
-                                catch (Exception ex)
-                                {
-                                    MessageBox.Show(ex.Message + "\n是否為修改值string[]之軟元件名稱錯誤", "DataUpload", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                }
-                            }
-                            else//其他軟元件
-                            {
-                                try
-                                {
-                                    TParameter.Mx_Connect.ProgSetDevice(TParameter.DeviceData.lWriteData[i].Address, TParameter.DeviceData.lWriteData[i].DeviceValueSet);
-                                }
-                                catch (Exception ex)
-                                {
-                                    MessageBox.Show(ex.Message + "\n上傳寫入資料填充有誤.\n請確認是否未輸入資料\n", "DataUpload", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                    ModelChange();//強制切換
-                                }
-                            }
+                            TParameter.MxConnect.ProgSetBlockCombine(TParameter.DeviceData.lWriteData[i].Address, TParameter.DeviceData.lWriteData[i].DeviceValueSet);
                         }
-                    }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message + "\n是否為修改值string[]之軟元件名稱錯誤", "DataUpload", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                        break;
+                    case ValueStatus.IsSingle:
+                        try
+                        {
+                            TParameter.MxConnect.ProgSetDevice(TParameter.DeviceData.lWriteData[i].Address, TParameter.DeviceData.lWriteData[i].DeviceValueSet);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message + "\n上傳寫入資料填充有誤.\n請確認是否未輸入資料\n", "DataUpload", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            ModelChange();//強制切換
+                        }
+                        break;
                 }
             }
             //上傳讀取
             for (int i = 0; i < TParameter.DeviceData.lWriteData.Count; i++)
             {
-                if (TParameter.DeviceData.lWriteData[i].IsUse.ToString() == "1")//表示有使用
+                valueStatus = TParameter.DeviceData.SetDataStatus(i, "Write", "Get");
+                switch (valueStatus)
                 {
-                    if (TParameter.DeviceData.lWriteData[i].Address.ToString().Contains("~"))//若為軟元件區間
-                    {
+                    case ValueStatus.IsEmpty:
+                        break;
+                    case ValueStatus.IsArray:
                         try
                         {
-                            TParameter.Mx_Connect.ProgGetBlockCombine(TParameter.DeviceData.lWriteData[i].Address.ToString(), out sOutPutCell);
+                            TParameter.MxConnect.ProgGetBlockCombine(TParameter.DeviceData.lWriteData[i].Address.ToString(), out sOutPutCell);
                         }
                         catch (Exception ex)
                         {
                             MessageBox.Show(ex.Message + "\n是否為string[]之軟元件名稱錯誤(~)", "DataUpload讀取", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             ModelChange();//強制切換
                         }
-                    }
-                    else//其他軟元件
-                    {
+                        break;
+                    case ValueStatus.IsSingle:
                         try
                         {
-                            TParameter.Mx_Connect.ProgGetDevice(TParameter.DeviceData.lWriteData[i].Address.ToString(), out sOutPutCell);
+                            TParameter.MxConnect.ProgGetDevice(TParameter.DeviceData.lWriteData[i].Address.ToString(), out sOutPutCell);
                         }
                         catch (Exception ex)
                         {
                             MessageBox.Show(ex.Message + "\n是否為word之軟元件名稱錯誤(Device)", "DataUpload讀取", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             ModelChange();//強制切換
                         }
-                    }
+                        break;
                 }
             }
             Console.WriteLine("上傳成功");
@@ -559,13 +552,13 @@ namespace PLC_Data_Access
 
                     if (txt_ReadTime.Text != "" && Convert.ToInt32(txt_ReadTime.Text) > 0)
                     {
-                        Timer_DeviceGet.Interval = TParameter.Mx_Connect.iReciveTime = Convert.ToInt32(txt_ReadTime.Text);
+                        Timer_DeviceGet.Interval = TParameter.MxConnect.iReciveTime = Convert.ToInt32(txt_ReadTime.Text);
                     }
                     else
                     {
                         //超出範圍預設值
-                        TParameter.Error_Info.ErrorMessageBox_Time();
-                        TParameter.Mx_Connect.iReciveTime = 2000;//兩秒
+                        TParameter.ErrorInfo.ErrorMessageBox_Time();
+                        TParameter.MxConnect.iReciveTime = 2000;//兩秒
                         Timer_DeviceGet.Interval = 2000;
                         txt_ReadTime.Text = "2000";
                     }
@@ -582,11 +575,11 @@ namespace PLC_Data_Access
             {
                 DeviceGet();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "DeviceGet", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            
+
         }
         private void DeviceGet()
         {
@@ -624,7 +617,7 @@ namespace PLC_Data_Access
                     if (TParameter.DeviceData.lWriteData[i].Address.ToString().Contains("~"))//若為軟元件區間
                     {
                         TParameter.DeviceData.GetCombineArray_str(TParameter.DeviceData.lWriteData[i].Address.ToString(), out int iItemCount, out string sItemStr);
-                        
+
                         iTotalItem += iItemCount;//增加軟元件總數
                         //串Random用字串
                         arrGetData += (arrGetData == "") ? sItemStr : "\n" + sItemStr;
@@ -640,7 +633,7 @@ namespace PLC_Data_Access
                 }
             }
             //取全部元件的值(ReadRandom)
-            TParameter.Mx_Connect.ProgGetDeviceRandom(arrGetData, iTotalItem, out int[] arrDeviceData);
+            TParameter.MxConnect.ProgGetDeviceRandom(arrGetData, iTotalItem, out int[] arrDeviceData);
             //餵回去
             int iOrderCount = 0;
             //讀
@@ -702,5 +695,7 @@ namespace PLC_Data_Access
 
             Console.WriteLine("迴圈1次時間: " + trim + "\n目前時間: " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
         }
+
+
     }
 }
