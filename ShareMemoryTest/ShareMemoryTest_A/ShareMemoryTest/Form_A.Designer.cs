@@ -43,6 +43,7 @@ namespace ShareMemory_A
             this.button3 = new System.Windows.Forms.Button();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -192,11 +193,21 @@ namespace ShareMemory_A
             this.label3.TabIndex = 6;
             this.label3.Text = "label3";
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(352, 356);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(33, 12);
+            this.label4.TabIndex = 6;
+            this.label4.Text = "label3";
+            // 
             // Form_A
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(611, 434);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox3);
@@ -233,6 +244,7 @@ namespace ShareMemory_A
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
     }
 }
 

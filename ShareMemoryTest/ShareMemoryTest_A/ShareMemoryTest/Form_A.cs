@@ -24,7 +24,7 @@ namespace ShareMemory_A
         public static extern int FindWindow(string lpClassName, string lpWindowName);
 
         private static readonly int WM_COPYDATA = 0x004A;
-        private static readonly int WM_COPYMEMORY = 0x004B;
+        private static readonly int WM_COPYMEMORY = 0x0401;
 
         public string FormClient = "FormB";
 
@@ -71,26 +71,26 @@ namespace ShareMemory_A
 
         protected override void WndProc(ref Message m)
         {
+            //if (m.Msg == WM_COPYDATA)
+            //{
+            //    COPYDATASTRUCT cds = (COPYDATASTRUCT)m.GetLParam(typeof(COPYDATASTRUCT));
+
+            //    if (cds.cbData > 0 && cds.lpData != null)
+            //    {
+            //        label2.Text = cds.lpData;
+            //        Console.WriteLine(cds.lpData);
+            //    }
+
+            //}
             if (m.Msg == WM_COPYDATA)
             {
-                COPYDATASTRUCT cds = (COPYDATASTRUCT)m.GetLParam(typeof(COPYDATASTRUCT));
+                COPYDATASTRUCT CRC = (COPYDATASTRUCT)m.GetLParam(typeof(COPYDATASTRUCT));
 
-                if (cds.cbData > 0 && cds.lpData != null)
+                if (CRC.cbData > 0 && CRC.lpData != null)
                 {
-                    label2.Text = cds.lpData;
-                    Console.WriteLine(cds.lpData);
+                    label4.Text = CRC.lpData;
+                    Console.WriteLine(CRC.lpData);
                 }
-
-            }
-            if(m.Msg == WM_COPYMEMORY)
-            {
-                //COPYDATASTRUCT cds = (COPYDATASTRUCT)m.GetLParam(typeof(COPYDATASTRUCT));
-
-                //if (cds.cbData > 0 && cds.lpData != null)
-                //{
-                //    label3.Text = cds.lpData;
-                //    Console.WriteLine(cds.lpData);
-                //}
 
                 if (mMutex.WaitOne() == true)
                 {

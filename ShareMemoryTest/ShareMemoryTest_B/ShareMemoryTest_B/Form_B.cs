@@ -23,7 +23,7 @@ namespace ShareMemory_B
         public static extern int FindWindow(string lpClassName, string lpWindowName);
 
         private static readonly int WM_COPYDATA = 0x004A;
-        private static readonly int WM_COPYMEMORY = 0x004B;
+        private static readonly int WM_COPYMEMORY = 0x0401;
 
         public string FormClient = "FormA";
 
@@ -149,7 +149,7 @@ namespace ShareMemory_B
         {
             public IntPtr dwData;
             public int cbData;
-            //[MarshalAs(UnmanagedType.LPStr)]
+            [MarshalAs(UnmanagedType.LPStr)]
             public string lpData;
         }
 
@@ -179,10 +179,11 @@ namespace ShareMemory_B
                 {
                     COPYDATASTRUCT cds = new COPYDATASTRUCT();
                     cds.dwData = (IntPtr)0;
-                    cds.cbData = 0;//無
-                    cds.lpData = "";
-                    SendMessage(hwndReceiver, WM_COPYMEMORY, 0, ref cds);
+                    cds.cbData = Encoding.Unicode.GetBytes(textBox2.Text).Length;//有中文字長度上要注意
+                    cds.lpData = textBox2.Text;
+                    SendMessage(hwndReceiver, WM_COPYDATA, 0, ref cds);
                 }
+            
                 else
                 {
                     MessageBox.Show("指定Form: " + FormClient + " 未發現");
