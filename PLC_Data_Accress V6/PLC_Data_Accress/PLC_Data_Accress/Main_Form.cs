@@ -20,8 +20,8 @@ namespace PLC_Data_Access
     {
         public System.Timers.Timer Timer_DeviceGet = new System.Timers.Timer();
 
-        delegate void UpdateLabel(Label lab, string Msg);
-        delegate void UpdateDataGridView(DataGridView view, DataGridViewRow[] data);
+        private delegate void UpdateLabel(Label lab, string Msg);
+        private delegate void UpdateDataGridView(DataGridView view, DataGridViewRow[] data);
         public Stopwatch swStopwatch = new Stopwatch();
         public ValueStatus valueStatus = ValueStatus.IsEmpty;
 

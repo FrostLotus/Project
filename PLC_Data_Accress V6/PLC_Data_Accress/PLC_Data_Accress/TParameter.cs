@@ -32,8 +32,6 @@ namespace PLC_Data_Access
     }
     public class TParameter
     {
-        
-
         public static CMXComponent MxConnect = new CMXComponent();
         public static CDeviceData DeviceData = new CDeviceData();
         public static CErrorInfo ErrorInfo = new CErrorInfo();
