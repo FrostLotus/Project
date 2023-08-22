@@ -24,7 +24,6 @@ namespace ShareMemory_A
         public static extern int FindWindow(string lpClassName, string lpWindowName);
 
         private static readonly int WM_COPYDATA = 0x004A;
-        private static readonly int WM_COPYMEMORY = 0x0401;
 
         public string FormClient = "FormB";
 
@@ -71,17 +70,6 @@ namespace ShareMemory_A
 
         protected override void WndProc(ref Message m)
         {
-            //if (m.Msg == WM_COPYDATA)
-            //{
-            //    COPYDATASTRUCT cds = (COPYDATASTRUCT)m.GetLParam(typeof(COPYDATASTRUCT));
-
-            //    if (cds.cbData > 0 && cds.lpData != null)
-            //    {
-            //        label2.Text = cds.lpData;
-            //        Console.WriteLine(cds.lpData);
-            //    }
-
-            //}
             if (m.Msg == WM_COPYDATA)
             {
                 COPYDATASTRUCT CRC = (COPYDATASTRUCT)m.GetLParam(typeof(COPYDATASTRUCT));
@@ -103,7 +91,7 @@ namespace ShareMemory_A
                         {
                             int ilength = brReader.ReadInt32();
                             string sMessageRead = Encoding.UTF8.GetString(brReader.ReadBytes(ilength), 0, ilength);
-                            label3.Text = $"訊息＝{sMessageRead}";
+                            label3.Text = $"Message ＝ {sMessageRead}";
                         }
                     }
                     mMutex.ReleaseMutex();//釋放對mMutex的控制權
@@ -193,6 +181,50 @@ namespace ShareMemory_A
             /// </summary>
             [MarshalAs(UnmanagedType.LPStr)]
             public string lpData;
+        }
+
+        private void Btn_SendToFormMemory_Click(object sender, EventArgs e)
+        {
+            if (mMutex.WaitOne() == true)
+            {
+                //再丟入資料(文字資料)進ShareMemory 供A使用
+                iStart = 0;
+                iSize = 0;
+                using (MemoryMappedViewStream mmvsStream = mmFile.CreateViewStream(iStart, iSize))
+                {
+                    using (BinaryWriter brWriter = new BinaryWriter(mmvsStream))
+                    {
+                        byte[] bMessageWrite = Encoding.UTF8.GetBytes(textBox1.Text);
+                        brWriter.Write(bMessageWrite.Length);//先寫長度
+                        brWriter.Write(bMessageWrite);
+                    }
+                }
+                mMutex.ReleaseMutex();//放掉控制權
+            }
+            try
+            {
+                int hwndReceiver = FindWindow(null, FormClient);//找TestB的IntPtr 用來代表指標或控制代碼
+
+                if (hwndReceiver != 0)
+                {
+                    COPYDATASTRUCT cds = new COPYDATASTRUCT
+                    {
+                        dwData = (IntPtr)0,
+                        cbData = Encoding.Unicode.GetBytes("視窗A傳值").Length,//有中文字長度上要注意
+                        lpData = "視窗A傳值"
+                    };
+                    SendMessage(hwndReceiver, WM_COPYDATA, 0, ref cds);
+                }
+
+                else
+                {
+                    MessageBox.Show("指定Form: " + FormClient + " 未發現");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

@@ -23,18 +23,16 @@ namespace ShareMemory_B
         public static extern int FindWindow(string lpClassName, string lpWindowName);
 
         private static readonly int WM_COPYDATA = 0x004A;
-        private static readonly int WM_COPYMEMORY = 0x0401;
-
         public string FormClient = "FormA";
 
-        int iTotalSize = 2048;
-        int iStart = 0;
-        int iSize = 0;
+        public int iTotalSize = 2048;
+        public int iStart = 0;
+        public int iSize = 0;
 
-        MemoryMappedFile mmFile;
-        Mutex mMutex;
-        string sShareMemory = "ShareMemoryInAB";
-        string sMutexShareMemory = "MutShareMemoryInAB";
+        public MemoryMappedFile mmFile;
+        public Mutex mMutex;
+        public string sShareMemory = "ShareMemoryInAB";
+        public string sMutexShareMemory = "MutShareMemoryInAB";
         public Form_B()
         {
             
@@ -64,24 +62,40 @@ namespace ShareMemory_B
             }
             
         }
-
+        
         
         protected override void WndProc(ref Message m)
         {
             if (m.Msg == WM_COPYDATA)
             {
-                COPYDATASTRUCT cds = (COPYDATASTRUCT)m.GetLParam(typeof(COPYDATASTRUCT));
+                COPYDATASTRUCT CRC = (COPYDATASTRUCT)m.GetLParam(typeof(COPYDATASTRUCT));
 
-                if (cds.cbData > 0 && cds.lpData != null)
+                if (CRC.cbData > 0 && CRC.lpData != null)
                 {
-                    label2.Text = cds.lpData;
-                    Console.WriteLine(cds.lpData);
+                    label4.Text = CRC.lpData;
+                    Console.WriteLine(CRC.lpData);
                 }
-                    
+
+                if (mMutex.WaitOne() == true)
+                {
+                    //讀B丟到ShareMemory中的資料(文字資料)
+                    iStart = 0;
+                    iSize = 1024;
+                    using (MemoryMappedViewStream mmvsStream = mmFile.CreateViewStream(iStart, iSize))
+                    {
+                        using (BinaryReader brReader = new BinaryReader(mmvsStream))
+                        {
+                            int ilength = brReader.ReadInt32();
+                            string sMessageRead = Encoding.UTF8.GetString(brReader.ReadBytes(ilength), 0, ilength);
+                            label3.Text = $"Message ＝ {sMessageRead}";
+                        }
+                    }
+                    mMutex.ReleaseMutex();//釋放對mMutex的控制權
+                }
             }
             base.WndProc(ref m);
         }
-        private void btn_Write_Click(object sender, EventArgs e)
+        private void Btn_Write_Click(object sender, EventArgs e)
         {
 
             if (mMutex.WaitOne() == true)
@@ -100,13 +114,13 @@ namespace ShareMemory_B
                 mMutex.ReleaseMutex();//放掉控制權
             }
         }
-        private void btn_Read_Click(object sender, EventArgs e)
+        private void Btn_Read_Click(object sender, EventArgs e)
         {
             if (mMutex.WaitOne() == true)
             {
                 //先讀A丟到ShareMemory中的資料(文字資料)
                 iStart = 0;
-                iSize = 0;
+                iSize = 1024;
                 using (MemoryMappedViewStream mmvsStream = mmFile.CreateViewStream(iStart, iSize))//A丟的
                 {
                     using (BinaryReader brReader = new BinaryReader(mmvsStream))
@@ -119,7 +133,7 @@ namespace ShareMemory_B
                 mMutex.ReleaseMutex();//放掉控制權
             }
         }
-        private void btn_Send_Click(object sender, EventArgs e)
+        private void Btn_Send_Click(object sender, EventArgs e)
         {
             try
             {
@@ -127,10 +141,12 @@ namespace ShareMemory_B
 
                 if (hwndReceiver != 0)
                 {
-                    COPYDATASTRUCT cds = new COPYDATASTRUCT();
-                    cds.dwData = (IntPtr)0;
-                    cds.cbData = Encoding.Unicode.GetBytes(textBox2.Text).Length;//有中文字長度上要注意
-                    cds.lpData = textBox2.Text;
+                    COPYDATASTRUCT cds = new COPYDATASTRUCT
+                    {
+                        dwData = (IntPtr)0,
+                        cbData = Encoding.Unicode.GetBytes(textBox2.Text).Length,//有中文字長度上要注意
+                        lpData = textBox2.Text
+                    };
                     SendMessage(hwndReceiver, WM_COPYDATA, 0, ref cds);
                 }
                 else
@@ -177,10 +193,12 @@ namespace ShareMemory_B
 
                 if (hwndReceiver != 0)
                 {
-                    COPYDATASTRUCT cds = new COPYDATASTRUCT();
-                    cds.dwData = (IntPtr)0;
-                    cds.cbData = Encoding.Unicode.GetBytes(textBox2.Text).Length;//有中文字長度上要注意
-                    cds.lpData = textBox2.Text;
+                    COPYDATASTRUCT cds = new COPYDATASTRUCT
+                    {
+                        dwData = (IntPtr)0,
+                        cbData = Encoding.Unicode.GetBytes("視窗B傳值").Length,//有中文字長度上要注意
+                        lpData = "視窗B傳值"
+                    };
                     SendMessage(hwndReceiver, WM_COPYDATA, 0, ref cds);
                 }
             

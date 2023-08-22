@@ -44,12 +44,15 @@ namespace ShareMemory_A
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.Btn_SendToFormMemory = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            this.groupBox7.SuspendLayout();
             this.SuspendLayout();
             // 
             // button1
@@ -187,26 +190,49 @@ namespace ShareMemory_A
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(218, 356);
+            this.label3.Font = new System.Drawing.Font("新細明體", 14F);
+            this.label3.Location = new System.Drawing.Point(228, 325);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(33, 12);
+            this.label3.Size = new System.Drawing.Size(150, 19);
             this.label3.TabIndex = 6;
-            this.label3.Text = "label3";
+            this.label3.Text = "ShareMemory內容";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(352, 356);
+            this.label4.Font = new System.Drawing.Font("新細明體", 14F);
+            this.label4.Location = new System.Drawing.Point(228, 386);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(33, 12);
+            this.label4.Size = new System.Drawing.Size(146, 19);
             this.label4.TabIndex = 6;
-            this.label4.Text = "label3";
+            this.label4.Text = "SandMessage內容";
+            // 
+            // groupBox7
+            // 
+            this.groupBox7.Controls.Add(this.Btn_SendToFormMemory);
+            this.groupBox7.Location = new System.Drawing.Point(12, 315);
+            this.groupBox7.Name = "groupBox7";
+            this.groupBox7.Size = new System.Drawing.Size(186, 107);
+            this.groupBox7.TabIndex = 7;
+            this.groupBox7.TabStop = false;
+            this.groupBox7.Text = "傳送Message 撈記憶體區塊";
+            // 
+            // Btn_SendToFormMemory
+            // 
+            this.Btn_SendToFormMemory.Location = new System.Drawing.Point(38, 39);
+            this.Btn_SendToFormMemory.Name = "Btn_SendToFormMemory";
+            this.Btn_SendToFormMemory.Size = new System.Drawing.Size(101, 41);
+            this.Btn_SendToFormMemory.TabIndex = 0;
+            this.Btn_SendToFormMemory.Text = "傳送資料至FormB";
+            this.Btn_SendToFormMemory.UseVisualStyleBackColor = true;
+            this.Btn_SendToFormMemory.Click += new System.EventHandler(this.Btn_SendToFormMemory_Click);
             // 
             // Form_A
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(611, 434);
+            this.Controls.Add(this.groupBox7);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.groupBox5);
@@ -223,6 +249,7 @@ namespace ShareMemory_A
             this.groupBox6.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            this.groupBox7.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -245,6 +272,8 @@ namespace ShareMemory_A
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.GroupBox groupBox7;
+        private System.Windows.Forms.Button Btn_SendToFormMemory;
     }
 }
 

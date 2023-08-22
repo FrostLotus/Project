@@ -37,20 +37,22 @@ namespace ShareMemory_B
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.Btn_SendToFormMemory = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.button3 = new System.Windows.Forms.Button();
             this.textBox2 = new System.Windows.Forms.TextBox();
-            this.groupBox7 = new System.Windows.Forms.GroupBox();
-            this.Btn_SendToFormMemory = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.groupBox6.SuspendLayout();
-            this.groupBox4.SuspendLayout();
             this.groupBox7.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -71,7 +73,7 @@ namespace ShareMemory_B
             this.button1.TabIndex = 1;
             this.button1.Text = "傳送資料至ShareMemory";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.btn_Write_Click);
+            this.button1.Click += new System.EventHandler(this.Btn_Write_Click);
             // 
             // textBox1
             // 
@@ -89,7 +91,7 @@ namespace ShareMemory_B
             this.button2.TabIndex = 3;
             this.button2.Text = "從ShareMemory讀取資料";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.btn_Read_Click);
+            this.button2.Click += new System.EventHandler(this.Btn_Read_Click);
             // 
             // groupBox1
             // 
@@ -126,6 +128,8 @@ namespace ShareMemory_B
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.label4);
+            this.groupBox5.Controls.Add(this.label3);
             this.groupBox5.Controls.Add(this.groupBox6);
             this.groupBox5.Controls.Add(this.groupBox7);
             this.groupBox5.Controls.Add(this.groupBox4);
@@ -135,6 +139,26 @@ namespace ShareMemory_B
             this.groupBox5.TabIndex = 7;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "SendMessage";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("新細明體", 14F);
+            this.label4.Location = new System.Drawing.Point(230, 208);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(146, 19);
+            this.label4.TabIndex = 8;
+            this.label4.Text = "SandMessage內容";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("新細明體", 14F);
+            this.label3.Location = new System.Drawing.Point(230, 151);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(150, 19);
+            this.label3.TabIndex = 7;
+            this.label3.Text = "ShareMemory內容";
             // 
             // groupBox6
             // 
@@ -157,35 +181,6 @@ namespace ShareMemory_B
             this.label2.TabIndex = 1;
             this.label2.Text = "按 Button 開始讀取及回應…";
             // 
-            // groupBox4
-            // 
-            this.groupBox4.Controls.Add(this.button3);
-            this.groupBox4.Controls.Add(this.textBox2);
-            this.groupBox4.Location = new System.Drawing.Point(6, 21);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(186, 107);
-            this.groupBox4.TabIndex = 4;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "傳送Message";
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(38, 24);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(101, 41);
-            this.button3.TabIndex = 0;
-            this.button3.Text = "傳送資料至SandMessage";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.btn_Send_Click);
-            // 
-            // textBox2
-            // 
-            this.textBox2.Location = new System.Drawing.Point(6, 71);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(172, 22);
-            this.textBox2.TabIndex = 2;
-            this.textBox2.Text = "to A Message";
-            // 
             // groupBox7
             // 
             this.groupBox7.Controls.Add(this.Btn_SendToFormMemory);
@@ -206,6 +201,35 @@ namespace ShareMemory_B
             this.Btn_SendToFormMemory.UseVisualStyleBackColor = true;
             this.Btn_SendToFormMemory.Click += new System.EventHandler(this.Btn_SendToFormMemory_Click);
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.button3);
+            this.groupBox4.Controls.Add(this.textBox2);
+            this.groupBox4.Location = new System.Drawing.Point(6, 21);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(186, 107);
+            this.groupBox4.TabIndex = 4;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "傳送Message";
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(38, 24);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(101, 41);
+            this.button3.TabIndex = 0;
+            this.button3.Text = "傳送資料至SandMessage";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.Btn_Send_Click);
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(6, 71);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(172, 22);
+            this.textBox2.TabIndex = 2;
+            this.textBox2.Text = "to A Message";
+            // 
             // Form_B
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -221,11 +245,12 @@ namespace ShareMemory_B
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
+            this.groupBox7.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
-            this.groupBox7.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -247,6 +272,8 @@ namespace ShareMemory_B
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.GroupBox groupBox7;
         private System.Windows.Forms.Button Btn_SendToFormMemory;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label3;
     }
 }
 
