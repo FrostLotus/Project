@@ -41,9 +41,10 @@ namespace DataBaseTest
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.Dgv_Product = new System.Windows.Forms.DataGridView();
             this.label2 = new System.Windows.Forms.Label();
-            this.treeView1 = new System.Windows.Forms.TreeView();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.label1 = new System.Windows.Forms.Label();
+            this.Tv_DataBaseList = new System.Windows.Forms.TreeView();
+            this.Dgv_DataTable = new System.Windows.Forms.DataGridView();
+            this.Lab_DataTable = new System.Windows.Forms.Label();
+            this.Btn_FrashDataTable = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Dgv_Customers)).BeginInit();
@@ -53,7 +54,7 @@ namespace DataBaseTest
             ((System.ComponentModel.ISupportInitialize)(this.Dgv_Orders)).BeginInit();
             this.tabPage4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Dgv_Product)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Dgv_DataTable)).BeginInit();
             this.SuspendLayout();
             // 
             // Btn_Connect
@@ -82,7 +83,7 @@ namespace DataBaseTest
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage4);
-            this.tabControl1.Location = new System.Drawing.Point(1143, 102);
+            this.tabControl1.Location = new System.Drawing.Point(1027, 41);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(639, 426);
@@ -175,39 +176,51 @@ namespace DataBaseTest
             this.label2.TabIndex = 5;
             this.label2.Text = "能存取之資料庫";
             // 
-            // treeView1
+            // Tv_DataBaseList
             // 
-            this.treeView1.Location = new System.Drawing.Point(12, 203);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(224, 245);
-            this.treeView1.TabIndex = 6;
+            this.Tv_DataBaseList.Location = new System.Drawing.Point(12, 203);
+            this.Tv_DataBaseList.Name = "Tv_DataBaseList";
+            this.Tv_DataBaseList.Size = new System.Drawing.Size(224, 245);
+            this.Tv_DataBaseList.TabIndex = 6;
+            this.Tv_DataBaseList.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.Tv_DataBaseList_NodeMouseDoubleClick);
             // 
-            // dataGridView1
+            // Dgv_DataTable
             // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(312, 42);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(756, 479);
-            this.dataGridView1.TabIndex = 7;
+            this.Dgv_DataTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.Dgv_DataTable.Location = new System.Drawing.Point(251, 26);
+            this.Dgv_DataTable.Name = "Dgv_DataTable";
+            this.Dgv_DataTable.RowTemplate.Height = 24;
+            this.Dgv_DataTable.Size = new System.Drawing.Size(659, 405);
+            this.Dgv_DataTable.TabIndex = 7;
             // 
-            // label1
+            // Lab_DataTable
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(310, 27);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(89, 12);
-            this.label1.TabIndex = 8;
-            this.label1.Text = "請先選擇資料表";
+            this.Lab_DataTable.AutoSize = true;
+            this.Lab_DataTable.Location = new System.Drawing.Point(249, 11);
+            this.Lab_DataTable.Name = "Lab_DataTable";
+            this.Lab_DataTable.Size = new System.Drawing.Size(89, 12);
+            this.Lab_DataTable.TabIndex = 8;
+            this.Lab_DataTable.Text = "請先選擇資料表";
+            // 
+            // Btn_FrashDataTable
+            // 
+            this.Btn_FrashDataTable.Location = new System.Drawing.Point(251, 437);
+            this.Btn_FrashDataTable.Name = "Btn_FrashDataTable";
+            this.Btn_FrashDataTable.Size = new System.Drawing.Size(105, 38);
+            this.Btn_FrashDataTable.TabIndex = 9;
+            this.Btn_FrashDataTable.Text = "更新修改值";
+            this.Btn_FrashDataTable.UseVisualStyleBackColor = true;
+            this.Btn_FrashDataTable.Click += new System.EventHandler(this.Btn_FrashDataTable_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1202, 536);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.dataGridView1);
-            this.Controls.Add(this.treeView1);
+            this.Controls.Add(this.Btn_FrashDataTable);
+            this.Controls.Add(this.Lab_DataTable);
+            this.Controls.Add(this.Dgv_DataTable);
+            this.Controls.Add(this.Tv_DataBaseList);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.Btn_Read);
@@ -223,7 +236,7 @@ namespace DataBaseTest
             ((System.ComponentModel.ISupportInitialize)(this.Dgv_Orders)).EndInit();
             this.tabPage4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.Dgv_Product)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Dgv_DataTable)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -243,9 +256,10 @@ namespace DataBaseTest
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.DataGridView Dgv_Product;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TreeView treeView1;
-        private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TreeView Tv_DataBaseList;
+        private System.Windows.Forms.DataGridView Dgv_DataTable;
+        private System.Windows.Forms.Label Lab_DataTable;
+        private System.Windows.Forms.Button Btn_FrashDataTable;
     }
 }
 

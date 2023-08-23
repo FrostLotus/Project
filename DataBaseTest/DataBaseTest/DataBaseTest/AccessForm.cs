@@ -56,11 +56,7 @@ namespace DataBaseTest
             {
                 MessageBox.Show(ex.Message, "OPEN", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-
         }
-
-
         private void Fst_Layer_Set(SqlConnection scnn, List<string> ds)
         {
             string squery = $"SELECT * FROM sys.databases";//選所有資料庫

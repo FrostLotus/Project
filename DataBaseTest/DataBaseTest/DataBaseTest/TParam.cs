@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
 using System.Windows.Forms;
+using System.Data;
 
 namespace DataBaseTest
 {
@@ -36,6 +37,10 @@ namespace DataBaseTest
         public static bool bIntegrated_Security = true;
         //-------------------------------------------
         /// <summary>
+        /// 選取資料表容器
+        /// </summary>
+        public static DataSet SQLDataSet = new DataSet();
+        /// <summary>
         /// [TEST]將資料庫與資料表包為樹狀結構
         /// </summary>
         public static System.Windows.Forms.TreeView treeView;
@@ -65,13 +70,38 @@ namespace DataBaseTest
             sTable = new List<string>();
             
         }
+        /// <summary>
+        /// SqlConnectionStringBuilder設定
+        /// </summary>
+        /// SqlConnectionStringBuilder
+        /// <param name="ConSB"></param>
         public static void Build_SqlConSB()
         {
+            //基礎型
+            sqlConSB = new SqlConnectionStringBuilder
+            {
+                DataSource = sDataSource,
+                //InitialCatalog = sInitialCatalog,
+                UserID = sUserID,
+                Password = sPassword,
+                IntegratedSecurity = true
+            };
+        }
+        /// <summary>
+        /// SqlConnectionStringBuilder設定
+        /// </summary>
+        /// SqlConnectionStringBuilder
+        /// <param name="ConSB"></param>
+        /// 帶InitialCatalog
+        /// <param name="InCat"></param>
+        public static void Build_SqlConSB(string InCat)
+        {
+            //帶InitialCatalog
             sqlConSB = new SqlConnectionStringBuilder
             {
                 //建立之系統OK
                 DataSource = sDataSource,
-                InitialCatalog = sInitialCatalog,
+                InitialCatalog = InCat,
                 UserID = sUserID,
                 Password = sPassword,
                 IntegratedSecurity = true
