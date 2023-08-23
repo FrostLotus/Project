@@ -12,12 +12,11 @@ using System.Windows.Forms;
 
 namespace DataBaseTest
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         
         //@"Data Source=AOI-142\\SQLEXPRESS;Initial Catalog=MVC_TestDB;User ID=AOI;Password = aoi0817;"(string)
-        
-
+     
         public DataSet SQLDataSet = new DataSet();
 
         public class CustomersDB
@@ -55,23 +54,20 @@ namespace DataBaseTest
             public string InitDate { get; set; }
         }
         //-----------------------
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
-            TParam.sqlConSB = new SqlConnectionStringBuilder()
+
+            AccessForm form = new AccessForm();
+            if (form.ShowDialog() == DialogResult.OK)
             {
-                //建立之系統OK
-                DataSource = TParam.sDataSource,
-                InitialCatalog = TParam.sInitialCatalog,
-                UserID = TParam.sUserID,
-                Password = TParam.sPassword
-            };
-            Stopwatch swStopwatch = new Stopwatch();
-            swStopwatch.Restart();
-            All_dgv_ReFlash();
-            swStopwatch.Stop();
-            TimeSpan trim = swStopwatch.Elapsed;
-            Console.WriteLine("迴圈1次時間: " + trim + "\n目前時間: " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
+                TParam.CopyTreeNodes(TParam.treeView.Nodes, treeView1.Nodes);
+            }
+            
+
+           
+            //All_dgv_ReFlash();
+            
         }
         private void All_dgv_ReFlash()
         {
