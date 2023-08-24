@@ -22,7 +22,7 @@ namespace DataBaseTest
         /// <summary>
         /// 指定資料庫名稱
         /// </summary>
-        public static string sInitialCatalog="";// = "MVC_TestDB";
+        public static string sInitialCatalog = "";// = "MVC_TestDB";
         /// <summary>
         /// 使用者ID
         /// </summary>
@@ -39,7 +39,7 @@ namespace DataBaseTest
         /// <summary>
         /// 選取資料表容器
         /// </summary>
-        public static DataSet SQLDataSet = new DataSet();
+        public static DataSet SQLDataSet;
         /// <summary>
         /// [TEST]將資料庫與資料表包為樹狀結構
         /// </summary>
@@ -56,6 +56,15 @@ namespace DataBaseTest
         /// 對應資料庫之資料表名稱列表
         /// </summary>
         public static List<string> sTable;//之後若改為不同資料表需要靠List方式來鍵入所有資料表名稱
+        /// <summary>
+        /// 修改前列數
+        /// </summary>
+        public static int iPreRowCount;
+        /// <summary>
+        /// 
+        /// </summary>
+        public static string sPreDataTable;
+
         //目前先如下
         public static string sTable_Customers = "Table_Customers";
         public static string sTable_Orderdetail = "Table_Orderdetial";
@@ -64,11 +73,15 @@ namespace DataBaseTest
         //=================================================================
         public static void Init()
         {
+            SQLDataSet = new DataSet();
             treeView = new TreeView();
             sFullDataSet = new List<List<string>>();
             sDataSet = new List<string>();
             sTable = new List<string>();
-            
+
+            iPreRowCount = 0;
+            sPreDataTable = "";
+
         }
         /// <summary>
         /// SqlConnectionStringBuilder設定
@@ -81,27 +94,23 @@ namespace DataBaseTest
             sqlConSB = new SqlConnectionStringBuilder
             {
                 DataSource = sDataSource,
-                //InitialCatalog = sInitialCatalog,
+
                 UserID = sUserID,
                 Password = sPassword,
                 IntegratedSecurity = true
             };
         }
         /// <summary>
-        /// SqlConnectionStringBuilder設定
+        /// SqlConnectionStringBuilder設定(帶InitialCatalog)
         /// </summary>
-        /// SqlConnectionStringBuilder
-        /// <param name="ConSB"></param>
-        /// 帶InitialCatalog
-        /// <param name="InCat"></param>
-        public static void Build_SqlConSB(string InCat)
+        /// <param name="sInitialCatalog">InitialCatalog</param>
+        public static void Build_SqlConSB(string sInitialCatalog)
         {
             //帶InitialCatalog
             sqlConSB = new SqlConnectionStringBuilder
             {
-                //建立之系統OK
                 DataSource = sDataSource,
-                InitialCatalog = InCat,
+                InitialCatalog = sInitialCatalog,
                 UserID = sUserID,
                 Password = sPassword,
                 IntegratedSecurity = true

@@ -45,6 +45,7 @@ namespace DataBaseTest
             this.Dgv_DataTable = new System.Windows.Forms.DataGridView();
             this.Lab_DataTable = new System.Windows.Forms.Label();
             this.Btn_FrashDataTable = new System.Windows.Forms.Button();
+            this.Lab_Rsult = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Dgv_Customers)).BeginInit();
@@ -192,6 +193,8 @@ namespace DataBaseTest
             this.Dgv_DataTable.RowTemplate.Height = 24;
             this.Dgv_DataTable.Size = new System.Drawing.Size(659, 405);
             this.Dgv_DataTable.TabIndex = 7;
+            this.Dgv_DataTable.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.Dgv_DataTable_UserDeletedRow);
+            this.Dgv_DataTable.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.Dgv_DataTable_UserDeletingRow);
             // 
             // Lab_DataTable
             // 
@@ -212,12 +215,22 @@ namespace DataBaseTest
             this.Btn_FrashDataTable.UseVisualStyleBackColor = true;
             this.Btn_FrashDataTable.Click += new System.EventHandler(this.Btn_FrashDataTable_Click);
             // 
+            // Lab_Rsult
+            // 
+            this.Lab_Rsult.AutoSize = true;
+            this.Lab_Rsult.Location = new System.Drawing.Point(362, 450);
+            this.Lab_Rsult.Name = "Lab_Rsult";
+            this.Lab_Rsult.Size = new System.Drawing.Size(56, 12);
+            this.Lab_Rsult.TabIndex = 8;
+            this.Lab_Rsult.Text = "共影響:列";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1202, 536);
             this.Controls.Add(this.Btn_FrashDataTable);
+            this.Controls.Add(this.Lab_Rsult);
             this.Controls.Add(this.Lab_DataTable);
             this.Controls.Add(this.Dgv_DataTable);
             this.Controls.Add(this.Tv_DataBaseList);
@@ -260,6 +273,7 @@ namespace DataBaseTest
         private System.Windows.Forms.DataGridView Dgv_DataTable;
         private System.Windows.Forms.Label Lab_DataTable;
         private System.Windows.Forms.Button Btn_FrashDataTable;
+        private System.Windows.Forms.Label Lab_Rsult;
     }
 }
 
