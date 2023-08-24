@@ -14,46 +14,6 @@ namespace DataBaseTest
 {
     public partial class MainForm : Form
     {
-
-        //@"Data Source=AOI-142\\SQLEXPRESS;Initial Catalog=MVC_TestDB;User ID=AOI;Password = aoi0817;"(string)
-
-
-
-        public class CustomersDB
-        {
-            public string Id { get; set; }
-            public string Name { get; set; }
-            public string Tel { get; set; }
-            public string Address { get; set; }
-            public string InitDate { get; set; }
-        }
-        public class OrderdetailDB
-        {
-            public string Id { get; set; }
-            public string OrderID { get; set; }
-            public string ProductID { get; set; }
-            public string Amount { get; set; }
-            public string Price { get; set; }
-            public string Total { get; set; }
-            public string Memo { get; set; }
-            public string InitDate { get; set; }
-        }
-        public class OrdersDB
-        {
-            public string Id { get; set; }
-            public string CustomerID { get; set; }
-            public string Total { get; set; }
-            public string InitDate { get; set; }
-
-        }
-        public class ProductDB
-        {
-            public string Id { get; set; }
-            public string Name { get; set; }
-            public string Price { get; set; }
-            public string InitDate { get; set; }
-        }
-        //-----------------------
         public MainForm()
         {
             InitializeComponent();
@@ -63,17 +23,19 @@ namespace DataBaseTest
             {
                 TParam.CopyTreeNodes(TParam.treeView.Nodes, Tv_DataBaseList.Nodes);
             }
-            //test
-            //TParam.Build_SqlConSB("MVC_TestDB");
-            //All_dgv_ReFlash();
-
         }
-        private void Set_Data_To_DataTable(string tableName, DataSet dataset, out int RowCount)
+        /// <summary>
+        /// 鍵入資料表進 DataSet中
+        /// </summary>
+        /// <param name="tableName">資料表名稱</param>
+        /// <param name="dataset">目標快取資料集</param>
+        /// <param name="nowRowCount">資料表Row數目</param>
+        private void SELECT_Data_To_DataTable(string tableName, DataSet dataset, out int nowRowCount)
         {
             using (SqlConnection cnn = new SqlConnection(TParam.sqlConSB.ConnectionString))
             {
                 cnn.Open();
-                RowCount = 0;
+                nowRowCount = 0;
                 string squery = $"SELECT * FROM {tableName}";
                 using (SqlCommand command = new SqlCommand(squery, cnn))
                 {
@@ -86,7 +48,7 @@ namespace DataBaseTest
                                 dataset.Tables[tableName].Clear();
                             }
                             adapter.Fill(dataset, tableName);
-                            RowCount = dataset.Tables[tableName].Rows.Count;
+                            nowRowCount = dataset.Tables[tableName].Rows.Count;
                         }
                         catch (Exception ex)
                         {
@@ -98,12 +60,18 @@ namespace DataBaseTest
                 cnn.Dispose();
             }
         }
-        private void Dgv_SetValue(DataGridView dgv, string tableName, DataSet dataset)
+        /// <summary>
+        /// 更新對應資料進儲存資料庫
+        /// </summary>
+        /// <param name="dgv">顯示之DataGirdView</param>
+        /// <param name="tableName">資料表名稱</param>
+        private void UPDATE_Data_To_DataTable(DataGridView dgv,string tableName)
         {
             #region 更新
             using (SqlConnection cnn = new SqlConnection(TParam.sqlConSB.ConnectionString))
             {
                 cnn.Open();
+
                 for (int i = 0; i < dgv.Rows.Count - 1; i++)
                 {
                     if (TParam.iPreRowCount > dgv.Rows[i].Index)//小於原值為新增
@@ -131,7 +99,14 @@ namespace DataBaseTest
                 cnn.Dispose();
             }
             #endregion
-
+        }
+        /// <summary>
+        /// 新增對應資料進儲存資料庫
+        /// </summary>
+        /// <param name="dgv">顯示之DataGirdView</param>
+        /// <param name="tableName">資料表名稱</param>
+        private void INSERT_Data_To_DataTable(DataGridView dgv, string tableName)
+        {
             #region 新增
             using (SqlConnection cnn = new SqlConnection(TParam.sqlConSB.ConnectionString))
             {
@@ -160,50 +135,47 @@ namespace DataBaseTest
                 cnn.Dispose();
             }
             #endregion
-
-            //原值讀回來
-            Set_Data_To_DataTable(tableName, dataset, out TParam.iPreRowCount);
         }
-        private void Btn_Connect_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                using (SqlConnection cnn = new SqlConnection(TParam.sqlConSB.ConnectionString))
-                {
-                    cnn.Open();
-                    MessageBox.Show("資料庫開啟成功!");
-                    cnn.Close();//可不用 using會藉由 IDisposable 清除
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "OPEN", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-        private void Btn_Read_Click(object sender, EventArgs e)
+        /// <summary>
+        /// 從儲存資料庫刪除對應資料
+        /// </summary>
+        /// <param name="Where_Row_Value">目標Row標號</param>
+        private void DELETE_Data_To_DataTable(DataGridView dgv)
         {
             using (SqlConnection cnn = new SqlConnection(TParam.sqlConSB.ConnectionString))
             {
                 cnn.Open();
-
-                string squery = $"SELECT address FROM {TParam.sTable_Customers}";
-                using (SqlCommand command = new SqlCommand(squery, cnn))
+                foreach (DataGridViewRow row in dgv.SelectedRows)
                 {
-                    using (SqlDataReader reader = command.ExecuteReader())
+                    int id = (int)row.Cells["id"].Value;
+                    string squery = $"DELETE {TParam.sPreDataTable} WHERE id = @id";
+                    using (SqlCommand command = new SqlCommand(squery, cnn))
                     {
-                        int address = reader.GetOrdinal("Address");
+                        command.Parameters.AddWithValue("@id", id);
 
-                        while (reader.Read())
-                        {
-                            Console.WriteLine(reader.GetString(address));
-                        }
+                        command.ExecuteNonQuery();
                     }
                 }
-                cnn.Close();//可不用 using會藉由 IDisposable 清除
+                cnn.Close();
                 cnn.Dispose();
             }
         }
-
+        /// <summary>
+        ///  更新與新增對應資料進儲存資料庫 並刷新快取資料集
+        /// </summary>
+        /// <param name="dgv">顯示之DataGirdView</param>
+        /// <param name="tableName">資料表名稱</param>
+        /// <param name="dataset">目標快取資料集</param>
+        private void Dgv_SetValue(DataGridView dgv, string tableName, DataSet dataset)
+        {
+            //更新(修改)
+            UPDATE_Data_To_DataTable(dgv, tableName);
+            //新增
+            INSERT_Data_To_DataTable(dgv, tableName);
+            //原值讀回來
+            SELECT_Data_To_DataTable(tableName, dataset, out TParam.iPreRowCount);
+        }
+        //----------------------------------------------------------------
         private void Tv_DataBaseList_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             int BaseNode = 1;
@@ -214,13 +186,10 @@ namespace DataBaseTest
                 string sDataTable = Tv_DataBaseList.SelectedNode.Text;//資料表名稱
                 string sDataBase = Tv_DataBaseList.SelectedNode.Parent.Text;//資料庫名稱
                 TParam.Build_SqlConSB(sDataBase);//設定指定資料表位置
-                Set_Data_To_DataTable(sDataTable, TParam.SQLDataSet, out TParam.iPreRowCount);//鍵入資料表資料
+                SELECT_Data_To_DataTable(sDataTable, TParam.SQLDataSet, out TParam.iPreRowCount);//鍵入資料表資料
                 Dgv_DataTable.DataSource = TParam.SQLDataSet.Tables[sDataTable];//輸出至DataGirdView
                 Lab_DataTable.Text = sDataTable;//顯示資料表標籤名稱
                 TParam.sPreDataTable = sDataTable;//紀錄選取資料表
-
-
-
             }
         }
         private void Btn_FrashDataTable_Click(object sender, EventArgs e)
@@ -235,10 +204,9 @@ namespace DataBaseTest
                 Lab_DataTable.Text = "未選取資料表";
             }
         }
-
         private void Dgv_DataTable_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
-            //若執行delete
+            //若執行delete 判斷
             if (MessageBox.Show("是否刪除選取之列並更新", $"資料表: {TParam.sPreDataTable}", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
             {
                 e.Cancel = true;//不刪除
@@ -246,31 +214,13 @@ namespace DataBaseTest
             else
             {
                 e.Cancel = false;//刪除
-
-                //e.Row
-                using (SqlConnection cnn = new SqlConnection(TParam.sqlConSB.ConnectionString))
-                {
-                    cnn.Open();
-                    int id = (int)e.Row.Cells["id"].Value;
-                    string squery = $"DELETE {TParam.sPreDataTable} WHERE id = @id";
-                    using (SqlCommand command = new SqlCommand(squery, cnn))
-                    {
-                        command.Parameters.AddWithValue("@id", id);
-
-                        command.ExecuteNonQuery();
-                    }
-                    cnn.Close();
-                    cnn.Dispose();
-                }
+                DELETE_Data_To_DataTable(Dgv_DataTable);
             }
         }
-
         private void Dgv_DataTable_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
         {
-            ///已結束刪除
-            //更新資料表與DataGridView
-            Set_Data_To_DataTable(TParam.sPreDataTable, TParam.SQLDataSet, out TParam.iPreRowCount);
-            Console.WriteLine("delete done");
+            //已結束刪除 更新資料表與DataGridView
+            SELECT_Data_To_DataTable(TParam.sPreDataTable, TParam.SQLDataSet, out TParam.iPreRowCount);
 
         }
     }

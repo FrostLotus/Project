@@ -43,7 +43,7 @@ namespace DataBaseTest
                 using (SqlConnection cnn = new SqlConnection(TParam.sqlConSB.ConnectionString))
                 {
                     cnn.Open();
-                    MessageBox.Show("資料庫開啟成功!");
+                    //MessageBox.Show("資料庫開啟成功!");
                     Fst_Layer_Set(cnn, TParam.sDataSet);
                     Snd_Layer_Set(cnn, TParam.sDataSet);
 
@@ -102,5 +102,6 @@ namespace DataBaseTest
 
             }
         }
+
     }
 }
