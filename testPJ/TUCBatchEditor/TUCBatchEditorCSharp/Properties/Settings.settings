@@ -1,0 +1,15 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="TUCBatchEditorCSharp.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="T4" Type="System.String" Scope="User">
+      <Value Profile="(Default)">DRIVER={SQL Server};SERVER=192.168.2.104;UID=sa;PWD=80689917;Database=T4;</Value>
+    </Setting>
+    <Setting Name="T6" Type="System.String" Scope="User">
+      <Value Profile="(Default)">DRIVER={SQL Server};SERVER=192.168.2.104;UID=sa;PWD=80689917;Database=T4;;</Value>
+    </Setting>
+    <Setting Name="DefaultDB" Type="System.String" Scope="User">
+      <Value Profile="(Default)">DRIVER={SQL Server};SERVER=localhost;UID=sa;PWD=80689917;Database=Production_Board_YINGHUA;</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
