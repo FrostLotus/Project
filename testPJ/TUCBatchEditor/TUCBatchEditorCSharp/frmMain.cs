@@ -284,7 +284,7 @@ namespace TUCBatchEditorCSharp
         public const int WM_TUC_MSG = 0x8000 + 2000;//WM_APP+2000
         public const int WM_TUC_SHOW_CMD = 0x8000 + 2001;//WM_APP+2001
         private bool IsAOIMode { get; set; } //AOI 模式, 將AOI編輯工單view蓋住
-        private bool m_Aoi_ShowHide { get; set; } //基本上為true
+        private bool m_Aoi_ShowHide { get; set; } //MainForm用 基本上為true
         private List<frmBatchView> m_lsBatchView = new List<frmBatchView>(); //AOI模式下支援多螢幕顯示
         private List<HandleObject> m_lsHandle = new List<HandleObject>(); //登記handle, 避免ui移到下方
         
@@ -293,16 +293,16 @@ namespace TUCBatchEditorCSharp
             //Get the top-most window in the desktop
             if(xForm.Visible)
             {
-                IntPtr window = GetTopWindow(GetDesktopWindow());
+                IntPtr window = GetTopWindow(GetDesktopWindow());//取得指定最上層視窗控制碼
                 do
                 {
-                    if (IsWindowVisible(window))
+                    if (IsWindowVisible(window))//有無隱藏
                     {
                         RECT rct = new RECT();
                         GetWindowRect(window, ref rct);
                         Rectangle rcWnd = new Rectangle(rct.Left, rct.Top, (rct.Right - rct.Left), (rct.Bottom - rct.Top));
                         Rectangle rcForm = new Rectangle(xForm.Location.X, xForm.Location.Y, xForm.Size.Width, xForm.Size.Height);
-                        if (rcForm.IntersectsWith(rcWnd) /*&& !m_lsHandle.Any(x=> x.xHandle == window)*/) //find overlap window
+                        if (rcForm.IntersectsWith(rcWnd) /*&& !m_lsHandle.Any(x=> x.xHandle == window)*/) //find overlap window 有touch到
                         {
                             if (window == Handle || m_lsHandle.Any(x => x.xCtrl.IsDisposed == false && x.xCtrl.Handle == window))
                             {
@@ -354,17 +354,17 @@ namespace TUCBatchEditorCSharp
             int nWinHandle = FindWindow(null, "AOI Master"); //找AOI Master
             //RECT rc = new RECT();
             long nWndStyle = GetWindowLong((IntPtr)nWinHandle, (int)GetWindowLongCode.GWL_STYLE);//Form訊息
-            if ((nWndStyle & WS_MINIMIZE) == 0)//show WS_MINIMIZE用處??
+            if ((nWndStyle & WS_MINIMIZE) == 0) //AOI Master 有附錄值且 WS_MINIMIZE(視窗最小化)
             {
-                if (m_Aoi_ShowHide)
+                if (m_Aoi_ShowHide)//AOI Master要顯示
                 {
                     if(this.Visible == false)
                         this.Show();
                 }
-                nIndex = 0;
+                nIndex = 0;//count
                 foreach (var xView in m_lsBatchView)
                 {
-                    if (nIndex != 0)
+                    if (nIndex != 0)//主畫面的不處理
                     {    //skip first(it contains in main form
                         if (xView.Get_AOI_ShowHide() && xView.Visible == false)
                         {
@@ -400,13 +400,13 @@ namespace TUCBatchEditorCSharp
             const int nChars = 256;
             System.Text.StringBuilder Buff = new System.Text.StringBuilder(nChars);
 #endif
-            Rectangle rcThis = new Rectangle(this.Location.X, this.Location.Y, this.Size.Width, this.Size.Height);
+            //Rectangle rcThis = new Rectangle(this.Location.X, this.Location.Y, this.Size.Width, this.Size.Height);
 
-            if (NeedMoveWindow(this))//set top most again
+            if (NeedMoveWindow(this))//set top most again 有沒有與最上層視窗衝突 並移動
             {
                 Console.WriteLine("top most again");
                 this.TopMost = true;
-                TopmostEditForm(this);
+                TopmostEditForm(this);//再設定為最上層
             }
             nIndex = 0;
             foreach(var xView in m_lsBatchView)
