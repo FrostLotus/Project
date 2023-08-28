@@ -110,9 +110,18 @@ namespace TUCBatchEditorCSharp
                 }
             }
         }
+        /// <summary>
+        /// 資料庫屬性
+        /// </summary>
         public enum DBProperty
         {
+            /// <summary>
+            /// 資料庫
+            /// </summary>
             DataBase,
+            /// <summary>
+            /// 伺服器
+            /// </summary>
             Server
         }
         public static string GetDBProperty(DBProperty eProperty, string strCon)

@@ -25,7 +25,7 @@ namespace TUCBatchEditorCSharp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("DRIVER={SQL Server};SERVER=192.168.2.104;UID=sa;PWD=80689917;Database=T4;")]
+        [global::System.Configuration.DefaultSettingValueAttribute("DRIVER={SQL Server};SERVER=localhost;UID=T4user;PWD=AOITest0828;Database=T4;")]
         public string T4 {
             get {
                 return ((string)(this["T4"]));
@@ -37,7 +37,7 @@ namespace TUCBatchEditorCSharp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("DRIVER={SQL Server};SERVER=192.168.2.104;UID=sa;PWD=80689917;Database=T4;;")]
+        [global::System.Configuration.DefaultSettingValueAttribute("DRIVER={SQL Server};SERVER=localhost;UID=T4user;PWD=AOITest0828;Database=T4;;")]
         public string T6 {
             get {
                 return ((string)(this["T6"]));
@@ -49,8 +49,8 @@ namespace TUCBatchEditorCSharp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("DRIVER={SQL Server};SERVER=localhost;UID=sa;PWD=80689917;Database=Production_Boar" +
-            "d_YINGHUA;")]
+        [global::System.Configuration.DefaultSettingValueAttribute("DRIVER={SQL Server};SERVER=localhost;UID=T4user;PWD=8AOITest0828;Database=Product" +
+            "ion_Board_YINGHUA;")]
         public string DefaultDB {
             get {
                 return ((string)(this["DefaultDB"]));

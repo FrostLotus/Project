@@ -15,7 +15,6 @@ using TUCBatchEditorCSharp.CustomData;
 using TUCBatchEditorCSharp.Helper;
 namespace TUCBatchEditorCSharp
 {
-
     public enum AOI_CUSTOMERTYPE_
     { 
         CUSTOMER_NONE = 0,
@@ -37,15 +36,22 @@ namespace TUCBatchEditorCSharp
         private DataManagerBase dataManager = null;
         private Rectangle _rcLight = new Rectangle(25, 660, 20, 20);
         bool _DBStatus = false;
-        string m_DBName;
-        string m_Server;
+        string m_DBName;//資料庫名稱
+        string m_Server;//伺服器名稱
         private DB.IEditable m_lastCreate = null;
         DataGridView m_LastSelGridView = null;
         frmAddnEdit m_xEdidForm = null;
-        DB.IEditable m_CurSel = null;
+        private DB.IEditable m_CurSel = null;
         private IHandleRegistry m_xReg = null;
         private bool m_Aoi_ShowHide { get; set; }
         private string strDBCon { get; set; }
+        //-----------------------------------------
+        /// <summary>
+        /// 批次處理視窗顯示
+        /// </summary>
+        /// <param name="strDBCon">資料庫對應名稱</param>
+        /// <param name="xReg">控制項設置</param>
+        /// <param name="eType">預設版型</param>
         public frmBatchView(string strDBCon, IHandleRegistry xReg, AOI_CUSTOMERTYPE_ eType)
         {
             //default use TUC mode
@@ -123,7 +129,7 @@ namespace TUCBatchEditorCSharp
             m_xEdidForm.OnFinishEdit += this.OnFinishEdit;
             m_xEdidForm.OnCancelEdit += this.OnCancelEdit;
             m_xEdidForm.TopMost = true;
-            if(m_xReg != null) m_xReg.AddHandle(m_xEdidForm);
+            if(m_xReg != null) m_xReg.AddEditHandle(m_xEdidForm);
             Console.WriteLine(string.Format("add {0}", m_xEdidForm.Handle));
         }
         private void frmBatchView_Load(object sender, EventArgs e)
