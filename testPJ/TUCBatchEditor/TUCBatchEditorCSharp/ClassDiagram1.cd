@@ -1,0 +1,185 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="TUCBatchEditorCSharp.CustomData.CmdObject" Collapsed="true">
+    <Position X="9" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAAAAAAAAAAAAAAQAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>CustomData\DataManagerBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TUCBatchEditorCSharp.CustomData.DataManagerBase">
+    <Position X="5.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABIAAAAICAAAAAAIAAAAQAAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>CustomData\DataManagerBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="TUCBatchEditorCSharp.CustomData.DataManagerBase2&lt;TBatchClass&gt;" Collapsed="true">
+    <Position X="5" Y="3.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAJIRAAQJCAAAAACIAAQAQIiEICAAABABAAQABAAEAA=</HashCode>
+      <FileName>CustomData\DataManagerBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TUCBatchEditorCSharp.CustomData.TUCData" Collapsed="true">
+    <Position X="2" Y="3.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AABAQAAQAAAAAAAAAAAQAAAAEAAAAgBAAAAAAAAAAAA=</HashCode>
+      <FileName>CustomData\TUCData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TUCBatchEditorCSharp.CustomData.YINGHUAData" Collapsed="true">
+    <Position X="2" Y="6.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AABAQAAAAAAAAAAAAAAQAAAAEAAAAABAAAAAAAAAAAA=</HashCode>
+      <FileName>CustomData\YINGHUAData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TUCBatchEditorCSharp.DB.FieldInfoAttribute" Collapsed="true">
+    <Position X="10.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAgEAAAAAAACAAAAAAA=</HashCode>
+      <FileName>DB\IEditable.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TUCBatchEditorCSharp.DB.TUC.CCDBA" Collapsed="true">
+    <Position X="10.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAIA=</HashCode>
+      <FileName>DB\TUC\CCDBA.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TUCBatchEditorCSharp.DB.TUC.CCDTA" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="12.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAABAAAAAAAAAQAAAQAAgAAAAAEAAACAAAADIA=</HashCode>
+      <FileName>DB\TUC\CCDTA.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="TUCBatchEditorCSharp.DB.YINGHUA.CCDTA" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="14.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAABAAAAARAAAQAAAQAAgAAAAAEAAACAAAADIA=</HashCode>
+      <FileName>DB\YINGHUA\CCDTA.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="TUCBatchEditorCSharp.frmAddnEdit" Collapsed="true">
+    <Position X="12.5" Y="1.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAKAAAAAICQAABEBAADABQASAAABBGwABAAAAACBAAA=</HashCode>
+      <FileName>frmAddnEdit.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TUCBatchEditorCSharp.frmBatchView" BaseTypeListCollapsed="true">
+    <Position X="14.25" Y="1.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>mEAAiggCVCYAgFEQEAGAEQGKUAAgpCCAAAAAEAAIUgA=</HashCode>
+      <FileName>frmBatchView.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.208" />
+  </Class>
+  <Class Name="TUCBatchEditorCSharp.frmMain" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAkBBQBCIhAAwCAACRAEACAAEAoCAEAACAYoCAAAA=</HashCode>
+      <FileName>frmMain.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="TUCBatchEditorCSharp.ODBCHelper" Collapsed="true">
+    <Position X="12.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAEAAAAAAAAAIAAAAAAAAEACAAAAABAAAAA=</HashCode>
+      <FileName>Helper\ODBCHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TUCBatchEditorCSharp.Program" Collapsed="true">
+    <Position X="12.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TUCBatchEditorCSharp.Helper.LogHelper" Collapsed="true">
+    <Position X="10.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAYAAAEAAAAAAAAAAAAAAIAAAAEAAAAA=</HashCode>
+      <FileName>Helper\LogHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TUCBatchEditorCSharp.Properties.Resources" Collapsed="true">
+    <Position X="9" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAwAAAQBAAAIAAAAAAABEAAAAQAAAAAAAAAAAAAAAIA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TUCBatchEditorCSharp.Properties.Settings" Collapsed="true">
+    <Position X="10.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAAAAAAAAAAIAAAAAABAAAAAAAABAAAAQA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TUCBatchEditorCSharp.UI.AoiButton" Collapsed="true">
+    <Position X="9" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAIAAAAAAAAAABAgAAAAAAAAAAAYAAAAAACAAA=</HashCode>
+      <FileName>UI\AoiButton.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="TUCBatchEditorCSharp.CustomData.IDataCallBack" Collapsed="true">
+    <Position X="9" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CustomData\DataManagerBase.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="TUCBatchEditorCSharp.DB.IEditable" Collapsed="true">
+    <Position X="10.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAABAA=</HashCode>
+      <FileName>DB\IEditable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="TUCBatchEditorCSharp.IHandleRegistry" Collapsed="true">
+    <Position X="12.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>frmMain.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="TUCBatchEditorCSharp.CustomData.GridDataType" Collapsed="true">
+    <Position X="10.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAAAAAAAAAAAAAAiAAAAAAAAAAEA=</HashCode>
+      <FileName>CustomData\DataManagerBase.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="TUCBatchEditorCSharp.DB.TUC.STSN_CODE" Collapsed="true">
+    <Position X="12.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAAAAAAAAAAAAAAgAAAAAAAAAAEA=</HashCode>
+      <FileName>DB\TUC\CCDTA.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="TUCBatchEditorCSharp.DB.YINGHUA.STSN_CODE" Collapsed="true">
+    <Position X="9" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAAAAAAAAAAAAAAgAAAAAAAAAAEA=</HashCode>
+      <FileName>DB\YINGHUA\CCDTA.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="TUCBatchEditorCSharp.AOI_CUSTOMERTYPE_" Collapsed="true">
+    <Position X="9" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EBAQRAAAgCAQAAAAAAAgAAAAIACABAAAAAAAAAIAAAA=</HashCode>
+      <FileName>frmBatchView.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Microsoft JhengHei UI" Size="9" />
+</ClassDiagram>

@@ -13,10 +13,16 @@ namespace TUCBatchEditorCSharp
     
     public partial class frmAddnEdit : Form
     {
+        public frmAddnEdit()
+        {
+            InitializeComponent();
+        }
+
         public delegate void dgFinishEdit(FormType eType, DB.IEditable xOld, DB.IEditable xNew);
         public event dgFinishEdit OnFinishEdit = null;
         public delegate void dgCancelEdit();
         public event dgCancelEdit OnCancelEdit = null;
+
         [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
         private static extern IntPtr CreateRoundRectRgn
         (
@@ -27,43 +33,37 @@ namespace TUCBatchEditorCSharp
             int nWidthEllipse, // height of ellipse
             int nHeightEllipse // width of ellipse
          );
-        const int ctHeaderHeight = 50;
-        private bool mouseDown;
-        private Point lastLocation;
-        private Font m_TextFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+        public enum FormType
+        {
+            Add,
+            Edit
+        }
         private enum BTN_TYPE
         {
             OK,
             CANCEL,
             BTN_MAX
         }
+        //----------------
+        private Point lastLocation;
+        private Font m_TextFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
         UI.AoiButton[] m_xBtn = new UI.AoiButton[(int)BTN_TYPE.BTN_MAX];
         /// <summary>
         /// key: Control Name, value: list of data
         /// </summary>
         List<KeyValuePair<string, List<string>>> m_lsComboData;
-        public enum FormType
-        {
-            Add,
-            Edit
-        }
+
         private FormType m_eType { get; set; }
         private DB.IEditable m_xData { get; set; }
-        public frmAddnEdit()
+
+        const int ctHeaderHeight = 50;
+        private bool mouseDown;
+
+        //---------------------------------------------------
+        private void frmAddnEdit_Load(object sender, EventArgs e)
         {
-            InitializeComponent();
-        }
-        /// <summary>
-        /// 顯示表單前須設定表單類型及預設顯示資料
-        /// </summary>
-        /// <param name="eType"></param>
-        /// <param name="xData"></param>
-        /// <param name="lsComboData">key: Control Name, value: list of data</param>
-        public void SetEditParam(FormType eType, DB.IEditable xData, List<KeyValuePair<string, List<string>>> lsComboData)
-        {
-            m_xData = xData;
-            m_eType = eType;
-            m_lsComboData = lsComboData;
+            InitControl();
+            FillDefault();
         }
         private void InitControl()
         {
@@ -75,7 +75,7 @@ namespace TUCBatchEditorCSharp
             int nWidth = 450; //fix width
 
             int nYPos = ctHeaderHeight + 20;
-            foreach(var xAttr in xAttributeList)
+            foreach (var xAttr in xAttributeList)
             {
                 //add label
                 Label xLabel = new Label();
@@ -89,7 +89,7 @@ namespace TUCBatchEditorCSharp
                 this.Controls.Add(xLabel);
 
                 //add control
-                if(xAttr.Value.ControlType == typeof(TextBox))
+                if (xAttr.Value.ControlType == typeof(TextBox))
                 {
                     TextBox xTextBox = new TextBox();
                     xTextBox.Size = new Size(300, 35);
@@ -99,7 +99,7 @@ namespace TUCBatchEditorCSharp
                     xTextBox.TextAlign = HorizontalAlignment.Center;
                     this.Controls.Add(xTextBox);
                 }
-                else if(xAttr.Value.ControlType == typeof(ComboBox))
+                else if (xAttr.Value.ControlType == typeof(ComboBox))
                 {
                     ComboBox xCB = new ComboBox();
                     xCB.Size = new Size(300, 35);
@@ -119,10 +119,10 @@ namespace TUCBatchEditorCSharp
                     //}
                     //else if(m_eType == FormType.Edit)
                     //{
-                        
+
                     //    foreach(var xCBItem in xCB.Items)
                     //    {
-                            
+
                     //    }
                     //}
                     this.Controls.Add(xCB);
@@ -130,12 +130,12 @@ namespace TUCBatchEditorCSharp
                 nYPos += 45;
             }
             //add ok/cancel
-            for(int i=0; i < (int)BTN_TYPE.BTN_MAX; i++)
+            for (int i = 0; i < (int)BTN_TYPE.BTN_MAX; i++)
             {
                 Bitmap xBitmap = null;
                 string strName = "";
                 Point xPoint = new Point(0, nYPos);
-                switch((BTN_TYPE)i)
+                switch ((BTN_TYPE)i)
                 {
                     case BTN_TYPE.OK:
                         xBitmap = Properties.Resources.ok_btn;
@@ -159,11 +159,6 @@ namespace TUCBatchEditorCSharp
             this.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, nWidth, nYPos, 20, 20)); //change to round rect
             this.Size = new Size(nWidth, nYPos);
             this.CenterToScreen();
-        }
-        private void frmAddnEdit_Load(object sender, EventArgs e)
-        {
-            InitControl();
-            FillDefault();
         }
         private void FillDefault()
         {
@@ -198,6 +193,19 @@ namespace TUCBatchEditorCSharp
                 }
             }
         }
+        /// <summary>
+        /// 顯示表單前須設定表單類型及預設顯示資料
+        /// </summary>
+        /// <param name="eType"></param>
+        /// <param name="xData"></param>
+        /// <param name="lsComboData">key: Control Name, value: list of data</param>
+        public void SetEditParam(FormType eType, DB.IEditable xData, List<KeyValuePair<string, List<string>>> lsComboData)
+        {
+            m_xData = xData;
+            m_eType = eType;
+            m_lsComboData = lsComboData;
+        }
+        
         protected override void OnPaint(PaintEventArgs e)
         {
             string strText = "";
@@ -216,7 +224,6 @@ namespace TUCBatchEditorCSharp
             e.Graphics.DrawString(strText, m_TextFont,
                 new SolidBrush(Color.White), 10, 15);
         }
-
         private void frmAddnEdit_MouseMove(object sender, MouseEventArgs e)
         {
             if (mouseDown)
@@ -227,7 +234,6 @@ namespace TUCBatchEditorCSharp
                 this.Update();
             }
         }
-
         private void frmAddnEdit_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Y >= 0 && e.Y <= ctHeaderHeight)
@@ -236,7 +242,6 @@ namespace TUCBatchEditorCSharp
                 lastLocation = e.Location;
             }
         }
-
         private void frmAddnEdit_MouseUp(object sender, MouseEventArgs e)
         {
             mouseDown = false;

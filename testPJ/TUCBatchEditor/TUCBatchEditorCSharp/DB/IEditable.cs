@@ -10,7 +10,15 @@ namespace TUCBatchEditorCSharp.DB
     /// </summary>
     public interface IEditable
     {
+        /// <summary>
+        /// 取得鍵
+        /// </summary>
+        /// <returns></returns>
         string GetKey();
+        /// <summary>
+        /// 取得參數名稱
+        /// </summary>
+        /// <returns></returns>
         string GetName();
     }
     /// <summary>

@@ -11,9 +11,20 @@ using TUCBatchEditorCSharp.Helper;
 
 namespace TUCBatchEditorCSharp
 {
+    /// <summary>
+    /// 控制項註冊
+    /// </summary>
     public interface IHandleRegistry
     {
-        void AddEditHandle(Form xAdd);
+        /// <summary>
+        /// 新增控制項
+        /// </summary>
+        /// <param name="xAdd">目標Form</param>
+        void AddHandle(Form xAdd);
+        /// <summary>
+        /// 移除控制項
+        /// </summary>
+        /// <param name="xRemove">控制項碼</param>
         void RemoveHandle(IntPtr xRemove);
     }
     public partial class frmMain : Form, IHandleRegistry
@@ -277,7 +288,7 @@ namespace TUCBatchEditorCSharp
             /// </summary>
             EditForm
         }
-        //------------------------
+        //---------------------------------------------------
         private Timer m_TopMostTimer;
 
         private const Int64 WS_MINIMIZE = 0x20000000L;//視窗一開始會最小化,?不確定有無用
@@ -415,6 +426,7 @@ namespace TUCBatchEditorCSharp
                 {    //skip first(it contains in main form
                     if (NeedMoveWindow(xView))
                     {
+                        //在每個螢幕單元中將視窗調為最上層最大化
                         Console.WriteLine("top most view again");
                         xView.TopMost = true;
                         TopmostEditForm(xView);
@@ -428,7 +440,7 @@ namespace TUCBatchEditorCSharp
             m_Aoi_ShowHide = false;//不顯示
             this.TopMost = true;//本視窗上層顯示
             Form xForm = null;
-            string strCon = Properties.Settings.Default.DefaultDB;//預設資料庫設定
+            string strCon = Properties.Settings.Default.T4;//預設資料庫設定//defaultDB
 
             #region for top most
             m_TopMostTimer = new Timer();
@@ -512,7 +524,7 @@ namespace TUCBatchEditorCSharp
         private void frmMain_Shown(object sender, EventArgs e)
         {
 #if DEBUG
-            bInit = true;
+            bInit = true;//DEBUG怎都要開啟AOI模式
 #endif
             if (IsAOIMode && bInit == false) //AOI模式要預設隱藏
             {
@@ -560,11 +572,12 @@ namespace TUCBatchEditorCSharp
             else
             base.WndProc(ref m);
         }
+        //-------------------------------------------------
         /// <summary>
         /// 增加新的視窗或控制項
         /// </summary>
         /// <param name="xAdd"控制項增加</param>
-        public void AddEditHandle(Form xAdd)
+        public void AddHandle(Form xAdd)
         {
             m_lsHandle.Add(new HandleObject(HandleType.EditForm, xAdd));
         }

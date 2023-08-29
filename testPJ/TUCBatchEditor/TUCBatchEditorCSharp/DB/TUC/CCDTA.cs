@@ -24,7 +24,7 @@ namespace TUCBatchEditorCSharp.DB.TUC
     /// <summary>
     /// 工單接收檔, CCDTA1(待執行:0)/CCDTA2(執行中:1+已完成:2)
     /// </summary>
-    class CCDTA: IEditable
+    class CCDTA : IEditable
     {
         /// <summary>
         /// 索引值
@@ -44,7 +44,7 @@ namespace TUCBatchEditorCSharp.DB.TUC
         /// <summary>
         /// 參數編碼
         /// </summary>
-        [FieldInfoAttribute("檢測設定", true, true, typeof(ComboBox))]
+        [FieldInfoAttribute("參數編碼", true, true, typeof(ComboBox))]
         public string PARAM { get; set; }
         /// <summary>
         /// 檢測廢品數量
@@ -66,6 +66,7 @@ namespace TUCBatchEditorCSharp.DB.TUC
         /// </summary>
         [FieldInfoAttribute("結束時間", true, false, null)]
         public DateTime ETIME { get; set; }
+
         #region 實作interface
         public string GetKey() { return PDID.ToString(); }
         public string GetName() { return LOTSN; }

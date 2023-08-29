@@ -37,8 +37,8 @@ namespace TUCBatchEditorCSharp
             this.lblUsed = new System.Windows.Forms.Label();
             this.lblUsing = new System.Windows.Forms.Label();
             this.lblUnUsed = new System.Windows.Forms.Label();
-            this.lblStatus = new System.Windows.Forms.Label();
-            this.lblDBStatus = new System.Windows.Forms.Label();
+            this.lbl_Status = new System.Windows.Forms.Label();
+            this.lbl_DBStatus = new System.Windows.Forms.Label();
             this.btnAdd = new UI.AoiButton(Properties.Resources.btn_pg5_add, this.BackColor);
             this.btnEdit = new UI.AoiButton(Properties.Resources.btn_pg3_edit, this.BackColor);
             this.btnRemove = new UI.AoiButton(Properties.Resources.btn_pg3_del, this.BackColor);
@@ -178,33 +178,33 @@ namespace TUCBatchEditorCSharp
             // 
             // lblDBStatus
             // 
-            this.lblDBStatus.AutoSize = true;
-            this.lblDBStatus.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.lblDBStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(93)))), ((int)(((byte)(93)))), ((int)(((byte)(93)))));
-            this.lblDBStatus.Location = new System.Drawing.Point(60, 660);
-            this.lblDBStatus.Name = "lblDBStatus";
-            this.lblDBStatus.Text = "資料庫連線異常";
-            this.lblDBStatus.Size = new System.Drawing.Size(0, 19);
-            this.lblDBStatus.TabIndex = 10;
-            this.lblDBStatus.Visible = true;
+            this.lbl_DBStatus.AutoSize = true;
+            this.lbl_DBStatus.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.lbl_DBStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(93)))), ((int)(((byte)(93)))), ((int)(((byte)(93)))));
+            this.lbl_DBStatus.Location = new System.Drawing.Point(60, 660);
+            this.lbl_DBStatus.Name = "lblDBStatus";
+            this.lbl_DBStatus.Text = "資料庫連線異常";
+            this.lbl_DBStatus.Size = new System.Drawing.Size(0, 19);
+            this.lbl_DBStatus.TabIndex = 10;
+            this.lbl_DBStatus.Visible = true;
             // 
             // lblStatus
             // 
-            this.lblStatus.AutoSize = true;
-            this.lblStatus.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.lblStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(93)))), ((int)(((byte)(93)))), ((int)(((byte)(93)))));
-            this.lblStatus.Location = new System.Drawing.Point(25, 640);
-            this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(0, 19);
-            this.lblStatus.TabIndex = 9;
+            this.lbl_Status.AutoSize = true;
+            this.lbl_Status.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.lbl_Status.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(93)))), ((int)(((byte)(93)))), ((int)(((byte)(93)))));
+            this.lbl_Status.Location = new System.Drawing.Point(25, 640);
+            this.lbl_Status.Name = "lblStatus";
+            this.lbl_Status.Size = new System.Drawing.Size(0, 19);
+            this.lbl_Status.TabIndex = 9;
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(782, 869);
-            this.Controls.Add(this.lblStatus);
-            this.Controls.Add(this.lblDBStatus);
+            this.Controls.Add(this.lbl_Status);
+            this.Controls.Add(this.lbl_DBStatus);
             this.Controls.Add(this.btnRemove);
             this.Controls.Add(this.btnEdit);
             this.Controls.Add(this.btnAdd);
@@ -237,8 +237,8 @@ namespace TUCBatchEditorCSharp
         private UI.AoiButton btnAdd;
         private UI.AoiButton btnEdit;
         private UI.AoiButton btnRemove;
-        private Label lblStatus;
-        private Label lblDBStatus;
+        private Label lbl_Status;
+        private Label lbl_DBStatus;
     }
 }
 

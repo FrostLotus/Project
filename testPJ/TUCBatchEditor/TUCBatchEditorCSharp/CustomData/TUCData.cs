@@ -14,8 +14,7 @@ namespace TUCBatchEditorCSharp.CustomData
     {
         //參數基本檔
         List<DB.TUC.CCDBA> listInsp = new List<DB.TUC.CCDBA>();
-        public TUCData(string strDBCon, IDataCallBack callback)
-            : base(strDBCon, callback)
+        public TUCData(string strDBCon, IDataCallBack callback): base(strDBCon, callback)
         {
 
         }
@@ -43,7 +42,7 @@ namespace TUCBatchEditorCSharp.CustomData
             return strRtn;
         }
         /// <summary>
-        /// 查詢檢測設定
+        /// 查詢CCDBAQuery(ALL)
         /// </summary>
         protected override void DoQueryInsp()
         {

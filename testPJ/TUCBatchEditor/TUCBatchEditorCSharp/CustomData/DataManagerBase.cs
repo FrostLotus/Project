@@ -8,10 +8,22 @@ namespace TUCBatchEditorCSharp.CustomData
 {
     class CmdObject
     {
+        /// <summary>
+        /// 命令類別
+        /// </summary>
         public enum CmdType
         {
+            /// <summary>
+            /// 新增
+            /// </summary>
             Insert,
+            /// <summary>
+            /// 更新
+            /// </summary>
             Update,
+            /// <summary>
+            /// 刪除
+            /// </summary>
             Delete
         }
         /// <summary>
@@ -224,7 +236,7 @@ namespace TUCBatchEditorCSharp.CustomData
                 DoQueryBatch(ref listUsing, GridDataType.Using);
                 DoQueryBatch(ref listUsed, GridDataType.Used);
 
-                DoQueryInsp();
+                DoQueryInsp();//
 #if DEBUG
                 System.Threading.Thread.Sleep(1000);
 #else

@@ -49,8 +49,8 @@ namespace TUCBatchEditorCSharp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("DRIVER={SQL Server};SERVER=localhost;UID=T4user;PWD=8AOITest0828;Database=Product" +
-            "ion_Board_YINGHUA;")]
+        [global::System.Configuration.DefaultSettingValueAttribute("DRIVER={SQL Server};SERVER=localhost;UID=T4user;PWD=AOITest0828;Database=Producti" +
+            "on_Board_YINGHUA;")]
         public string DefaultDB {
             get {
                 return ((string)(this["DefaultDB"]));
