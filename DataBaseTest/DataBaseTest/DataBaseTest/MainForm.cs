@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
+using System.Data.Odbc;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -32,10 +33,10 @@ namespace DataBaseTest
         /// <param name="nowRowCount">資料表Row數目</param>
         private void SELECT_Data_To_DataTable(string tableName, DataSet dataset, out int nowRowCount)
         {
+            nowRowCount = 0;
             using (SqlConnection cnn = new SqlConnection(TParam.sqlConSB.ConnectionString))
             {
                 cnn.Open();
-                nowRowCount = 0;
                 string squery = $"SELECT * FROM {tableName}";
                 using (SqlCommand command = new SqlCommand(squery, cnn))
                 {
@@ -59,6 +60,37 @@ namespace DataBaseTest
                 cnn.Close();//可不用 using會藉由 IDisposable 清除
                 cnn.Dispose();
             }
+            //---------------------------------------
+            //OdbcConnectionStringBuilder strDBCon = new OdbcConnectionStringBuilder
+            //{
+            //    Driver = "AOI-142\\SQLEXPRESS",
+            //    ["SERVER"] = "localhost",
+            //    ["UID"] = "AOI",
+            //    ["PWD"] = "aoi0817",
+            //    ["Database"] = "MVC_TestDB"
+            //};
+            //string strDBCon = "DRIVER ={ SQL Server}; SERVER = localhost; UID = AOI; PWD = aoi0817; Database = MVC_TestDB;";
+            //string strCmd = $"SELECT * FROM {tableName}";
+            //using (OdbcConnection odbcCon = new OdbcConnection(strDBCon.ConnectionString))
+            //{
+            //    using (OdbcDataAdapter odbcAdapter = new OdbcDataAdapter(strCmd, odbcCon))
+            //    {
+            //        try
+            //        {
+            //            if (dataset.Tables.Contains(tableName))
+            //            {
+            //                dataset.Tables[tableName].Clear();
+            //            }
+            //            odbcAdapter.Fill(dataset, tableName);
+            //            nowRowCount = dataset.Tables[tableName].Rows.Count;
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            Console.WriteLine($"{ex.StackTrace}\n\n{ex.Message}");
+            //            MessageBox.Show($"{ex.StackTrace}\n\n{ex.Message}", "Dgv_Flash_By_DataSet", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //        }
+            //    }
+            //}
         }
         /// <summary>
         /// 更新對應資料進儲存資料庫
