@@ -236,7 +236,7 @@ namespace TUCBatchEditorCSharp.CustomData
                 DoQueryBatch(ref listUsing, GridDataType.Using);
                 DoQueryBatch(ref listUsed, GridDataType.Used);
 
-                DoQueryInsp();//
+                DoQueryInsp();//指定繼承資料表全取出(SELECT *)並鍵入指定list當中
 #if DEBUG
                 System.Threading.Thread.Sleep(1000);
 #else
@@ -257,6 +257,7 @@ namespace TUCBatchEditorCSharp.CustomData
                         {
                             case CmdObject.CmdType.Insert:
                                 ODBCHelper.InsertData(strDBCon, xCmdObj.Cmd, xCmdObj.Parameter);
+                                //
                                 break;
                             case CmdObject.CmdType.Update:
                                 ODBCHelper.UpdateData(strDBCon, xCmdObj.Cmd, xCmdObj.Parameter);

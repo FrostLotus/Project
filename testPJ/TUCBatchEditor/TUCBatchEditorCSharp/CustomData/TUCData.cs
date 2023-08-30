@@ -47,11 +47,12 @@ namespace TUCBatchEditorCSharp.CustomData
         protected override void DoQueryInsp()
         {
             var lsCCDBA = new List<DB.TUC.CCDBA>();
-            if (ODBCHelper.QueryData<DB.TUC.CCDBA>(strDBCon, "SELECT * FROM CCDBA", ref lsCCDBA))
+            //strDBCon = Properties.Settings.Default.T4 = DRIVER={SQL Server};SERVER=localhost;UID=T4user;PWD=AOITest0828;Database=T4;
+            if (ODBCHelper.QueryData<DB.TUC.CCDBA>(strDBCon, "SELECT * FROM CCDBA", ref lsCCDBA))//將CCDBA全部讀出來
             {
                 lock (lockQuery)
                 {
-                    listInsp = lsCCDBA;
+                    listInsp = lsCCDBA;//鍵入listInsp
                 }
             }
         }
@@ -64,7 +65,7 @@ namespace TUCBatchEditorCSharp.CustomData
             List<string> lsRtn = null;
             lock (lockQuery)
             {
-                lsRtn = listInsp.Select(x => x.PARAM).ToList();
+                lsRtn = listInsp.Select(x => x.PARAM).ToList();//將CCDBA中的"@PARAM"參數取出變成List鍵入listInsp中
             }
             return lsRtn;
         }
@@ -75,12 +76,14 @@ namespace TUCBatchEditorCSharp.CustomData
         protected override CmdObject GetInsertCmd(DB.IEditable xNew)
         {
             CmdObject xCmd = new CmdObject();
-            xCmd.Type = CmdObject.CmdType.Insert;
+            xCmd.Type = CmdObject.CmdType.Insert;//新增
             xCmd.Cmd = "INSERT INTO CCDTA1(LOTSN,MPN,PARAM,STSN) VALUES (?,?,?,0)";
-            xCmd.Parameter = new OdbcParameter[] { 
-                new OdbcParameter("@LOTSN", ((DB.TUC.CCDTA)xNew).LOTSN),
-                new OdbcParameter("@MPN", ((DB.TUC.CCDTA)xNew).MPN),
-                new OdbcParameter("@PARAM", ((DB.TUC.CCDTA)xNew).PARAM),
+            xCmd.Parameter = new OdbcParameter[] 
+            { 
+                new OdbcParameter("@LOTSN", ((DB.TUC.CCDTA)xNew).LOTSN),//批次號
+                new OdbcParameter("@MPN", ((DB.TUC.CCDTA)xNew).MPN),//料號
+                new OdbcParameter("@PARAM", ((DB.TUC.CCDTA)xNew).PARAM),//參數編碼
+                new OdbcParameter("@STSN",((DB.TUC.CCDTA)xNew).STSN)//狀態碼
             };
             return xCmd;
         }

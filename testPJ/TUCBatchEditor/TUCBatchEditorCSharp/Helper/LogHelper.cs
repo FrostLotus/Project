@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace TUCBatchEditorCSharp.Helper
 {
     class LogHelper
     {
-        static TextWriterTraceListener _DebugLog = new TextWriterTraceListener(System.IO.File.Open(string.Format("{0}_Debug.log", System.Reflection.Assembly.GetExecutingAssembly().GetName().Name), System.IO.FileMode.Append));
-        static TextWriterTraceListener _SystemLog = new TextWriterTraceListener(System.IO.File.Open(string.Format("{0}_System.log", System.Reflection.Assembly.GetExecutingAssembly().GetName().Name), System.IO.FileMode.Append));
-        static TextWriterTraceListener _ErrorLog = new TextWriterTraceListener(System.IO.File.Open(string.Format("{0}_Error.log", System.Reflection.Assembly.GetExecutingAssembly().GetName().Name), System.IO.FileMode.Append));
+        static TextWriterTraceListener _DebugLog = new TextWriterTraceListener(File.Open(string.Format("{0}_Debug.log", System.Reflection.Assembly.GetExecutingAssembly().GetName().Name), System.IO.FileMode.Append));
+        static TextWriterTraceListener _SystemLog = new TextWriterTraceListener(File.Open(string.Format("{0}_System.log", System.Reflection.Assembly.GetExecutingAssembly().GetName().Name), System.IO.FileMode.Append));
+        static TextWriterTraceListener _ErrorLog = new TextWriterTraceListener(File.Open(string.Format("{0}_Error.log", System.Reflection.Assembly.GetExecutingAssembly().GetName().Name), System.IO.FileMode.Append));
 
         public LogHelper()
         {

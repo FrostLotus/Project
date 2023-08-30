@@ -48,8 +48,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomData\DataManagerBase.cs" />
+    <Compile Include="CustomData\TTADATA.cs" />
     <Compile Include="CustomData\TUCData.cs" />
     <Compile Include="CustomData\YINGHUAData.cs" />
+    <Compile Include="DB\TEST\CCD_TEST.cs" />
     <Compile Include="DB\TUC\CCDBA.cs" />
     <Compile Include="DB\TUC\CCDTA.cs" />
     <Compile Include="DB\IEditable.cs" />

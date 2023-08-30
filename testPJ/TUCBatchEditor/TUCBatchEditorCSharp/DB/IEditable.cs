@@ -6,7 +6,7 @@ using System.Text;
 namespace TUCBatchEditorCSharp.DB
 {
     /// <summary>
-    /// 支援編輯畫面
+    /// 控制編輯視窗取得
     /// </summary>
     public interface IEditable
     {

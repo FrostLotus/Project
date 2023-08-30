@@ -13,10 +13,7 @@ namespace TUCBatchEditorCSharp
     
     public partial class frmAddnEdit : Form
     {
-        public frmAddnEdit()
-        {
-            InitializeComponent();
-        }
+        
 
         public delegate void dgFinishEdit(FormType eType, DB.IEditable xOld, DB.IEditable xNew);
         public event dgFinishEdit OnFinishEdit = null;
@@ -60,6 +57,10 @@ namespace TUCBatchEditorCSharp
         private bool mouseDown;
 
         //---------------------------------------------------
+        public frmAddnEdit()
+        {
+            InitializeComponent();
+        }
         private void frmAddnEdit_Load(object sender, EventArgs e)
         {
             InitControl();
@@ -67,8 +68,13 @@ namespace TUCBatchEditorCSharp
         }
         private void InitControl()
         {
-            var xAttributeList = m_xData.GetType().GetProperties().Select(x => x.GetCustomAttributes(typeof(DB.FieldInfoAttribute), false).Select(y => new KeyValuePair<string, DB.FieldInfoAttribute>(x.Name, (DB.FieldInfoAttribute)y))
-                    .FirstOrDefault())
+            var xAttributeList = m_xData.GetType().GetProperties().Select
+                (
+                    x => x.GetCustomAttributes(typeof(DB.FieldInfoAttribute), false).Select
+                    (
+                        y => new KeyValuePair<string, DB.FieldInfoAttribute>(x.Name, (DB.FieldInfoAttribute)y)
+                    ).FirstOrDefault()
+                )
                 .Where(x => x.Value != null && x.Value.Editable)
                 .ToList();
 
@@ -78,25 +84,29 @@ namespace TUCBatchEditorCSharp
             foreach (var xAttr in xAttributeList)
             {
                 //add label
-                Label xLabel = new Label();
-                xLabel.Text = xAttr.Value.Name;
-                xLabel.Name = xAttr.Key;
-                xLabel.Size = new Size(80, 30);
-                xLabel.Location = new Point(20, nYPos);
-                xLabel.Font = m_TextFont;
-                xLabel.ForeColor = Color.FromArgb(93, 93, 93);
-                xLabel.TextAlign = ContentAlignment.MiddleRight;
+                Label xLabel = new Label
+                {
+                    Text = xAttr.Value.Name,
+                    Name = xAttr.Key,
+                    Size = new Size(80, 30),
+                    Location = new Point(20, nYPos),
+                    Font = m_TextFont,
+                    ForeColor = Color.FromArgb(93, 93, 93),
+                    TextAlign = ContentAlignment.MiddleRight
+                };
                 this.Controls.Add(xLabel);
 
                 //add control
                 if (xAttr.Value.ControlType == typeof(TextBox))
                 {
-                    TextBox xTextBox = new TextBox();
-                    xTextBox.Size = new Size(300, 35);
-                    xTextBox.Name = xAttr.Key;
-                    xTextBox.Font = m_TextFont;
-                    xTextBox.Location = new Point(120, nYPos);
-                    xTextBox.TextAlign = HorizontalAlignment.Center;
+                    TextBox xTextBox = new TextBox
+                    {
+                        Size = new Size(300, 35),
+                        Name = xAttr.Key,
+                        Font = m_TextFont,
+                        Location = new Point(120, nYPos),
+                        TextAlign = HorizontalAlignment.Center
+                    };
                     this.Controls.Add(xTextBox);
                 }
                 else if (xAttr.Value.ControlType == typeof(ComboBox))
@@ -201,8 +211,8 @@ namespace TUCBatchEditorCSharp
         /// <param name="lsComboData">key: Control Name, value: list of data</param>
         public void SetEditParam(FormType eType, DB.IEditable xData, List<KeyValuePair<string, List<string>>> lsComboData)
         {
-            m_xData = xData;
             m_eType = eType;
+            m_xData = xData;
             m_lsComboData = lsComboData;
         }
         

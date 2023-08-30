@@ -13,8 +13,7 @@ namespace TUCBatchEditorCSharp.UI
         public Bitmap m_xBitmap { get; set; }
         private PushButtonState m_eState = PushButtonState.Normal;
         
-        public AoiButton()
-            : base()
+        public AoiButton(): base()
         {
 
         }

@@ -12,38 +12,57 @@ namespace TUCBatchEditorCSharp
 {
     class ODBCHelper
     {
+        /// <summary>
+        /// 資料庫屬性
+        /// </summary>
+        public enum DBProperty
+        {
+            /// <summary>
+            /// 資料庫
+            /// </summary>
+            DataBase,
+            /// <summary>
+            /// 伺服器
+            /// </summary>
+            Server
+        }
         public static bool QueryData<T>(string strCon, string strCmd, ref List<T> lsRtn) where T : new()
         {
             lsRtn = new List<T>();
             try
             {
-                OdbcConnection odbcCon = new OdbcConnection(strCon);
-
-                OdbcDataAdapter odbcAdapter = new OdbcDataAdapter(strCmd, odbcCon);
-                DataSet ds = new DataSet();
-                odbcAdapter.Fill(ds);
-                foreach (DataTable ta in ds.Tables)
+                using (OdbcConnection odbcCon = new OdbcConnection(strCon))
                 {
-                    List<T> ls = ta.AsEnumerable().Select(x =>
+                    odbcCon.Open();
+                    using (OdbcDataAdapter odbcAdapter = new OdbcDataAdapter(strCmd, odbcCon))
                     {
-                        T newObj = new T();
-                        foreach (DataColumn col in x.Table.Columns)
+                        DataSet ds = new DataSet();
+                        odbcAdapter.Fill(ds);
+                        foreach (DataTable ta in ds.Tables)
                         {
-                            foreach (var prop in typeof(T).GetProperties())
-                            {
-                                if (prop.Name == col.ColumnName && x.ItemArray[col.Ordinal].GetType() != typeof(DBNull))
+                            List<T> ls = ta.AsEnumerable().Select
+                            (x => 
+                                {T newObj = new T();
+                                foreach (DataColumn col in x.Table.Columns)//每一COL
                                 {
-                                    prop.SetValue(newObj, x.ItemArray[col.Ordinal], null);
-                                    break;
+                                    foreach (var prop in typeof(T).GetProperties())//每一COL對應ROW
+                                    {
+                                        //若名稱與其值type相同且不為null                
+                                        if (prop.Name == col.ColumnName && x.ItemArray[col.Ordinal].GetType() != typeof(DBNull))
+                                        {
+                                            prop.SetValue(newObj, x.ItemArray[col.Ordinal], null);
+                                            break;
+                                        }
+                                    }
                                 }
-                            }
+                                return newObj;}
+                            ).ToList();
+                            lsRtn.AddRange(ls);
                         }
-                        return newObj;
-                    }).ToList();
-                    lsRtn.AddRange(ls);
+                        odbcAdapter.Dispose();
+                    }
+                    odbcCon.Close();
                 }
-                odbcCon.Close();
-                odbcAdapter.Dispose();
             }
             catch (System.Exception ex)
             {
@@ -109,20 +128,6 @@ namespace TUCBatchEditorCSharp
                     }
                 }
             }
-        }
-        /// <summary>
-        /// 資料庫屬性
-        /// </summary>
-        public enum DBProperty
-        {
-            /// <summary>
-            /// 資料庫
-            /// </summary>
-            DataBase,
-            /// <summary>
-            /// 伺服器
-            /// </summary>
-            Server
         }
         public static string GetDBProperty(DBProperty eProperty, string strCon)
         {

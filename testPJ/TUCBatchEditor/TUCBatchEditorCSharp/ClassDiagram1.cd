@@ -79,7 +79,7 @@
   <Class Name="TUCBatchEditorCSharp.frmBatchView" BaseTypeListCollapsed="true">
     <Position X="14.25" Y="1.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>mEAAiggCVCYAgFEQEAGAEQGKUAAgpCCAAAAAEAAIUgA=</HashCode>
+      <HashCode>mFAAiggCVCYAgFEQEAGAEQGKUAAgpCCAAAAAEAAIUgA=</HashCode>
       <FileName>frmBatchView.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.208" />

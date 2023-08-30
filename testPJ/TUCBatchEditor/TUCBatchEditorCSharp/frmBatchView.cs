@@ -110,20 +110,23 @@ namespace TUCBatchEditorCSharp
         private void CreateEditForm()
         {
             m_xEdidForm = new frmAddnEdit();
-            m_xEdidForm.OnFinishEdit += this.OnFinishEdit;
-            m_xEdidForm.OnCancelEdit += this.OnCancelEdit;
+            m_xEdidForm.OnFinishEdit += this.OnFinishEdit;//事件
+            m_xEdidForm.OnCancelEdit += this.OnCancelEdit;//事件
             m_xEdidForm.TopMost = true;//最上最大化
-            if (m_xReg != null) m_xReg.AddHandle(m_xEdidForm);
+            if (m_xReg != null) m_xReg.AddHandle(m_xEdidForm);//加入註冊項
             Console.WriteLine(string.Format("add {0}", m_xEdidForm.Handle));
         }
         private void InitGrid()
         {
             //init gridview
-            var xList = dataManager.GetColumnType().GetProperties()
-                .Select(x => x.GetCustomAttributes(typeof(DB.FieldInfoAttribute), false).Select(y => new KeyValuePair<string, DB.FieldInfoAttribute>(x.Name, (DB.FieldInfoAttribute)y))
-                    .FirstOrDefault())
-                .Where(x => x.Value != null && x.Value.Show)
-                .ToList();
+            var xList = dataManager.GetColumnType().GetProperties().Select
+                (
+                    x => x.GetCustomAttributes(typeof(DB.FieldInfoAttribute), false).Select
+                    (
+                        y => new KeyValuePair<string, DB.FieldInfoAttribute>(x.Name, (DB.FieldInfoAttribute)y)
+                    ).FirstOrDefault()
+                ).Where(x => x.Value != null && x.Value.Show).ToList();
+
             List<DataGridView> lsGrid = new List<DataGridView>() { dgvUnUsed, dgvUsing, dgvUsed };
             lsGrid.ForEach(x => { x.Rows.Clear(); x.Columns.Clear(); });
             foreach (var xCol in xList)
@@ -239,17 +242,16 @@ namespace TUCBatchEditorCSharp
         }
         private void btn_Click(object sender, EventArgs e)
         {
-            if(sender == btnAdd || sender == btnEdit)
+            if(sender == btnAdd || sender == btnEdit)//若按下為新增或編輯
             {
                 if (!m_xEdidForm.Visible)
                 {
                     if (m_xEdidForm.IsDisposed)
                     {
-                        CreateEditForm();
+                        CreateEditForm();//frmAddnEdit
                     }
-
                     List<KeyValuePair<string, List<string>>> lsCombo = new List<KeyValuePair<string, List<string>>>();
-                    lsCombo.Add(new KeyValuePair<string, List<string>>("PARAM", dataManager.GetInspList()));
+                    lsCombo.Add(new KeyValuePair<string, List<string>>("PARAM", dataManager.GetInspList()));//
                     if (sender == btnAdd)
                     {
                         if (m_lastCreate != null)
@@ -260,7 +262,7 @@ namespace TUCBatchEditorCSharp
                     else if (sender == btnEdit)
                     {
                         if (m_CurSel == null) return;
-                        m_xEdidForm.SetEditParam(frmAddnEdit.FormType.Edit, m_CurSel, lsCombo);
+                            m_xEdidForm.SetEditParam(frmAddnEdit.FormType.Edit, m_CurSel, lsCombo);
                     }
 #if EDITFORM_DOMODAL
                     m_xEdidForm.ShowDialog();
