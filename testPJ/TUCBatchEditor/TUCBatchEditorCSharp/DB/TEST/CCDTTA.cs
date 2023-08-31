@@ -10,7 +10,7 @@ namespace TUCBatchEditorCSharp.DB.TTA
     /// <summary>
     /// 測試資料庫
     /// </summary>
-    class CCD_TEST : IEditable
+    class CCDTTA : IEditable
     {
         /// <summary>
         /// 索引值
@@ -23,21 +23,34 @@ namespace TUCBatchEditorCSharp.DB.TTA
         [FieldInfoAttribute("批次號", true, true, typeof(TextBox))]
         public string LOTSN { get; set; }
         /// <summary>
+        /// 料號
+        /// </summary>
+        [FieldInfoAttribute("料號", true, true, typeof(TextBox))]
+        public string MPN { get; set; }
+        /// <summary>
         /// 參數編碼
         /// </summary>
         [FieldInfoAttribute("參數編碼", true, true, typeof(ComboBox))]
         public string PARAM { get; set; }
         /// <summary>
-        /// TEST
+        /// 狀態碼.0 待執行,1執行中,2完成
         /// </summary>
-        [FieldInfoAttribute("TEST", true, true, null)]
-        public int TTA { get; set; }
-
+        [FieldInfoAttribute("狀態碼", false, false, null)]
+        public int STSN { get; set; }
+        /// <summary>
+        /// 開始時間
+        /// </summary>
+        [FieldInfoAttribute("開始時間", true, false, null)]
+        public DateTime STIME { get; set; }
+        /// <summary>
+        /// 結束時間
+        /// </summary>
+        [FieldInfoAttribute("結束時間", true, false, null)]
+        public DateTime ETIME { get; set; }
         public string GetKey()
         {
             return PDID.ToString();
         }
-
         public string GetName()
         {
             return LOTSN;

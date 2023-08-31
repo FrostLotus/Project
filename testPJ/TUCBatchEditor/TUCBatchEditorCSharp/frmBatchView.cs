@@ -30,6 +30,7 @@ namespace TUCBatchEditorCSharp
         CUSTOMER_TUC_PP = 11,		  //台耀 PP
         CUSTOMER_TG = 12,			  //台玻
         CUSTOMER_YINGHUA = 13,		  //盈華
+        CUSTOMER_TTA_TEST = 14        //TEST
     };
     public partial class frmBatchView : Form, IDataCallBack
     {
@@ -48,10 +49,16 @@ namespace TUCBatchEditorCSharp
                     dataManager = new TUCBatchEditorCSharp.CustomData.YINGHUAData(strDBCon, this);
                     break;
                 case AOI_CUSTOMERTYPE_.CUSTOMER_TUC_PP:
+                    dataManager = new TUCBatchEditorCSharp.CustomData.TUCData(strDBCon, this);
+                    break;
+                case AOI_CUSTOMERTYPE_.CUSTOMER_TTA_TEST:
+                    dataManager = new TUCBatchEditorCSharp.CustomData.TTADATA(strDBCon, this);
+                    break;
                 default:
                     //這邊就透過TUCData中已實作有的Callback每一次執行緒的監聽
                     dataManager = new TUCBatchEditorCSharp.CustomData.TUCData(strDBCon, this);
                     break;
+
             }
             this.strDBCon = strDBCon;
             m_Aoi_ShowHide = false;

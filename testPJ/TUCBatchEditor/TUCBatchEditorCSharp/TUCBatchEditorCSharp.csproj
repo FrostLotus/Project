@@ -51,7 +51,7 @@
     <Compile Include="CustomData\TTADATA.cs" />
     <Compile Include="CustomData\TUCData.cs" />
     <Compile Include="CustomData\YINGHUAData.cs" />
-    <Compile Include="DB\TEST\CCD_TEST.cs" />
+    <Compile Include="DB\TEST\CCDTTA.cs" />
     <Compile Include="DB\TUC\CCDBA.cs" />
     <Compile Include="DB\TUC\CCDTA.cs" />
     <Compile Include="DB\IEditable.cs" />
@@ -100,7 +100,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="ClassDiagram1.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

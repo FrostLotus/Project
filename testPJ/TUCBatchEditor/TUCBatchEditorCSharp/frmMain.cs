@@ -298,7 +298,92 @@ namespace TUCBatchEditorCSharp
         private bool m_Aoi_ShowHide { get; set; } //MainForm用 基本上為true
         private List<frmBatchView> m_lsBatchView = new List<frmBatchView>(); //AOI模式下支援多螢幕顯示
         private List<HandleObject> m_lsHandle = new List<HandleObject>(); //登記handle, 避免ui移到下方
-        
+                                                                          //-----------------------------------------------------------------
+        private void frmMain_Load(object sender, EventArgs e)
+        {
+            m_Aoi_ShowHide = false;//不顯示
+            this.TopMost = true;//本視窗上層顯示
+            Form xForm = null;
+            string strCon = Properties.Settings.Default.T4;//預設資料庫設定//defaultDB
+
+            #region for top most
+            m_TopMostTimer = new Timer();
+#if DEBUG
+            m_TopMostTimer.Interval = 3000;//DEBUG用 3秒turn one
+#else
+            m_TopMostTimer.Interval = 300;
+#endif
+            m_TopMostTimer.Tick += TopMostTimer_Tick;
+
+            m_TopMostTimer.Start();
+
+            m_lsHandle.Add(new HandleObject(HandleType.Main, this));//控制項註冊
+            #endregion
+
+            this.Size = new Size(795, 900);//主視窗尺吋
+            IsAOIMode = true;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            const int ctUINT_FIX_WIDTH = 1920;
+            int nLeft = GetSystemMetrics(SystemMetricCode.SM_XVIRTUALSCREEN);//左座標=0
+            int nTop = GetSystemMetrics(SystemMetricCode.SM_YVIRTUALSCREEN);//頂座標=0
+            int nRight = GetSystemMetrics(SystemMetricCode.SM_CXVIRTUALSCREEN);//右座標
+            int nBottom = GetSystemMetrics(SystemMetricCode.SM_CYVIRTUALSCREEN);//底座標
+            Rectangle rcFull = new Rectangle(nLeft, nTop, nRight - nLeft, nBottom - nTop);//指定位置
+
+            int nWidth = rcFull.Right - rcFull.Left;//總寬
+            int nUnit = nWidth / ctUINT_FIX_WIDTH;//  總寬/螢幕寬 = 多少螢幕?單元?
+            int nHeight = 62;
+#if DEBUG
+            nHeight = 78;
+#endif
+            //第一個元素是可執行檔名稱後面的零或多個元素包含其餘的命令列引數
+            string[] args = Environment.GetCommandLineArgs();
+            //AOI_CUSTOMERTYPE_ eCustomerType = AOI_CUSTOMERTYPE_.CUSTOMER_TUC_PP;//台耀 mode
+            AOI_CUSTOMERTYPE_ eCustomerType = AOI_CUSTOMERTYPE_.CUSTOMER_TTA_TEST;//TTA mode (TEST)
+            if (args.Length >= 2)//有回傳
+            {
+                if (int.TryParse(args[1], out int nTemp))//可以換成int
+                {
+                    eCustomerType = (AOI_CUSTOMERTYPE_)nTemp;
+                }
+            }
+            for (int i = 0; i < nUnit; i++)
+            {
+                //新增處理視窗
+                frmBatchView xFormTmp = new frmBatchView(strCon, this, eCustomerType);//新增處裡視窗
+                //for top most
+                m_lsHandle.Add(new HandleObject(HandleType.Form, xFormTmp));//處裡視窗加入控制項
+
+                Point xPt = new Point(0, 0);
+                if (i == 0)//主單元螢幕
+                {
+                    xPt = new Point(135 + 1000, nHeight);//(135 + 1000, 78)
+                    xForm = xFormTmp;
+                    this.Location = xPt;//顯示位置
+                }
+                else
+                {
+                    //次要螢幕
+                    xPt = new Point(i * ctUINT_FIX_WIDTH + 1035, nHeight);//(單元數*1920+1035,78)
+                    xFormTmp.Size = new Size(849, 900);
+                }
+                xFormTmp.Show();
+                xFormTmp.Location = xPt;
+                xFormTmp.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+                xFormTmp.TopLevel = true;
+                xFormTmp.TopMost = true;
+                m_lsBatchView.Add(xFormTmp);
+                xFormTmp.Hide();//(複數)(frmBatchView)初始化完後隱藏
+            }
+            if (xForm != null)//主Form存在
+            {
+                xForm.TopLevel = false;
+                xForm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+                xForm.Visible = true;
+                xForm.Dock = DockStyle.Fill;
+                this.Controls.Add(xForm);
+            }
+        }
         private bool NeedMoveWindow(Form xForm)
         {
             //Get the top-most window in the desktop
@@ -435,90 +520,7 @@ namespace TUCBatchEditorCSharp
                 nIndex++;
             }
         }
-        private void frmMain_Load(object sender, EventArgs e)
-        {
-            m_Aoi_ShowHide = false;//不顯示
-            this.TopMost = true;//本視窗上層顯示
-            Form xForm = null;
-            string strCon = Properties.Settings.Default.T4;//預設資料庫設定//defaultDB
-
-            #region for top most
-            m_TopMostTimer = new Timer();
-#if DEBUG
-            m_TopMostTimer.Interval = 3000;//DEBUG用 3秒turn one
-#else
-            m_TopMostTimer.Interval = 300;
-#endif
-            m_TopMostTimer.Tick += TopMostTimer_Tick;
-
-            m_TopMostTimer.Start();
-
-            m_lsHandle.Add(new HandleObject(HandleType.Main, this));//控制項註冊
-            #endregion
-
-            this.Size = new Size(795, 900);//主視窗尺吋
-            IsAOIMode = true;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            const int ctUINT_FIX_WIDTH = 1920;
-            int nLeft = GetSystemMetrics(SystemMetricCode.SM_XVIRTUALSCREEN);//左座標=0
-            int nTop = GetSystemMetrics(SystemMetricCode.SM_YVIRTUALSCREEN);//頂座標=0
-            int nRight = GetSystemMetrics(SystemMetricCode.SM_CXVIRTUALSCREEN);//右座標
-            int nBottom = GetSystemMetrics(SystemMetricCode.SM_CYVIRTUALSCREEN);//底座標
-            Rectangle rcFull = new Rectangle(nLeft, nTop, nRight - nLeft, nBottom - nTop);//指定位置
-
-            int nWidth = rcFull.Right - rcFull.Left;//總寬
-            int nUnit = nWidth / ctUINT_FIX_WIDTH;//  總寬/螢幕寬 = 多少螢幕?單元?
-            int nHeight = 62;
-#if DEBUG
-            nHeight = 78;
-#endif
-            //第一個元素是可執行檔名稱後面的零或多個元素包含其餘的命令列引數
-            string[] args = Environment.GetCommandLineArgs();
-            AOI_CUSTOMERTYPE_ eCustomerType = AOI_CUSTOMERTYPE_.CUSTOMER_TUC_PP;//台耀 mode
-            if (args.Length >= 2)//有回傳
-            {
-                if(int.TryParse(args[1], out int nTemp))//可以換成int
-                {
-                   eCustomerType = (AOI_CUSTOMERTYPE_)nTemp;
-                }
-            }
-            for (int i = 0; i < nUnit; i++)
-            {
-                //新增處理視窗
-                frmBatchView xFormTmp = new frmBatchView(strCon, this, eCustomerType);//新增處裡視窗
-                //for top most
-                m_lsHandle.Add(new HandleObject(HandleType.Form, xFormTmp));//處裡視窗加入控制項
-
-                Point xPt = new Point(0, 0);
-                if (i == 0)//主單元螢幕
-                {
-                    xPt = new Point(135 + 1000, nHeight);//(135 + 1000, 78)
-                    xForm = xFormTmp;
-                    this.Location = xPt;//顯示位置
-                }
-                else
-                {
-                    //次要螢幕
-                    xPt = new Point(i * ctUINT_FIX_WIDTH + 1035, nHeight);//(單元數*1920+1035,78)
-                    xFormTmp.Size = new Size(849, 900);
-                }
-                xFormTmp.Show();
-                xFormTmp.Location = xPt; 
-                xFormTmp.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-                xFormTmp.TopLevel = true;
-                xFormTmp.TopMost = true;
-                m_lsBatchView.Add(xFormTmp);
-                xFormTmp.Hide();//(複數)(frmBatchView)初始化完後隱藏
-            }
-            if (xForm != null)//主Form存在
-            {
-                xForm.TopLevel = false;
-                xForm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-                xForm.Visible = true;
-                xForm.Dock = DockStyle.Fill;
-                this.Controls.Add(xForm);
-            }
-        }
+       
 
         private bool bInit = false;
         private void frmMain_Shown(object sender, EventArgs e)

@@ -36,7 +36,7 @@ namespace TUCBatchEditorCSharp.CustomData
                     strRtn = "SELECT * FROM CCDTA2 WHERE STSN=1";
                     break;
                 case GridDataType.Used:
-                    strRtn = "SELECT * FROM CCDTA2 WHERE STSN=2 ORDER BY STIME DESC";
+                    strRtn = "SELECT * FROM CCDTA2 WHERE STSN=2 ORDER BY STIME DESC";//ORDER BY STIME DESC用時間做降冪排列
                     break;
             }
             return strRtn;
