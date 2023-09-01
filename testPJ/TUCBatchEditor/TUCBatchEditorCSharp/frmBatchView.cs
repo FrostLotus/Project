@@ -15,8 +15,8 @@ using TUCBatchEditorCSharp.CustomData;
 using TUCBatchEditorCSharp.Helper;
 namespace TUCBatchEditorCSharp
 {
-    public enum AOI_CUSTOMERTYPE_
-    { 
+    public enum AOI_CUSTOMERTYPE
+    {
         CUSTOMER_NONE = 0,
         CUSTOMER_NANYA = 2,			  //台塑南亞
         CUSTOMER_SYST_WEB_COPPER = 3, //生益軟板
@@ -34,40 +34,7 @@ namespace TUCBatchEditorCSharp
     };
     public partial class frmBatchView : Form, IDataCallBack
     {
-        /// <summary>
-        /// 批次資料庫控制視窗控制項建立
-        /// </summary>
-        /// <param name="strDBCon">資料庫控制碼</param>
-        /// <param name="xReg">控制項登記</param>
-        /// <param name="eType">客製化用戶類型</param>
-        public frmBatchView(string strDBCon, IHandleRegistry xReg, AOI_CUSTOMERTYPE_ eType)
-        {
-            //default use TUC mode
-            switch (eType)
-            {
-                case AOI_CUSTOMERTYPE_.CUSTOMER_YINGHUA:
-                    dataManager = new TUCBatchEditorCSharp.CustomData.YINGHUAData(strDBCon, this);
-                    break;
-                case AOI_CUSTOMERTYPE_.CUSTOMER_TUC_PP:
-                    dataManager = new TUCBatchEditorCSharp.CustomData.TUCData(strDBCon, this);
-                    break;
-                case AOI_CUSTOMERTYPE_.CUSTOMER_TTA_TEST:
-                    dataManager = new TUCBatchEditorCSharp.CustomData.TTADATA(strDBCon, this);
-                    break;
-                default:
-                    //這邊就透過TUCData中已實作有的Callback每一次執行緒的監聽
-                    dataManager = new TUCBatchEditorCSharp.CustomData.TUCData(strDBCon, this);
-                    break;
-
-            }
-            this.strDBCon = strDBCon;
-            m_Aoi_ShowHide = false;
-            m_xReg = xReg;
-            m_DBName = ODBCHelper.GetDBProperty(ODBCHelper.DBProperty.DataBase, strDBCon);
-            m_Server = ODBCHelper.GetDBProperty(ODBCHelper.DBProperty.Server, strDBCon);
-            InitializeComponent();
-        }
-        //-----------------
+        #region DllImport 直接調用Win32 API DLL
         /// <summary>
         /// 尋找視窗控制項
         /// </summary>
@@ -86,8 +53,8 @@ namespace TUCBatchEditorCSharp
         /// <returns></returns>
         [DllImport("user32.dll", EntryPoint = "PostMessage", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
         private static extern int PostMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
-        //-----------------
-
+        #endregion
+        //------------------------------------------------
         private DataManagerBase dataManager = null;
         private Rectangle _rcLight = new Rectangle(25, 660, 20, 20);
         private DataGridView m_LastSelGridView = null;
@@ -100,13 +67,43 @@ namespace TUCBatchEditorCSharp
         private bool _DBStatus = false;
         private string m_DBName;//資料庫名稱
         private string m_Server;//伺服器名稱
-        
+        const int WM_CLOSE = 0x10;
         private bool m_Aoi_ShowHide { get; set; }
         private string strDBCon { get; set; }
-
-        const int WM_CLOSE = 0x10;
         //-----------------------------------------
-        
+        /// <summary>
+        /// 批次資料庫控制視窗控制項建立
+        /// </summary>
+        /// <param name="strDBCon">資料庫控制碼</param>
+        /// <param name="xReg">控制項登記</param>
+        /// <param name="eType">客製化用戶類型</param>
+        public frmBatchView(string strDBCon, IHandleRegistry xReg, AOI_CUSTOMERTYPE eType)
+        {
+            //default use TUC mode
+            switch (eType)
+            {
+                case AOI_CUSTOMERTYPE.CUSTOMER_YINGHUA:
+                    dataManager = new TUCBatchEditorCSharp.CustomData.YINGHUAData(strDBCon, this);
+                    break;
+                case AOI_CUSTOMERTYPE.CUSTOMER_TUC_PP:
+                    dataManager = new TUCBatchEditorCSharp.CustomData.TUCData(strDBCon, this);
+                    break;
+                case AOI_CUSTOMERTYPE.CUSTOMER_TTA_TEST:
+                    dataManager = new TUCBatchEditorCSharp.CustomData.TTADATA(strDBCon, this);
+                    break;
+                default:
+                    //這邊就透過TUCData中已實作有的Callback每一次執行緒的監聽
+                    dataManager = new TUCBatchEditorCSharp.CustomData.TUCData(strDBCon, this);
+                    break;
+
+            }
+            this.strDBCon = strDBCon;
+            m_Aoi_ShowHide = false;
+            m_xReg = xReg;
+            m_DBName = ODBCHelper.GetDBProperty(ODBCHelper.DBProperty.DataBase,strDBCon);
+            m_Server = ODBCHelper.GetDBProperty(ODBCHelper.DBProperty.Server, strDBCon);
+            InitializeComponent();
+        }
         private void frmBatchView_Load(object sender, EventArgs e)
         {
             CreateEditForm();
@@ -123,55 +120,33 @@ namespace TUCBatchEditorCSharp
             if (m_xReg != null) m_xReg.AddHandle(m_xEdidForm);//加入註冊項
             Console.WriteLine(string.Format("add {0}", m_xEdidForm.Handle));
         }
+        class ABC
+        {
+            public int A { get; set; }
+            public int B { get; set; }
+        }
         private void InitGrid()
         {
-            //init gridview
-            var xList = dataManager.GetColumnType().GetProperties().Select
-                (
-                    x => x.GetCustomAttributes(typeof(DB.FieldInfoAttribute), false).Select
-                    (
-                        y => new KeyValuePair<string, DB.FieldInfoAttribute>(x.Name, (DB.FieldInfoAttribute)y)
-                    ).FirstOrDefault()
-                ).Where(x => x.Value != null && x.Value.Show).ToList();
+            List<ABC> ls = new List<ABC>();
+            List<string> aaa = ls.Select(x => { 
+                return "123";
+            }).ToList();
+                                                  //init gridview
+            var xList = dataManager.GetColumnType().GetProperties()
+                        .Select(x =>
+                        {
+                            return x.GetCustomAttributes(typeof(DB.FieldInfoAttribute), false)
+                          .Select(y => new KeyValuePair<string, DB.FieldInfoAttribute>(x.Name, (DB.FieldInfoAttribute)y)).FirstOrDefault();
+                        }
+                        )
+                        .Where(x => x.Value != null && x.Value.Show).ToList();
 
             List<DataGridView> lsGrid = new List<DataGridView>() { dgvUnUsed, dgvUsing, dgvUsed };
             lsGrid.ForEach(x => { x.Rows.Clear(); x.Columns.Clear(); });
             foreach (var xCol in xList)
             {
-                lsGrid.ForEach(x => x.Columns.Add(xCol.Key, xCol.Value.Name));
+                lsGrid.ForEach(x => { x.Columns.Add(xCol.Key, xCol.Value.Name); });
             }
-        }
-
-        /// <summary>
-        /// 實際Callback執行的循環動作
-        /// </summary>
-        /// <param name="eType">使用狀態</param>
-        /// <param name="nCount"></param>
-        /// <param name="bSuccess"></param>
-        public void OnQueryThreadCallBack(GridDataType eType, int nCount, bool bSuccess)
-        {
-            //顯示目前CallBack的時間與目標
-            UpdateLabelText(lbl_Status, string.Format("Server:{0} DB:{1}, UpdateTime:{2}", m_Server, m_DBName, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")));
-
-            if (_DBStatus != bSuccess)//
-            {
-                _DBStatus = bSuccess;
-                Invalidate(_rcLight);//塊狀範圍失效
-                UpdateLabelText(lbl_DBStatus, _DBStatus ? "資料庫連線正常" : "資料庫連線異常");
-            }
-            switch (eType)
-            {
-                case GridDataType.UnUsed:
-                    UpdateGridViewCount(dgvUnUsed, nCount);
-                    break;
-                case GridDataType.Using:
-                    UpdateGridViewCount(dgvUsing, nCount);
-                    break;
-                case GridDataType.Used:
-                    UpdateGridViewCount(dgvUsed, nCount);
-                    break;
-            }
-            
         }
         /// <summary>
         /// 更新dataGridView文字
@@ -199,7 +174,7 @@ namespace TUCBatchEditorCSharp
         /// <param name="strText">輸出文字</param>
         private void UpdateLabelText(Label xLbl, string strText)
         {
-            if(xLbl.InvokeRequired)//若需要用Invoke方式更新標籤
+            if (xLbl.InvokeRequired)//若需要用Invoke方式更新標籤
             {
                 Action safeWrite = delegate { UpdateLabelText(xLbl, strText); };
                 xLbl.Invoke(safeWrite);
@@ -213,19 +188,50 @@ namespace TUCBatchEditorCSharp
         {
             e.Graphics.FillEllipse(new SolidBrush(_DBStatus ? Color.Green : Color.Red), _rcLight);
         }
-        private void dgv_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
+        private void btn_Click(object sender, EventArgs e)
         {
-            DataGridView dgv = (DataGridView)sender;
-            if (dataManager != null)
+            if (sender == btnAdd || sender == btnEdit)//若按下為新增或編輯
             {
-                DB.IEditable Batch = dataManager.GetBatchObject(GetGridViewType(dgv), e.RowIndex);
-                // Set the cell value to paint using the Customer object retrieved.
-                foreach (var prop in Batch.GetType().GetProperties())
+                if (!m_xEdidForm.Visible)
                 {
-                    if (prop.Name == dgv.Columns[e.ColumnIndex].Name)
+                    if (m_xEdidForm.IsDisposed)
                     {
-                        e.Value = prop.GetValue(Batch, null);
-                        break;
+                        CreateEditForm();//frmAddnEdit
+                    }
+                    List<KeyValuePair<string, List<string>>> lsCombo = new List<KeyValuePair<string, List<string>>>();
+                    lsCombo.Add(new KeyValuePair<string, List<string>>("PARAM", dataManager.GetInspList()));//
+                    if (sender == btnAdd)
+                    {
+                        if (m_lastCreate != null)
+                            m_xEdidForm.SetEditParam(frmAddnEdit.FormType.Add, m_lastCreate, lsCombo);
+                        else
+                            m_xEdidForm.SetEditParam(frmAddnEdit.FormType.Add, Activator.CreateInstance(dataManager.GetColumnType()) as DB.IEditable, lsCombo);
+                    }
+                    else if (sender == btnEdit)
+                    {
+                        if (m_CurSel == null) return;
+                        m_xEdidForm.SetEditParam(frmAddnEdit.FormType.Edit, m_CurSel, lsCombo);
+                    }
+#if EDITFORM_DOMODAL
+                    m_xEdidForm.ShowDialog();
+                    m_xEdidForm.Dispose();
+#else
+                    m_xEdidForm.Show();
+#endif
+                }
+            }
+            else if (sender == btnRemove)
+            {
+                if (m_CurSel != null && (m_LastSelGridView == dgvUsed || m_LastSelGridView == dgvUnUsed) /*執行中不可刪除*/)
+                {
+                    if (MessageBox.Show(string.Format("警告!確認要移除({0})工單?", m_CurSel.GetName()), "", MessageBoxButtons.OKCancel) == System.Windows.Forms.DialogResult.OK)
+                    {
+                        if (m_LastSelGridView == dgvUsed)
+                            dataManager.OnDelete(m_CurSel, GridDataType.Used);
+                        else if (m_LastSelGridView == dgvUnUsed)
+                            dataManager.OnDelete(m_CurSel, GridDataType.UnUsed);
+
+                        LogHelper.Info(string.Format("delete id {0} name {1}", m_CurSel.GetKey(), m_CurSel.GetName()));
                     }
                 }
             }
@@ -247,50 +253,19 @@ namespace TUCBatchEditorCSharp
             }
             return eType;
         }
-        private void btn_Click(object sender, EventArgs e)
+        private void dgv_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
         {
-            if(sender == btnAdd || sender == btnEdit)//若按下為新增或編輯
+            DataGridView dgv = (DataGridView)sender;
+            if (dataManager != null)
             {
-                if (!m_xEdidForm.Visible)
+                DB.IEditable Batch = dataManager.GetBatchObject(GetGridViewType(dgv), e.RowIndex);
+                // Set the cell value to paint using the Customer object retrieved.
+                foreach (var prop in Batch.GetType().GetProperties())
                 {
-                    if (m_xEdidForm.IsDisposed)
+                    if (prop.Name == dgv.Columns[e.ColumnIndex].Name)
                     {
-                        CreateEditForm();//frmAddnEdit
-                    }
-                    List<KeyValuePair<string, List<string>>> lsCombo = new List<KeyValuePair<string, List<string>>>();
-                    lsCombo.Add(new KeyValuePair<string, List<string>>("PARAM", dataManager.GetInspList()));//
-                    if (sender == btnAdd)
-                    {
-                        if (m_lastCreate != null)
-                            m_xEdidForm.SetEditParam(frmAddnEdit.FormType.Add, m_lastCreate, lsCombo);
-                        else
-                            m_xEdidForm.SetEditParam(frmAddnEdit.FormType.Add, Activator.CreateInstance(dataManager.GetColumnType()) as DB.IEditable, lsCombo);
-                    }
-                    else if (sender == btnEdit)
-                    {
-                        if (m_CurSel == null) return;
-                            m_xEdidForm.SetEditParam(frmAddnEdit.FormType.Edit, m_CurSel, lsCombo);
-                    }
-#if EDITFORM_DOMODAL
-                    m_xEdidForm.ShowDialog();
-                    m_xEdidForm.Dispose();
-#else
-                    m_xEdidForm.Show();
-#endif
-                }
-            }
-            else if (sender == btnRemove)
-            {
-                if (m_CurSel != null && (m_LastSelGridView == dgvUsed ||m_LastSelGridView == dgvUnUsed) /*執行中不可刪除*/)
-                {
-                    if (MessageBox.Show(string.Format("警告!確認要移除({0})工單?", m_CurSel.GetName()), "", MessageBoxButtons.OKCancel) == System.Windows.Forms.DialogResult.OK)
-                    {
-                        if (m_LastSelGridView == dgvUsed)
-                            dataManager.OnDelete(m_CurSel, GridDataType.Used);
-                        else if (m_LastSelGridView == dgvUnUsed)
-                            dataManager.OnDelete(m_CurSel, GridDataType.UnUsed);
-
-                        LogHelper.Info(string.Format("delete id {0} name {1}", m_CurSel.GetKey(), m_CurSel.GetName()));
+                        e.Value = prop.GetValue(Batch, null);
+                        break;
                     }
                 }
             }
@@ -313,27 +288,6 @@ namespace TUCBatchEditorCSharp
                 m_CurSel = dataManager.GetBatchObject(GetGridViewType(dgv), e.Row.Index);
             }
         }
-        private void OnCancelEdit()
-        {
-            if(m_xReg != null)
-            {
-                m_xReg.RemoveHandle(m_xEdidForm.Handle);
-            }
-        }
-        private void OnFinishEdit(frmAddnEdit.FormType eType, DB.IEditable xOld, DB.IEditable xNew)
-        {
-            dataManager.OnFinishEdit(eType, xOld, xNew);
-            if (eType == frmAddnEdit.FormType.Add)
-                m_lastCreate = xNew;
-            if (m_xReg != null)
-            {
-                m_xReg.RemoveHandle(m_xEdidForm.Handle);
-            }
-        }
-        public void Set_AOI_ShowHide(bool bShow)
-        {
-            m_Aoi_ShowHide = bShow;
-        }
         public void CloseEditWindow()
         {
             if (!m_xEdidForm.IsDisposed)
@@ -349,9 +303,63 @@ namespace TUCBatchEditorCSharp
                 }
             }
         }
-        public bool Get_AOI_ShowHide() 
-        { 
+        public bool Get_AOI_ShowHide()
+        {
             return m_Aoi_ShowHide;
+        }
+        public void Set_AOI_ShowHide(bool bShow)
+        {
+            m_Aoi_ShowHide = bShow;
+        }
+        //委託-------------------------------------------
+        private void OnCancelEdit()
+        {
+            if (m_xReg != null)
+            {
+                m_xReg.RemoveHandle(m_xEdidForm.Handle);
+            }
+        }
+        private void OnFinishEdit(frmAddnEdit.FormType eType, DB.IEditable xOld, DB.IEditable xNew)
+        {
+            dataManager.OnFinishEdit(eType, xOld, xNew);
+            if (eType == frmAddnEdit.FormType.Add)
+                m_lastCreate = xNew;
+            if (m_xReg != null)
+            {
+                m_xReg.RemoveHandle(m_xEdidForm.Handle);
+            }
+        }
+        //---------------------------------------------
+        /// <summary>
+        /// 實際Callback執行的循環動作
+        /// </summary>
+        /// <param name="eType">使用狀態</param>
+        /// <param name="nCount"></param>
+        /// <param name="bSuccess"></param>
+        public void OnQueryThreadCallBack(GridDataType eType, int nCount, bool bSuccess)
+        {
+            //顯示目前CallBack的時間與目標
+            UpdateLabelText(lbl_Status, string.Format("Server:{0} DB:{1}, UpdateTime:{2}", m_Server, m_DBName, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")));
+
+            if (_DBStatus != bSuccess)
+            {
+                _DBStatus = bSuccess;
+                Invalidate(_rcLight);//塊狀範圍失效
+                UpdateLabelText(lbl_DBStatus, _DBStatus ? "資料庫連線正常" : "資料庫連線異常");
+            }
+            switch (eType)
+            {
+                case GridDataType.UnUsed:
+                    UpdateGridViewCount(dgvUnUsed, nCount);
+                    break;
+                case GridDataType.Using:
+                    UpdateGridViewCount(dgvUsing, nCount);
+                    break;
+                case GridDataType.Used:
+                    UpdateGridViewCount(dgvUsed, nCount);
+                    break;
+            }
+
         }
     }
 }

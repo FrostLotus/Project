@@ -131,7 +131,7 @@ namespace TUCBatchEditorCSharp
         }
         public static string GetDBProperty(DBProperty eProperty, string strCon)
         {
-            OdbcConnection odbcCon = new OdbcConnection(strCon);
+            //OdbcConnection odbcCon = new OdbcConnection(strCon);
             
             string strRtn = "";
             string strUpper = strCon.ToUpper(), strKey = "";

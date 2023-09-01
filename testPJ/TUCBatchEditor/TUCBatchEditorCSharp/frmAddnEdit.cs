@@ -13,8 +13,6 @@ namespace TUCBatchEditorCSharp
     
     public partial class frmAddnEdit : Form
     {
-        
-
         public delegate void dgFinishEdit(FormType eType, DB.IEditable xOld, DB.IEditable xNew);
         public event dgFinishEdit OnFinishEdit = null;
         public delegate void dgCancelEdit();
