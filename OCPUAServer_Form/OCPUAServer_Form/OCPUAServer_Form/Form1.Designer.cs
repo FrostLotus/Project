@@ -1,5 +1,5 @@
 ﻿
-namespace OCPUAServer_Form
+namespace OCPUAServer
 {
     partial class MainForm
     {

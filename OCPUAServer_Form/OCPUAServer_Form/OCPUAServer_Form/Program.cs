@@ -7,7 +7,7 @@ using Opc.Ua;
 using Opc.Ua.Configuration;
 using Opc.Ua.Client.Controls;
 
-namespace OCPUAServer_Form
+namespace OCPUAServer
 {
     static class Program
     {
@@ -20,17 +20,31 @@ namespace OCPUAServer_Form
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            ApplicationInstance.MessageDlg = new ApplicationMessageDlg();
+            ApplicationInstance application = new ApplicationInstance();
+            application.ApplicationType = ApplicationType.Server;
+            application.ConfigSectionName = "SharpNodeSettingsServer";
+
             try
             {
+                #region 這段應該可以不要
                 // 載入應用程序配置
-                
-                // run the application interactively.
-                Application.Run(new MainForm());
+                application.LoadApplicationConfiguration( false ).Wait();
+                // 檢查應用程式證書
+                bool certOk = application.CheckApplicationInstanceCertificate(false, 0).Result;
+                if (!certOk)
+                {
+                    throw new Exception("Application instance certificate invalid!");
+                }
+                // start the server.
+                application.Start(new SharpNodeSettingsServer()).Wait();
+                #endregion
+                // 跑主視窗
+                Application.Run(new MainForm(application));
             }
             catch (Exception e)
             {
                 MessageBox.Show(e.Message, "program", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //ExceptionDlg.Show(application.ApplicationName, e);
             }
         }
     }

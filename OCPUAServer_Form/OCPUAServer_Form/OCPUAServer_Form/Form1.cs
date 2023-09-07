@@ -12,15 +12,39 @@ using System.Windows.Forms;
 using System.Threading;
 using System.IO;
 
-namespace OCPUAServer_Form
+using Opc.Ua.Client.Controls;
+using Opc.Ua.Configuration;
+
+
+namespace OCPUAServer
 {
     public partial class MainForm : Form
     {
+        private ApplicationInstance m_application;
         private List<OpcDataItem> opcDataItems = new List<OpcDataItem>();
         private MyOpcServer opcServer;
         public MainForm()
         {
             InitializeComponent();
+        }
+        public MainForm(ApplicationInstance application)
+        {
+            InitializeComponent();
+
+            m_application = application;
+
+            if (application.Server is StandardServer)
+            {
+                //this.ServerDiagnosticsCTRL.Initialize((StandardServer)application.Server, application.ApplicationConfiguration);
+            }
+
+            if (!application.ApplicationConfiguration.SecurityConfiguration.AutoAcceptUntrustedCertificates)
+            {
+                //application.ApplicationConfiguration.CertificateValidator.CertificateValidation += new CertificateValidationEventHandler(CertificateValidator_CertificateValidation);
+            }
+
+            //TrayIcon.Text = this.Text = application.ApplicationName;
+            //this.Icon = TrayIcon.Icon = ClientUtils.GetAppIcon();
         }
         private void MainForm_Load(object sender, EventArgs e)
         {
