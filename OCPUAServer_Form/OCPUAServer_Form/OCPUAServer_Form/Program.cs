@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Opc.Ua;
+using Opc.Ua.Configuration;
+using Opc.Ua.Client.Controls;
 
 namespace OCPUAServer_Form
 {
@@ -16,7 +19,19 @@ namespace OCPUAServer_Form
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+
+            try
+            {
+                // 載入應用程序配置
+                
+                // run the application interactively.
+                Application.Run(new MainForm());
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "program", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //ExceptionDlg.Show(application.ApplicationName, e);
+            }
         }
     }
 }

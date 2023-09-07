@@ -29,13 +29,13 @@ namespace OCPUAServer_Form
         /// </summary>
         private void InitializeComponent()
         {
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.textBox4 = new System.Windows.Forms.TextBox();
-            this.textBox5 = new System.Windows.Forms.TextBox();
-            this.textBox6 = new System.Windows.Forms.TextBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.Txt_Variable = new System.Windows.Forms.TextBox();
+            this.Txt_ItemName = new System.Windows.Forms.TextBox();
+            this.Txt_NodeId = new System.Windows.Forms.TextBox();
+            this.Txt_Length = new System.Windows.Forms.TextBox();
+            this.Txt_Inital = new System.Windows.Forms.TextBox();
+            this.Txt_Value = new System.Windows.Forms.TextBox();
+            this.Cbb_DataType = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -46,66 +46,71 @@ namespace OCPUAServer_Form
             this.Btn_Add = new System.Windows.Forms.Button();
             this.Btn_Delete = new System.Windows.Forms.Button();
             this.Btn_UpdateFile = new System.Windows.Forms.Button();
-            this.Btn_UpdateMember = new System.Windows.Forms.Button();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.Dgv_DataItem = new System.Windows.Forms.DataGridView();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.Btn_Stop = new System.Windows.Forms.Button();
             this.Btn_Run = new System.Windows.Forms.Button();
             this.Lab_Status = new System.Windows.Forms.Label();
             this.button7 = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Dgv_DataItem)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // textBox1
+            // Txt_Variable
             // 
-            this.textBox1.Location = new System.Drawing.Point(93, 24);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(321, 22);
-            this.textBox1.TabIndex = 0;
+            this.Txt_Variable.Location = new System.Drawing.Point(93, 24);
+            this.Txt_Variable.Name = "Txt_Variable";
+            this.Txt_Variable.Size = new System.Drawing.Size(321, 22);
+            this.Txt_Variable.TabIndex = 0;
             // 
-            // textBox2
+            // Txt_ItemName
             // 
-            this.textBox2.Location = new System.Drawing.Point(93, 52);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(321, 22);
-            this.textBox2.TabIndex = 0;
+            this.Txt_ItemName.Location = new System.Drawing.Point(93, 52);
+            this.Txt_ItemName.Name = "Txt_ItemName";
+            this.Txt_ItemName.Size = new System.Drawing.Size(321, 22);
+            this.Txt_ItemName.TabIndex = 0;
             // 
-            // textBox3
+            // Txt_NodeId
             // 
-            this.textBox3.Location = new System.Drawing.Point(93, 84);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(321, 22);
-            this.textBox3.TabIndex = 0;
+            this.Txt_NodeId.Location = new System.Drawing.Point(93, 84);
+            this.Txt_NodeId.Name = "Txt_NodeId";
+            this.Txt_NodeId.Size = new System.Drawing.Size(321, 22);
+            this.Txt_NodeId.TabIndex = 0;
             // 
-            // textBox4
+            // Txt_Length
             // 
-            this.textBox4.Location = new System.Drawing.Point(93, 138);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(321, 22);
-            this.textBox4.TabIndex = 0;
+            this.Txt_Length.Location = new System.Drawing.Point(93, 138);
+            this.Txt_Length.Name = "Txt_Length";
+            this.Txt_Length.Size = new System.Drawing.Size(321, 22);
+            this.Txt_Length.TabIndex = 0;
             // 
-            // textBox5
+            // Txt_Inital
             // 
-            this.textBox5.Location = new System.Drawing.Point(93, 166);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(321, 22);
-            this.textBox5.TabIndex = 0;
+            this.Txt_Inital.Location = new System.Drawing.Point(93, 166);
+            this.Txt_Inital.Name = "Txt_Inital";
+            this.Txt_Inital.Size = new System.Drawing.Size(321, 22);
+            this.Txt_Inital.TabIndex = 0;
             // 
-            // textBox6
+            // Txt_Value
             // 
-            this.textBox6.Location = new System.Drawing.Point(93, 194);
-            this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(321, 22);
-            this.textBox6.TabIndex = 0;
+            this.Txt_Value.Location = new System.Drawing.Point(93, 194);
+            this.Txt_Value.Name = "Txt_Value";
+            this.Txt_Value.Size = new System.Drawing.Size(321, 22);
+            this.Txt_Value.TabIndex = 0;
             // 
-            // comboBox1
+            // Cbb_DataType
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(93, 112);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(321, 20);
-            this.comboBox1.TabIndex = 1;
+            this.Cbb_DataType.FormattingEnabled = true;
+            this.Cbb_DataType.Items.AddRange(new object[] {
+            "String",
+            "Word",
+            "Bool",
+            "Real"});
+            this.Cbb_DataType.Location = new System.Drawing.Point(93, 112);
+            this.Cbb_DataType.Name = "Cbb_DataType";
+            this.Cbb_DataType.Size = new System.Drawing.Size(321, 20);
+            this.Cbb_DataType.TabIndex = 1;
+            this.Cbb_DataType.SelectedIndexChanged += new System.EventHandler(this.Cbb_DataType_SelectedIndexChanged);
             // 
             // label1
             // 
@@ -200,24 +205,16 @@ namespace OCPUAServer_Form
             this.Btn_UpdateFile.UseVisualStyleBackColor = true;
             this.Btn_UpdateFile.Click += new System.EventHandler(this.Btn_UpdateFile_Click);
             // 
-            // Btn_UpdateMember
+            // Dgv_DataItem
             // 
-            this.Btn_UpdateMember.Location = new System.Drawing.Point(435, 127);
-            this.Btn_UpdateMember.Name = "Btn_UpdateMember";
-            this.Btn_UpdateMember.Size = new System.Drawing.Size(99, 30);
-            this.Btn_UpdateMember.TabIndex = 3;
-            this.Btn_UpdateMember.Text = "Update_Member";
-            this.Btn_UpdateMember.UseVisualStyleBackColor = true;
-            this.Btn_UpdateMember.Click += new System.EventHandler(this.Btn_UpdateMember_Click);
-            // 
-            // dataGridView1
-            // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(12, 233);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(402, 317);
-            this.dataGridView1.TabIndex = 4;
+            this.Dgv_DataItem.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.Dgv_DataItem.Location = new System.Drawing.Point(12, 233);
+            this.Dgv_DataItem.Name = "Dgv_DataItem";
+            this.Dgv_DataItem.RowTemplate.Height = 24;
+            this.Dgv_DataItem.Size = new System.Drawing.Size(402, 317);
+            this.Dgv_DataItem.TabIndex = 4;
+            this.Dgv_DataItem.VirtualMode = true;
+            this.Dgv_DataItem.CellValueNeeded += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.Dgv_DataItem_CellValueNeeded);
             // 
             // groupBox1
             // 
@@ -276,8 +273,7 @@ namespace OCPUAServer_Form
             this.ClientSize = new System.Drawing.Size(560, 563);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.button7);
-            this.Controls.Add(this.dataGridView1);
-            this.Controls.Add(this.Btn_UpdateMember);
+            this.Controls.Add(this.Dgv_DataItem);
             this.Controls.Add(this.Btn_UpdateFile);
             this.Controls.Add(this.Btn_Delete);
             this.Controls.Add(this.Btn_Add);
@@ -288,16 +284,17 @@ namespace OCPUAServer_Form
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.textBox6);
-            this.Controls.Add(this.textBox5);
-            this.Controls.Add(this.textBox4);
-            this.Controls.Add(this.textBox3);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.Cbb_DataType);
+            this.Controls.Add(this.Txt_Value);
+            this.Controls.Add(this.Txt_Inital);
+            this.Controls.Add(this.Txt_Length);
+            this.Controls.Add(this.Txt_NodeId);
+            this.Controls.Add(this.Txt_ItemName);
+            this.Controls.Add(this.Txt_Variable);
             this.Name = "MainForm";
             this.Text = "Form1";
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.Load += new System.EventHandler(this.MainForm_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.Dgv_DataItem)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
@@ -307,13 +304,13 @@ namespace OCPUAServer_Form
 
         #endregion
 
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.TextBox textBox3;
-        private System.Windows.Forms.TextBox textBox4;
-        private System.Windows.Forms.TextBox textBox5;
-        private System.Windows.Forms.TextBox textBox6;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.TextBox Txt_Variable;
+        private System.Windows.Forms.TextBox Txt_ItemName;
+        private System.Windows.Forms.TextBox Txt_NodeId;
+        private System.Windows.Forms.TextBox Txt_Length;
+        private System.Windows.Forms.TextBox Txt_Inital;
+        private System.Windows.Forms.TextBox Txt_Value;
+        private System.Windows.Forms.ComboBox Cbb_DataType;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
@@ -324,8 +321,7 @@ namespace OCPUAServer_Form
         private System.Windows.Forms.Button Btn_Add;
         private System.Windows.Forms.Button Btn_Delete;
         private System.Windows.Forms.Button Btn_UpdateFile;
-        private System.Windows.Forms.Button Btn_UpdateMember;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView Dgv_DataItem;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button Btn_Stop;
         private System.Windows.Forms.Button Btn_Run;
