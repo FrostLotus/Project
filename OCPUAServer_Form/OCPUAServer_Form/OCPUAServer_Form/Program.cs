@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Opc.Ua;
 using Opc.Ua.Configuration;
-using Opc.Ua.Client.Controls;
 
 namespace OCPUAServer
 {

@@ -12,7 +12,6 @@ using System.Windows.Forms;
 using System.Threading;
 using System.IO;
 
-using Opc.Ua.Client.Controls;
 using Opc.Ua.Configuration;
 
 

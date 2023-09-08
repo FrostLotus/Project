@@ -138,11 +138,9 @@
     <Reference Include="Opc.Ua.Bindings.Https, Version=1.4.372.0, Culture=neutral, PublicKeyToken=bfa7a73c5cf4b6e8, processorArchitecture=MSIL">
       <HintPath>..\packages\OPCFoundation.NetStandard.Opc.Ua.Bindings.Https.1.4.372.56\lib\net48\Opc.Ua.Bindings.Https.dll</HintPath>
     </Reference>
-    <Reference Include="Opc.Ua.Client, Version=1.4.354.0, Culture=neutral, PublicKeyToken=bfa7a73c5cf4b6e8, processorArchitecture=MSIL">
-      <HintPath>..\packages\OPCFoundation.NetStandard.Opc.Ua.1.4.354.23\lib\net46\Opc.Ua.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Opc.Ua.ClientControls">
-      <HintPath>..\dll\Opc.Ua.ClientControls.dll</HintPath>
+    <Reference Include="Opc.Ua.Client, Version=1.4.372.0, Culture=neutral, PublicKeyToken=bfa7a73c5cf4b6e8, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\dll\Opc.Ua.Client.dll</HintPath>
     </Reference>
     <Reference Include="Opc.Ua.Configuration, Version=1.4.354.0, Culture=neutral, PublicKeyToken=bfa7a73c5cf4b6e8, processorArchitecture=MSIL">
       <HintPath>..\packages\OPCFoundation.NetStandard.Opc.Ua.1.4.354.23\lib\net46\Opc.Ua.Configuration.dll</HintPath>
@@ -161,9 +159,6 @@
     </Reference>
     <Reference Include="Opc.Ua.Server, Version=1.4.354.0, Culture=neutral, PublicKeyToken=bfa7a73c5cf4b6e8, processorArchitecture=MSIL">
       <HintPath>..\packages\OPCFoundation.NetStandard.Opc.Ua.1.4.354.23\lib\net46\Opc.Ua.Server.dll</HintPath>
-    </Reference>
-    <Reference Include="Opc.Ua.ServerControls">
-      <HintPath>..\dll\Opc.Ua.ServerControls.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -220,7 +215,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EmptyNodeManager.cs" />
+    <Compile Include="NodeManager.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -230,8 +225,8 @@
     <Compile Include="Namespaces.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReferenceServerConfiguration.cs" />
-    <Compile Include="SharpNodeSettingsServer.cs" />
+    <Compile Include="ServerConfiguration.cs" />
+    <Compile Include="Server.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
