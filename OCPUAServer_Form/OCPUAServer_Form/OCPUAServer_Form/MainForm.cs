@@ -29,16 +29,8 @@ namespace OCPUAServer
 
             if (application.Server is StandardServer)
             {
-                this.serverDiagnosticsCtrl1.Initialize((StandardServer)application.Server, application.ApplicationConfiguration);
+                serverDiagnosticsCtrl1.Initialize((StandardServer)application.Server, application.ApplicationConfiguration);
             }
-
-            if (!application.ApplicationConfiguration.SecurityConfiguration.AutoAcceptUntrustedCertificates)
-            {
-                //application.ApplicationConfiguration.CertificateValidator.CertificateValidation += new CertificateValidationEventHandler(CertificateValidator_CertificateValidation);
-            }
-
-            //TrayIcon.Text = this.Text = application.ApplicationName;
-            //this.Icon = TrayIcon.Icon = ClientUtils.GetAppIcon();
         }
 
         #region Event Handlers
