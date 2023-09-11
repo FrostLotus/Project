@@ -14,13 +14,17 @@ namespace OCPUAServer
         //參數
         private ReferenceServerConfiguration m_configuration;//基本為空
         private Opc.Ua.Test.DataGenerator m_generator;
-        private BaseDataVariableState<bool> SystemState = null;
+        private BaseDataVariableState<bool> SystemState = null;//紀錄
         private List<BaseDataVariableState<int>> TimeTickList = new List<BaseDataVariableState<int>>();//變數狀態
         private System.Timers.Timer timer1 = null;
         private string FirstLayerFolder = "Fatory";//"Machines"
         string[] machines = new string[] { "Union A", "Union B", "Union C" };
 
-        #region Constructors
+        //test
+        private List<BaseDataVariableState<int>> list = null;
+        private List<BaseDataVariableState<int>> intlist = null;
+        private List<BaseDataVariableState<float>> floatlist = null;
+
         /// <summary>
         /// 初始化節點管理器
         /// </summary>
@@ -39,11 +43,11 @@ namespace OCPUAServer
                 m_configuration = new ReferenceServerConfiguration();
             }
 
+
             timer1 = new System.Timers.Timer(500);
             timer1.Elapsed += Timer1_Elapsed;
             timer1.Start();
         }
-        #endregion
 
         #region INodeIdFactory Members
         /// <summary>
@@ -143,7 +147,7 @@ namespace OCPUAServer
                 //加載預定義節點
                 LoadPredefinedNodes(SystemContext, externalReferences);
                 //節點參考列表
-                IList<IReference> references;
+                IList<IReference> references = null;
                 //嘗試取得至Objects節點檔案夾參考資料
                 if (!externalReferences.TryGetValue(ObjectIds.ObjectsFolder, out references))
                 {
@@ -158,8 +162,10 @@ namespace OCPUAServer
                 rootMy.EventNotifier = EventNotifiers.SubscribeToEvents;//觸發事件
                 AddRootNotifier(rootMy);
 
-                //string[] machines = new string[] { "Machine A", "Machine B", "Machine C" };
-
+                string[] machines = new string[] { "Machine A", "Machine B", "Machine C" };
+                list = new List<BaseDataVariableState<int>>();
+                intlist = new List<BaseDataVariableState<int>>();
+                floatlist = new List<BaseDataVariableState<float>>();
                 //=================================================================
 
                 for (int i = 0; i < machines.Length; i++)
@@ -172,6 +178,9 @@ namespace OCPUAServer
                     CreateVariable(myFolder, "ValueFloat", DataTypeIds.Float, ValueRanks.Scalar, 100.5f).Description ="設備參數(Float)";
                     CreateVariable(myFolder, "ValueInt", DataTypeIds.Int32, ValueRanks.Scalar, 0).Description = "設備參數(Int)";
                     CreateVariable(myFolder, "AlarmTime", DataTypeIds.DateTime, ValueRanks.Scalar, DateTime.Now).Description = "建立時間";
+                    intlist.Add(CreateVariable(myFolder, "UseInt", DataTypeIds.Int32, ValueRanks.Scalar, 0));//測試(INT)
+                    floatlist.Add(CreateVariable(myFolder, "UseFloat", DataTypeIds.Float, ValueRanks.Scalar, 0.0f));//測試(Float)
+
                     TimeTickList.Add(CreateVariable(myFolder, "ValueIntTick", DataTypeIds.Int32, ValueRanks.Scalar, 1000));//時間增加建立次數(Int)
                     #endregion
 
@@ -242,7 +251,7 @@ namespace OCPUAServer
             return folder;
         }
         /// <summary>
-        /// 產身一個變數節點
+        /// 產生一個變數節點<T>
         /// </summary>
         private BaseDataVariableState<T> CreateVariable<T>(NodeState parent, string name, NodeId dataType, int valueRank, T defaultValue)
         {
@@ -263,14 +272,51 @@ namespace OCPUAServer
                 Value = defaultValue,
                 StatusCode = StatusCodes.Good,
                 Timestamp = DateTime.Now,
-                NodeId = (parent == null)
-                ? new NodeId(name, NamespaceIndex)
-                : new NodeId(parent.NodeId.ToString() + "/" + name)
+                NodeId = (parent == null)? new NodeId(name, NamespaceIndex): new NodeId(parent.NodeId.ToString() + "/" + name)
             };
             if (parent != null)
             {
                 parent.AddChild(variable);
             }
+            return variable;
+        }
+        /// <summary>
+        /// 產生一個變數節點 OBJECT
+        /// </summary>
+        protected BaseDataVariableState CreateBaseVariable(NodeState parent, string name, string description, NodeId dataType, int valueRank, object defaultValue)
+        {
+            BaseDataVariableState variable = new BaseDataVariableState(parent);
+
+            variable.SymbolicName = name;
+            variable.ReferenceTypeId = ReferenceTypes.Organizes;
+            variable.TypeDefinitionId = VariableTypeIds.BaseDataVariableType;
+            if (parent == null)
+            {
+                variable.NodeId = new NodeId(name, NamespaceIndex);
+            }
+            else
+            {
+                variable.NodeId = new NodeId(parent.NodeId.ToString() + "/" + name);
+            }
+            variable.Description = description;
+            variable.BrowseName = new QualifiedName(name, NamespaceIndex);
+            variable.DisplayName = new LocalizedText(name);
+            variable.WriteMask = AttributeWriteMask.DisplayName | AttributeWriteMask.Description;
+            variable.UserWriteMask = AttributeWriteMask.DisplayName | AttributeWriteMask.Description;
+            variable.DataType = dataType;
+            variable.ValueRank = valueRank;
+            variable.AccessLevel = AccessLevels.CurrentReadOrWrite;
+            variable.UserAccessLevel = AccessLevels.CurrentReadOrWrite;
+            variable.Historizing = false;
+            variable.Value = defaultValue;
+            variable.StatusCode = StatusCodes.Good;
+            variable.Timestamp = DateTime.Now;
+
+            if (parent != null)
+            {
+                parent.AddChild(variable);
+            }
+
             return variable;
         }
         /// <summary>
@@ -290,9 +336,7 @@ namespace OCPUAServer
                 Executable = true,
                 UserExecutable = true,
                 Description = description,
-                NodeId = (parent == null) 
-                ? new NodeId(name, NamespaceIndex) 
-                : new NodeId(parent.NodeId.ToString() + "/" + name)
+                NodeId = (parent == null)? new NodeId(name, NamespaceIndex) : new NodeId(parent.NodeId.ToString() + "/" + name)
             };
             if (parent != null)
             {
@@ -309,13 +353,14 @@ namespace OCPUAServer
             method.InputArguments = new PropertyState<Argument[]>(method)
             {
                 NodeId = new NodeId(method.BrowseName.Name + "InArgs", NamespaceIndex),
-                BrowseName = BrowseNames.InputArguments,
-                DisplayName = method.InputArguments.BrowseName.Name,
-                TypeDefinitionId = VariableTypeIds.PropertyType,
-                ReferenceTypeId = ReferenceTypeIds.HasProperty,
-                DataType = DataTypeIds.Argument,
-                ValueRank = ValueRanks.OneDimension,
+                BrowseName = BrowseNames.InputArguments
             };
+            method.InputArguments.DisplayName = method.InputArguments.BrowseName.Name;
+            method.InputArguments.TypeDefinitionId = VariableTypeIds.PropertyType;
+            method.InputArguments.ReferenceTypeId = ReferenceTypeIds.HasProperty;
+            method.InputArguments.DataType = DataTypeIds.Argument;
+            method.InputArguments.ValueRank = ValueRanks.OneDimension;
+
             method.InputArguments.Value = new Argument[]
             {
                 new Argument() { Name = "Int32", Description = "Int32 value",  DataType = DataTypeIds.Int32, ValueRank = ValueRanks.Scalar , Value = 100},
@@ -328,22 +373,55 @@ namespace OCPUAServer
         /// <param name="method">對應函數</param>
         private void OutPutMethod(MethodState method)
         {
-            method.OutputArguments = new PropertyState<Argument[]>(method)
-            {
-                NodeId = new NodeId(method.BrowseName.Name + "OutArgs", NamespaceIndex),
-                BrowseName = BrowseNames.OutputArguments,
-                DisplayName = method.OutputArguments.BrowseName.Name,
-                TypeDefinitionId = VariableTypeIds.PropertyType,
-                ReferenceTypeId = ReferenceTypeIds.HasProperty,
-                DataType = DataTypeIds.Argument,
-                ValueRank = ValueRanks.OneDimension
-            };
+            method.OutputArguments = new PropertyState<Argument[]>(method);
+            method.OutputArguments.NodeId = new NodeId(method.BrowseName.Name + "OutArgs", NamespaceIndex);
+            method.OutputArguments.BrowseName = BrowseNames.OutputArguments;
+            method.OutputArguments.DisplayName = method.OutputArguments.BrowseName.Name;
+            method.OutputArguments.TypeDefinitionId = VariableTypeIds.PropertyType;
+            method.OutputArguments.ReferenceTypeId = ReferenceTypeIds.HasProperty;
+            method.OutputArguments.DataType = DataTypeIds.Argument;
+            method.OutputArguments.ValueRank = ValueRanks.OneDimension;
+
             method.OutputArguments.Value = new Argument[]
             {
                 new Argument() { Name = "Operater Result", Description = "Operater Result",  DataType = DataTypeIds.String, ValueRank = ValueRanks.Scalar }
             };
         }
 
+        protected override NodeHandle GetManagerHandle(ServerSystemContext context, NodeId nodeId, IDictionary<NodeId, NodeState> cache)
+        {
+            lock (Lock)
+            {
+                // quickly exclude nodes that are not in the namespace. 
+                if (!IsNodeIdInNamespace(nodeId))
+                {
+                    return null;
+                }
+
+                NodeState node = null;
+
+                if (!PredefinedNodes.TryGetValue(nodeId, out node))
+                {
+                    return null;
+                }
+
+                NodeHandle handle = new NodeHandle();
+
+                handle.NodeId = nodeId;
+                handle.Node = node;
+                handle.Validated = true;
+
+                return handle;
+            }
+        }
+        /// <summary>
+        /// 事件處理中函式
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="method"></param>
+        /// <param name="inputArguments"></param>
+        /// <param name="outputArguments"></param>
+        /// <returns></returns>
         private ServiceResult OnAddCall(ISystemContext context, MethodState method, IList<object> inputArguments, IList<object> outputArguments)
         {
             // 必須拿出所有參數
@@ -373,7 +451,12 @@ namespace OCPUAServer
             }
         }
         
+        //------------------------------------------
+
+
+
         #endregion
+
         private void Timer1_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             if (TimeTickList != null)

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Opc.Ua;
+using Opc.Ua.Server.Controls;
 using Opc.Ua.Configuration;
 
 namespace OCPUAServer
@@ -22,11 +23,10 @@ namespace OCPUAServer
             ApplicationInstance.MessageDlg = new ApplicationMessageDlg();
             ApplicationInstance application = new ApplicationInstance();
             application.ApplicationType = ApplicationType.Server;
-            application.ConfigSectionName = "SharpNodeSettingsServer";
+            application.ConfigSectionName = "OPCUASetting";
 
             try
             {
-                #region 這段應該可以不要
                 // 載入應用程序配置
                 application.LoadApplicationConfiguration( false ).Wait();
                 // 檢查應用程式證書
@@ -37,7 +37,8 @@ namespace OCPUAServer
                 }
                 // start the server.
                 application.Start(new SharpNodeSettingsServer()).Wait();
-                #endregion
+
+                
                 // 跑主視窗
                 Application.Run(new MainForm(application));
             }
