@@ -24,6 +24,7 @@ namespace OCPUAServer
             ApplicationInstance application = new ApplicationInstance();
             application.ApplicationType = ApplicationType.Server;
             application.ConfigSectionName = "OPCUASetting";
+            SharpNodeSettingsServer settingsServer = new SharpNodeSettingsServer();
 
             try
             {
@@ -36,7 +37,7 @@ namespace OCPUAServer
                     throw new Exception("Application instance certificate invalid!");
                 }
                 // start the server.
-                application.Start(new SharpNodeSettingsServer()).Wait();
+                application.Start(settingsServer).Wait();
 
                 
                 // 跑主視窗

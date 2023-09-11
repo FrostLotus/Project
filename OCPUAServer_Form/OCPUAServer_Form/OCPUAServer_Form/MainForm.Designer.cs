@@ -52,7 +52,8 @@ namespace OCPUAServer
             this.Txt_NodeId = new System.Windows.Forms.TextBox();
             this.Txt_ItemName = new System.Windows.Forms.TextBox();
             this.Txt_Variable = new System.Windows.Forms.TextBox();
-            this.serverDiagnosticsCtrl1 = new Opc.Ua.Server.Controls.ServerDiagnosticsCtrl();
+            this.serverControl1 = new OCPUAServer.ServerControl();
+            this.Trv_NodeViewer = new System.Windows.Forms.TreeView();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Dgv_DataItem)).BeginInit();
             this.SuspendLayout();
@@ -62,16 +63,16 @@ namespace OCPUAServer
             this.groupBox1.Controls.Add(this.Btn_Stop);
             this.groupBox1.Controls.Add(this.Btn_Run);
             this.groupBox1.Controls.Add(this.Lab_Status);
-            this.groupBox1.Location = new System.Drawing.Point(419, 221);
+            this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(134, 161);
+            this.groupBox1.Size = new System.Drawing.Size(350, 59);
             this.groupBox1.TabIndex = 25;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Server狀態";
             // 
             // Btn_Stop
             // 
-            this.Btn_Stop.Location = new System.Drawing.Point(15, 71);
+            this.Btn_Stop.Location = new System.Drawing.Point(130, 22);
             this.Btn_Stop.Name = "Btn_Stop";
             this.Btn_Stop.Size = new System.Drawing.Size(99, 30);
             this.Btn_Stop.TabIndex = 3;
@@ -92,7 +93,7 @@ namespace OCPUAServer
             // Lab_Status
             // 
             this.Lab_Status.AutoSize = true;
-            this.Lab_Status.Location = new System.Drawing.Point(27, 128);
+            this.Lab_Status.Location = new System.Drawing.Point(248, 30);
             this.Lab_Status.Name = "Lab_Status";
             this.Lab_Status.Size = new System.Drawing.Size(73, 12);
             this.Lab_Status.TabIndex = 2;
@@ -100,18 +101,18 @@ namespace OCPUAServer
             // 
             // Btn_Close
             // 
-            this.Btn_Close.Location = new System.Drawing.Point(434, 508);
+            this.Btn_Close.Location = new System.Drawing.Point(1095, 584);
             this.Btn_Close.Name = "Btn_Close";
             this.Btn_Close.Size = new System.Drawing.Size(99, 30);
             this.Btn_Close.TabIndex = 23;
-            this.Btn_Close.Text = "Close";
+            this.Btn_Close.Text = "Close Window";
             this.Btn_Close.UseVisualStyleBackColor = true;
             this.Btn_Close.Click += new System.EventHandler(this.Btn_Close_Click);
             // 
             // Dgv_DataItem
             // 
             this.Dgv_DataItem.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.Dgv_DataItem.Location = new System.Drawing.Point(11, 221);
+            this.Dgv_DataItem.Location = new System.Drawing.Point(678, 240);
             this.Dgv_DataItem.Name = "Dgv_DataItem";
             this.Dgv_DataItem.RowTemplate.Height = 24;
             this.Dgv_DataItem.Size = new System.Drawing.Size(402, 317);
@@ -120,7 +121,7 @@ namespace OCPUAServer
             // 
             // Btn_UpdateFile
             // 
-            this.Btn_UpdateFile.Location = new System.Drawing.Point(434, 79);
+            this.Btn_UpdateFile.Location = new System.Drawing.Point(1084, 87);
             this.Btn_UpdateFile.Name = "Btn_UpdateFile";
             this.Btn_UpdateFile.Size = new System.Drawing.Size(99, 30);
             this.Btn_UpdateFile.TabIndex = 22;
@@ -130,7 +131,7 @@ namespace OCPUAServer
             // 
             // Btn_Delete
             // 
-            this.Btn_Delete.Location = new System.Drawing.Point(434, 43);
+            this.Btn_Delete.Location = new System.Drawing.Point(1084, 51);
             this.Btn_Delete.Name = "Btn_Delete";
             this.Btn_Delete.Size = new System.Drawing.Size(99, 30);
             this.Btn_Delete.TabIndex = 21;
@@ -140,7 +141,7 @@ namespace OCPUAServer
             // 
             // Btn_Add
             // 
-            this.Btn_Add.Location = new System.Drawing.Point(434, 7);
+            this.Btn_Add.Location = new System.Drawing.Point(1084, 15);
             this.Btn_Add.Name = "Btn_Add";
             this.Btn_Add.Size = new System.Drawing.Size(99, 30);
             this.Btn_Add.TabIndex = 20;
@@ -151,7 +152,7 @@ namespace OCPUAServer
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(25, 185);
+            this.label7.Location = new System.Drawing.Point(676, 194);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(32, 12);
             this.label7.TabIndex = 18;
@@ -160,7 +161,7 @@ namespace OCPUAServer
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(25, 157);
+            this.label6.Location = new System.Drawing.Point(676, 166);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(32, 12);
             this.label6.TabIndex = 17;
@@ -169,7 +170,7 @@ namespace OCPUAServer
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(25, 129);
+            this.label5.Location = new System.Drawing.Point(676, 138);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(38, 12);
             this.label5.TabIndex = 19;
@@ -178,7 +179,7 @@ namespace OCPUAServer
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(25, 103);
+            this.label4.Location = new System.Drawing.Point(676, 112);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(29, 12);
             this.label4.TabIndex = 16;
@@ -187,7 +188,7 @@ namespace OCPUAServer
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(25, 75);
+            this.label3.Location = new System.Drawing.Point(676, 84);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(43, 12);
             this.label3.TabIndex = 15;
@@ -196,7 +197,7 @@ namespace OCPUAServer
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(25, 43);
+            this.label2.Location = new System.Drawing.Point(676, 52);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(56, 12);
             this.label2.TabIndex = 14;
@@ -205,7 +206,7 @@ namespace OCPUAServer
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(25, 15);
+            this.label1.Location = new System.Drawing.Point(676, 24);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(48, 12);
             this.label1.TabIndex = 13;
@@ -219,66 +220,74 @@ namespace OCPUAServer
             "Word",
             "Bool",
             "Real"});
-            this.Cbb_DataType.Location = new System.Drawing.Point(92, 100);
+            this.Cbb_DataType.Location = new System.Drawing.Point(743, 109);
             this.Cbb_DataType.Name = "Cbb_DataType";
             this.Cbb_DataType.Size = new System.Drawing.Size(321, 20);
             this.Cbb_DataType.TabIndex = 12;
             // 
             // Txt_Value
             // 
-            this.Txt_Value.Location = new System.Drawing.Point(92, 182);
+            this.Txt_Value.Location = new System.Drawing.Point(743, 191);
             this.Txt_Value.Name = "Txt_Value";
             this.Txt_Value.Size = new System.Drawing.Size(321, 22);
             this.Txt_Value.TabIndex = 10;
             // 
             // Txt_Inital
             // 
-            this.Txt_Inital.Location = new System.Drawing.Point(92, 154);
+            this.Txt_Inital.Location = new System.Drawing.Point(743, 163);
             this.Txt_Inital.Name = "Txt_Inital";
             this.Txt_Inital.Size = new System.Drawing.Size(321, 22);
             this.Txt_Inital.TabIndex = 9;
             // 
             // Txt_Length
             // 
-            this.Txt_Length.Location = new System.Drawing.Point(92, 126);
+            this.Txt_Length.Location = new System.Drawing.Point(743, 135);
             this.Txt_Length.Name = "Txt_Length";
             this.Txt_Length.Size = new System.Drawing.Size(321, 22);
             this.Txt_Length.TabIndex = 8;
             // 
             // Txt_NodeId
             // 
-            this.Txt_NodeId.Location = new System.Drawing.Point(92, 72);
+            this.Txt_NodeId.Location = new System.Drawing.Point(743, 81);
             this.Txt_NodeId.Name = "Txt_NodeId";
             this.Txt_NodeId.Size = new System.Drawing.Size(321, 22);
             this.Txt_NodeId.TabIndex = 7;
             // 
             // Txt_ItemName
             // 
-            this.Txt_ItemName.Location = new System.Drawing.Point(92, 40);
+            this.Txt_ItemName.Location = new System.Drawing.Point(743, 49);
             this.Txt_ItemName.Name = "Txt_ItemName";
             this.Txt_ItemName.Size = new System.Drawing.Size(321, 22);
             this.Txt_ItemName.TabIndex = 11;
             // 
             // Txt_Variable
             // 
-            this.Txt_Variable.Location = new System.Drawing.Point(92, 12);
+            this.Txt_Variable.Location = new System.Drawing.Point(743, 21);
             this.Txt_Variable.Name = "Txt_Variable";
             this.Txt_Variable.Size = new System.Drawing.Size(321, 22);
             this.Txt_Variable.TabIndex = 6;
             // 
-            // serverDiagnosticsCtrl1
+            // serverControl1
             // 
-            this.serverDiagnosticsCtrl1.Location = new System.Drawing.Point(559, 7);
-            this.serverDiagnosticsCtrl1.Name = "serverDiagnosticsCtrl1";
-            this.serverDiagnosticsCtrl1.Size = new System.Drawing.Size(532, 318);
-            this.serverDiagnosticsCtrl1.TabIndex = 26;
+            this.serverControl1.Location = new System.Drawing.Point(12, 81);
+            this.serverControl1.Name = "serverControl1";
+            this.serverControl1.Size = new System.Drawing.Size(488, 322);
+            this.serverControl1.TabIndex = 27;
+            // 
+            // Trv_NodeViewer
+            // 
+            this.Trv_NodeViewer.Location = new System.Drawing.Point(27, 409);
+            this.Trv_NodeViewer.Name = "Trv_NodeViewer";
+            this.Trv_NodeViewer.Size = new System.Drawing.Size(452, 205);
+            this.Trv_NodeViewer.TabIndex = 28;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1206, 562);
-            this.Controls.Add(this.serverDiagnosticsCtrl1);
+            this.ClientSize = new System.Drawing.Size(1206, 626);
+            this.Controls.Add(this.Trv_NodeViewer);
+            this.Controls.Add(this.serverControl1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.Btn_Close);
             this.Controls.Add(this.Dgv_DataItem);
@@ -334,6 +343,7 @@ namespace OCPUAServer
         private System.Windows.Forms.TextBox Txt_NodeId;
         private System.Windows.Forms.TextBox Txt_ItemName;
         private System.Windows.Forms.TextBox Txt_Variable;
-        private Opc.Ua.Server.Controls.ServerDiagnosticsCtrl serverDiagnosticsCtrl1;
+        private ServerControl serverControl1;
+        private System.Windows.Forms.TreeView Trv_NodeViewer;
     }
 }

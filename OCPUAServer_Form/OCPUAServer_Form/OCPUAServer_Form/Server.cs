@@ -40,6 +40,9 @@ namespace OCPUAServer
 {
     public partial class SharpNodeSettingsServer : StandardServer
     {
+        public List<INodeManager> NodeManagers; 
+        public EmptyNodeManager NodeManager;
+        
         //override實作
 
         /// <summary>
@@ -53,13 +56,15 @@ namespace OCPUAServer
             Console.WriteLine("Creating the Node Managers.");
             //Utils.Trace("Creating the Node Managers.");
 
-            List<INodeManager> nodeManagers = new List<INodeManager>();
+            NodeManagers = new List<INodeManager>();
+
+            NodeManager = new EmptyNodeManager(server, configuration);
 
             // 創建自訂義節點管理器.
-            nodeManagers.Add(new EmptyNodeManager(server, configuration));
+            NodeManagers.Add(NodeManager);
 
             // 以此創建主節點.
-            return new MasterNodeManager(server, configuration, null, nodeManagers.ToArray());
+            return new MasterNodeManager(server, configuration, null, NodeManagers.ToArray());
         }
         /// <summary>
         /// 加載應用程序的不可配置properties。

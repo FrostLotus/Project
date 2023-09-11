@@ -16,21 +16,26 @@ namespace OCPUAServer
         private Opc.Ua.Test.DataGenerator m_generator;
         private BaseDataVariableState<bool> SystemState = null;//紀錄
         private List<BaseDataVariableState<int>> TimeTickList = new List<BaseDataVariableState<int>>();//變數狀態
-        private System.Timers.Timer timer1 = null;
+        private System.Timers.Timer NodeTimer = null;
         private string FirstLayerFolder = "Fatory";//"Machines"
-        string[] machines = new string[] { "Union A", "Union B", "Union C" };
+        string[] SecondLayermachines = new string[] { "Union A", "Union B", "Union C" };
+
 
         //test
-        private List<BaseDataVariableState<int>> list = null;
-        private List<BaseDataVariableState<int>> intlist = null;
-        private List<BaseDataVariableState<float>> floatlist = null;
+        public List<BaseDataVariableState<int>> list = null;
+        public List<BaseDataVariableState<int>> intlist = null;
+        public List<BaseDataVariableState<float>> floatlist = null;
+
+        public List<TreeNodeItem> FilesTree = null;
+
+
+
 
         /// <summary>
         /// 初始化節點管理器
         /// </summary>
         public EmptyNodeManager(IServerInternal server, ApplicationConfiguration configuration)
-        :
-            base(server, configuration, Namespaces.ReferenceApplications)
+        : base(server, configuration, Namespaces.ReferenceApplications)
         {
             SystemContext.NodeIdFactory = this;
 
@@ -44,9 +49,9 @@ namespace OCPUAServer
             }
 
 
-            timer1 = new System.Timers.Timer(500);
-            timer1.Elapsed += Timer1_Elapsed;
-            timer1.Start();
+            NodeTimer = new System.Timers.Timer(500);
+            NodeTimer.Elapsed += NodeTimer_Elapsed;
+            NodeTimer.Start();
         }
 
         #region INodeIdFactory Members
@@ -155,12 +160,18 @@ namespace OCPUAServer
                     references = new List<IReference>();
                     externalReferences[ObjectIds.ObjectsFolder] = references;
                 }
+                FilesTree = new List<TreeNodeItem>();
+
                 //建立"Objects"下的第一層目錄
-                FolderState rootMy = CreateFolder(null, FirstLayerFolder);
+                FolderState rootMy = CreateFolder(null, FirstLayerFolder,"第一層");
+
                 rootMy.AddReference(ReferenceTypes.Organizes, false, ObjectIds.ObjectsFolder);//提供目錄參考(狀態 排列等) 中間本為true 
                 references.Add(new NodeStateReference(ReferenceTypes.Organizes, false, rootMy.NodeId));//建立目錄
                 rootMy.EventNotifier = EventNotifiers.SubscribeToEvents;//觸發事件
                 AddRootNotifier(rootMy);
+
+                //FilesTree.Add(new TreeNodeItem(FirstLayerFolder, ItemType.Folder));
+
 
                 string[] machines = new string[] { "Machine A", "Machine B", "Machine C" };
                 list = new List<BaseDataVariableState<int>>();
@@ -173,15 +184,15 @@ namespace OCPUAServer
                     //新增參數節點
                     FolderState myFolder = CreateFolder(rootMy, machines[i]);//建立所屬參數資料夾
                     #region Add Variable
-                    CreateVariable(myFolder, "Name", DataTypeIds.String, ValueRanks.Scalar, "測試文字").Description = "設備的名稱(String)";//外掛描述
-                    CreateVariable(myFolder, "IsActive", DataTypeIds.Boolean, ValueRanks.Scalar, true).Description = "設備是否啟動(Bool)";
-                    CreateVariable(myFolder, "ValueFloat", DataTypeIds.Float, ValueRanks.Scalar, 100.5f).Description ="設備參數(Float)";
-                    CreateVariable(myFolder, "ValueInt", DataTypeIds.Int32, ValueRanks.Scalar, 0).Description = "設備參數(Int)";
-                    CreateVariable(myFolder, "AlarmTime", DataTypeIds.DateTime, ValueRanks.Scalar, DateTime.Now).Description = "建立時間";
-                    intlist.Add(CreateVariable(myFolder, "UseInt", DataTypeIds.Int32, ValueRanks.Scalar, 0));//測試(INT)
-                    floatlist.Add(CreateVariable(myFolder, "UseFloat", DataTypeIds.Float, ValueRanks.Scalar, 0.0f));//測試(Float)
+                    CreateVariable(myFolder, "Name", DataTypeIds.String, ValueRanks.Scalar, "設備的名稱(String)", "測試文字");
+                    CreateVariable(myFolder, "IsActive", DataTypeIds.Boolean, ValueRanks.Scalar, "設備是否啟動(Bool)", true);
+                    CreateVariable(myFolder, "ValueFloat", DataTypeIds.Float, ValueRanks.Scalar, "設備參數(Float)", 100.5f);
+                    CreateVariable(myFolder, "ValueInt", DataTypeIds.Int32, ValueRanks.Scalar, "設備參數(Int)", 0);
+                    CreateVariable(myFolder, "AlarmTime", DataTypeIds.DateTime, ValueRanks.Scalar, "建立時間", DateTime.Now);
+                    intlist.Add(CreateVariable(myFolder, "UseInt", DataTypeIds.Int32, ValueRanks.Scalar, "測試(INT)",0));
+                    floatlist.Add(CreateVariable(myFolder, "UseFloat", DataTypeIds.Float, ValueRanks.Scalar, "測試(Float)", 0.0f));
 
-                    TimeTickList.Add(CreateVariable(myFolder, "ValueIntTick", DataTypeIds.Int32, ValueRanks.Scalar, 1000));//時間增加建立次數(Int)
+                    TimeTickList.Add(CreateVariable(myFolder, "ValueIntTick", DataTypeIds.Int32, ValueRanks.Scalar, "時間增加建立次數(Int)", 1000));
                     #endregion
 
                     #region Add Method
@@ -195,11 +206,10 @@ namespace OCPUAServer
                     #endregion
 
                 }
+                SystemState = CreateVariable(rootMy, "Enable", DataTypeIds.Boolean, ValueRanks.Scalar,"許可", false);
+                CreateVariable(rootMy, "Mat", DataTypeIds.Double, ValueRanks.TwoDimensions, "單一4*4陣列(double)", new double[4, 4]);
 
-                SystemState = CreateVariable(rootMy, "Enable", DataTypeIds.Boolean, ValueRanks.Scalar, false);
-                CreateVariable(rootMy, "Mat", DataTypeIds.Double, ValueRanks.TwoDimensions, new double[4, 4]);//新增單一4*4陣列(double)
-
-                AddPredefinedNode(SystemContext, rootMy);
+                AddPredefinedNode(SystemContext, rootMy);//將定義好的項目推送出去
 
                 FolderState robots = CreateFolder(null, "Robots");
                 robots.AddReference(ReferenceTypes.Organizes, true, ObjectIds.ObjectsFolder);
@@ -207,7 +217,7 @@ namespace OCPUAServer
                 robots.EventNotifier = EventNotifiers.SubscribeToEvents;
                 AddRootNotifier(robots);
 
-                AddPredefinedNode(SystemContext, robots);
+                AddPredefinedNode(SystemContext, robots);//將定義好的項目推送出去
             }
         }
         /// <summary>
@@ -253,7 +263,7 @@ namespace OCPUAServer
         /// <summary>
         /// 產生一個變數節點<T>
         /// </summary>
-        private BaseDataVariableState<T> CreateVariable<T>(NodeState parent, string name, NodeId dataType, int valueRank, T defaultValue)
+        private BaseDataVariableState<T> CreateVariable<T>(NodeState parent, string name, NodeId dataType, int valueRank,string description, T defaultValue)
         {
             BaseDataVariableState<T> variable = new BaseDataVariableState<T>(parent)
             {
@@ -262,6 +272,7 @@ namespace OCPUAServer
                 TypeDefinitionId = VariableTypeIds.BaseDataVariableType,
                 BrowseName = new QualifiedName(name),//, NamespaceIndex),
                 DisplayName = new LocalizedText(name),
+                Description = description,
                 WriteMask = AttributeWriteMask.DisplayName | AttributeWriteMask.Description,
                 UserWriteMask = AttributeWriteMask.DisplayName | AttributeWriteMask.Description,
                 DataType = dataType,
@@ -278,45 +289,6 @@ namespace OCPUAServer
             {
                 parent.AddChild(variable);
             }
-            return variable;
-        }
-        /// <summary>
-        /// 產生一個變數節點 OBJECT
-        /// </summary>
-        protected BaseDataVariableState CreateBaseVariable(NodeState parent, string name, string description, NodeId dataType, int valueRank, object defaultValue)
-        {
-            BaseDataVariableState variable = new BaseDataVariableState(parent);
-
-            variable.SymbolicName = name;
-            variable.ReferenceTypeId = ReferenceTypes.Organizes;
-            variable.TypeDefinitionId = VariableTypeIds.BaseDataVariableType;
-            if (parent == null)
-            {
-                variable.NodeId = new NodeId(name, NamespaceIndex);
-            }
-            else
-            {
-                variable.NodeId = new NodeId(parent.NodeId.ToString() + "/" + name);
-            }
-            variable.Description = description;
-            variable.BrowseName = new QualifiedName(name, NamespaceIndex);
-            variable.DisplayName = new LocalizedText(name);
-            variable.WriteMask = AttributeWriteMask.DisplayName | AttributeWriteMask.Description;
-            variable.UserWriteMask = AttributeWriteMask.DisplayName | AttributeWriteMask.Description;
-            variable.DataType = dataType;
-            variable.ValueRank = valueRank;
-            variable.AccessLevel = AccessLevels.CurrentReadOrWrite;
-            variable.UserAccessLevel = AccessLevels.CurrentReadOrWrite;
-            variable.Historizing = false;
-            variable.Value = defaultValue;
-            variable.StatusCode = StatusCodes.Good;
-            variable.Timestamp = DateTime.Now;
-
-            if (parent != null)
-            {
-                parent.AddChild(variable);
-            }
-
             return variable;
         }
         /// <summary>
@@ -457,7 +429,7 @@ namespace OCPUAServer
 
         #endregion
 
-        private void Timer1_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private void NodeTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             if (TimeTickList != null)
             {
@@ -472,5 +444,27 @@ namespace OCPUAServer
                 }
             }
         }
+
+
+    }
+    public class TreeNodeItem
+    {
+        public string Name { get; }
+        public ItemType Type { get; }
+        public List<TreeNodeItem> Children { get; }
+
+        public TreeNodeItem(string name, ItemType type)
+        {
+            Name = name;
+            Type = type;
+            Children = new List<TreeNodeItem>();
+        }
+    }
+    public enum ItemType
+    {
+
+        UFolder,
+        Variable,
+        Function
     }
 }

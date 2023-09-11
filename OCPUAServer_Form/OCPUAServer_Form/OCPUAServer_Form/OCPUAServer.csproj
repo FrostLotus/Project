@@ -222,11 +222,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="ServerConfiguration.cs" />
-    <Compile Include="ServerControl1.cs">
+    <Compile Include="ServerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ServerControl1.Designer.cs">
-      <DependentUpon>ServerControl1.cs</DependentUpon>
+    <Compile Include="ServerControl.Designer.cs">
+      <DependentUpon>ServerControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ServerDiagnosticsCtrl.cs">
       <SubType>UserControl</SubType>
@@ -246,8 +246,8 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="ServerControl1.resx">
-      <DependentUpon>ServerControl1.cs</DependentUpon>
+    <EmbeddedResource Include="ServerControl.resx">
+      <DependentUpon>ServerControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ServerDiagnosticsCtrl.resx">
       <DependentUpon>ServerDiagnosticsCtrl.cs</DependentUpon>
