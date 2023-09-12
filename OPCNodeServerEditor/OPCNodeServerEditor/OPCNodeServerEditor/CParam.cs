@@ -9,6 +9,12 @@ using Opc.Ua;
 
 namespace OPCNodeServerEditor
 {
+    public enum ServerFlag
+    {
+        Start = 1,
+        Stop = 2,
+        pause = 3
+    }
     public enum folderFlag
     {
 

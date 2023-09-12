@@ -259,6 +259,7 @@ namespace OPCNodeServerEditor
             this.Btn_Run.TabIndex = 3;
             this.Btn_Run.Text = "RUN";
             this.Btn_Run.UseVisualStyleBackColor = true;
+            this.Btn_Run.Click += new System.EventHandler(this.Btn_Run_Click);
             // 
             // Lab_Status
             // 
