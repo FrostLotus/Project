@@ -81,7 +81,6 @@ namespace DataBaseTest
 
             iPreRowCount = 0;
             sPreDataTable = "";
-
         }
         /// <summary>
         /// SqlConnectionStringBuilder設定
