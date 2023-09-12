@@ -39,8 +39,7 @@ namespace OCPUAServer
                 // start the server.
                 application.Start(settingsServer).Wait();
 
-                
-                // 跑主視窗
+                // 運行主視窗
                 Application.Run(new MainForm(application));
             }
             catch (Exception e)

@@ -19,7 +19,6 @@ namespace OCPUAServer
         public ServerControl()
         {
             InitializeComponent();
-
         }
         /// <summary>
         /// 初始化元件
@@ -48,7 +47,6 @@ namespace OCPUAServer
                 Cbb_EndpointsUrl.SelectedIndex = 0;//預設第一位
             }
         }
-
         private void UpdateTimer_Tick(object sender, EventArgs e)
         {
             try
@@ -117,7 +115,6 @@ namespace OCPUAServer
             for (int i = 0; i < subscriptions.Count; i++)
             {
                 Subscription subscription = subscriptions[i];
-
                 ListViewItem item = new ListViewItem(subscription.Id.ToString());
 
                 item.SubItems.Add(String.Format("{0}", (int)subscription.PublishingInterval));//更新時間
