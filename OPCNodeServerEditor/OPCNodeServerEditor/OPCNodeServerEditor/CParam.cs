@@ -31,8 +31,7 @@ namespace OPCNodeServerEditor
     public class CParam
     {
         //參數
-        public static StandardServer Server;
-        public static ApplicationInstance UsingApplication;
+        
 
         public static List<FolderState> FolderList = new List<FolderState>();//檔案夾節點列表
 
@@ -201,7 +200,7 @@ namespace OPCNodeServerEditor
         }
 
     }
-    public class OpcDataStruct: CustomNodeManager2
+    public class OpcDataNodeManager: CustomNodeManager2
     {
         private ReferenceServerConfiguration Configuration;//基本為空
         private List<BaseDataVariableState<int>> TimeTickList = new List<BaseDataVariableState<int>>();//變數狀態
@@ -211,7 +210,7 @@ namespace OPCNodeServerEditor
         /// <summary>
         /// 初始化節點管理器
         /// </summary>
-        public OpcDataStruct(IServerInternal server, ApplicationConfiguration configuration) 
+        public OpcDataNodeManager(IServerInternal server, ApplicationConfiguration configuration) 
             : base(server, configuration, "http://opcfoundation.org/Quickstarts/ReferenceApplications")
         {
             //CustomNodeManager2內部參數

@@ -15,12 +15,16 @@ namespace OPCNodeServerEditor
 {
     public partial class MainForm : Form
     {
+        public static StandardServer Server;
+        public static ApplicationInstance UsingApplication;
+
         public emServerFlag ServerFlags = emServerFlag.Stop;
         public static Timer ViewBarTimer = new Timer();
 
         public MainForm()
         {
             InitializeComponent();
+           
         }
         public MainForm(ApplicationInstance application)
         {
@@ -30,16 +34,18 @@ namespace OPCNodeServerEditor
 
             ///-----------------------------------------
             //設定SERVER
-            CParam.UsingApplication = application;
+            UsingApplication = application;
             if(application.Server is StandardServer)
             {
-                CParam.Server = (StandardServer)CParam.UsingApplication.Server;
-                
+                Server = (StandardServer)UsingApplication.Server;
+
+                EndpointDescriptionCollection EC = Server.GetEndpoints();
+                Console.WriteLine($"第一地址為: {EC[0].EndpointUrl}");
 
                 // 將URL列先清除後新增
                 Cbb_EndpointsUrl.Items.Clear();
                 //從OPC.UA的XML拉資料
-                foreach (EndpointDescription endpoint in CParam.Server.GetEndpoints())
+                foreach (EndpointDescription endpoint in Server.GetEndpoints())
                 {
                     if (Cbb_EndpointsUrl.FindStringExact(endpoint.EndpointUrl) == -1)
                     {
@@ -52,10 +58,9 @@ namespace OPCNodeServerEditor
                 }
 
             }
-            
-
             ///-----------------------------------------
             //先使server不為開啟動作
+            UsingApplication.Server.Stop();
             Btn_Stop.Enabled = false;
             Btn_Stop.BackColor = Color.ForestGreen;
             Lab_Status.Text = "Server以視窗開啟中";
@@ -65,7 +70,7 @@ namespace OPCNodeServerEditor
         {
             if (ServerFlags == emServerFlag.Stop)
             {
-                CParam.UsingApplication.Server.Start(CParam.UsingApplication.ApplicationConfiguration);//伺服器啟動
+                UsingApplication.Server.Start(UsingApplication.ApplicationConfiguration);//伺服器啟動
 
                 UpdateTimer_Start();
                 Btn_Run.Enabled = false;
@@ -81,7 +86,7 @@ namespace OPCNodeServerEditor
         {
             if (ServerFlags == emServerFlag.Start)
             {
-                CParam.UsingApplication.Server.Stop();
+                UsingApplication.Server.Stop();
 
                 UpdateTimer_Stop();
                 Btn_Stop.Enabled = false;
@@ -117,7 +122,7 @@ namespace OPCNodeServerEditor
         private void UpdateSessions()
         {
             Lsv_Sessions.Items.Clear();//清除Listview中項目
-            IList<Session> sessions = CParam.Server.CurrentInstance.SessionManager.GetSessions();//從SessionManager取得連結數
+            IList<Session> sessions = Server.CurrentInstance.SessionManager.GetSessions();//從SessionManager取得連結數
 
             for (int i = 0; i < sessions.Count; i++)
             {
@@ -151,7 +156,7 @@ namespace OPCNodeServerEditor
         private void UpdateSubscriptions()
         {
             Lsv_Subscriptions.Items.Clear();//清除Listview中項目
-            IList<Subscription> subscriptions = CParam.Server.CurrentInstance.SubscriptionManager.GetSubscriptions();//從SessionManager取得訂閱數
+            IList<Subscription> subscriptions = Server.CurrentInstance.SubscriptionManager.GetSubscriptions();//從SessionManager取得訂閱數
 
             for (int i = 0; i < subscriptions.Count; i++)
             {

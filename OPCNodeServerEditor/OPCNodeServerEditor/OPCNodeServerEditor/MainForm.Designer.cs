@@ -29,7 +29,7 @@ namespace OPCNodeServerEditor
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Roots");
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Roots");
             this.Btn_Close = new System.Windows.Forms.Button();
             this.Btn_UpdateFile = new System.Windows.Forms.Button();
             this.Btn_Delete = new System.Windows.Forms.Button();
@@ -316,10 +316,10 @@ namespace OPCNodeServerEditor
             // 
             this.treeView1.Location = new System.Drawing.Point(6, 21);
             this.treeView1.Name = "treeView1";
-            treeNode2.Name = "NodeRoots";
-            treeNode2.Text = "Roots";
+            treeNode1.Name = "NodeRoots";
+            treeNode1.Text = "Roots";
             this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode2});
+            treeNode1});
             this.treeView1.Size = new System.Drawing.Size(536, 336);
             this.treeView1.TabIndex = 46;
             // 
@@ -343,6 +343,7 @@ namespace OPCNodeServerEditor
             this.Cbb_EndpointsUrl.Name = "Cbb_EndpointsUrl";
             this.Cbb_EndpointsUrl.Size = new System.Drawing.Size(545, 20);
             this.Cbb_EndpointsUrl.TabIndex = 48;
+            this.Cbb_EndpointsUrl.Text = "opc.tcp://127.0.0.1:62547/DataAccessServer";
             // 
             // groupBox3
             // 
