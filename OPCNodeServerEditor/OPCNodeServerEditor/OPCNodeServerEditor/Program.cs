@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Opc.Ua;
+using Opc.Ua.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,7 +18,18 @@ namespace OPCNodeServerEditor
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+
+            ApplicationInstance application = new ApplicationInstance();
+            application.ApplicationType = ApplicationType.Server;
+            application.ConfigSectionName = "OPCUASetting";
+
+            //先載入相關參數 CParam
+            CParam.Init();
+            //SharpNodeSettingsServer settingsServer = new SharpNodeSettingsServer();
+
+
+            Application.Run(new MainForm(application));
+            //Application.Run(new MainForm());
         }
     }
 }
