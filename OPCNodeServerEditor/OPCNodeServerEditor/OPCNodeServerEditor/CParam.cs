@@ -45,8 +45,6 @@ namespace OPCNodeServerEditor
         public static string DefaultPath = Application.StartupPath;
         public static string DataFilePath = DefaultPath + "\\OPCServerValue.ini";
         public static Timer ViewTimer = new Timer();
-
-
         //--------------------------------------------------------------------------
         public static void Init()
         {
@@ -198,7 +196,6 @@ namespace OPCNodeServerEditor
             }
 
         }
-
     }
     public class OpcDataNodeManager: CustomNodeManager2
     {
@@ -235,6 +232,8 @@ namespace OPCNodeServerEditor
             {
                 //加載預定義節點
                 LoadPredefinedNodes(SystemContext, externalReferences);
+                //節點參考列表
+                IList<IReference> references = null;
                 //嘗試取得至Objects節點檔案夾參考資料(之後作為位入資料夾主體位置)
                 if (!externalReferences.TryGetValue(ObjectIds.ObjectsFolder, out references))
                 {
@@ -242,9 +241,54 @@ namespace OPCNodeServerEditor
                     references = new List<IReference>();
                     externalReferences[ObjectIds.ObjectsFolder] = references;
                 }
-                //以下為新增 目錄節點
+                #region 資料夾建置
+                FolderState rootButtom = new FolderState(null);
+                FolderState rootMy = new FolderState(null);
+                //以下為新增 目錄節點 DATA已入建置矩陣中
+                //先建立資料夾
+                foreach (OpcDataFolder roll in CParam.StringFolderList)
+                {
+                    if (roll.Parent == "null")
+                    {
+                        rootButtom = CreateFolder(null, roll.FolderName, roll.Description);
+                        CParam.FolderList.Add(rootButtom);
 
-
+                        references.Add(new NodeStateReference(ReferenceTypes.Organizes, false, rootButtom));//建立目錄(中間為false)
+                        AddPredefinedNode(SystemContext, rootButtom);//根目錄 處理皆可
+                    }
+                    else
+                    {
+                        //搜尋roll.Parent根資料夾
+                        FolderState rootNode = FindFolder(roll.Parent);
+                        rootMy = CreateFolder(rootNode, roll.FolderName, roll.Description);
+                        CParam.FolderList.Add(rootMy);
+                    }
+                }
+                #endregion
+                foreach(OpcDataItem roll in CParam.StringVariableList)
+                {
+                    FolderState rootNode = FindFolder(roll.FolderName);
+                    //單一值變數
+                    switch (roll.DataType)
+                    {
+                        case "String":
+                            CreateVariable(rootNode, roll.NodeID, DataTypeIds.String, ValueRanks.Scalar, roll.Description, roll.Value);
+                            AddPredefinedNode(SystemContext, rootNode);
+                            break;
+                        case "Bool":
+                            CreateVariable(rootNode, roll.NodeID, DataTypeIds.Boolean, ValueRanks.Scalar, roll.Description, roll.Value);
+                            AddPredefinedNode(SystemContext, rootNode);
+                            break;
+                        case "Real":
+                            CreateVariable(rootNode, roll.NodeID, DataTypeIds.Float, ValueRanks.Scalar, roll.Description, (float)roll.Value);
+                            AddPredefinedNode(SystemContext, rootNode);
+                            break;
+                        case "Word":
+                            CreateVariable(rootNode, roll.NodeID, DataTypeIds.String, ValueRanks.Scalar, roll.Description, roll.Value);
+                            AddPredefinedNode(SystemContext, rootNode);
+                            break;
+                    }
+                }
             }
         }
         protected override NodeHandle GetManagerHandle(ServerSystemContext context, NodeId nodeId, IDictionary<NodeId, NodeState> cache)
@@ -318,20 +362,17 @@ namespace OPCNodeServerEditor
         protected void AddFolder(NodeState parent, string name, string description)
         {
             FolderState Folder = CreateFolder(parent, name, description);
-
             Folder.AddReference(ReferenceTypes.Organizes, false, ObjectIds.ObjectsFolder);//提供目錄參考(狀態 排列等) 中間本為true 
             references.Add(new NodeStateReference(ReferenceTypes.Organizes, false, Folder.NodeId));//建立目錄
             Folder.EventNotifier = EventNotifiers.SubscribeToEvents;//觸發事件
             AddRootNotifier(Folder);
-
         }
-
-       protected FolderState FindFolder(string folderName)
+        protected FolderState FindFolder(string Parent)
         {
             FolderState re = new FolderState(null);
             foreach (FolderState roll in CParam.FolderList)
             {
-                if ((string)roll.NodeId.Identifier == folderName)
+                if ((string)roll.NodeId.Identifier == Parent)
                 {
                     re = roll;
                 }
@@ -384,6 +425,21 @@ namespace OPCNodeServerEditor
             }
             return variable;
         }
+        
+        private bool ChangeBool(string s_Bool)
+        {
+            bool re =false;
+            if (s_Bool == "0")
+            {
+                re = false;
+            }
+            else
+            {
+                re = true;
+            }
+            return re;
+        }
+
         #endregion
 
         #region 新增計算(計算原理尚不甚理解)

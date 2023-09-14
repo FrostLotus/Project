@@ -40,7 +40,7 @@ namespace OPCNodeServerEditor
                 Server = (StandardServer)UsingApplication.Server;
 
                 EndpointDescriptionCollection EC = Server.GetEndpoints();
-                Console.WriteLine($"第一地址為: {EC[0].EndpointUrl}");
+                Console.WriteLine($"第一地址為: {EC[0].EndpointUrl}");//確認Endpoint有SERVER位置
 
                 // 將URL列先清除後新增
                 Cbb_EndpointsUrl.Items.Clear();
