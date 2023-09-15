@@ -1,32 +1,4 @@
-﻿/* ========================================================================
- * Copyright (c) 2005-2016 The OPC Foundation, Inc. All rights reserved.
- *
- * OPC Foundation MIT License 1.00
- * 
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following
- * conditions:
- * 
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- *
- * The complete license agreement can be found here:
- * http://opcfoundation.org/License/MIT/1.00/
- * ======================================================================*/
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -38,19 +10,15 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace OPCNodeServerEditor
 {
-    public partial class SharpNodeSettingsServer : StandardServer
+    public partial class NodeServer : StandardServer
     {
         public List<INodeManager> NodeManagers;
-        public OpcDataNodeManager NodeManager;
+        public NodeManager NodeManager;
 
         //override實作
-
         /// <summary>
         /// 建立一個主要的Node管理器給SERVER
         /// </summary>
-        /// <param name="server"></param>
-        /// <param name="configuration"></param>
-        /// <returns>主節點管理器</returns>
         protected override MasterNodeManager CreateMasterNodeManager(IServerInternal server, ApplicationConfiguration configuration)
         {
             Console.WriteLine("Creating the Node Managers.");
@@ -58,7 +26,7 @@ namespace OPCNodeServerEditor
 
             NodeManagers = new List<INodeManager>();
 
-            NodeManager = new OpcDataNodeManager(server, configuration);
+            NodeManager = new NodeManager(server, configuration);
 
             // 創建自訂義節點管理器.
             NodeManagers.Add(NodeManager);
@@ -123,9 +91,12 @@ namespace OPCNodeServerEditor
         protected override void OnServerStarted(IServerInternal server)
         {
             base.OnServerStarted(server);
-
             // request notifications when the user identity is changed. all valid users are accepted by default.
             server.SessionManager.ImpersonateUser += new ImpersonateEventHandler(SessionManager_ImpersonateUser);
+            //server.SessionManager.SessionCreated += new SessionEventHandler(MainForm.UpdateStatus);
+            server.SessionManager.SessionActivated += new SessionEventHandler(MainForm.UpdateStatus);
+            server.SessionManager.SessionCreated += new SessionEventHandler(MainForm.UpdateStatus);
+            server.SessionManager.SessionClosing += new SessionEventHandler(MainForm.UpdateStatus);
         }
         /// <summary>
         /// 在SERVER關閉前清除
@@ -140,8 +111,15 @@ namespace OPCNodeServerEditor
             CleanSampleModel();
 #endif
         }
-        //================================================================
 
+        protected override SessionManager CreateSessionManager(IServerInternal server, ApplicationConfiguration configuration)
+        {
+            SessionManager sessionManager = new SessionManager(server, configuration);
+            
+            return sessionManager;
+        }
+
+        //================================================================
         #region User Validation Functions
         /// <summary>
         /// 在使用者需調換身分時調用
@@ -168,7 +146,6 @@ namespace OPCNodeServerEditor
                 return;
             }
         }
-
         /// <summary>
         /// 驗證使用者名稱對應密碼
         /// </summary>
@@ -265,6 +242,5 @@ namespace OPCNodeServerEditor
             }
         }
         #endregion
-
     }
 }

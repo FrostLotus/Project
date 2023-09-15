@@ -15,37 +15,38 @@ namespace OPCNodeServerEditor
 {
     public partial class MainForm : Form
     {
-        public static StandardServer Server;
-        public static ApplicationInstance UsingApplication;
-
+        //public static StandardServer Server;
+        //public static ApplicationInstance UsingApplication;
         public emServerFlag ServerFlags = emServerFlag.Stop;
         public static Timer ViewBarTimer = new Timer();
 
         public MainForm()
         {
             InitializeComponent();
-           
+
         }
         public MainForm(ApplicationInstance application)
         {
             InitializeComponent();
-            ViewBarTimer.Interval = 1000;
+            ViewBarTimer.Interval = 200;
             ViewBarTimer.Tick += UpdateTimer_Tick;
 
             ///-----------------------------------------
             //設定SERVER
-            UsingApplication = application;
-            if(application.Server is StandardServer)
+            CParam.UsingApplication = application; 
+            
+            if (application.Server is StandardServer)
             {
-                Server = (StandardServer)UsingApplication.Server;
+                //CParam._NodeServer = (StandardServer)CParam.UsingApplication.Server;
+                CParam._NodeServer = (NodeServer)CParam.UsingApplication.Server;
 
-                EndpointDescriptionCollection EC = Server.GetEndpoints();
+
+                EndpointDescriptionCollection EC = CParam._NodeServer.GetEndpoints();
                 Console.WriteLine($"第一地址為: {EC[0].EndpointUrl}");//確認Endpoint有SERVER位置
-
                 // 將URL列先清除後新增
                 Cbb_EndpointsUrl.Items.Clear();
                 //從OPC.UA的XML拉資料
-                foreach (EndpointDescription endpoint in Server.GetEndpoints())
+                foreach (EndpointDescription endpoint in CParam._NodeServer.GetEndpoints())
                 {
                     if (Cbb_EndpointsUrl.FindStringExact(endpoint.EndpointUrl) == -1)
                     {
@@ -56,11 +57,18 @@ namespace OPCNodeServerEditor
                 {
                     Cbb_EndpointsUrl.SelectedIndex = 0;//預設第一位
                 }
+                //SessionActivated += UpdateStatus;
 
+                CParam._NodeServer.CurrentInstance.SessionManager.SessionActivated += new SessionEventHandler(UpdateStatus);
             }
             ///-----------------------------------------
+            //更新VariableList
+            UpdateVariable();
+
+
             //先使server不為開啟動作
-            UsingApplication.Server.Stop();
+
+            CParam.UsingApplication.Server.Stop();
             Btn_Stop.Enabled = false;
             Btn_Stop.BackColor = Color.ForestGreen;
             Lab_Status.Text = "Server以視窗開啟中";
@@ -70,7 +78,7 @@ namespace OPCNodeServerEditor
         {
             if (ServerFlags == emServerFlag.Stop)
             {
-                UsingApplication.Server.Start(UsingApplication.ApplicationConfiguration);//伺服器啟動
+                CParam.UsingApplication.Server.Start(CParam.UsingApplication.ApplicationConfiguration);//伺服器啟動
 
                 UpdateTimer_Start();
                 Btn_Run.Enabled = false;
@@ -81,12 +89,13 @@ namespace OPCNodeServerEditor
                 Lab_Status.Text = $"Server啟動";
                 ServerFlags = emServerFlag.Start;
             }
+            
         }
         private void Btn_Stop_Click(object sender, EventArgs e)
         {
             if (ServerFlags == emServerFlag.Start)
             {
-                UsingApplication.Server.Stop();
+                CParam.UsingApplication.Server.Stop();
 
                 UpdateTimer_Stop();
                 Btn_Stop.Enabled = false;
@@ -102,7 +111,7 @@ namespace OPCNodeServerEditor
         {
             try
             {
-                Lab_ServerTimeNow.Text = String.Format("{0:HH:mm:ss}", DateTime.Now);
+                Lab_ServerTimeNow.Text = String.Format("{0:hh:mm:ss.fff}", DateTime.Now);
                 UpdateSessions();
                 Lab_sessionsCount.Text = Convert.ToString(Lsv_Sessions.Items.Count);
                 UpdateSubscriptions();
@@ -122,12 +131,12 @@ namespace OPCNodeServerEditor
         private void UpdateSessions()
         {
             Lsv_Sessions.Items.Clear();//清除Listview中項目
-            IList<Session> sessions = Server.CurrentInstance.SessionManager.GetSessions();//從SessionManager取得連結數
-
+            IList<Session> sessions = CParam._NodeServer.CurrentInstance.SessionManager.GetSessions();//從SessionManager取得連結數
+            
             for (int i = 0; i < sessions.Count; i++)
             {
                 Session session = sessions[i];
-
+                //UpdateStatus(session, SessionEventReason.Activated);
                 lock (session.DiagnosticsLock)//鎖執行緒
                 {
                     ListViewItem item = new ListViewItem(session.SessionDiagnostics.SessionName);
@@ -140,14 +149,14 @@ namespace OPCNodeServerEditor
                     {
                         item.SubItems.Add(String.Empty);//加空
                     }
-
                     item.SubItems.Add(String.Format("{0}", session.Id));//ID
-                    item.SubItems.Add(String.Format("{0:HH:mm:ss}", session.SessionDiagnostics.ClientLastContactTime.ToLocalTime()));//最後連線時間
-
+                    item.SubItems.Add(String.Format("{0:HH:mm:ss.fff}", session.SessionDiagnostics.ClientLastContactTime.ToLocalTime()));//最後連線時間
+                    
                     Lsv_Sessions.Items.Add(item);//反應回控制項
+
                 }
             }
-            // adjust 
+            // adjust 控制項外觀寬度
             for (int i = 0; i < Lsv_Sessions.Columns.Count; i++)
             {
                 Lsv_Sessions.Columns[i].Width = -2;
@@ -156,21 +165,18 @@ namespace OPCNodeServerEditor
         private void UpdateSubscriptions()
         {
             Lsv_Subscriptions.Items.Clear();//清除Listview中項目
-            IList<Subscription> subscriptions = Server.CurrentInstance.SubscriptionManager.GetSubscriptions();//從SessionManager取得訂閱數
-
+            IList<Subscription> subscriptions = CParam._NodeServer.CurrentInstance.SubscriptionManager.GetSubscriptions();//從SessionManager取得訂閱數
             for (int i = 0; i < subscriptions.Count; i++)
             {
                 Subscription subscription = subscriptions[i];
                 ListViewItem item = new ListViewItem(subscription.Id.ToString());
-
-                item.SubItems.Add(String.Format("{0}", (int)subscription.PublishingInterval));//更新時間
-                item.SubItems.Add(String.Format("{0}", subscription.MonitoredItemCount));//總數
-
                 lock (subscription.DiagnosticsLock)
                 {
+                    item.SubItems.Add(String.Format("{0}", (int)subscription.PublishingInterval));//更新時間
+                    item.SubItems.Add(String.Format("{0}", subscription.MonitoredItemCount));//總數
+
                     item.SubItems.Add(String.Format("{0}", subscription.Diagnostics.NextSequenceNumber));//S/N
                 }
-
                 Lsv_Subscriptions.Items.Add(item);//反應回控制項
             }
 
@@ -178,6 +184,47 @@ namespace OPCNodeServerEditor
             {
                 Lsv_Subscriptions.Columns[i].Width = -2;
             }
+
+        }
+        private void UpdateVariable()
+        {
+            int selectedIndex = Lsv_VariableList.SelectedIndices.Count > 0 ? Lsv_VariableList.SelectedIndices[0] : -1;
+            Lsv_VariableList.Items.Clear();//清除Listview中項目
+            for(int i=0;i< CParam.VariableList.Count; i++)
+            {
+                ListViewItem item = new ListViewItem($"{CParam.VariableList[i]._OpcDataItem.Index}");
+                item.SubItems.Add($"{CParam.VariableList[i]._OpcDataItem.ItemName}");
+                item.SubItems.Add($"{CParam.VariableList[i]._OpcDataItem.NodeID}");
+                item.SubItems.Add($"{CParam.VariableList[i]._BaseDataVariableState.Value}");
+                CParam.StringVariableList[i].Value = CParam.VariableList[i]._BaseDataVariableState.Value;//使CreateAddressSpace重新運作不直接拿原本INI值拿暫存
+                Lsv_VariableList.Items.Add(item);//反應回控制項
+            }
+            ListViewItem tmpTime = new ListViewItem(String.Format("{0:hh:mm:ss.fff}", DateTime.Now));
+            Lsv_VariableList.Items.Add(tmpTime);
+            if (selectedIndex >= 0 && selectedIndex < Lsv_VariableList.Items.Count)
+            {
+                Lsv_VariableList.Items[selectedIndex].Selected = true;
+                Lsv_VariableList.Items[selectedIndex].EnsureVisible(); // 确保选中项可见
+            }
+            //Lsv_VariableList.Sort();
+        }
+        public static void UpdateStatus(Session session, SessionEventReason e)
+        {
+            lock (session.DiagnosticsLock)//鎖執行緒
+            {
+
+                //UpdateVariable();
+
+                Console.WriteLine($"Session觸發:\n" +
+                                  $"SessionName =  {session.SessionDiagnostics.SessionName}\n" +
+                                  $"Id = {session.Id}" +
+                                  $"最後連線時間 = {session.SessionDiagnostics.ClientLastContactTime.ToLocalTime()}");
+                asd();
+            }
+        }
+        public static void asd()
+        {
+
         }
         public void UpdateTimer_Stop()
         {
@@ -187,7 +234,7 @@ namespace OPCNodeServerEditor
         {
             ViewBarTimer.Start();
         }
-
-        
     }
+
+    
 }

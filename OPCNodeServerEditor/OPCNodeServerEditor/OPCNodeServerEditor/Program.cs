@@ -25,10 +25,10 @@ namespace OPCNodeServerEditor
 
             //先載入相關參數 CParam
             CParam.Init();
-            SharpNodeSettingsServer Server = new SharpNodeSettingsServer();
+            //NodeServer Server = new NodeServer();
 
-            //try
-            //{
+            try
+            {
                 // 載入應用程序配置
                 application.LoadApplicationConfiguration(false).Wait();
                 // 檢查應用程式證書
@@ -38,15 +38,15 @@ namespace OPCNodeServerEditor
                     throw new Exception("Application instance certificate invalid!");
                 }
                 // start the server.
-                application.Start(Server).Wait();
+                application.Start(CParam._NodeServer).Wait();
 
                 // 運行主視窗
                 Application.Run(new MainForm(application));
-            //}
-            //catch (Exception e)
-            //{
-            //    MessageBox.Show(e.Message, "program", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //}
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "program", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
         }
     }
