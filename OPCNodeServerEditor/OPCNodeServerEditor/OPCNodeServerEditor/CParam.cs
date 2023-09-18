@@ -30,6 +30,7 @@ namespace OPCNodeServerEditor
     /// </summary>
     public class CParam
     {
+
         //參數
         public static NodeServer _NodeServer;
         public static ApplicationInstance UsingApplication;
@@ -230,6 +231,19 @@ namespace OPCNodeServerEditor
         public BaseDataVariableState<T> _BaseDataVariableState;
 
         public OpcDataItem _OpcDataItem;
+
+        //public NodeState FindVariable()
+        //{
+        //    NodeState re = new NodeState(null);
+        //    foreach (FolderState roll in CParam.FolderList)
+        //    {
+        //        if ((string)roll.NodeId.Identifier == Parent)
+        //        {
+        //            re = roll;
+        //        }
+        //    }
+        //    return re;
+        //}
 
     }
 

@@ -12,6 +12,7 @@ namespace OPCNodeServerEditor
 {
     public partial class NodeServer : StandardServer
     {
+        
         public List<INodeManager> NodeManagers;
         public NodeManager NodeManager;
 
@@ -93,10 +94,10 @@ namespace OPCNodeServerEditor
             base.OnServerStarted(server);
             // request notifications when the user identity is changed. all valid users are accepted by default.
             server.SessionManager.ImpersonateUser += new ImpersonateEventHandler(SessionManager_ImpersonateUser);
+
+            //server.SessionManager.SessionActivated += new SessionEventHandler(MainForm.UpdateStatus);
             //server.SessionManager.SessionCreated += new SessionEventHandler(MainForm.UpdateStatus);
-            server.SessionManager.SessionActivated += new SessionEventHandler(MainForm.UpdateStatus);
-            server.SessionManager.SessionCreated += new SessionEventHandler(MainForm.UpdateStatus);
-            server.SessionManager.SessionClosing += new SessionEventHandler(MainForm.UpdateStatus);
+            //server.SessionManager.SessionClosing += new SessionEventHandler(MainForm.UpdateStatus);
         }
         /// <summary>
         /// 在SERVER關閉前清除

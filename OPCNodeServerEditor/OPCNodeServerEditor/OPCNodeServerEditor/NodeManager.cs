@@ -10,11 +10,14 @@ namespace OPCNodeServerEditor
 {
     public class NodeManager : CustomNodeManager2
     {
+        public delegate void NodeModifity(NodeHandle handle, MonitoredItem monitoredItem);
         private ReferenceServerConfiguration Configuration;//基本為空
         private List<BaseDataVariableState<int>> TimeTickList = new List<BaseDataVariableState<int>>();//變數狀態
         private System.Timers.Timer NodeTimer = null;
 
         private IList<IReference> references = null;//節點參考列表
+        private INodeManager server;
+
         /// <summary>
         /// 初始化節點管理器
         /// </summary>
@@ -57,7 +60,7 @@ namespace OPCNodeServerEditor
                 FolderState rootButtom = new FolderState(null);
                 FolderState rootMy = new FolderState(null);
                 //以下為新增 目錄節點 DATA已入建置矩陣中
-                //先建立資料夾
+                //建立資料夾
                 foreach (OpcDataFolder roll in CParam.StringFolderList)
                 {
                     if (roll.Parent == "null")
@@ -77,7 +80,8 @@ namespace OPCNodeServerEditor
                     }
                 }
                 #endregion
-                
+
+                #region 變數建立
                 foreach (OpcDataItem roll in CParam.StringVariableList)
                 {
                     FolderState rootNode = FindFolder(roll.FolderName);
@@ -124,8 +128,12 @@ namespace OPCNodeServerEditor
                             break;
                     }
                 }
+                #endregion
+
+
             }
         }
+
         protected override NodeHandle GetManagerHandle(ServerSystemContext context, NodeId nodeId, IDictionary<NodeId, NodeState> cache)
         {
             lock (Lock)
@@ -243,15 +251,16 @@ namespace OPCNodeServerEditor
                 Value = defaultValue,
                 StatusCode = StatusCodes.Good,
                 Timestamp = DateTime.Now,
-                NodeId = (parent == null) 
-                ? new NodeId(name, NamespaceIndex) 
-                : new NodeId(parent.NodeId.ToString() + "/" + name), 
+                NodeId = (parent == null)
+                ? new NodeId(name, NamespaceIndex)
+                : new NodeId(parent.NodeId.ToString() + "/" + name),
             };
 
             if (parent != null)
             {
                 parent.AddChild(variable);
             }
+            //追加
             return variable;
         }
 
@@ -370,5 +379,5 @@ namespace OPCNodeServerEditor
             }
         }
     }
- 
+
 }

@@ -19,6 +19,7 @@ namespace OPCNodeServerEditor
         //public static ApplicationInstance UsingApplication;
         public emServerFlag ServerFlags = emServerFlag.Stop;
         public static Timer ViewBarTimer = new Timer();
+        private delegate void ReflashListView();
 
         public MainForm()
         {
@@ -33,12 +34,13 @@ namespace OPCNodeServerEditor
 
             ///-----------------------------------------
             //設定SERVER
-            CParam.UsingApplication = application; 
-            
+            CParam.UsingApplication = application;
+
             if (application.Server is StandardServer)
             {
                 //CParam._NodeServer = (StandardServer)CParam.UsingApplication.Server;
                 CParam._NodeServer = (NodeServer)CParam.UsingApplication.Server;
+
 
 
                 EndpointDescriptionCollection EC = CParam._NodeServer.GetEndpoints();
@@ -60,6 +62,7 @@ namespace OPCNodeServerEditor
                 //SessionActivated += UpdateStatus;
 
                 CParam._NodeServer.CurrentInstance.SessionManager.SessionActivated += new SessionEventHandler(UpdateStatus);
+
             }
             ///-----------------------------------------
             //更新VariableList
@@ -79,6 +82,13 @@ namespace OPCNodeServerEditor
             if (ServerFlags == emServerFlag.Stop)
             {
                 CParam.UsingApplication.Server.Start(CParam.UsingApplication.ApplicationConfiguration);//伺服器啟動
+                foreach (OpcDataVariable<object> roll in CParam.VariableList)
+                {
+                    roll._BaseDataVariableState.OnSimpleWriteValue += new NodeValueSimpleEventHandler(UpdateStatus2);
+                    
+                    //roll._BaseDataVariableState.OnSimpleWriteValue += (UpdateStatus2);
+                }
+                //CParam.VariableList[0]._BaseDataVariableState.OnSimpleWriteValue += new NodeValueSimpleEventHandler(UpdateStatus2);
 
                 UpdateTimer_Start();
                 Btn_Run.Enabled = false;
@@ -89,7 +99,7 @@ namespace OPCNodeServerEditor
                 Lab_Status.Text = $"Server啟動";
                 ServerFlags = emServerFlag.Start;
             }
-            
+
         }
         private void Btn_Stop_Click(object sender, EventArgs e)
         {
@@ -132,7 +142,7 @@ namespace OPCNodeServerEditor
         {
             Lsv_Sessions.Items.Clear();//清除Listview中項目
             IList<Session> sessions = CParam._NodeServer.CurrentInstance.SessionManager.GetSessions();//從SessionManager取得連結數
-            
+
             for (int i = 0; i < sessions.Count; i++)
             {
                 Session session = sessions[i];
@@ -151,7 +161,7 @@ namespace OPCNodeServerEditor
                     }
                     item.SubItems.Add(String.Format("{0}", session.Id));//ID
                     item.SubItems.Add(String.Format("{0:HH:mm:ss.fff}", session.SessionDiagnostics.ClientLastContactTime.ToLocalTime()));//最後連線時間
-                    
+
                     Lsv_Sessions.Items.Add(item);//反應回控制項
 
                 }
@@ -190,7 +200,7 @@ namespace OPCNodeServerEditor
         {
             int selectedIndex = Lsv_VariableList.SelectedIndices.Count > 0 ? Lsv_VariableList.SelectedIndices[0] : -1;
             Lsv_VariableList.Items.Clear();//清除Listview中項目
-            for(int i=0;i< CParam.VariableList.Count; i++)
+            for (int i = 0; i < CParam.VariableList.Count; i++)
             {
                 ListViewItem item = new ListViewItem($"{CParam.VariableList[i]._OpcDataItem.Index}");
                 item.SubItems.Add($"{CParam.VariableList[i]._OpcDataItem.ItemName}");
@@ -219,11 +229,40 @@ namespace OPCNodeServerEditor
                                   $"SessionName =  {session.SessionDiagnostics.SessionName}\n" +
                                   $"Id = {session.Id}" +
                                   $"最後連線時間 = {session.SessionDiagnostics.ClientLastContactTime.ToLocalTime()}");
-                asd();
             }
         }
-        public static void asd()
+
+
+        public ServiceResult UpdateStatus2(ISystemContext context, NodeState node, ref object value)
         {
+            Console.WriteLine($"變數{node.NodeId} = {value.ToString()}");
+            //餵回去變更值
+            foreach(OpcDataVariable<object> roll in CParam.VariableList)
+            {
+                if(roll._BaseDataVariableState.NodeId.Identifier == node.NodeId.Identifier)
+                {
+                    roll._BaseDataVariableState.Value = value;
+                    roll._OpcDataItem.Value = value;
+                }  
+            }
+            UpdateListViewChange();
+            return ServiceResult.Good;
+        }
+
+
+        public void UpdateListViewChange()
+        {
+            //判斷物件是否在同一個執行緒上
+            if (this.InvokeRequired)
+            {
+                //當InvokeRequired為true時，表示在不同的執行緒上，所以進行委派的動作!!
+                ReflashListView del = new ReflashListView(UpdateListViewChange);
+                this.Invoke(del, null);
+            }
+            else
+            {
+                UpdateVariable();
+            }
 
         }
         public void UpdateTimer_Stop()
@@ -236,5 +275,5 @@ namespace OPCNodeServerEditor
         }
     }
 
-    
+
 }
