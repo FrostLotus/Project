@@ -29,7 +29,6 @@ namespace OPCNodeServerEditor
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Roots");
             this.Btn_Close = new System.Windows.Forms.Button();
             this.Btn_UpdateFile = new System.Windows.Forms.Button();
             this.Btn_Delete = new System.Windows.Forms.Button();
@@ -46,13 +45,12 @@ namespace OPCNodeServerEditor
             this.Txt_NodeId = new System.Windows.Forms.TextBox();
             this.Txt_ItemName = new System.Windows.Forms.TextBox();
             this.Txt_Index = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.Btn_UpdateValue = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.Btn_Stop = new System.Windows.Forms.Button();
             this.Btn_Run = new System.Windows.Forms.Button();
             this.Lab_Status = new System.Windows.Forms.Label();
             this.Gbx_NodeList = new System.Windows.Forms.GroupBox();
-            this.treeView1 = new System.Windows.Forms.TreeView();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.Cbb_EndpointsUrl = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -83,6 +81,8 @@ namespace OPCNodeServerEditor
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.Txt_Initial = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.Gbx_NodeList.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -103,36 +103,39 @@ namespace OPCNodeServerEditor
             // 
             // Btn_UpdateFile
             // 
-            this.Btn_UpdateFile.Location = new System.Drawing.Point(441, 435);
+            this.Btn_UpdateFile.Location = new System.Drawing.Point(441, 92);
             this.Btn_UpdateFile.Name = "Btn_UpdateFile";
             this.Btn_UpdateFile.Size = new System.Drawing.Size(99, 30);
             this.Btn_UpdateFile.TabIndex = 41;
             this.Btn_UpdateFile.Text = "Update_File";
             this.Btn_UpdateFile.UseVisualStyleBackColor = true;
+            this.Btn_UpdateFile.Click += new System.EventHandler(this.Btn_UpdateFile_Click);
             // 
             // Btn_Delete
             // 
-            this.Btn_Delete.Location = new System.Drawing.Point(440, 400);
+            this.Btn_Delete.Location = new System.Drawing.Point(440, 57);
             this.Btn_Delete.Name = "Btn_Delete";
             this.Btn_Delete.Size = new System.Drawing.Size(99, 30);
             this.Btn_Delete.TabIndex = 40;
             this.Btn_Delete.Text = "Delete";
             this.Btn_Delete.UseVisualStyleBackColor = true;
+            this.Btn_Delete.Click += new System.EventHandler(this.Btn_Delete_Click);
             // 
             // Btn_Add
             // 
-            this.Btn_Add.Location = new System.Drawing.Point(441, 368);
+            this.Btn_Add.Location = new System.Drawing.Point(441, 25);
             this.Btn_Add.Name = "Btn_Add";
             this.Btn_Add.Size = new System.Drawing.Size(99, 30);
             this.Btn_Add.TabIndex = 39;
             this.Btn_Add.Text = "Add";
             this.Btn_Add.UseVisualStyleBackColor = true;
+            this.Btn_Add.Click += new System.EventHandler(this.Btn_Add_Click);
             // 
             // label7
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("新細明體", 10F);
-            this.label7.Location = new System.Drawing.Point(10, 478);
+            this.label7.Location = new System.Drawing.Point(10, 167);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(39, 14);
             this.label7.TabIndex = 37;
@@ -142,7 +145,7 @@ namespace OPCNodeServerEditor
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("新細明體", 10F);
-            this.label5.Location = new System.Drawing.Point(234, 444);
+            this.label5.Location = new System.Drawing.Point(234, 101);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(46, 14);
             this.label5.TabIndex = 38;
@@ -152,7 +155,7 @@ namespace OPCNodeServerEditor
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("新細明體", 10F);
-            this.label4.Location = new System.Drawing.Point(10, 440);
+            this.label4.Location = new System.Drawing.Point(10, 97);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(35, 14);
             this.label4.TabIndex = 35;
@@ -162,7 +165,7 @@ namespace OPCNodeServerEditor
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("新細明體", 10F);
-            this.label3.Location = new System.Drawing.Point(234, 409);
+            this.label3.Location = new System.Drawing.Point(234, 66);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(51, 14);
             this.label3.TabIndex = 34;
@@ -172,7 +175,7 @@ namespace OPCNodeServerEditor
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("新細明體", 10F);
-            this.label2.Location = new System.Drawing.Point(9, 409);
+            this.label2.Location = new System.Drawing.Point(9, 66);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(66, 14);
             this.label2.TabIndex = 33;
@@ -182,7 +185,7 @@ namespace OPCNodeServerEditor
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("新細明體", 10F);
-            this.label1.Location = new System.Drawing.Point(10, 377);
+            this.label1.Location = new System.Drawing.Point(10, 34);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(38, 14);
             this.label1.TabIndex = 32;
@@ -196,54 +199,55 @@ namespace OPCNodeServerEditor
             "Word",
             "Bool",
             "Real"});
-            this.Cbb_DataType.Location = new System.Drawing.Point(82, 441);
+            this.Cbb_DataType.Location = new System.Drawing.Point(82, 98);
             this.Cbb_DataType.Name = "Cbb_DataType";
             this.Cbb_DataType.Size = new System.Drawing.Size(145, 20);
             this.Cbb_DataType.TabIndex = 31;
             // 
             // Txt_Value
             // 
-            this.Txt_Value.Location = new System.Drawing.Point(82, 475);
+            this.Txt_Value.Location = new System.Drawing.Point(82, 164);
             this.Txt_Value.Name = "Txt_Value";
             this.Txt_Value.Size = new System.Drawing.Size(353, 22);
             this.Txt_Value.TabIndex = 29;
             // 
             // Txt_Length
             // 
-            this.Txt_Length.Location = new System.Drawing.Point(290, 441);
+            this.Txt_Length.Location = new System.Drawing.Point(290, 98);
             this.Txt_Length.Name = "Txt_Length";
             this.Txt_Length.Size = new System.Drawing.Size(145, 22);
             this.Txt_Length.TabIndex = 27;
             // 
             // Txt_NodeId
             // 
-            this.Txt_NodeId.Location = new System.Drawing.Point(290, 406);
+            this.Txt_NodeId.Location = new System.Drawing.Point(290, 63);
             this.Txt_NodeId.Name = "Txt_NodeId";
             this.Txt_NodeId.Size = new System.Drawing.Size(144, 22);
             this.Txt_NodeId.TabIndex = 26;
             // 
             // Txt_ItemName
             // 
-            this.Txt_ItemName.Location = new System.Drawing.Point(82, 406);
+            this.Txt_ItemName.Location = new System.Drawing.Point(82, 63);
             this.Txt_ItemName.Name = "Txt_ItemName";
             this.Txt_ItemName.Size = new System.Drawing.Size(145, 22);
             this.Txt_ItemName.TabIndex = 30;
             // 
             // Txt_Index
             // 
-            this.Txt_Index.Location = new System.Drawing.Point(82, 374);
+            this.Txt_Index.Location = new System.Drawing.Point(82, 31);
             this.Txt_Index.Name = "Txt_Index";
             this.Txt_Index.Size = new System.Drawing.Size(145, 22);
             this.Txt_Index.TabIndex = 25;
             // 
-            // button1
+            // Btn_UpdateValue
             // 
-            this.button1.Location = new System.Drawing.Point(441, 469);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(99, 30);
-            this.button1.TabIndex = 41;
-            this.button1.Text = "Update_Value";
-            this.button1.UseVisualStyleBackColor = true;
+            this.Btn_UpdateValue.Location = new System.Drawing.Point(441, 126);
+            this.Btn_UpdateValue.Name = "Btn_UpdateValue";
+            this.Btn_UpdateValue.Size = new System.Drawing.Size(99, 30);
+            this.Btn_UpdateValue.TabIndex = 41;
+            this.Btn_UpdateValue.Text = "Update_Value";
+            this.Btn_UpdateValue.UseVisualStyleBackColor = true;
+            this.Btn_UpdateValue.Click += new System.EventHandler(this.Btn_UpdateValue_Click);
             // 
             // groupBox1
             // 
@@ -289,39 +293,29 @@ namespace OPCNodeServerEditor
             // Gbx_NodeList
             // 
             this.Gbx_NodeList.Controls.Add(this.Txt_Length);
-            this.Gbx_NodeList.Controls.Add(this.treeView1);
             this.Gbx_NodeList.Controls.Add(this.Txt_Index);
             this.Gbx_NodeList.Controls.Add(this.Txt_ItemName);
             this.Gbx_NodeList.Controls.Add(this.Txt_NodeId);
-            this.Gbx_NodeList.Controls.Add(this.button1);
+            this.Gbx_NodeList.Controls.Add(this.Btn_UpdateValue);
             this.Gbx_NodeList.Controls.Add(this.Btn_UpdateFile);
+            this.Gbx_NodeList.Controls.Add(this.Txt_Initial);
             this.Gbx_NodeList.Controls.Add(this.Txt_Value);
             this.Gbx_NodeList.Controls.Add(this.Btn_Delete);
             this.Gbx_NodeList.Controls.Add(this.Cbb_DataType);
             this.Gbx_NodeList.Controls.Add(this.Btn_Add);
             this.Gbx_NodeList.Controls.Add(this.label1);
+            this.Gbx_NodeList.Controls.Add(this.label6);
             this.Gbx_NodeList.Controls.Add(this.label7);
             this.Gbx_NodeList.Controls.Add(this.label2);
             this.Gbx_NodeList.Controls.Add(this.label3);
             this.Gbx_NodeList.Controls.Add(this.label5);
             this.Gbx_NodeList.Controls.Add(this.label4);
-            this.Gbx_NodeList.Location = new System.Drawing.Point(569, 33);
+            this.Gbx_NodeList.Location = new System.Drawing.Point(569, 227);
             this.Gbx_NodeList.Name = "Gbx_NodeList";
-            this.Gbx_NodeList.Size = new System.Drawing.Size(551, 520);
+            this.Gbx_NodeList.Size = new System.Drawing.Size(551, 209);
             this.Gbx_NodeList.TabIndex = 45;
             this.Gbx_NodeList.TabStop = false;
             this.Gbx_NodeList.Text = "NodeList";
-            // 
-            // treeView1
-            // 
-            this.treeView1.Location = new System.Drawing.Point(6, 21);
-            this.treeView1.Name = "treeView1";
-            treeNode1.Name = "NodeRoots";
-            treeNode1.Text = "Roots";
-            this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1});
-            this.treeView1.Size = new System.Drawing.Size(536, 336);
-            this.treeView1.TabIndex = 46;
             // 
             // groupBox2
             // 
@@ -341,7 +335,7 @@ namespace OPCNodeServerEditor
             this.Cbb_EndpointsUrl.FormattingEnabled = true;
             this.Cbb_EndpointsUrl.Location = new System.Drawing.Point(18, 33);
             this.Cbb_EndpointsUrl.Name = "Cbb_EndpointsUrl";
-            this.Cbb_EndpointsUrl.Size = new System.Drawing.Size(545, 20);
+            this.Cbb_EndpointsUrl.Size = new System.Drawing.Size(375, 20);
             this.Cbb_EndpointsUrl.TabIndex = 48;
             this.Cbb_EndpointsUrl.Text = "opc.tcp://127.0.0.1:62547/DataAccessServer";
             // 
@@ -459,9 +453,9 @@ namespace OPCNodeServerEditor
             this.Lab_subscriptionsCount,
             this.Lab_items,
             this.Lab_itemsCount});
-            this.StatusBAR.Location = new System.Drawing.Point(0, 666);
+            this.StatusBAR.Location = new System.Drawing.Point(0, 453);
             this.StatusBAR.Name = "StatusBAR";
-            this.StatusBAR.Size = new System.Drawing.Size(1325, 22);
+            this.StatusBAR.Size = new System.Drawing.Size(1155, 22);
             this.StatusBAR.TabIndex = 50;
             this.StatusBAR.Text = "statusStrip1";
             // 
@@ -520,9 +514,9 @@ namespace OPCNodeServerEditor
             // groupBox5
             // 
             this.groupBox5.Controls.Add(this.Lsv_VariableList);
-            this.groupBox5.Location = new System.Drawing.Point(12, 442);
+            this.groupBox5.Location = new System.Drawing.Point(569, 12);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(523, 209);
+            this.groupBox5.Size = new System.Drawing.Size(551, 209);
             this.groupBox5.TabIndex = 49;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "變數列表";
@@ -536,12 +530,13 @@ namespace OPCNodeServerEditor
             this.columnHeader4});
             this.Lsv_VariableList.FullRowSelect = true;
             this.Lsv_VariableList.HideSelection = false;
-            this.Lsv_VariableList.Location = new System.Drawing.Point(26, 21);
+            this.Lsv_VariableList.Location = new System.Drawing.Point(13, 21);
             this.Lsv_VariableList.Name = "Lsv_VariableList";
-            this.Lsv_VariableList.Size = new System.Drawing.Size(475, 182);
+            this.Lsv_VariableList.Size = new System.Drawing.Size(526, 182);
             this.Lsv_VariableList.TabIndex = 2;
             this.Lsv_VariableList.UseCompatibleStateImageBehavior = false;
             this.Lsv_VariableList.View = System.Windows.Forms.View.Details;
+            this.Lsv_VariableList.SelectedIndexChanged += new System.EventHandler(this.Lsv_VariableList_SelectedIndexChanged);
             // 
             // columnHeader1
             // 
@@ -565,11 +560,28 @@ namespace OPCNodeServerEditor
             this.columnHeader4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.columnHeader4.Width = 140;
             // 
+            // Txt_Initial
+            // 
+            this.Txt_Initial.Location = new System.Drawing.Point(82, 132);
+            this.Txt_Initial.Name = "Txt_Initial";
+            this.Txt_Initial.Size = new System.Drawing.Size(353, 22);
+            this.Txt_Initial.TabIndex = 29;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("新細明體", 10F);
+            this.label6.Location = new System.Drawing.Point(10, 135);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(40, 14);
+            this.label6.TabIndex = 37;
+            this.label6.Text = "Initial";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1325, 688);
+            this.ClientSize = new System.Drawing.Size(1155, 475);
             this.Controls.Add(this.StatusBAR);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
@@ -614,13 +626,12 @@ namespace OPCNodeServerEditor
         private System.Windows.Forms.TextBox Txt_NodeId;
         private System.Windows.Forms.TextBox Txt_ItemName;
         private System.Windows.Forms.TextBox Txt_Index;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button Btn_UpdateValue;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button Btn_Stop;
         private System.Windows.Forms.Button Btn_Run;
         private System.Windows.Forms.Label Lab_Status;
         private System.Windows.Forms.GroupBox Gbx_NodeList;
-        private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.ComboBox Cbb_EndpointsUrl;
         private System.Windows.Forms.GroupBox groupBox3;
@@ -651,6 +662,8 @@ namespace OPCNodeServerEditor
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.TextBox Txt_Initial;
+        private System.Windows.Forms.Label label6;
     }
 }
 

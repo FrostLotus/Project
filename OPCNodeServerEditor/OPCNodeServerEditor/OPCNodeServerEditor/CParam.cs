@@ -12,6 +12,19 @@ using System.Runtime.Serialization;
 
 namespace OPCNodeServerEditor
 {
+    public enum emVariable
+    {
+        FolderName = 1,//以(string)NodeID.Identifier作為唯一資料夾名稱追查
+        Description = 2,//描述
+        //變數用
+        Index = 3,//變數序
+        ItemName = 4,//對應中文名稱(client不顯示)
+        NodeID = 5,//ID名稱(英數)
+        DataType = 6,//數值類型:word(uint)
+        DataLength = 7,//數值長度(string:?)
+        Value = 8//數值
+    }
+
     public enum emServerFlag
     {
         Start = 1,
@@ -36,7 +49,7 @@ namespace OPCNodeServerEditor
         public static ApplicationInstance UsingApplication;
 
         public static List<OpcDataItem> StringVariableList = new List<OpcDataItem>();
-        public static List<OpcDataFolder> StringFolderList =new List<OpcDataFolder>();
+        public static List<OpcDataFolder> StringFolderList = new List<OpcDataFolder>();
 
         public static List<FolderState> FolderList = new List<FolderState>();//檔案夾節點列表
         public static List<OpcDataVariable<object>> VariableList = new List<OpcDataVariable<object>>();//變數狀態(object慢一點沒辦法)
@@ -53,7 +66,7 @@ namespace OPCNodeServerEditor
         {
             VariableTreeView = new TreeView();
             LoadData();
-             _NodeServer = new NodeServer();
+            _NodeServer = new NodeServer();
 
         }
         public static void LoadData()
@@ -106,17 +119,20 @@ namespace OPCNodeServerEditor
                         var key = parts[0].Trim();
                         var value = parts[1].Trim();
 
-                        if(key == "ItemFlag")
+                        if (key == "ItemFlag")
                         {
                             switch (value)
                             {
                                 case "Folder":
                                     nowItem = emItemFlag.Folder;
                                     currentFolder = new OpcDataFolder();
+                                    currentFolder.itemFlag = emItemFlag.Folder;
                                     break;
                                 case "Variable":
                                     nowItem = emItemFlag.Variable;
+                                    
                                     currentDataItem = new OpcDataItem();
+                                    currentDataItem.itemFlag = emItemFlag.Variable;
                                     break;
                                 case "Method"://TBD
                                     nowItem = emItemFlag.Method;
@@ -179,7 +195,7 @@ namespace OPCNodeServerEditor
                                     }
                                     else if (currentDataItem.DataType == "Bool")
                                     {
-                                        currentDataItem.Value = (value == "1")? true:false;
+                                        currentDataItem.Value = (value == "1") ? true : false;
                                     }
                                     else if (currentDataItem.DataType == "Word")
                                     {
@@ -203,9 +219,89 @@ namespace OPCNodeServerEditor
             }
 
         }
+
+        public static void SaveData()
+        {
+            #region 沒有就創建
+            if (!File.Exists(DataFilePath))
+            {
+                DataFilePath = DefaultPath + "\\OPCServerValue.ini";
+                using (StreamWriter createfile = File.CreateText(DataFilePath))
+                {
+                    MessageBox.Show("無指定資料,已生成");
+                    createfile.Close();
+                }
+            }
+            #endregion
+            //寫入所有資料
+            using (StreamWriter writer = new StreamWriter(DataFilePath))
+            {
+                writer.Write("");
+                string LineData;
+                try
+                {
+                    //先資料夾
+                    foreach(var roll in StringFolderList)
+                    {
+                        LineData = $"ItemFlag={roll.itemFlag}";
+                        writer.WriteLine(LineData);//itemFlag
+                        //-----------------------------------------------
+                        LineData = $"Parent={roll.Parent}";
+                        writer.WriteLine(LineData);//Parent
+                        //-----------------------------------------------
+                        LineData = $"FolderName={roll.FolderName}";
+                        writer.WriteLine(LineData);//FolderName
+                        //-----------------------------------------------
+                        LineData = $"Description={roll.Description}";
+                        writer.WriteLine(LineData);//Description
+                        //-----------------------------------------------
+                        writer.WriteLine("");//寫空一行
+                    }
+                    //再變數
+                    foreach (var roll in StringVariableList)
+                    {
+                        LineData = $"ItemFlag={roll.itemFlag}";
+                        writer.WriteLine(LineData);//itemFlag
+                        //-----------------------------------------------
+                        LineData = $"FolderName={roll.FolderName}";
+                        writer.WriteLine(LineData);//FolderName
+                        //-----------------------------------------------
+                        LineData = $"Description={roll.Description}";
+                        writer.WriteLine(LineData);//Description
+                        //-----------------------------------------------
+                        LineData = $"Index={roll.Index}";
+                        writer.WriteLine(LineData);//Index
+                        //-----------------------------------------------
+                        LineData = $"ItemName={roll.ItemName}";
+                        writer.WriteLine(LineData);//ItemName
+                        //-----------------------------------------------
+                        LineData = $"NodeId={roll.NodeID}";
+                        writer.WriteLine(LineData);//NodeID
+                        //-----------------------------------------------
+                        LineData = $"DataType={roll.DataType}";
+                        writer.WriteLine(LineData);//DataType
+                        //-----------------------------------------------
+                        LineData = $"DataLength={roll.DataLength}";
+                        writer.WriteLine(LineData);//DataLength
+                        //-----------------------------------------------
+                        LineData = $"Value={roll.Value}";
+                        writer.WriteLine(LineData);//Value
+                        //-----------------------------------------------
+                        writer.WriteLine("");//寫空一行
+                        
+                    }
+                    writer.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "SaveData", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
     }
     public class OpcDataItem
     {
+        public emItemFlag itemFlag = emItemFlag.None;
         //通用
         public string FolderName { get; set; }//以(string)NodeID.Identifier作為唯一資料夾名稱追查
         public string Description { get; set; }//描述
@@ -219,6 +315,7 @@ namespace OPCNodeServerEditor
     }
     public class OpcDataFolder
     {
+        public emItemFlag itemFlag = emItemFlag.None;
         //資料夾用
         public string Parent { get; set; }
         //通用
@@ -231,20 +328,6 @@ namespace OPCNodeServerEditor
         public BaseDataVariableState<T> _BaseDataVariableState;
 
         public OpcDataItem _OpcDataItem;
-
-        //public NodeState FindVariable()
-        //{
-        //    NodeState re = new NodeState(null);
-        //    foreach (FolderState roll in CParam.FolderList)
-        //    {
-        //        if ((string)roll.NodeId.Identifier == Parent)
-        //        {
-        //            re = roll;
-        //        }
-        //    }
-        //    return re;
-        //}
-
     }
 
     /// <summary>

@@ -264,6 +264,7 @@ namespace OPCNodeServerEditor
             return variable;
         }
 
+         
 
         #endregion
 
