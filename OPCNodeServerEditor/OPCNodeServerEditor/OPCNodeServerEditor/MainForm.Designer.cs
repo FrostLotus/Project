@@ -51,6 +51,8 @@ namespace OPCNodeServerEditor
             this.Btn_Run = new System.Windows.Forms.Button();
             this.Lab_Status = new System.Windows.Forms.Label();
             this.Gbx_NodeList = new System.Windows.Forms.GroupBox();
+            this.Txt_Initial = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.Cbb_EndpointsUrl = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -81,8 +83,6 @@ namespace OPCNodeServerEditor
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.Txt_Initial = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.Gbx_NodeList.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -317,6 +317,23 @@ namespace OPCNodeServerEditor
             this.Gbx_NodeList.TabStop = false;
             this.Gbx_NodeList.Text = "NodeList";
             // 
+            // Txt_Initial
+            // 
+            this.Txt_Initial.Location = new System.Drawing.Point(82, 132);
+            this.Txt_Initial.Name = "Txt_Initial";
+            this.Txt_Initial.Size = new System.Drawing.Size(353, 22);
+            this.Txt_Initial.TabIndex = 29;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("新細明體", 10F);
+            this.label6.Location = new System.Drawing.Point(10, 135);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(40, 14);
+            this.label6.TabIndex = 37;
+            this.label6.Text = "Initial";
+            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.Btn_Close);
@@ -531,6 +548,7 @@ namespace OPCNodeServerEditor
             this.Lsv_VariableList.FullRowSelect = true;
             this.Lsv_VariableList.HideSelection = false;
             this.Lsv_VariableList.Location = new System.Drawing.Point(13, 21);
+            this.Lsv_VariableList.MultiSelect = false;
             this.Lsv_VariableList.Name = "Lsv_VariableList";
             this.Lsv_VariableList.Size = new System.Drawing.Size(526, 182);
             this.Lsv_VariableList.TabIndex = 2;
@@ -559,23 +577,6 @@ namespace OPCNodeServerEditor
             this.columnHeader4.Text = "值";
             this.columnHeader4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.columnHeader4.Width = 140;
-            // 
-            // Txt_Initial
-            // 
-            this.Txt_Initial.Location = new System.Drawing.Point(82, 132);
-            this.Txt_Initial.Name = "Txt_Initial";
-            this.Txt_Initial.Size = new System.Drawing.Size(353, 22);
-            this.Txt_Initial.TabIndex = 29;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("新細明體", 10F);
-            this.label6.Location = new System.Drawing.Point(10, 135);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(40, 14);
-            this.label6.TabIndex = 37;
-            this.label6.Text = "Initial";
             // 
             // MainForm
             // 

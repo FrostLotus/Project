@@ -133,7 +133,6 @@ namespace OPCNodeServerEditor
 
             }
         }
-
         protected override NodeHandle GetManagerHandle(ServerSystemContext context, NodeId nodeId, IDictionary<NodeId, NodeState> cache)
         {
             lock (Lock)
@@ -215,7 +214,6 @@ namespace OPCNodeServerEditor
             return re;
         }
         #endregion
-
         #region 新增變數
         /// <summary>
         /// 產生一個變數節點<T>
@@ -263,9 +261,6 @@ namespace OPCNodeServerEditor
             //追加
             return variable;
         }
-
-         
-
         #endregion
 
         #region 新增計算(計算原理尚不甚理解)

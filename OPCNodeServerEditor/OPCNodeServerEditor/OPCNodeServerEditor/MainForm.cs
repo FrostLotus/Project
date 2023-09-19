@@ -15,8 +15,6 @@ namespace OPCNodeServerEditor
 {
     public partial class MainForm : Form
     {
-        //public static StandardServer Server;
-        //public static ApplicationInstance UsingApplication;
         public emServerFlag ServerFlags = emServerFlag.Stop;
         public static Timer ViewBarTimer = new Timer();
         private delegate void ReflashListView();
@@ -24,29 +22,21 @@ namespace OPCNodeServerEditor
         public MainForm()
         {
             InitializeComponent();
-
         }
         public MainForm(ApplicationInstance application)
         {
             InitializeComponent();
             ViewBarTimer.Interval = 5000;
             ViewBarTimer.Tick += UpdateTimer_Tick;
-
             ///-----------------------------------------
             //設定SERVER
             CParam.UsingApplication = application;
-
             if (application.Server is StandardServer)
             {
-                //CParam._NodeServer = (StandardServer)CParam.UsingApplication.Server;
                 CParam._NodeServer = (NodeServer)CParam.UsingApplication.Server;
-
-
-
                 EndpointDescriptionCollection EC = CParam._NodeServer.GetEndpoints();
                 Console.WriteLine($"第一地址為: {EC[0].EndpointUrl}");//確認Endpoint有SERVER位置
-                // 將URL列先清除後新增
-                Cbb_EndpointsUrl.Items.Clear();
+                Cbb_EndpointsUrl.Items.Clear();// 將URL列先清除後新增
                 //從OPC.UA的XML拉資料
                 foreach (EndpointDescription endpoint in CParam._NodeServer.GetEndpoints())
                 {
@@ -59,59 +49,22 @@ namespace OPCNodeServerEditor
                 {
                     Cbb_EndpointsUrl.SelectedIndex = 0;//預設第一位
                 }
-                //CParam._NodeServer.CurrentInstance.SessionManager.SessionActivated += new SessionEventHandler(UpdateSession);
-
             }
             ///-----------------------------------------
             //更新VariableList
-            UpdateVariable();
-
-
+            UpdateVariableList();
             //先使server不為開啟動作
-
             CParam.UsingApplication.Server.Stop();
             Btn_Stop.Enabled = false;
             Btn_Stop.BackColor = Color.ForestGreen;
             Lab_Status.Text = "Server以視窗開啟中";
+            //Form狀態
+            Txt_Value.Enabled = false;
+            Btn_Delete.Enabled = false;
+            Btn_UpdateFile.Enabled = false;
+            Btn_UpdateValue.Enabled = false;
         }
-
-        private void Btn_Run_Click(object sender, EventArgs e)
-        {
-            if (ServerFlags == emServerFlag.Stop)
-            {
-                CParam.UsingApplication.Server.Start(CParam.UsingApplication.ApplicationConfiguration);//伺服器啟動
-                //全監控
-                foreach (OpcDataVariable<object> roll in CParam.VariableList)
-                {
-                    roll._BaseDataVariableState.OnSimpleWriteValue += new NodeValueSimpleEventHandler(UpdateStatus);
-                }
-                UpdateTimer_Start();
-                Btn_Run.Enabled = false;
-                Btn_Run.BackColor = Color.ForestGreen;
-                Btn_Stop.Enabled = true;
-                Btn_Stop.BackColor = Color.DarkGray;
-
-                Lab_Status.Text = $"Server啟動";
-                ServerFlags = emServerFlag.Start;
-            }
-
-        }
-        private void Btn_Stop_Click(object sender, EventArgs e)
-        {
-            if (ServerFlags == emServerFlag.Start)
-            {
-                CParam.UsingApplication.Server.Stop();
-
-                UpdateTimer_Stop();
-                Btn_Stop.Enabled = false;
-                Btn_Stop.BackColor = Color.ForestGreen;
-                Btn_Run.Enabled = true;
-                Btn_Run.BackColor = Color.DarkGray;
-
-                Lab_Status.Text = $"Server停止";
-                ServerFlags = emServerFlag.Stop;
-            }
-        }
+        
         public void UpdateTimer_Tick(object sender, EventArgs e)
         {
             try
@@ -191,7 +144,7 @@ namespace OPCNodeServerEditor
             }
 
         }
-        private void UpdateVariable()
+        private void UpdateVariableList()
         {
             //int selectedIndex = Lsv_VariableList.SelectedIndices.Count > 0 ? Lsv_VariableList.SelectedIndices[0] : -1;
             Lsv_VariableList.Items.Clear();//清除Listview中項目
@@ -213,7 +166,7 @@ namespace OPCNodeServerEditor
             //}
             //Lsv_VariableList.Sort();
         }
-        public static void UpdateSession(Session session, SessionEventReason e)
+        public  void UpdateSession(Session session, SessionEventReason e)
         {
             //僅session啟動時讀的了
             lock (session.DiagnosticsLock)//鎖執行緒
@@ -250,7 +203,7 @@ namespace OPCNodeServerEditor
             }
             else
             {
-                UpdateVariable();
+                UpdateVariableList();
             }
 
         }
@@ -262,12 +215,13 @@ namespace OPCNodeServerEditor
         {
             ViewBarTimer.Start();
         }
-
         private void Lsv_VariableList_SelectedIndexChanged(object sender, EventArgs e)
         {
+
             //時間最後行不觸發
             if (Lsv_VariableList.SelectedIndices.Count > 0 && Lsv_VariableList.SelectedIndices[0] < Lsv_VariableList.Items.Count - 1)
             {
+                //將值變更為選取項目
                 int selectedIndex = Lsv_VariableList.SelectedIndices[0];
                 Console.WriteLine($"選取第{selectedIndex}行");
                 Txt_Index.Text = CParam.VariableList[selectedIndex]._OpcDataItem.Index.ToString();
@@ -277,6 +231,21 @@ namespace OPCNodeServerEditor
                 Txt_Length.Text = CParam.VariableList[selectedIndex]._OpcDataItem.DataLength.ToString();
                 Txt_Initial.Text = CParam.VariableList[selectedIndex]._OpcDataItem.Value.ToString();//INI_VALUE
                 Txt_Value.Text = CParam.VariableList[selectedIndex]._BaseDataVariableState.Value.ToString();//暫存_VALUE
+
+                //Form狀態
+                if (ServerFlags == emServerFlag.Stop)
+                {
+                    Btn_Delete.Enabled = true;
+                    Btn_UpdateFile.Enabled = true;
+                    Btn_UpdateValue.Enabled = false;
+
+                }
+                if (ServerFlags == emServerFlag.Start)
+                {
+                    Btn_Delete.Enabled = false;
+                    Btn_UpdateFile.Enabled = false;
+                    Btn_UpdateValue.Enabled = true;
+                }
             }
             else
             {
@@ -284,67 +253,179 @@ namespace OPCNodeServerEditor
                 Console.WriteLine("沒有選中項");
                 //不做等第二次
             }
-
         }
-
         private void Btn_Add_Click(object sender, EventArgs e)
         {
-            //若是符合建立標準
-            if (HaveAddCondition())
+            if (HaveAddCondition())//若是符合建立標準
             {
                 try
                 {
-                    OpcDataItem tmpitem = new OpcDataItem();
-
-                    tmpitem.itemFlag = emItemFlag.Variable;
-                    tmpitem.FolderName = "A";//先預設
-                    tmpitem.Description = "";
-                    tmpitem.Index = Convert.ToInt32(Txt_Index.Text);
-                    tmpitem.ItemName = Txt_ItemName.Text;
-                    tmpitem.NodeID = Txt_NodeId.Text;
-                    tmpitem.DataType = Cbb_DataType.SelectedItem.ToString();
-                    tmpitem.DataLength = Convert.ToInt32(Txt_Length.Text);
-                    //if (tmpitem.DataType == "Real")
-                    //{
-                    //    tmpitem.Value = float.Parse(Txt_Value.Text);
-                    //}
-                    //else if (tmpitem.DataType == "String")
-                    //{
-                    //    tmpitem.Value = (object)Txt_Value.Text;
-                    //}
-                    //else if (tmpitem.DataType == "Bool")
-                    //{
-                    //    tmpitem.Value = (Txt_Value.Text == "1") ? true : false;
-                    //}
-                    //else if (tmpitem.DataType == "Word")
-                    //{
-                    //    tmpitem.Value = (object)Txt_Value.Text;
-                    //}
-                    tmpitem.Value = Txt_Value.Text;
-
-                    //加入初始StringVariableList
+                    OpcDataItem tmpitem = new OpcDataItem
+                    {
+                        itemFlag = emItemFlag.Variable,
+                        FolderName = "A",//先預設
+                        Description = "",
+                        Index = Convert.ToInt32(Txt_Index.Text),
+                        ItemName = Txt_ItemName.Text,
+                        NodeID = Txt_NodeId.Text,
+                        DataType = Cbb_DataType.SelectedItem.ToString(),
+                        DataLength = Convert.ToInt32(Txt_Length.Text)
+                    };
+                    switch (tmpitem.DataType)
+                    {
+                        case "Real":
+                            tmpitem.Value = float.Parse(Txt_Initial.Text);
+                            break;
+                        case "String":
+                            tmpitem.Value = Txt_Initial.Text;
+                            break;
+                        case "Bool":
+                            tmpitem.Value = (Txt_Initial.Text == "0") ? "0" : "1";
+                            break;
+                        case "Word":
+                            tmpitem.Value = Txt_Initial.Text;
+                            break;
+                    }
+                    //加入初始化StringVariableList
                     CParam.StringVariableList.Add(tmpitem);
                     //寫入INI
                     CParam.SaveData();
+                    //加入節點(以開關方式被動寫入)
+                    CParam.UsingApplication.Server.Start(CParam.UsingApplication.ApplicationConfiguration);
+                    CParam.UsingApplication.Server.Stop();
+                    //更新ListView
+                    UpdateVariableList();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message, "Btn_Add_Click", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-
             }
         }
         private void Btn_Delete_Click(object sender, EventArgs e)
         {
-
+            int selectedIndex = Lsv_VariableList.SelectedIndices[0];
+            if (selectedIndex != -1)//有選取  確認有無刪除項目
+            {
+                for (int i = 0; i < CParam.StringVariableList.Count; i++)
+                {
+                    if (Convert.ToInt32(Txt_Index.Text) == CParam.StringVariableList[i].Index)
+                    {
+                        CParam.StringVariableList.RemoveAt(i);//刪除特定位置
+                    }
+                }
+                //重寫INI
+                CParam.SaveData();
+                //加入節點(以開關方式被動寫入)
+                CParam.UsingApplication.Server.Start(CParam.UsingApplication.ApplicationConfiguration);
+                CParam.UsingApplication.Server.Stop();
+                //更新ListView
+                UpdateVariableList();
+            }
         }
         private void Btn_UpdateFile_Click(object sender, EventArgs e)
         {
-
+            int selectedIndex = Lsv_VariableList.SelectedIndices[0];
+            if (selectedIndex != -1)//有選取  確認需更改
+            {
+                for (int i = 0; i < CParam.StringVariableList.Count; i++)
+                {
+                    if (Convert.ToInt32(Txt_Index.Text) == CParam.StringVariableList[i].Index)
+                    {
+                        //僅只能修改length initial部分
+                        CParam.StringVariableList[i].DataLength = Convert.ToInt32(Txt_Length.Text);
+                        CParam.StringVariableList[i].Value = Convert.ToInt32(Txt_Initial.Text);
+                    }
+                }
+                //重寫INI
+                CParam.SaveData();
+                //加入節點(以開關方式被動寫入)
+                CParam.UsingApplication.Server.Start(CParam.UsingApplication.ApplicationConfiguration);
+                CParam.UsingApplication.Server.Stop();
+                //更新ListView
+                UpdateVariableList();
+            }
         }
         private void Btn_UpdateValue_Click(object sender, EventArgs e)
         {
+            //單純修改值
+            int selectedIndex = Lsv_VariableList.SelectedIndices[0];
+            if (selectedIndex != -1)//有選取  確認有無刪除項目
+            {
+                for (int i = 0; i < CParam.StringVariableList.Count; i++)
+                {
+                    if (Convert.ToInt32(Txt_Index.Text) == CParam.StringVariableList[i].Index)
+                    {
+                        CParam.VariableList[i]._BaseDataVariableState.Value = Txt_Value.Text;
+                    }
+                }
+                //更新ListView
+                UpdateVariableList();
+            }
+        }
+        private void Btn_Run_Click(object sender, EventArgs e)
+        {
+            if (ServerFlags == emServerFlag.Stop)
+            {
+                CParam.UsingApplication.Server.Start(CParam.UsingApplication.ApplicationConfiguration);//伺服器啟動
+                //全監控
+                foreach (OpcDataVariable<object> roll in CParam.VariableList)
+                {
+                    roll._BaseDataVariableState.OnSimpleWriteValue += new NodeValueSimpleEventHandler(UpdateStatus);
+                }
+                UpdateTimer_Start();
+                //Form方面
+                Btn_Run.Enabled = false;
+                Btn_Run.BackColor = Color.ForestGreen;
+                Btn_Stop.Enabled = true;
+                Btn_Stop.BackColor = Color.DarkGray;
 
+                Btn_Add.Enabled = false;
+                Btn_Delete.Enabled = false;
+                Btn_UpdateFile.Enabled = false;
+                Btn_UpdateValue.Enabled = true;
+
+                Txt_Index.Enabled = false;
+                Txt_ItemName.Enabled = false;
+                Txt_NodeId.Enabled = false;
+                Cbb_DataType.Enabled = false;
+                Txt_Length.Enabled = false;
+                Txt_Initial.Enabled = false;
+                Txt_Value.Enabled = true;
+
+                Lab_Status.Text = $"Server啟動";
+                ServerFlags = emServerFlag.Start;
+            }
+        }
+        private void Btn_Stop_Click(object sender, EventArgs e)
+        {
+            if (ServerFlags == emServerFlag.Start)
+            {
+                CParam.UsingApplication.Server.Stop();
+
+                UpdateTimer_Stop();
+                //Form方面
+                Btn_Stop.Enabled = false;
+                Btn_Stop.BackColor = Color.ForestGreen;
+                Btn_Run.Enabled = true;
+                Btn_Run.BackColor = Color.DarkGray;
+
+                Btn_Add.Enabled = true;
+                Btn_Delete.Enabled = true;
+                Btn_UpdateFile.Enabled = true;
+                Btn_UpdateValue.Enabled = false;
+
+                Txt_Index.Enabled = true;
+                Txt_ItemName.Enabled = true;
+                Txt_NodeId.Enabled = true;
+                Cbb_DataType.Enabled = true;
+                Txt_Length.Enabled = true;
+                Txt_Initial.Enabled = true;
+                Txt_Value.Enabled = false;
+
+                Lab_Status.Text = $"Server停止";
+                ServerFlags = emServerFlag.Stop;
+            }
         }
         private bool HaveAddCondition()
         {
@@ -352,9 +433,9 @@ namespace OPCNodeServerEditor
             {
                 ///INDEX
                 //------------------------------------------------------------
-                if (!IsNumeric(Txt_Index.Text))
+                if (!IsNumeric(Txt_Index.Text) || Txt_Index.Text == "")
                 {
-                    MessageBox.Show("Index存在數字以外字元");
+                    MessageBox.Show("Index存在數字以外字元或為空");
                     return false;
                 }
                 if (roll._OpcDataItem.Index == Convert.ToInt32(Txt_Index.Text))
@@ -364,6 +445,11 @@ namespace OPCNodeServerEditor
                 }
                 ///ITEMNAME
                 //------------------------------------------------------------
+                if (Txt_ItemName.Text == "")
+                {
+                    MessageBox.Show("ItemName字元為空");
+                    return false;
+                }
                 if (roll._OpcDataItem.ItemName == Txt_ItemName.Text)
                 {
                     MessageBox.Show("ItemName已存在");
@@ -371,9 +457,9 @@ namespace OPCNodeServerEditor
                 }
                 ///NODEID
                 //------------------------------------------------------------
-                if (!IsAlphanumeric(Txt_NodeId.Text))
+                if (!IsAlphanumeric(Txt_NodeId.Text) || Txt_NodeId.Text == "")
                 {
-                    MessageBox.Show("NodeID存在英數以外字元");
+                    MessageBox.Show("NodeID存在英數以外字元或為空");
                     return false;
                 }
                 if (roll._OpcDataItem.NodeID == Txt_NodeId.Text)
@@ -383,9 +469,9 @@ namespace OPCNodeServerEditor
                 }
                 ///DATALENGTH
                 //------------------------------------------------------------
-                if (!IsNumeric(Txt_Length.Text))
+                if (!IsNumeric(Txt_Length.Text) || Txt_Length.Text == "")
                 {
-                    MessageBox.Show("DataLength存在數字以外字元");
+                    MessageBox.Show("DataLength存在數字以外字元或為空");
                     return false;
                 }
                 ///INITIAL

@@ -219,7 +219,6 @@ namespace OPCNodeServerEditor
             }
 
         }
-
         public static void SaveData()
         {
             #region 沒有就創建
@@ -288,7 +287,6 @@ namespace OPCNodeServerEditor
                         writer.WriteLine(LineData);//Value
                         //-----------------------------------------------
                         writer.WriteLine("");//寫空一行
-                        
                     }
                     writer.Close();
                 }
