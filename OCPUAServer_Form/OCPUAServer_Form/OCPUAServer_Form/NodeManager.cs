@@ -13,7 +13,6 @@ namespace OCPUAServer
     {
         //參數
         private ReferenceServerConfiguration m_configuration;//基本為空
-        private Opc.Ua.Test.DataGenerator m_generator;
         private BaseDataVariableState<bool> SystemState = null;//紀錄
         private List<BaseDataVariableState<int>> TimeTickList = new List<BaseDataVariableState<int>>();//變數狀態
         private System.Timers.Timer NodeTimer = null;
@@ -27,9 +26,6 @@ namespace OCPUAServer
         public List<BaseDataVariableState<float>> floatlist = null;
 
         public List<TreeNodeItem> FilesTree = null;
-
-
-
 
         /// <summary>
         /// 初始化節點管理器
@@ -75,71 +71,6 @@ namespace OCPUAServer
         }
         #endregion
 
-        #region Private Helper Functions
-        private static bool IsUnsignedAnalogType(BuiltInType builtInType)
-        {
-            bool re = false;
-            if (builtInType == BuiltInType.Byte ||
-                builtInType == BuiltInType.UInt16 ||
-                builtInType == BuiltInType.UInt32 ||
-                builtInType == BuiltInType.UInt64)
-            {
-                re = true;
-            }
-            return re;
-        }
-
-        private static bool IsAnalogType(BuiltInType builtInType)
-        {
-            bool re = false;
-            switch (builtInType)
-            {
-                case BuiltInType.Byte:
-                case BuiltInType.UInt16:
-                case BuiltInType.UInt32:
-                case BuiltInType.UInt64:
-                case BuiltInType.SByte:
-                case BuiltInType.Int16:
-                case BuiltInType.Int32:
-                case BuiltInType.Int64:
-                case BuiltInType.Float:
-                case BuiltInType.Double:
-                    re = true;
-                    break;
-            }
-            return re;
-        }
-
-        private static Opc.Ua.Range GetAnalogRange(BuiltInType builtInType)
-        {
-            switch (builtInType)
-            {
-                case BuiltInType.UInt16:
-                    return new Range(System.UInt16.MaxValue, System.UInt16.MinValue);
-                case BuiltInType.UInt32:
-                    return new Range(System.UInt32.MaxValue, System.UInt32.MinValue);
-                case BuiltInType.UInt64:
-                    return new Range(System.UInt64.MaxValue, System.UInt64.MinValue);
-                case BuiltInType.SByte:
-                    return new Range(System.SByte.MaxValue, System.SByte.MinValue);
-                case BuiltInType.Int16:
-                    return new Range(System.Int16.MaxValue, System.Int16.MinValue);
-                case BuiltInType.Int32:
-                    return new Range(System.Int32.MaxValue, System.Int32.MinValue);
-                case BuiltInType.Int64:
-                    return new Range(System.Int64.MaxValue, System.Int64.MinValue);
-                case BuiltInType.Float:
-                    return new Range(System.Single.MaxValue, System.Single.MinValue);
-                case BuiltInType.Double:
-                    return new Range(System.Double.MaxValue, System.Double.MinValue);
-                case BuiltInType.Byte:
-                    return new Range(System.Byte.MaxValue, System.Byte.MinValue);
-                default:
-                    return new Range(System.SByte.MaxValue, System.SByte.MinValue);
-            }
-        }
-        #endregion
-
         #region INodeManager Members
         /// <summary>
         /// 初始化做完再使用address space
@@ -163,7 +94,7 @@ namespace OCPUAServer
                 FilesTree = new List<TreeNodeItem>();
 
                 //建立"Objects"下的第一層目錄
-                FolderState rootMy = CreateFolder(null, FirstLayerFolder,"第一層");
+                FolderState rootMy = CreateFolder(null, FirstLayerFolder, "第一層");
 
                 rootMy.AddReference(ReferenceTypes.Organizes, false, ObjectIds.ObjectsFolder);//提供目錄參考(狀態 排列等) 中間本為true 
                 references.Add(new NodeStateReference(ReferenceTypes.Organizes, false, rootMy.NodeId));//建立目錄
@@ -189,25 +120,27 @@ namespace OCPUAServer
                     CreateVariable(myFolder, "ValueFloat", DataTypeIds.Float, ValueRanks.Scalar, "設備參數(Float)", 100.5f);
                     CreateVariable(myFolder, "ValueInt", DataTypeIds.Int32, ValueRanks.Scalar, "設備參數(Int)", 0);
                     CreateVariable(myFolder, "AlarmTime", DataTypeIds.DateTime, ValueRanks.Scalar, "建立時間", DateTime.Now);
-                    intlist.Add(CreateVariable(myFolder, "UseInt", DataTypeIds.Int32, ValueRanks.Scalar, "測試(INT)",0));
+                    intlist.Add(CreateVariable(myFolder, "UseInt", DataTypeIds.Int32, ValueRanks.Scalar, "測試(INT)", 0));
                     floatlist.Add(CreateVariable(myFolder, "UseFloat", DataTypeIds.Float, ValueRanks.Scalar, "測試(Float)", 0.0f));
 
                     TimeTickList.Add(CreateVariable(myFolder, "ValueIntTick", DataTypeIds.Int32, ValueRanks.Scalar, "時間增加建立次數(Int)", 1000));
                     #endregion
 
                     #region Add Method
-                    MethodState addMethod = CreateMethod(myFolder, "Calculate","計算描述");
+                    MethodState addMethod = CreateMethod(myFolder, "Calculate", "計算描述");
                     // set input arguments 設定函式輸入
                     InPutMethod(addMethod);
                     // set output arguments 設定函式輸出
                     OutPutMethod(addMethod);
                     //將函式放到事件處理中
                     addMethod.OnCallMethod = new GenericMethodCalledEventHandler(OnAddCall);
+                    
                     #endregion
 
                 }
-                SystemState = CreateVariable(rootMy, "Enable", DataTypeIds.Boolean, ValueRanks.Scalar,"許可", false);
-                CreateVariable(rootMy, "Mat", DataTypeIds.Double, ValueRanks.TwoDimensions, "單一4*4陣列(double)", new double[4, 4]);
+
+                SystemState = CreateVariable(rootMy, "Enable", DataTypeIds.Boolean, ValueRanks.Scalar, "許可", false);
+                CreateVariable(rootMy, "Mat", DataTypeIds.Double, ValueRanks.TwoDimensions, "單一4*4陣列(double)", new double[4, 4]{ { 1, 2, 3, 4 },{ 5, 6, 7, 8 },{ 9, 10, 11, 12 },{ 13, 14, 15, 16 } });
 
                 AddPredefinedNode(SystemContext, rootMy);//將定義好的項目推送出去
 
@@ -283,6 +216,7 @@ namespace OCPUAServer
                 Value = defaultValue,
                 StatusCode = StatusCodes.Good,
                 Timestamp = DateTime.Now,
+                
                 NodeId = (parent == null)? new NodeId(name, NamespaceIndex): new NodeId(parent.NodeId.ToString() + "/" + name)
             };
             if (parent != null)
