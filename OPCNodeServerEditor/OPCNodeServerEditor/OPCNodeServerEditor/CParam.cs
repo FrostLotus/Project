@@ -24,7 +24,6 @@ namespace OPCNodeServerEditor
         DataLength = 7,//數值長度(string:?)
         Value = 8//數值
     }
-
     public enum emServerFlag
     {
         Start = 1,

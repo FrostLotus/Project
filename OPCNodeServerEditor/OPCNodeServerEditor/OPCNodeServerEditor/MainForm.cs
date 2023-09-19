@@ -18,11 +18,6 @@ namespace OPCNodeServerEditor
         public emServerFlag ServerFlags = emServerFlag.Stop;
         public static Timer ViewBarTimer = new Timer();
         private delegate void ReflashListView();
-
-        public MainForm()
-        {
-            InitializeComponent();
-        }
         public MainForm(ApplicationInstance application)
         {
             InitializeComponent();
@@ -63,157 +58,6 @@ namespace OPCNodeServerEditor
             Btn_Delete.Enabled = false;
             Btn_UpdateFile.Enabled = false;
             Btn_UpdateValue.Enabled = false;
-        }
-        
-        public void UpdateTimer_Tick(object sender, EventArgs e)
-        {
-            try
-            {
-                Lab_ServerTimeNow.Text = String.Format("{0:hh:mm:ss.fff}", DateTime.Now);
-                UpdateSessions();
-                Lab_sessionsCount.Text = Convert.ToString(Lsv_Sessions.Items.Count);
-                UpdateSubscriptions();
-                Lab_subscriptionsCount.Text = Convert.ToString(Lsv_Subscriptions.Items.Count);
-                int itemTotal = 0;
-                for (int i = 0; i < Lsv_Subscriptions.Items.Count; i++)
-                {
-                    itemTotal += Convert.ToInt32(Lsv_Subscriptions.Items[i].SubItems[2].Text);
-                }
-                Lab_itemsCount.Text = Convert.ToString(itemTotal);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "UpdateTimer_Tick", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-            }
-        }
-        private void UpdateSessions()
-        {
-            Lsv_Sessions.Items.Clear();//清除Listview中項目
-            IList<Session> sessions = CParam._NodeServer.CurrentInstance.SessionManager.GetSessions();//從SessionManager取得連結數
-
-            for (int i = 0; i < sessions.Count; i++)
-            {
-                Session session = sessions[i];
-                //UpdateStatus(session, SessionEventReason.Activated);
-                lock (session.DiagnosticsLock)//鎖執行緒
-                {
-                    ListViewItem item = new ListViewItem(session.SessionDiagnostics.SessionName);
-                    //若偵測項不為空
-                    if (session.Identity != null)
-                    {
-                        item.SubItems.Add(session.Identity.DisplayName);//新增顯示連線名稱
-                    }
-                    else
-                    {
-                        item.SubItems.Add(String.Empty);//加空
-                    }
-                    item.SubItems.Add(String.Format("{0}", session.Id));//ID
-                    item.SubItems.Add(String.Format("{0:HH:mm:ss.fff}", session.SessionDiagnostics.ClientLastContactTime.ToLocalTime()));//最後連線時間
-
-                    Lsv_Sessions.Items.Add(item);//反應回控制項
-
-                }
-            }
-            // adjust 控制項外觀寬度
-            for (int i = 0; i < Lsv_Sessions.Columns.Count; i++)
-            {
-                Lsv_Sessions.Columns[i].Width = -2;
-            }
-        }
-        private void UpdateSubscriptions()
-        {
-            Lsv_Subscriptions.Items.Clear();//清除Listview中項目
-            IList<Subscription> subscriptions = CParam._NodeServer.CurrentInstance.SubscriptionManager.GetSubscriptions();//從SessionManager取得訂閱數
-            for (int i = 0; i < subscriptions.Count; i++)
-            {
-                Subscription subscription = subscriptions[i];
-                ListViewItem item = new ListViewItem(subscription.Id.ToString());
-                lock (subscription.DiagnosticsLock)
-                {
-                    item.SubItems.Add(String.Format("{0}", (int)subscription.PublishingInterval));//更新時間
-                    item.SubItems.Add(String.Format("{0}", subscription.MonitoredItemCount));//總數
-
-                    item.SubItems.Add(String.Format("{0}", subscription.Diagnostics.NextSequenceNumber));//S/N
-                }
-                Lsv_Subscriptions.Items.Add(item);//反應回控制項
-            }
-
-            for (int i = 0; i < Lsv_Subscriptions.Columns.Count; i++)
-            {
-                Lsv_Subscriptions.Columns[i].Width = -2;
-            }
-
-        }
-        private void UpdateVariableList()
-        {
-            //int selectedIndex = Lsv_VariableList.SelectedIndices.Count > 0 ? Lsv_VariableList.SelectedIndices[0] : -1;
-            Lsv_VariableList.Items.Clear();//清除Listview中項目
-            for (int i = 0; i < CParam.VariableList.Count; i++)
-            {
-                ListViewItem item = new ListViewItem($"{CParam.VariableList[i]._OpcDataItem.Index}");
-                item.SubItems.Add($"{CParam.VariableList[i]._OpcDataItem.ItemName}");
-                item.SubItems.Add($"{CParam.VariableList[i]._OpcDataItem.NodeID}");
-                item.SubItems.Add($"{CParam.VariableList[i]._BaseDataVariableState.Value}");
-                CParam.StringVariableList[i].Value = CParam.VariableList[i]._BaseDataVariableState.Value;//使CreateAddressSpace重新運作不直接拿原本INI值拿暫存
-                Lsv_VariableList.Items.Add(item);//反應回控制項
-            }
-            ListViewItem tmpTime = new ListViewItem(String.Format("{0:hh:mm:ss.fff}", DateTime.Now));
-            Lsv_VariableList.Items.Add(tmpTime);
-            //if (selectedIndex >= 0 && selectedIndex < Lsv_VariableList.Items.Count)
-            //{
-            //    Lsv_VariableList.Items[selectedIndex].Selected = true;
-            //    Lsv_VariableList.Items[selectedIndex].EnsureVisible(); // 确保选中项可见
-            //}
-            //Lsv_VariableList.Sort();
-        }
-        public  void UpdateSession(Session session, SessionEventReason e)
-        {
-            //僅session啟動時讀的了
-            lock (session.DiagnosticsLock)//鎖執行緒
-            {
-                Console.WriteLine($"Session觸發:\n" +
-                                  $"SessionName =  {session.SessionDiagnostics.SessionName}\n" +
-                                  $"Id = {session.Id}" +
-                                  $"最後連線時間 = {session.SessionDiagnostics.ClientLastContactTime.ToLocalTime()}");
-            }
-        }
-        public ServiceResult UpdateStatus(ISystemContext context, NodeState node, ref object value)
-        {
-            Console.WriteLine($"變數{node.NodeId} = {value.ToString()}");
-            //餵回去變更值
-            foreach (OpcDataVariable<object> roll in CParam.VariableList)
-            {
-                if (roll._BaseDataVariableState.NodeId.Identifier == node.NodeId.Identifier)
-                {
-                    roll._BaseDataVariableState.Value = value;
-                    //roll._OpcDataItem.Value = value;
-                }
-            }
-            UpdateListViewChange();
-            return ServiceResult.Good;
-        }
-        public void UpdateListViewChange()
-        {
-            //判斷物件是否在同一個執行緒上
-            if (this.InvokeRequired)
-            {
-                //當InvokeRequired為true時，表示在不同的執行緒上，所以進行委派的動作!!
-                ReflashListView del = new ReflashListView(UpdateListViewChange);
-                this.Invoke(del, null);
-            }
-            else
-            {
-                UpdateVariableList();
-            }
-
-        }
-        public void UpdateTimer_Stop()
-        {
-            ViewBarTimer.Stop();
-        }
-        public void UpdateTimer_Start()
-        {
-            ViewBarTimer.Start();
         }
         private void Lsv_VariableList_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -427,6 +271,21 @@ namespace OPCNodeServerEditor
                 ServerFlags = emServerFlag.Stop;
             }
         }
+        private void Btn_Close_Click(object sender, EventArgs e)
+        {
+            if (ServerFlags == emServerFlag.Stop)
+            {
+                Close();
+            }
+            if (ServerFlags == emServerFlag.Start)
+            {
+                CParam.UsingApplication.Server.Stop();
+
+                UpdateTimer_Stop();
+                Close();
+            }
+        }
+        //=========================================================================
         private bool HaveAddCondition()
         {
             foreach (OpcDataVariable<object> roll in CParam.VariableList)
@@ -484,6 +343,155 @@ namespace OPCNodeServerEditor
             }
             return true;
         }
+        public void UpdateTimer_Stop()
+        {
+            ViewBarTimer.Stop();
+        }
+        public void UpdateTimer_Start()
+        {
+            ViewBarTimer.Start();
+        }
+        public void UpdateTimer_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                Lab_ServerTimeNow.Text = String.Format("{0:hh:mm:ss.fff}", DateTime.Now);
+                UpdateSessions();
+                Lab_sessionsCount.Text = Convert.ToString(Lsv_Sessions.Items.Count);
+                UpdateSubscriptions();
+                Lab_subscriptionsCount.Text = Convert.ToString(Lsv_Subscriptions.Items.Count);
+                int itemTotal = 0;
+                for (int i = 0; i < Lsv_Subscriptions.Items.Count; i++)
+                {
+                    itemTotal += Convert.ToInt32(Lsv_Subscriptions.Items[i].SubItems[2].Text);
+                }
+                Lab_itemsCount.Text = Convert.ToString(itemTotal);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "UpdateTimer_Tick", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            }
+        }
+        private void UpdateSessions()
+        {
+            Lsv_Sessions.Items.Clear();//清除Listview中項目
+            IList<Session> sessions = CParam._NodeServer.CurrentInstance.SessionManager.GetSessions();//從SessionManager取得連結數
+
+            for (int i = 0; i < sessions.Count; i++)
+            {
+                Session session = sessions[i];
+                //UpdateStatus(session, SessionEventReason.Activated);
+                lock (session.DiagnosticsLock)//鎖執行緒
+                {
+                    ListViewItem item = new ListViewItem(session.SessionDiagnostics.SessionName);
+                    //若偵測項不為空
+                    if (session.Identity != null)
+                    {
+                        item.SubItems.Add(session.Identity.DisplayName);//新增顯示連線名稱
+                    }
+                    else
+                    {
+                        item.SubItems.Add(String.Empty);//加空
+                    }
+                    item.SubItems.Add(String.Format("{0}", session.Id));//ID
+                    item.SubItems.Add(String.Format("{0:HH:mm:ss.fff}", session.SessionDiagnostics.ClientLastContactTime.ToLocalTime()));//最後連線時間
+
+                    Lsv_Sessions.Items.Add(item);//反應回控制項
+
+                }
+            }
+            // adjust 控制項外觀寬度
+            for (int i = 0; i < Lsv_Sessions.Columns.Count; i++)
+            {
+                Lsv_Sessions.Columns[i].Width = -2;
+            }
+        }
+        private void UpdateSubscriptions()
+        {
+            Lsv_Subscriptions.Items.Clear();//清除Listview中項目
+            IList<Subscription> subscriptions = CParam._NodeServer.CurrentInstance.SubscriptionManager.GetSubscriptions();//從SessionManager取得訂閱數
+            for (int i = 0; i < subscriptions.Count; i++)
+            {
+                Subscription subscription = subscriptions[i];
+                ListViewItem item = new ListViewItem(subscription.Id.ToString());
+                lock (subscription.DiagnosticsLock)
+                {
+                    item.SubItems.Add(String.Format("{0}", (int)subscription.PublishingInterval));//更新時間
+                    item.SubItems.Add(String.Format("{0}", subscription.MonitoredItemCount));//總數
+
+                    item.SubItems.Add(String.Format("{0}", subscription.Diagnostics.NextSequenceNumber));//S/N
+                }
+                Lsv_Subscriptions.Items.Add(item);//反應回控制項
+            }
+
+            for (int i = 0; i < Lsv_Subscriptions.Columns.Count; i++)
+            {
+                Lsv_Subscriptions.Columns[i].Width = -2;
+            }
+
+        }
+        private void UpdateVariableList()
+        {
+            //int selectedIndex = Lsv_VariableList.SelectedIndices.Count > 0 ? Lsv_VariableList.SelectedIndices[0] : -1;
+            Lsv_VariableList.Items.Clear();//清除Listview中項目
+            for (int i = 0; i < CParam.VariableList.Count; i++)
+            {
+                ListViewItem item = new ListViewItem($"{CParam.VariableList[i]._OpcDataItem.Index}");
+                item.SubItems.Add($"{CParam.VariableList[i]._OpcDataItem.ItemName}");
+                item.SubItems.Add($"{CParam.VariableList[i]._OpcDataItem.NodeID}");
+                item.SubItems.Add($"{CParam.VariableList[i]._BaseDataVariableState.Value}");
+                CParam.StringVariableList[i].Value = CParam.VariableList[i]._BaseDataVariableState.Value;//使CreateAddressSpace重新運作不直接拿原本INI值拿暫存
+                Lsv_VariableList.Items.Add(item);//反應回控制項
+            }
+            ListViewItem tmpTime = new ListViewItem(String.Format("{0:hh:mm:ss.fff}", DateTime.Now));
+            Lsv_VariableList.Items.Add(tmpTime);
+            //if (selectedIndex >= 0 && selectedIndex < Lsv_VariableList.Items.Count)
+            //{
+            //    Lsv_VariableList.Items[selectedIndex].Selected = true;
+            //    Lsv_VariableList.Items[selectedIndex].EnsureVisible(); // 确保选中项可见
+            //}
+            //Lsv_VariableList.Sort();
+        }
+        public void UpdateSession(Session session, SessionEventReason e)
+        {
+            //僅session啟動時讀的了
+            lock (session.DiagnosticsLock)//鎖執行緒
+            {
+                Console.WriteLine($"Session觸發:\n" +
+                                  $"SessionName =  {session.SessionDiagnostics.SessionName}\n" +
+                                  $"Id = {session.Id}" +
+                                  $"最後連線時間 = {session.SessionDiagnostics.ClientLastContactTime.ToLocalTime()}");
+            }
+        }
+        public ServiceResult UpdateStatus(ISystemContext context, NodeState node, ref object value)
+        {
+            Console.WriteLine($"變數{node.NodeId} = {value.ToString()}");
+            //餵回去變更值
+            foreach (OpcDataVariable<object> roll in CParam.VariableList)
+            {
+                if (roll._BaseDataVariableState.NodeId.Identifier == node.NodeId.Identifier)
+                {
+                    roll._BaseDataVariableState.Value = value;
+                    //roll._OpcDataItem.Value = value;
+                }
+            }
+            UpdateListViewChange();
+            return ServiceResult.Good;
+        }
+        public void UpdateListViewChange()
+        {
+            //判斷物件是否在同一個執行緒上
+            if (this.InvokeRequired)
+            {
+                //當InvokeRequired為true時，表示在不同的執行緒上，所以進行委派的動作!!
+                ReflashListView del = new ReflashListView(UpdateListViewChange);
+                this.Invoke(del, null);
+            }
+            else
+            {
+                UpdateVariableList();
+            }
+        }
         private static bool IsNumeric(string input)
         {
             foreach (char c in input)
@@ -506,6 +514,8 @@ namespace OPCNodeServerEditor
             }
             return true;
         }
+
+        
     }
 
 

@@ -100,6 +100,7 @@ namespace OPCNodeServerEditor
             this.Btn_Close.TabIndex = 42;
             this.Btn_Close.Text = "Close Window";
             this.Btn_Close.UseVisualStyleBackColor = true;
+            this.Btn_Close.Click += new System.EventHandler(this.Btn_Close_Click);
             // 
             // Btn_UpdateFile
             // 

@@ -25,8 +25,6 @@ namespace OPCNodeServerEditor
 
             //先載入相關參數 CParam
             CParam.Init();
-            //NodeServer Server = new NodeServer();
-
             try
             {
                 // 載入應用程序配置
@@ -39,7 +37,6 @@ namespace OPCNodeServerEditor
                 }
                 // start the server.
                 application.Start(CParam._NodeServer).Wait();
-
                 // 運行主視窗
                 Application.Run(new MainForm(application));
             }

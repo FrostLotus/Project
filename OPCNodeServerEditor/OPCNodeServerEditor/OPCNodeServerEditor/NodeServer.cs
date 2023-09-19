@@ -15,7 +15,6 @@ namespace OPCNodeServerEditor
         
         public List<INodeManager> NodeManagers;
         public NodeManager NodeManager;
-
         //override實作
         /// <summary>
         /// 建立一個主要的Node管理器給SERVER
@@ -81,7 +80,8 @@ namespace OPCNodeServerEditor
         /// <param name="configuration"></param>
         protected override void OnServerStarting(ApplicationConfiguration configuration)
         {
-            Utils.Trace("The server is starting.");
+            //Utils.Trace("The server is starting.");
+            Debug.WriteLine("The server is starting.");
 
             base.OnServerStarting(configuration);
         }
