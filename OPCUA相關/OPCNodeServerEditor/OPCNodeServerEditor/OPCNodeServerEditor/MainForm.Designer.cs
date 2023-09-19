@@ -67,7 +67,6 @@ namespace OPCNodeServerEditor
             this.ItemCountCH = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SequenceNumberCH = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.label8 = new System.Windows.Forms.Label();
             this.StatusBAR = new System.Windows.Forms.StatusStrip();
             this.Lab_Time = new System.Windows.Forms.ToolStripStatusLabel();
             this.Lab_ServerTimeNow = new System.Windows.Forms.ToolStripStatusLabel();
@@ -83,6 +82,7 @@ namespace OPCNodeServerEditor
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.groupBox1.SuspendLayout();
             this.Gbx_NodeList.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -90,11 +90,12 @@ namespace OPCNodeServerEditor
             this.groupBox4.SuspendLayout();
             this.StatusBAR.SuspendLayout();
             this.groupBox5.SuspendLayout();
+            this.groupBox6.SuspendLayout();
             this.SuspendLayout();
             // 
             // Btn_Close
             // 
-            this.Btn_Close.Location = new System.Drawing.Point(29, 21);
+            this.Btn_Close.Location = new System.Drawing.Point(35, 21);
             this.Btn_Close.Name = "Btn_Close";
             this.Btn_Close.Size = new System.Drawing.Size(99, 30);
             this.Btn_Close.TabIndex = 42;
@@ -257,7 +258,7 @@ namespace OPCNodeServerEditor
             this.groupBox1.Controls.Add(this.Lab_Status);
             this.groupBox1.Location = new System.Drawing.Point(12, 71);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(379, 59);
+            this.groupBox1.Size = new System.Drawing.Size(361, 59);
             this.groupBox1.TabIndex = 44;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Server狀態";
@@ -285,7 +286,7 @@ namespace OPCNodeServerEditor
             // Lab_Status
             // 
             this.Lab_Status.AutoSize = true;
-            this.Lab_Status.Location = new System.Drawing.Point(266, 30);
+            this.Lab_Status.Location = new System.Drawing.Point(233, 30);
             this.Lab_Status.Name = "Lab_Status";
             this.Lab_Status.Size = new System.Drawing.Size(73, 12);
             this.Lab_Status.TabIndex = 2;
@@ -311,7 +312,7 @@ namespace OPCNodeServerEditor
             this.Gbx_NodeList.Controls.Add(this.label3);
             this.Gbx_NodeList.Controls.Add(this.label5);
             this.Gbx_NodeList.Controls.Add(this.label4);
-            this.Gbx_NodeList.Location = new System.Drawing.Point(569, 227);
+            this.Gbx_NodeList.Location = new System.Drawing.Point(541, 227);
             this.Gbx_NodeList.Name = "Gbx_NodeList";
             this.Gbx_NodeList.Size = new System.Drawing.Size(551, 209);
             this.Gbx_NodeList.TabIndex = 45;
@@ -338,7 +339,7 @@ namespace OPCNodeServerEditor
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.Btn_Close);
-            this.groupBox2.Location = new System.Drawing.Point(407, 69);
+            this.groupBox2.Location = new System.Drawing.Point(379, 71);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(156, 61);
             this.groupBox2.TabIndex = 47;
@@ -351,9 +352,9 @@ namespace OPCNodeServerEditor
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.Cbb_EndpointsUrl.FormattingEnabled = true;
-            this.Cbb_EndpointsUrl.Location = new System.Drawing.Point(18, 33);
+            this.Cbb_EndpointsUrl.Location = new System.Drawing.Point(13, 21);
             this.Cbb_EndpointsUrl.Name = "Cbb_EndpointsUrl";
-            this.Cbb_EndpointsUrl.Size = new System.Drawing.Size(375, 20);
+            this.Cbb_EndpointsUrl.Size = new System.Drawing.Size(488, 20);
             this.Cbb_EndpointsUrl.TabIndex = 48;
             this.Cbb_EndpointsUrl.Text = "opc.tcp://127.0.0.1:62547/DataAccessServer";
             // 
@@ -451,15 +452,6 @@ namespace OPCNodeServerEditor
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "訂閱狀態";
             // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(16, 9);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(59, 12);
-            this.label8.TabIndex = 2;
-            this.label8.Text = "Server位址";
-            // 
             // StatusBAR
             // 
             this.StatusBAR.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -471,9 +463,9 @@ namespace OPCNodeServerEditor
             this.Lab_subscriptionsCount,
             this.Lab_items,
             this.Lab_itemsCount});
-            this.StatusBAR.Location = new System.Drawing.Point(0, 453);
+            this.StatusBAR.Location = new System.Drawing.Point(0, 441);
             this.StatusBAR.Name = "StatusBAR";
-            this.StatusBAR.Size = new System.Drawing.Size(1155, 22);
+            this.StatusBAR.Size = new System.Drawing.Size(1100, 22);
             this.StatusBAR.TabIndex = 50;
             this.StatusBAR.Text = "statusStrip1";
             // 
@@ -532,7 +524,7 @@ namespace OPCNodeServerEditor
             // groupBox5
             // 
             this.groupBox5.Controls.Add(this.Lsv_VariableList);
-            this.groupBox5.Location = new System.Drawing.Point(569, 12);
+            this.groupBox5.Location = new System.Drawing.Point(541, 12);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(551, 209);
             this.groupBox5.TabIndex = 49;
@@ -579,17 +571,26 @@ namespace OPCNodeServerEditor
             this.columnHeader4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.columnHeader4.Width = 140;
             // 
+            // groupBox6
+            // 
+            this.groupBox6.Controls.Add(this.Cbb_EndpointsUrl);
+            this.groupBox6.Location = new System.Drawing.Point(12, 4);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(523, 61);
+            this.groupBox6.TabIndex = 47;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Server位址";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1155, 475);
+            this.ClientSize = new System.Drawing.Size(1100, 463);
             this.Controls.Add(this.StatusBAR);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.Cbb_EndpointsUrl);
+            this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.Gbx_NodeList);
             this.Controls.Add(this.groupBox1);
@@ -605,6 +606,7 @@ namespace OPCNodeServerEditor
             this.StatusBAR.ResumeLayout(false);
             this.StatusBAR.PerformLayout();
             this.groupBox5.ResumeLayout(false);
+            this.groupBox6.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -648,7 +650,6 @@ namespace OPCNodeServerEditor
         private System.Windows.Forms.ColumnHeader ItemCountCH;
         private System.Windows.Forms.ColumnHeader SequenceNumberCH;
         private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.Label label8;
         private System.Windows.Forms.StatusStrip StatusBAR;
         private System.Windows.Forms.ToolStripStatusLabel Lab_Time;
         private System.Windows.Forms.ToolStripStatusLabel Lab_ServerTimeNow;
@@ -666,6 +667,7 @@ namespace OPCNodeServerEditor
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.TextBox Txt_Initial;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.GroupBox groupBox6;
     }
 }
 
