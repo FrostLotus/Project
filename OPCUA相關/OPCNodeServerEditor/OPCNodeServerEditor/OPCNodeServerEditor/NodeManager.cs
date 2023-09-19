@@ -10,7 +10,7 @@ namespace OPCNodeServerEditor
 {
     public class NodeManager : CustomNodeManager2
     {
-        public delegate void NodeModifity(NodeHandle handle, MonitoredItem monitoredItem);
+       
         private ReferenceServerConfiguration Configuration;//基本為空
         private List<BaseDataVariableState<int>> TimeTickList = new List<BaseDataVariableState<int>>();//變數狀態
         private System.Timers.Timer NodeTimer = null;

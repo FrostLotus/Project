@@ -4,9 +4,9 @@
   xmlns:ua="http://opcfoundation.org/UA/2008/02/Types.xsd"
   xmlns="http://opcfoundation.org/UA/SDK/Configuration.xsd"
 >
-  <ApplicationName>SharpNodeSettings.OpcUaServer</ApplicationName>
-  <ApplicationUri>https://github.com/dathlin/SharpNodeSettings</ApplicationUri>
-  <ProductUri>uhttps://github.com/dathlin/SharpNodeSettings</ProductUri>
+  <ApplicationName>OPCNodeServerEditor</ApplicationName>
+  <ApplicationUri>https://github.com/FrostLotus/Project/tree/master/OPCUA%E7%9B%B8%E9%97%9C/OPCNodeServerEditor/OPCNodeServerEditor</ApplicationUri>
+  <ProductUri>uhttps://github.com/FrostLotus/Project/tree/master/OPCUA%E7%9B%B8%E9%97%9C/OPCNodeServerEditor/OPCNodeServerEditor</ProductUri>
   <ApplicationType>Server_0</ApplicationType>
   
   <SecurityConfiguration>

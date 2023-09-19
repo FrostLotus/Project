@@ -485,7 +485,7 @@ namespace OPCNodeServerEditor
             {
                 //當InvokeRequired為true時，表示在不同的執行緒上，所以進行委派的動作!!
                 ReflashListView del = new ReflashListView(UpdateListViewChange);
-                this.Invoke(del, null);
+                this.Invoke(del, null);//委託自己
             }
             else
             {

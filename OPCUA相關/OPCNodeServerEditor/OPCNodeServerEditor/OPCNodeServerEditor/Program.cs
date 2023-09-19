@@ -22,13 +22,20 @@ namespace OPCNodeServerEditor
             ApplicationInstance application = new ApplicationInstance();
             application.ApplicationType = ApplicationType.Server;
             application.ConfigSectionName = "OPCUASetting";
-
+            
             //先載入相關參數 CParam
             CParam.Init();
             try
             {
                 // 載入應用程序配置
                 application.LoadApplicationConfiguration(false).Wait();
+                Console.WriteLine("//======================================================================");
+                Console.WriteLine($"ApplicationUri:{application.ApplicationConfiguration.ApplicationUri}");//productURI
+                Console.WriteLine($"ApplicationName:{application.ApplicationConfiguration.ApplicationName}");
+                Console.WriteLine($"ProductUri:{application.ApplicationConfiguration.ProductUri}");
+                Console.WriteLine($"ConfigSectionName:{application.ConfigSectionName}");
+                Console.WriteLine("//======================================================================");
+
                 // 檢查應用程式證書
                 bool certOk = application.CheckApplicationInstanceCertificate(false, 0).Result;
                 if (!certOk)
