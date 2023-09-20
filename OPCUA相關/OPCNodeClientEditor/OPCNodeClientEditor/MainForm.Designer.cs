@@ -51,6 +51,7 @@ namespace OPCNodeClientEditor
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.Btn_ReflashList = new System.Windows.Forms.Button();
             this.Gbx_NodeList.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.SuspendLayout();
@@ -105,7 +106,7 @@ namespace OPCNodeClientEditor
             this.Gbx_NodeList.Controls.Add(this.label9);
             this.Gbx_NodeList.Controls.Add(this.label10);
             this.Gbx_NodeList.Controls.Add(this.label12);
-            this.Gbx_NodeList.Location = new System.Drawing.Point(13, 297);
+            this.Gbx_NodeList.Location = new System.Drawing.Point(12, 348);
             this.Gbx_NodeList.Name = "Gbx_NodeList";
             this.Gbx_NodeList.Size = new System.Drawing.Size(551, 140);
             this.Gbx_NodeList.TabIndex = 64;
@@ -215,10 +216,11 @@ namespace OPCNodeClientEditor
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.Btn_ReflashList);
             this.groupBox5.Controls.Add(this.Lsv_VariableList);
             this.groupBox5.Location = new System.Drawing.Point(12, 71);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(551, 220);
+            this.groupBox5.Size = new System.Drawing.Size(551, 271);
             this.groupBox5.TabIndex = 63;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "變數列表";
@@ -235,7 +237,7 @@ namespace OPCNodeClientEditor
             this.Lsv_VariableList.Location = new System.Drawing.Point(13, 21);
             this.Lsv_VariableList.MultiSelect = false;
             this.Lsv_VariableList.Name = "Lsv_VariableList";
-            this.Lsv_VariableList.Size = new System.Drawing.Size(526, 182);
+            this.Lsv_VariableList.Size = new System.Drawing.Size(526, 211);
             this.Lsv_VariableList.TabIndex = 2;
             this.Lsv_VariableList.UseCompatibleStateImageBehavior = false;
             this.Lsv_VariableList.View = System.Windows.Forms.View.Details;
@@ -263,11 +265,21 @@ namespace OPCNodeClientEditor
             this.columnHeader4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.columnHeader4.Width = 140;
             // 
+            // Btn_ReflashList
+            // 
+            this.Btn_ReflashList.Location = new System.Drawing.Point(210, 238);
+            this.Btn_ReflashList.Name = "Btn_ReflashList";
+            this.Btn_ReflashList.Size = new System.Drawing.Size(118, 23);
+            this.Btn_ReflashList.TabIndex = 3;
+            this.Btn_ReflashList.Text = "更新列表";
+            this.Btn_ReflashList.UseVisualStyleBackColor = true;
+            this.Btn_ReflashList.Click += new System.EventHandler(this.Btn_ReflashList_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(574, 449);
+            this.ClientSize = new System.Drawing.Size(574, 500);
             this.Controls.Add(this.Txt_ServerURL);
             this.Controls.Add(this.Btn_Connect);
             this.Controls.Add(this.label13);
@@ -309,6 +321,7 @@ namespace OPCNodeClientEditor
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.Button Btn_ReflashList;
     }
 }
 
