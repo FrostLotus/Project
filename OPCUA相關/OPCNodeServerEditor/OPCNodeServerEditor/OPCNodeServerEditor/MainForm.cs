@@ -61,7 +61,6 @@ namespace OPCNodeServerEditor
         }
         private void Lsv_VariableList_SelectedIndexChanged(object sender, EventArgs e)
         {
-
             //時間最後行不觸發
             if (Lsv_VariableList.SelectedIndices.Count > 0 && Lsv_VariableList.SelectedIndices[0] < Lsv_VariableList.Items.Count - 1)
             {
@@ -127,7 +126,8 @@ namespace OPCNodeServerEditor
                             tmpitem.Value = (Txt_Initial.Text == "0") ? "0" : "1";
                             break;
                         case "Word":
-                            tmpitem.Value = Txt_Initial.Text;
+                            if (int.TryParse(Txt_Initial.Text, out int tmp))
+                                tmpitem.Value = tmp;
                             break;
                     }
                     //加入初始化StringVariableList
@@ -191,7 +191,8 @@ namespace OPCNodeServerEditor
                                 CParam.StringVariableList[i].Value = (Txt_Initial.Text == "0") ? false : true;
                                 break;
                             case "Word":
-                                CParam.StringVariableList[i].Value = Txt_Initial.Text;
+                                if (int.TryParse(Txt_Initial.Text, out int tmp))
+                                    CParam.StringVariableList[i].Value = tmp;
                                 break;
 
 
@@ -212,8 +213,17 @@ namespace OPCNodeServerEditor
         {
             try
             {
+                int selectedIndex = -1;
                 //單純修改值
-                int selectedIndex = Lsv_VariableList.SelectedIndices[0];
+                if (Lsv_VariableList.SelectedIndices.Count <= 0)
+                {
+                    MessageBox.Show("在列表中無選擇 沒有修改目標");
+                }
+                else
+                {
+                    selectedIndex = Lsv_VariableList.SelectedIndices[0];
+                }
+                //-------------------------------------------------------
                 if (selectedIndex != -1)//有選取  確認有無刪除項目
                 {
                     for (int i = 0; i < CParam.VariableList.Count; i++)
@@ -234,11 +244,14 @@ namespace OPCNodeServerEditor
                                     CParam.VariableList[i]._BaseDataVariableState.Value = (Txt_Value.Text=="0")?false:true;
                                     break;
                                 case "Word":
-                                    CParam.VariableList[i]._BaseDataVariableState.Value = Txt_Value.Text;
+                                    if (int.TryParse(Txt_Value.Text, out int tmp))
+                                    {
+                                        CParam.VariableList[i]._BaseDataVariableState.Value = tmp;
+                                    }
                                     break;
-
-
                             }
+                            CParam.VariableList[i]._BaseDataVariableState.StatusCode = StatusCodes.Good;
+                            CParam.VariableList[i]._BaseDataVariableState.Timestamp = DateTime.Now;
                             
                         }
                     }

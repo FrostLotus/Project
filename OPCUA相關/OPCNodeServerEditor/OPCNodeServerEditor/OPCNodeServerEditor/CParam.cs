@@ -198,7 +198,8 @@ namespace OPCNodeServerEditor
                                     }
                                     else if (currentDataItem.DataType == "Word")
                                     {
-                                        currentDataItem.Value = value;
+                                        if (int.TryParse(value, out int tmp))
+                                            currentDataItem.Value = tmp;
                                     }
                                     //最後加入暫存變數當中
                                     StringVariableList.Add(currentDataItem);

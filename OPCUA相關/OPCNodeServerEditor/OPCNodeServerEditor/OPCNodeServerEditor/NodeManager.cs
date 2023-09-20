@@ -120,7 +120,7 @@ namespace OPCNodeServerEditor
                         case "Word":
                             tmpData = new OpcDataVariable<object>
                             {
-                                _BaseDataVariableState = CreateVariable(rootNode, roll.NodeID, DataTypeIds.String, ValueRanks.Scalar, roll.Description, roll.Value),
+                                _BaseDataVariableState = CreateVariable(rootNode, roll.NodeID, DataTypeIds.Integer, ValueRanks.Scalar, roll.Description, roll.Value),
                                 _OpcDataItem = roll
                             };
                             CParam.VariableList.Add(tmpData);
@@ -214,6 +214,7 @@ namespace OPCNodeServerEditor
             return re;
         }
         #endregion
+
         #region 新增變數
         /// <summary>
         /// 產生一個變數節點<T>
