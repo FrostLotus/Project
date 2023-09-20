@@ -42,7 +42,6 @@ namespace OPCNodeServerEditor
     /// </summary>
     public class CParam
     {
-
         //參數
         public static NodeServer _NodeServer;
         public static ApplicationInstance UsingApplication;
@@ -320,14 +319,12 @@ namespace OPCNodeServerEditor
         public string FolderName { get; set; }//以(string)NodeID.Identifier作為唯一資料夾名稱追查
         public string Description { get; set; }//描述
     }
-
     public class OpcDataVariable<T>
     {
         public BaseDataVariableState<T> _BaseDataVariableState;
 
         public OpcDataItem _OpcDataItem;
     }
-
     /// <summary>
     /// 存儲數據訪問節點管理器的配置。
     /// </summary>

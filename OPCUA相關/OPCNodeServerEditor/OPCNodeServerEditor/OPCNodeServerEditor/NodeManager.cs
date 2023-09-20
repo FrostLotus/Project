@@ -231,26 +231,26 @@ namespace OPCNodeServerEditor
         {
             BaseDataVariableState<T> variable = new BaseDataVariableState<T>(parent)
             {
-                SymbolicName = name,
-                ReferenceTypeId = ReferenceTypes.Organizes,
-                TypeDefinitionId = VariableTypeIds.BaseDataVariableType,
+                SymbolicName = name,//
+                ReferenceTypeId = ReferenceTypes.Organizes,//組織架構下
+                TypeDefinitionId = VariableTypeIds.BaseDataVariableType,//變數
 
-                BrowseName = new QualifiedName(name),//, NamespaceIndex),
-                DisplayName = new LocalizedText(name),
-                Description = description,
+                BrowseName = new QualifiedName(name),//, NamespaceIndex),//瀏覽名稱
+                DisplayName = new LocalizedText(name),//顯示名稱
+                Description = description,//描述
 
-                WriteMask = AttributeWriteMask.DisplayName | AttributeWriteMask.Description,
-                UserWriteMask = AttributeWriteMask.DisplayName | AttributeWriteMask.Description,
+                WriteMask = AttributeWriteMask.DisplayName | AttributeWriteMask.Description,//公開屬性供Client修改
+                UserWriteMask = AttributeWriteMask.DisplayName | AttributeWriteMask.Description,//公開屬性供Client修改
 
-                DataType = dataType,
-                ValueRank = valueRank,
-                AccessLevel = AccessLevels.CurrentReadOrWrite,
-                UserAccessLevel = AccessLevels.CurrentReadOrWrite,
-                Historizing = false,
-                Value = defaultValue,
-                StatusCode = StatusCodes.Good,
-                Timestamp = DateTime.Now,
-                NodeId = (parent == null)
+                DataType = dataType,//TYPE
+                ValueRank = valueRank,//變數形式
+                AccessLevel = AccessLevels.CurrentReadOrWrite,//可否讀寫
+                UserAccessLevel = AccessLevels.CurrentReadOrWrite,//Client可否讀寫
+                Historizing = false,//是否紀錄舊有歷史紀錄
+                Value = defaultValue,//變數值
+                StatusCode = StatusCodes.Good,//狀態碼
+                Timestamp = DateTime.Now,//紀錄目前時間
+                NodeId = (parent == null)//節點位置
                 ? new NodeId(name, NamespaceIndex)
                 : new NodeId(parent.NodeId.ToString() + "/" + name),
             };
