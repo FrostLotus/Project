@@ -178,7 +178,25 @@ namespace OPCNodeServerEditor
                     {
                         //僅只能修改length initial部分
                         CParam.StringVariableList[i].DataLength = Convert.ToInt32(Txt_Length.Text);
-                        CParam.StringVariableList[i].Value = Convert.ToInt32(Txt_Initial.Text);
+                        //依格式餵入
+                        switch (CParam.StringVariableList[i].DataType)
+                        {
+                            case "String":
+                                CParam.StringVariableList[i].Value = Txt_Initial.Text;
+                                break;
+                            case "Real":
+                                CParam.StringVariableList[i].Value = float.Parse(Txt_Initial.Text);
+                                break;
+                            case "Bool":
+                                CParam.StringVariableList[i].Value = (Txt_Initial.Text == "0") ? false : true;
+                                break;
+                            case "Word":
+                                CParam.StringVariableList[i].Value = Txt_Initial.Text;
+                                break;
+
+
+                        }
+                        //CParam.StringVariableList[i].Value = Convert.ToInt32(Txt_Initial.Text);
                     }
                 }
                 //重寫INI
@@ -192,20 +210,47 @@ namespace OPCNodeServerEditor
         }
         private void Btn_UpdateValue_Click(object sender, EventArgs e)
         {
-            //單純修改值
-            int selectedIndex = Lsv_VariableList.SelectedIndices[0];
-            if (selectedIndex != -1)//有選取  確認有無刪除項目
+            try
             {
-                for (int i = 0; i < CParam.StringVariableList.Count; i++)
+                //單純修改值
+                int selectedIndex = Lsv_VariableList.SelectedIndices[0];
+                if (selectedIndex != -1)//有選取  確認有無刪除項目
                 {
-                    if (Convert.ToInt32(Txt_Index.Text) == CParam.StringVariableList[i].Index)
+                    for (int i = 0; i < CParam.VariableList.Count; i++)
                     {
-                        CParam.VariableList[i]._BaseDataVariableState.Value = Txt_Value.Text;
+                        //找相同index
+                        if (Convert.ToInt32(Txt_Index.Text) == CParam.VariableList[i]._OpcDataItem.Index)
+                        {
+                            //依格式餵入
+                            switch (CParam.VariableList[i]._OpcDataItem.DataType)
+                            {
+                                case "String":
+                                    CParam.VariableList[i]._BaseDataVariableState.Value = Txt_Value.Text;
+                                    break;
+                                case "Real":
+                                    CParam.VariableList[i]._BaseDataVariableState.Value = float.Parse(Txt_Value.Text);
+                                    break;
+                                case "Bool":
+                                    CParam.VariableList[i]._BaseDataVariableState.Value = (Txt_Value.Text=="0")?false:true;
+                                    break;
+                                case "Word":
+                                    CParam.VariableList[i]._BaseDataVariableState.Value = Txt_Value.Text;
+                                    break;
+
+
+                            }
+                            
+                        }
                     }
+                    //更新ListView
+                    UpdateVariableList();
                 }
-                //更新ListView
-                UpdateVariableList();
             }
+            catch(Exception ex)
+            {
+                MessageBox.Show($"{ex.Message} \n可能輸入值不匹配type", "Btn_UpdateValue", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            
         }
         private void Btn_Run_Click(object sender, EventArgs e)
         {
@@ -335,11 +380,11 @@ namespace OPCNodeServerEditor
                 }
                 ///INITIAL
                 //------------------------------------------------------------
-                if (!IsAlphanumeric(Txt_Initial.Text))
-                {
-                    MessageBox.Show("initial存在英數以外字元");
-                    return false;
-                }
+                //if (!IsAlphanumeric(Txt_Initial.Text))
+                //{
+                //    MessageBox.Show("initial存在英數以外字元");
+                //    return false;
+                //}
             }
             return true;
         }
