@@ -29,136 +29,88 @@ namespace OPCNodeClientEditor
         /// </summary>
         private void InitializeComponent()
         {
+            this.Txt_ServerURL = new System.Windows.Forms.TextBox();
+            this.Btn_Connect = new System.Windows.Forms.Button();
+            this.label13 = new System.Windows.Forms.Label();
+            this.Lab_ConnectStatus = new System.Windows.Forms.Label();
+            this.Gbx_NodeList = new System.Windows.Forms.GroupBox();
+            this.Txt_Index = new System.Windows.Forms.TextBox();
+            this.Txt_ItemName = new System.Windows.Forms.TextBox();
+            this.Txt_NodeId = new System.Windows.Forms.TextBox();
+            this.Btn_UpdateValue = new System.Windows.Forms.Button();
+            this.Txt_Value = new System.Windows.Forms.TextBox();
+            this.Cbb_DataType = new System.Windows.Forms.ComboBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.Lsv_VariableList = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.label8 = new System.Windows.Forms.Label();
-            this.Cbb_EndpointsUrl = new System.Windows.Forms.ComboBox();
-            this.Gbx_NodeList = new System.Windows.Forms.GroupBox();
-            this.Txt_Length = new System.Windows.Forms.TextBox();
-            this.Txt_Index = new System.Windows.Forms.TextBox();
-            this.Txt_ItemName = new System.Windows.Forms.TextBox();
-            this.Txt_NodeId = new System.Windows.Forms.TextBox();
-            this.Btn_UpdateValue = new System.Windows.Forms.Button();
-            this.Txt_Initial = new System.Windows.Forms.TextBox();
-            this.Txt_Value = new System.Windows.Forms.TextBox();
-            this.Cbb_DataType = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.Lab_ConnectStatus = new System.Windows.Forms.Label();
-            this.Btn_Connect = new System.Windows.Forms.Button();
-            this.groupBox5.SuspendLayout();
             this.Gbx_NodeList.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
-            // groupBox5
+            // Txt_ServerURL
             // 
-            this.groupBox5.Controls.Add(this.Lsv_VariableList);
-            this.groupBox5.Location = new System.Drawing.Point(12, 58);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(551, 220);
-            this.groupBox5.TabIndex = 53;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "變數列表";
+            this.Txt_ServerURL.Location = new System.Drawing.Point(13, 43);
+            this.Txt_ServerURL.Name = "Txt_ServerURL";
+            this.Txt_ServerURL.Size = new System.Drawing.Size(548, 22);
+            this.Txt_ServerURL.TabIndex = 69;
+            this.Txt_ServerURL.Text = "opc.tcp://127.0.0.1:62547/DataAccessServer";
             // 
-            // Lsv_VariableList
+            // Btn_Connect
             // 
-            this.Lsv_VariableList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader3,
-            this.columnHeader4});
-            this.Lsv_VariableList.FullRowSelect = true;
-            this.Lsv_VariableList.HideSelection = false;
-            this.Lsv_VariableList.Location = new System.Drawing.Point(13, 21);
-            this.Lsv_VariableList.MultiSelect = false;
-            this.Lsv_VariableList.Name = "Lsv_VariableList";
-            this.Lsv_VariableList.Size = new System.Drawing.Size(526, 182);
-            this.Lsv_VariableList.TabIndex = 2;
-            this.Lsv_VariableList.UseCompatibleStateImageBehavior = false;
-            this.Lsv_VariableList.View = System.Windows.Forms.View.Details;
+            this.Btn_Connect.Location = new System.Drawing.Point(487, 11);
+            this.Btn_Connect.Name = "Btn_Connect";
+            this.Btn_Connect.Size = new System.Drawing.Size(75, 26);
+            this.Btn_Connect.TabIndex = 68;
+            this.Btn_Connect.Text = "連線";
+            this.Btn_Connect.UseVisualStyleBackColor = true;
+            this.Btn_Connect.Click += new System.EventHandler(this.Btn_Connect_Click);
             // 
-            // columnHeader1
+            // label13
             // 
-            this.columnHeader1.Text = "目錄";
-            this.columnHeader1.Width = 91;
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(10, 20);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(59, 12);
+            this.label13.TabIndex = 66;
+            this.label13.Text = "Server位址";
             // 
-            // columnHeader2
+            // Lab_ConnectStatus
             // 
-            this.columnHeader2.Text = "名稱";
-            this.columnHeader2.Width = 112;
-            // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "節點名稱";
-            this.columnHeader3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.columnHeader3.Width = 119;
-            // 
-            // columnHeader4
-            // 
-            this.columnHeader4.Text = "值";
-            this.columnHeader4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.columnHeader4.Width = 140;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(10, 8);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(59, 12);
-            this.label8.TabIndex = 50;
-            this.label8.Text = "Server位址";
-            // 
-            // Cbb_EndpointsUrl
-            // 
-            this.Cbb_EndpointsUrl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.Cbb_EndpointsUrl.FormattingEnabled = true;
-            this.Cbb_EndpointsUrl.Location = new System.Drawing.Point(12, 32);
-            this.Cbb_EndpointsUrl.Name = "Cbb_EndpointsUrl";
-            this.Cbb_EndpointsUrl.Size = new System.Drawing.Size(538, 20);
-            this.Cbb_EndpointsUrl.TabIndex = 52;
-            this.Cbb_EndpointsUrl.Text = "opc.tcp://127.0.0.1:62547/DataAccessServer";
+            this.Lab_ConnectStatus.AutoSize = true;
+            this.Lab_ConnectStatus.Font = new System.Drawing.Font("新細明體", 10F);
+            this.Lab_ConnectStatus.Location = new System.Drawing.Point(379, 18);
+            this.Lab_ConnectStatus.Name = "Lab_ConnectStatus";
+            this.Lab_ConnectStatus.Size = new System.Drawing.Size(35, 14);
+            this.Lab_ConnectStatus.TabIndex = 65;
+            this.Lab_ConnectStatus.Text = "離線";
             // 
             // Gbx_NodeList
             // 
-            this.Gbx_NodeList.Controls.Add(this.Txt_Length);
             this.Gbx_NodeList.Controls.Add(this.Txt_Index);
             this.Gbx_NodeList.Controls.Add(this.Txt_ItemName);
             this.Gbx_NodeList.Controls.Add(this.Txt_NodeId);
             this.Gbx_NodeList.Controls.Add(this.Btn_UpdateValue);
-            this.Gbx_NodeList.Controls.Add(this.Txt_Initial);
             this.Gbx_NodeList.Controls.Add(this.Txt_Value);
             this.Gbx_NodeList.Controls.Add(this.Cbb_DataType);
-            this.Gbx_NodeList.Controls.Add(this.label1);
             this.Gbx_NodeList.Controls.Add(this.label6);
-            this.Gbx_NodeList.Controls.Add(this.label7);
-            this.Gbx_NodeList.Controls.Add(this.label2);
-            this.Gbx_NodeList.Controls.Add(this.label3);
-            this.Gbx_NodeList.Controls.Add(this.label5);
-            this.Gbx_NodeList.Controls.Add(this.label4);
-            this.Gbx_NodeList.Location = new System.Drawing.Point(12, 284);
+            this.Gbx_NodeList.Controls.Add(this.label8);
+            this.Gbx_NodeList.Controls.Add(this.label9);
+            this.Gbx_NodeList.Controls.Add(this.label10);
+            this.Gbx_NodeList.Controls.Add(this.label12);
+            this.Gbx_NodeList.Location = new System.Drawing.Point(13, 297);
             this.Gbx_NodeList.Name = "Gbx_NodeList";
-            this.Gbx_NodeList.Size = new System.Drawing.Size(551, 183);
-            this.Gbx_NodeList.TabIndex = 51;
+            this.Gbx_NodeList.Size = new System.Drawing.Size(551, 140);
+            this.Gbx_NodeList.TabIndex = 64;
             this.Gbx_NodeList.TabStop = false;
             this.Gbx_NodeList.Text = "NodeList";
-            // 
-            // Txt_Length
-            // 
-            this.Txt_Length.Location = new System.Drawing.Point(288, 110);
-            this.Txt_Length.Name = "Txt_Length";
-            this.Txt_Length.Size = new System.Drawing.Size(145, 22);
-            this.Txt_Length.TabIndex = 27;
             // 
             // Txt_Index
             // 
@@ -189,19 +141,13 @@ namespace OPCNodeClientEditor
             this.Btn_UpdateValue.TabIndex = 41;
             this.Btn_UpdateValue.Text = "Update_Value";
             this.Btn_UpdateValue.UseVisualStyleBackColor = true;
-            // 
-            // Txt_Initial
-            // 
-            this.Txt_Initial.Location = new System.Drawing.Point(82, 110);
-            this.Txt_Initial.Name = "Txt_Initial";
-            this.Txt_Initial.Size = new System.Drawing.Size(145, 22);
-            this.Txt_Initial.TabIndex = 29;
+            this.Btn_UpdateValue.Click += new System.EventHandler(this.Btn_UpdateValue_Click);
             // 
             // Txt_Value
             // 
-            this.Txt_Value.Location = new System.Drawing.Point(81, 147);
+            this.Txt_Value.Location = new System.Drawing.Point(83, 104);
             this.Txt_Value.Name = "Txt_Value";
-            this.Txt_Value.Size = new System.Drawing.Size(353, 22);
+            this.Txt_Value.Size = new System.Drawing.Size(350, 22);
             this.Txt_Value.TabIndex = 29;
             // 
             // Cbb_DataType
@@ -217,113 +163,123 @@ namespace OPCNodeClientEditor
             this.Cbb_DataType.Size = new System.Drawing.Size(145, 20);
             this.Cbb_DataType.TabIndex = 31;
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("新細明體", 10F);
-            this.label1.Location = new System.Drawing.Point(6, 34);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(38, 14);
-            this.label1.TabIndex = 32;
-            this.label1.Text = "Index";
-            // 
             // label6
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("新細明體", 10F);
-            this.label6.Location = new System.Drawing.Point(6, 113);
+            this.label6.Location = new System.Drawing.Point(6, 34);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(40, 14);
-            this.label6.TabIndex = 37;
-            this.label6.Text = "Initial";
+            this.label6.Size = new System.Drawing.Size(38, 14);
+            this.label6.TabIndex = 32;
+            this.label6.Text = "Index";
             // 
-            // label7
+            // label8
             // 
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("新細明體", 10F);
-            this.label7.Location = new System.Drawing.Point(6, 150);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(39, 14);
-            this.label7.TabIndex = 37;
-            this.label7.Text = "Value";
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("新細明體", 10F);
+            this.label8.Location = new System.Drawing.Point(10, 110);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(39, 14);
+            this.label8.TabIndex = 37;
+            this.label8.Text = "Value";
             // 
-            // label2
+            // label9
             // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("新細明體", 10F);
-            this.label2.Location = new System.Drawing.Point(6, 74);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(66, 14);
-            this.label2.TabIndex = 33;
-            this.label2.Text = "Item Name";
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("新細明體", 10F);
+            this.label9.Location = new System.Drawing.Point(6, 74);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(66, 14);
+            this.label9.TabIndex = 33;
+            this.label9.Text = "Item Name";
             // 
-            // label3
+            // label10
             // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("新細明體", 10F);
-            this.label3.Location = new System.Drawing.Point(234, 74);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(51, 14);
-            this.label3.TabIndex = 34;
-            this.label3.Text = "Node Id";
+            this.label10.AutoSize = true;
+            this.label10.Font = new System.Drawing.Font("新細明體", 10F);
+            this.label10.Location = new System.Drawing.Point(234, 74);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(51, 14);
+            this.label10.TabIndex = 34;
+            this.label10.Text = "Node Id";
             // 
-            // label5
+            // label12
             // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("新細明體", 10F);
-            this.label5.Location = new System.Drawing.Point(234, 113);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(46, 14);
-            this.label5.TabIndex = 38;
-            this.label5.Text = "Length";
+            this.label12.AutoSize = true;
+            this.label12.Font = new System.Drawing.Font("新細明體", 10F);
+            this.label12.Location = new System.Drawing.Point(234, 34);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(35, 14);
+            this.label12.TabIndex = 35;
+            this.label12.Text = "Type";
             // 
-            // label4
+            // groupBox5
             // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("新細明體", 10F);
-            this.label4.Location = new System.Drawing.Point(234, 34);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(35, 14);
-            this.label4.TabIndex = 35;
-            this.label4.Text = "Type";
+            this.groupBox5.Controls.Add(this.Lsv_VariableList);
+            this.groupBox5.Location = new System.Drawing.Point(12, 71);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(551, 220);
+            this.groupBox5.TabIndex = 63;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "變數列表";
             // 
-            // Lab_ConnectStatus
+            // Lsv_VariableList
             // 
-            this.Lab_ConnectStatus.AutoSize = true;
-            this.Lab_ConnectStatus.Font = new System.Drawing.Font("新細明體", 10F);
-            this.Lab_ConnectStatus.Location = new System.Drawing.Point(383, 8);
-            this.Lab_ConnectStatus.Name = "Lab_ConnectStatus";
-            this.Lab_ConnectStatus.Size = new System.Drawing.Size(63, 14);
-            this.Lab_ConnectStatus.TabIndex = 35;
-            this.Lab_ConnectStatus.Text = "連線狀態";
+            this.Lsv_VariableList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2,
+            this.columnHeader3,
+            this.columnHeader4});
+            this.Lsv_VariableList.FullRowSelect = true;
+            this.Lsv_VariableList.HideSelection = false;
+            this.Lsv_VariableList.Location = new System.Drawing.Point(13, 21);
+            this.Lsv_VariableList.MultiSelect = false;
+            this.Lsv_VariableList.Name = "Lsv_VariableList";
+            this.Lsv_VariableList.Size = new System.Drawing.Size(526, 182);
+            this.Lsv_VariableList.TabIndex = 2;
+            this.Lsv_VariableList.UseCompatibleStateImageBehavior = false;
+            this.Lsv_VariableList.View = System.Windows.Forms.View.Details;
+            this.Lsv_VariableList.SelectedIndexChanged += new System.EventHandler(this.Lsv_VariableList_SelectedIndexChanged);
             // 
-            // Btn_Connect
+            // columnHeader1
             // 
-            this.Btn_Connect.Location = new System.Drawing.Point(477, 3);
-            this.Btn_Connect.Name = "Btn_Connect";
-            this.Btn_Connect.Size = new System.Drawing.Size(75, 23);
-            this.Btn_Connect.TabIndex = 54;
-            this.Btn_Connect.Text = "連線";
-            this.Btn_Connect.UseVisualStyleBackColor = true;
-            this.Btn_Connect.Click += new System.EventHandler(this.Btn_Connect_Click);
+            this.columnHeader1.Text = "目錄";
+            this.columnHeader1.Width = 91;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "名稱";
+            this.columnHeader2.Width = 112;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "節點名稱";
+            this.columnHeader3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.columnHeader3.Width = 119;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "值";
+            this.columnHeader4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.columnHeader4.Width = 140;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(573, 477);
+            this.ClientSize = new System.Drawing.Size(574, 449);
+            this.Controls.Add(this.Txt_ServerURL);
             this.Controls.Add(this.Btn_Connect);
-            this.Controls.Add(this.groupBox5);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.Cbb_EndpointsUrl);
-            this.Controls.Add(this.Gbx_NodeList);
+            this.Controls.Add(this.label13);
             this.Controls.Add(this.Lab_ConnectStatus);
+            this.Controls.Add(this.Gbx_NodeList);
+            this.Controls.Add(this.groupBox5);
             this.Name = "MainForm";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.MainForm_Load);
-            this.groupBox5.ResumeLayout(false);
             this.Gbx_NodeList.ResumeLayout(false);
             this.Gbx_NodeList.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -331,32 +287,28 @@ namespace OPCNodeClientEditor
 
         #endregion
 
+        private System.Windows.Forms.TextBox Txt_ServerURL;
+        private System.Windows.Forms.Button Btn_Connect;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label Lab_ConnectStatus;
+        private System.Windows.Forms.GroupBox Gbx_NodeList;
+        private System.Windows.Forms.TextBox Txt_Index;
+        private System.Windows.Forms.TextBox Txt_ItemName;
+        private System.Windows.Forms.TextBox Txt_NodeId;
+        private System.Windows.Forms.Button Btn_UpdateValue;
+        private System.Windows.Forms.TextBox Txt_Value;
+        private System.Windows.Forms.ComboBox Cbb_DataType;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label12;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.ListView Lsv_VariableList;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.ComboBox Cbb_EndpointsUrl;
-        private System.Windows.Forms.GroupBox Gbx_NodeList;
-        private System.Windows.Forms.TextBox Txt_Length;
-        private System.Windows.Forms.TextBox Txt_Index;
-        private System.Windows.Forms.TextBox Txt_ItemName;
-        private System.Windows.Forms.TextBox Txt_NodeId;
-        private System.Windows.Forms.Button Btn_UpdateValue;
-        private System.Windows.Forms.TextBox Txt_Initial;
-        private System.Windows.Forms.TextBox Txt_Value;
-        private System.Windows.Forms.ComboBox Cbb_DataType;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label Lab_ConnectStatus;
-        private System.Windows.Forms.Button Btn_Connect;
     }
 }
 
