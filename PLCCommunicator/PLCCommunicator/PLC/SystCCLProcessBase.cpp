@@ -401,7 +401,6 @@ void CSystCCLProcessBase::PushResult(BATCH_SHARE_SYST_RESULTCCL &xResult)
 	std::lock_guard< std::mutex > lock(m_oMutex);
 	m_vResult.push_back(xResult);
 }
-
 DWORD CSystCCLProcessBase::Thread_Result(void* pvoid)
 {
 	CSystCCLProcessBase* pThis = (CSystCCLProcessBase*)pvoid;
@@ -447,7 +446,6 @@ DWORD CSystCCLProcessBase::Thread_Result(void* pvoid)
 	}
 	return NULL;
 }
-
 void CSystCCLProcessBase::WriteResult(BATCH_SHARE_SYST_RESULTCCL &xData)
 {
 #ifdef USE_IN_COMMUNICATOR

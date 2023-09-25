@@ -1,6 +1,4 @@
-
 // PLCCommunicatorDlg.cpp : πÍß@¿…
-//
 
 #include "stdafx.h"
 #include "PLCCommunicator.h"

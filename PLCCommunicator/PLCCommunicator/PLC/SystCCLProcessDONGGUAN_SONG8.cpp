@@ -144,6 +144,7 @@ CSystCCLProcessDONGGUAN_SONG8::CSystCCLProcessDONGGUAN_SONG8()
 		}
 		INIT_PLCDATA();
 }
+
 CSystCCLProcessDONGGUAN_SONG8::~CSystCCLProcessDONGGUAN_SONG8()
 {
 	DESTROY_PLC_DATA();
@@ -158,6 +159,7 @@ CSystCCLProcessDONGGUAN_SONG8::~CSystCCLProcessDONGGUAN_SONG8()
 		delete[] m_pPLC_FIELD_INFO;
 	}
 }
+
 PLC_DATA_ITEM_* CSystCCLProcessDONGGUAN_SONG8::GetPLCAddressInfo(int nFieldId, BOOL bSkip)
 {
 	if (nFieldId >= 0 && nFieldId <= FIELD_MAX){
@@ -165,6 +167,7 @@ PLC_DATA_ITEM_* CSystCCLProcessDONGGUAN_SONG8::GetPLCAddressInfo(int nFieldId, B
 	}
 	return NULL;
 }
+
 void CSystCCLProcessDONGGUAN_SONG8::DoWriteResult(BATCH_SHARE_SYST_RESULTCCL &xData)
 {
 	auto WriteSizeField = [&](int nField, float fSize){
@@ -186,6 +189,7 @@ void CSystCCLProcessDONGGUAN_SONG8::DoWriteResult(BATCH_SHARE_SYST_RESULTCCL &xD
 
 	SET_PLC_FIELD_DATA(FIELD_CCL_NO_C10, 2, (BYTE*)&xData.wIndex);
 }
+
 void CSystCCLProcessDONGGUAN_SONG8::DoSetInfoField(BATCH_SHARE_SYST_INFO &xInfo)
 {
 	//SET_PLC_FIELD_DATA_BIT(FIELD_SIZE_INFO_1, FIELD_CCD_INFO_2, 2, (BYTE*)&xInfo.xInfo1);
@@ -236,6 +240,7 @@ void CSystCCLProcessDONGGUAN_SONG8::SetMXParam(IActProgType *pParam, BATCH_SHARE
 	pParam->put_ActUnitType(UNIT_RETHER);
 #endif
 }
+
 void CSystCCLProcessDONGGUAN_SONG8::DoCustomAction() //客製化行為
 {
 	DWORD dwOldIndex = _ttoi(GET_PLC_FIELD_VALUE(FIELD_CUTTER_INDEX));
