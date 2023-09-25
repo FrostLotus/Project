@@ -377,6 +377,7 @@ NodeItem *CSystDONGGUANPPProcess::GetNodeItem(int nIndex0Base)
 ///<summary>設定監視ID</summary>
 void CSystDONGGUANPPProcess::SET_MONITOR_ID(CString strKey, UA_NodeId xNodeId, int nMonId)
 {
+
 	int nFieldSize = GetNodeSize();//FIELD_MAX
 	if (m_ppFIELD_INFO)//SubscribeNodeItem訂閱存在
 	{

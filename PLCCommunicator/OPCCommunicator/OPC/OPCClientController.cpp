@@ -131,44 +131,50 @@ void COPCClientController::GetMonitorNodes(vector<std::pair<CString, UA_NodeId>>
 		id.namespaceIndex = m_nRootNS;//= 1
 		id.identifierType = UA_NODEIDTYPE_STRING;//3
 		id.identifier.string = m_pUA_String_fromChars(m_strRootID);//L"PL25_PL2502043"變數資料夾
-
-		UA_BrowseRequest bRequest = { 0 };
+		//------------------------------------------------
+		UA_BrowseRequest bRequest = { 0 };//Client 請求
 		UA_BrowseRequest_init(&bRequest);//初始化
 		bRequest.requestedMaxReferencesPerNode = 0;
 		bRequest.nodesToBrowse = (UA_BrowseDescription*)m_pUA_new(m_pUA_TYPES + UA_TYPES_BROWSEDESCRIPTION);//節點加入Type格式
 		bRequest.nodesToBrowseSize = 1;
 		bRequest.nodesToBrowse[0].nodeId = id;//節點加入初始位置
 		bRequest.nodesToBrowse[0].resultMask = UA_BROWSERESULTMASK_ALL; /* return everything */
-
-		UA_BrowseResponse bResponse;
+		//------------------------------------------------
+		UA_BrowseResponse bResponse;//Client 回覆
 		m_p__UA_Client_Service(m_pClient,                              //UA_Client* client
 							   &bRequest,                              //const void* request
 							   m_pUA_TYPES + UA_TYPES_BROWSEREQUEST,   //const UA_DataType * requestType
 							   &bResponse,                             //void* response
-							   m_pUA_TYPES + UA_TYPES_BROWSERESPONSE   //const UA_DataType* responseType
-							   );
+							   m_pUA_TYPES + UA_TYPES_BROWSERESPONSE);   //const UA_DataType* responseType
 		m_pUA_clear(&bRequest, m_pUA_TYPES + UA_TYPES_BROWSEREQUEST);
-
+		//------------------------------------------------
 		CString strLog;
 		strLog.Format(L"bResp.resultsSize %d ", bResponse.resultsSize);
 		ON_OPC_NOTIFY(strLog);//丟去給訊息處理 最後會貼在Log列表
-		for (size_t i = 0; i < bResponse.resultsSize; ++i) {
+		//------------------------------------------------
+		for (size_t i = 0; i < bResponse.resultsSize; ++i) 
+		{
 			strLog.Format(L"bResp.results[i].referencesSize %d ", bResponse.results[i].referencesSize);
-			ON_OPC_NOTIFY(strLog);
-			for (size_t j = 0; j < bResponse.results[i].referencesSize; ++j) {
+			ON_OPC_NOTIFY(strLog);//丟去給訊息處理 最後會貼在Log列表
+			//-------------------------------
+			for (size_t j = 0; j < bResponse.results[i].referencesSize; ++j) //單筆結果
+			{
 				UA_ReferenceDescription *ref = &(bResponse.results[i].references[j]);
-				CString strDisplayName((char*)ref->displayName.text.data, ref->displayName.text.length);
+				CString strDisplayName((char*)ref->displayName.text.data, ref->displayName.text.length);//UA_ReferenceDescription.displayName
 				BOOL bFind = FALSE;
-				for (auto &strMonitor : m_vMonitorNode){
-					if (strMonitor == strDisplayName){
-						switch (ref->nodeId.nodeId.identifierType){
-						case UA_NODEIDTYPE_STRING:
+				for (auto &strMonitor : m_vMonitorNode)//將Sub process.cpp所定義的SubscribeNodeItems取出
+				{
+					if (strMonitor == strDisplayName)//若Client回覆瀏覽節點DisplayName與訂閱節點vector中每一節點比較
+					{
+						switch (ref->nodeId.nodeId.identifierType)
+						{
+						case UA_NODEIDTYPE_STRING://string要轉換
 						{
 							UA_NodeId id; 
 							id.namespaceIndex = ref->nodeId.nodeId.namespaceIndex;
 							id.identifierType = UA_NODEIDTYPE_STRING;
 							CStringA str((char*)ref->nodeId.nodeId.identifier.string.data, ref->nodeId.nodeId.identifier.string.length);
-							id.identifier.string = m_pUA_String_fromChars(str);
+							id.identifier.string = m_pUA_String_fromChars(str);//拆解Chars to CString
 							vNode.push_back(std::pair<CString, UA_NodeId>(strMonitor, id));
 						}
 							break;
@@ -180,14 +186,16 @@ void COPCClientController::GetMonitorNodes(vector<std::pair<CString, UA_NodeId>>
 						break;
 					}
 				}
-				if (!bFind){
+				if (!bFind)
+				{
 					strLog.Format(L"warning Display name:%s not found", strDisplayName);
 					theApp.InsertDebugLog(strLog, LOG_OPC);
 				}
 			}
 		}
 
-		if (m_pUA_clear && m_pUA_TYPES){
+		if (m_pUA_clear && m_pUA_TYPES)
+		{
 			//clear old resp
 			m_pUA_clear(&bResponse, m_pUA_TYPES + UA_TYPES_BROWSERESPONSE);
 		}
@@ -261,14 +269,14 @@ void COPCClientController::Connect()
 	UA_StatusCode dwRetval = UA_STATUSCODE_BADUNEXPECTEDERROR;//預設錯誤
 	if (m_pUA_Client_connect)//若連線
 	{
-		dwRetval = m_pUA_Client_connect(m_pClient, m_strConnectURL);//client,endpointUrl
+		dwRetval = m_pUA_Client_connect(m_pClient, m_strConnectURL);//client,endpointUrl => UA_StatusCode
 	}
-	if (dwRetval == UA_STATUSCODE_GOOD)
+	if (dwRetval == UA_STATUSCODE_GOOD)//若狀態良好
 	{
 		TRACE("Connect to server on %s\n", m_strConnectURL);
 		CString strLog;
 		strLog.Format(L"Connect to server on %s\n", CString(m_strConnectURL));
-		ON_OPC_NOTIFY(strLog);
+		ON_OPC_NOTIFY(strLog);//丟到Log
 		if (m_tTimer == NULL)
 		{
 			m_tTimer = SetTimer(NULL, TIMER_ID_ITERATE, 1000, OnTimer);
@@ -396,31 +404,32 @@ void COPCClientController::DiscoverNode()
 {
 	if (m_pClient)//若連線
 	{
-		vector<std::pair<CString, UA_NodeId>> vMonitorNode;//創建監控節點vector
-		GetMonitorNodes(vMonitorNode);//取得監控節點
-		UA_CreateSubscriptionRequest request = UA_CreateSubscriptionRequest_default();//請求
-		UA_CreateSubscriptionResponse response = m_pUA_Client_Subscriptions_create(m_pClient, request, NULL, NULL, NULL);//回應
-		for (auto &xNode : vMonitorNode)
+		//訂閱.監控節點[vector]
+		vector<std::pair<CString, UA_NodeId>> vMonitorNode;//創建節點vector
+		GetMonitorNodes(vMonitorNode);//取得Sub.cpp所建立之監控節點
+		UA_CreateSubscriptionRequest request = UA_CreateSubscriptionRequest_default();//訂閱請求
+		UA_CreateSubscriptionResponse response = m_pUA_Client_Subscriptions_create(m_pClient, request, NULL, NULL, NULL);//訂閱回應
+		for (auto &xNode : vMonitorNode)//監控節點vector中元素
 		{
-			if (m_pUA_Client_Subscriptions_create && m_pUA_Client_MonitoredItems_createDataChange)
+			if (m_pUA_Client_Subscriptions_create && m_pUA_Client_MonitoredItems_createDataChange)//建立成功&&DLL載入成功
 			{
-				if (response.responseHeader.serviceResult == UA_STATUSCODE_GOOD)
+				if (response.responseHeader.serviceResult == UA_STATUSCODE_GOOD)//若接收成功
 				{
-					UA_MonitoredItemCreateRequest xMonRequest = UA_MonitoredItemCreateRequest_default(xNode.second);
-					UA_MonitoredItemCreateResult monResponse = m_pUA_Client_MonitoredItems_createDataChange(
+					UA_MonitoredItemCreateRequest xMonRequest = UA_MonitoredItemCreateRequest_default(xNode.second/*UA_NodeId*/);
+					UA_MonitoredItemCreateResult monResponse = m_pUA_Client_MonitoredItems_createDataChange(//在此建立回覆後所該做的事
 															   m_pClient,
 															   response.subscriptionId, 
 															   UA_TIMESTAMPSTORETURN_BOTH, 
 															   xMonRequest, 
 															   NULL, 
-															   ClientCallBack, 
-															   NULL
-															  );
-					if (monResponse.statusCode == UA_STATUSCODE_GOOD)
+															   ClientCallBack,//將回復 
+															   NULL);
+					if (monResponse.statusCode == UA_STATUSCODE_GOOD)//若回覆成功 建立成功
 					{
 						CString strLog;
 						strLog.Format(L"monitor ok type:%d disp:%s, field %s, subid:%d", xNode.second.identifierType, xNode.first, CString((char*)xNode.second.identifier.string.data, xNode.second.identifier.string.length), response.subscriptionId);
 						theApp.InsertDebugLog(strLog, LOG_OPC);
+						//ON_OPC_NOTIFY(strLog);
 						SET_MONITOR_ID(xNode.first, xNode.second, monResponse.monitoredItemId);
 					}
 					else
@@ -432,18 +441,17 @@ void COPCClientController::DiscoverNode()
 									  CString((char*)xNode.second.identifier.string.data, 
 									  xNode.second.identifier.string.length), 
 									  response.subscriptionId, 
-									  monResponse.statusCode
-									 );
+									  monResponse.statusCode);
 						theApp.InsertDebugLog(strLog, LOG_OPC);
 					}
 				}
-				else{
+				else
+				{
 					CString strLog;
 					strLog.Format(L"Subscriptions_create fail type:%d disp:%s, field %s, status:%d", 
 						          xNode.second.identifierType, xNode.first, 
 						          CString((char*)xNode.second.identifier.string.data, xNode.second.identifier.string.length), 
-						          response.responseHeader.serviceResult
-								 );
+						          response.responseHeader.serviceResult);
 					theApp.InsertDebugLog(strLog, LOG_OPC);
 				}
 			}
@@ -465,7 +473,8 @@ void COPCClientController::LIB_LOAD()
 	CString strLog;
 	strLog.Format(L"Load %s ", DLL_OPEN62541);
 	m_hDL_Dll_OPEN62541 = ::LoadLibrary(strFile);
-	if (m_hDL_Dll_OPEN62541){
+	if (m_hDL_Dll_OPEN62541)//內部參數定義
+	{
 		m_pUA_Client_new = reinterpret_cast<pUA_Client_new>(GetProcAddress(m_hDL_Dll_OPEN62541, "UA_Client_new"));
 		m_pUA_Client_getConfig = reinterpret_cast<pUA_Client_getConfig>(GetProcAddress(m_hDL_Dll_OPEN62541, "UA_Client_getConfig"));
 		m_pUA_ClientConfig_setDefault = reinterpret_cast<pUA_ClientConfig_setDefault>(GetProcAddress(m_hDL_Dll_OPEN62541, "UA_ClientConfig_setDefault"));

@@ -5231,7 +5231,8 @@ UA_AddNodesRequest_delete(UA_AddNodesRequest *p) {
 
 /* BrowseRequest */
 static UA_INLINE void
-UA_BrowseRequest_init(UA_BrowseRequest *p) {
+UA_BrowseRequest_init(UA_BrowseRequest *p) 
+{
     memset(p, 0, sizeof(UA_BrowseRequest));
 }
 

@@ -55,7 +55,8 @@ typedef UA_MonitoredItemCreateResult(WINAPI fUA_Client_MonitoredItems_createData
 	UA_UInt32 subscriptionId,																					
 	UA_TimestampsToReturn timestampsToReturn,
 	const UA_MonitoredItemCreateRequest item,																					
-	void *context, UA_Client_DataChangeNotificationCallback callback,																			
+	void *context, 
+	UA_Client_DataChangeNotificationCallback callback,																			
 	UA_Client_DeleteMonitoredItemCallback deleteCallback
 );
 typedef fUA_Client_MonitoredItems_createDataChange* pUA_Client_MonitoredItems_createDataChange;

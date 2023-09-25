@@ -99,28 +99,30 @@ using namespace std;
 #endif
 
 #define AOI_MASTER_NAME _T("AOI Master")
-
-enum AOI_CUSTOMERTYPE_{ //eric chao 201
+/// <summary>客戶</summary>
+enum AOI_CUSTOMERTYPE_ { //eric chao 201
 	CUSTOMER_EMC_CCL = 0,		 //台光CCL
 	CUSTOMER_NANYA = 2,
 	CUSTOMER_SYST_WEB_COPPER = 3, //生益軟板
-	CUSTOMER_SYST_CCL = 4,		 //生益CCL
-	CUSTOMER_NANYA_WARPING = 5,	 //南亞整經機
-	CUSTOMER_SYST_PP = 6,		 //生益PP       //no use	for AOI_NEWUI_PP_20191121 branch
-	CUSTOMER_SCRIBD_PP = 7,		 //宏仁 PP      //no use	for AOI_NEWUI_PP_20191121 branch
-	CUSTOMER_EMC_PP = 8,		 //台光 PP      //no use	for AOI_NEWUI_PP_20191121 branch
-	CUSTOMER_ITEQ = 9,           //聯茂
-	CUSTOMER_JIANGXI_NANYA = 10, //江西南亞CCL
-	CUSTOMER_TUC_PP = 11,		 //台耀 PP
-	CUSTOMER_TG = 12,			 //台玻
-	CUSTOMER_YINGHUA = 13,			 //盈華
-	CUSTOMER_TECHAIN = 255,		//地謙
+	CUSTOMER_SYST_CCL = 4,		  //生益CCL
+	CUSTOMER_NANYA_WARPING = 5,	  //南亞整經機
+	CUSTOMER_SYST_PP = 6,		  //生益 PP       //no use	for AOI_NEWUI_PP_20191121 branch
+	CUSTOMER_SCRIBD_PP = 7,		  //宏仁 PP       //no use	for AOI_NEWUI_PP_20191121 branch
+	CUSTOMER_EMC_PP = 8,		  //台光 PP      //no use	for AOI_NEWUI_PP_20191121 branch
+	CUSTOMER_ITEQ = 9,            //聯茂
+	CUSTOMER_JIANGXI_NANYA = 10,  //江西南亞CCL
+	CUSTOMER_TUC_PP = 11,		  //台耀 PP
+	CUSTOMER_TG = 12,			  //台玻
+	CUSTOMER_YINGHUA = 13,		  //盈華
+	CUSROMER_EVERSTRONG = 14,     //甬強         //23/09/25新增
+	CUSTOMER_TECHAIN = 255,		  //地謙        
 #ifdef _DEBUG
 	CUSTOMER_TAG = 254,           //標籤機
 #endif
 };
-
-enum AOI_SUBCUSTOMERTYPE_ {
+/// <summary>客戶子場域</summary>
+enum AOI_SUBCUSTOMERTYPE_ 
+{
 	SUB_CUSTOMER_NONE = 0,
 	SUB_CUSTOMER_SYST_START = 1,
 	SUB_CUSTOMER_DONGGUAN = SUB_CUSTOMER_SYST_START,		//東莞 (生益)
@@ -129,25 +131,28 @@ enum AOI_SUBCUSTOMERTYPE_ {
 	SUB_CUSTOMER_CHANGSHU,		//常熟 (生益)
 	SUB_CUSTOMER_CHANGSHU2,		//常熟 (生益), A2/A4線 PLC Address全部加上 2000
 	SUB_CUSTOMER_DONGGUAN_SONG8,//東莞松八 (生益)
-	SUB_CUSTOMER_EMC_START = 5,					//未來台光新增須把4~1代號依遞減方式補齊
+	SUB_CUSTOMER_EMC_START = 5,					    //未來台光新增須把4~1代號依遞減方式補齊
 	SUB_CUSTOMER_KUNSHAN = 5,	//昆山 (台光)
 	SUB_CUSTOMER_HUANGSHI,		//黃石 (台光)
 	SUB_CUSTOMER_GUANYIN,		//觀音 (台光)
-	SUB_CUSTOMER_ITEQ_START = 7,				//未來聯茂新增須把6~1代號依遞減方式補齊
+	SUB_CUSTOMER_ITEQ_START = 7,                   //未來聯茂新增須把6~1代號依遞減方式補齊
 	SUB_CUSTOMER_WUXI = 7,      //無錫 (聯茂)
-	SUB_CUSTOMER_NANYA_START = 1,
+	SUB_CUSTOMER_NANYA_START = 1,                     
 	SUB_CUSTOMER_NANYA_N4 = SUB_CUSTOMER_NANYA_START, //江西南亞N4(N4和N5 ERP下發規格不同)
 	SUB_CUSTOMER_NANYA_N5							  //江西南亞N5
-
 };
 //--------		SYST		--------------------------
-typedef struct BATCH_SHARE_OPC_INITPARAM_{
+/// <summary>[BATCH=>OPC]初始化參數</summary>
+typedef struct BATCH_SHARE_OPC_INITPARAM_
+{
 	TCHAR cOPCIP[MAX_BATCH_FIELD_LEN];
 	int nRootIdNamespace;
 	TCHAR cROOTID[MAX_BATCH_FIELD_LEN];
 
 }BATCH_SHARE_OPC_INITPARAM;
-typedef struct BATCH_SHARE_SYSTCCL_INITPARAM_{
+/// <summary>[BATCH=>SYSTCCL]初始化參數</summary>
+typedef struct BATCH_SHARE_SYSTCCL_INITPARAM_
+{
 	TCHAR cPLCIP[MAX_BATCH_FIELD_LEN];
 	long lConnectedStationNo;		//連接站側模組站號
 	long lTargetNetworkNo;			//物件站側模組網路No
@@ -155,14 +160,18 @@ typedef struct BATCH_SHARE_SYSTCCL_INITPARAM_{
 	long lPCNetworkNo;				//計算機側網路No
 	long lPCStationNo;				//計算機側站號
 }BATCH_SHARE_SYSTCCL_INITPARAM;
-struct BATCH_SHARE_SYSTPP_INITPARAM_ : public BATCH_SHARE_SYSTCCL_INITPARAM_ {
+/// <summary>[BATCH=>SYSTPP]初始化參數</summary>
+struct BATCH_SHARE_SYSTPP_INITPARAM_ : public BATCH_SHARE_SYSTCCL_INITPARAM_ 
+{
 	int nWatchDogTimeout;			//WatchDog timeout(second)
 	int nVersion;		
 	int nWSMode;					//0:模式一/1:模式二
 	BOOL bFX5U;
 	int nNewbatchDelay;				//
 };
-enum SYST_RESULT_FLAG{
+/// <summary>系統Flag參數</summary>
+enum SYST_RESULT_FLAG
+ {
 	SRF_REAL_Y_ONE = 0x0001,			//小板實際長度1
 	SRF_REAL_Y_TWO = 0x0002,			//小板實際長度2
 	SRF_REAL_X_ONE = 0x0004,			//小板實際寬度1
@@ -177,33 +186,37 @@ enum SYST_RESULT_FLAG{
 	SRF_FRONT_CODE = 0x0800,			//正面判斷代碼
 	SRF_BACK_LEVEL = 0x1000,			//反面判斷級別
 	SRF_BACK_CODE = 0x2000,				//反面判斷代碼
-	SRF_SIZE_G10 = 0x4000,			//尺寸判斷級別(G10)
-	SRF_SIZE_G12 = 0x8000,			//尺寸判斷級別(G12)
-	SRF_SIZE_G14 = 0x010000,		//尺寸判斷級別(G14)
+	SRF_SIZE_G10 = 0x4000,			    //尺寸判斷級別(G10)
+	SRF_SIZE_G12 = 0x8000,			    //尺寸判斷級別(G12)
+	SRF_SIZE_G14 = 0x010000,		    //尺寸判斷級別(G14)
 	SRF_RESULT_LEVEL = 0x020000,		//小板物料級別
 	SRF_NUM_AA = 0x040000,				//小版AA級數量
 	SRF_NUM_A = 0x080000,				//小版A級數量
 	SRF_NUM_P = 0x100000,				//小版P級數量
 	SRF_QUALIFY_RATE = 0x200000,		//訂單合格率
-	SRF_DIFF_XY = 0x400000,			//級差實際檢測值
+	SRF_DIFF_XY = 0x400000,			    //級差實際檢測值
 	SRF_FRONT_SIZE = 0x800000,			//九宮格中正面前五大缺陷大小1~5
 	SRF_FRONT_LOCATION = 0x1000000,		//九宮格中正面前五大缺陷位置1~5
 	SRF_BACK_SIZE = 0x2000000,			//九宮格中反面前五大缺陷大小1~5
 	SRF_BACK_LOCATION = 0x4000000,		//九宮格中反面前五大缺陷位置1~5
-	SRF_INDEX = 0x8000000,		//小板編號
+	SRF_INDEX = 0x8000000,		        //小板編號
 };
-struct BATCH_SYST_EXTRA {
+/// <summary>系統工單額外項目</summary>
+struct BATCH_SYST_EXTRA 
+{
 	__time64_t xStart;
 	__time64_t xEnd;
 	char cInsp[MAX_BATCH_FIELD_LEN];
 	char cLight[MAX_BATCH_FIELD_LEN];
 };
-typedef struct BATCH_SHARE_SYST_BASE_{
+typedef struct BATCH_SHARE_SYST_BASE_
+{
 	TCHAR cName[MAX_BATCH_FIELD_LEN];
 	TCHAR cMaterial[MAX_BATCH_FIELD_LEN];
 }BATCH_SHARE_SYST_BASE;
 
-typedef struct BATCH_SHARE_SYST_PARAMCCL_ : public BATCH_SHARE_SYST_BASE{
+typedef struct BATCH_SHARE_SYST_PARAMCCL_ : public BATCH_SHARE_SYST_BASE
+{
 	TCHAR cModel[MAX_BATCH_FIELD_LEN];		//模號
 	TCHAR cAssign[MAX_BATCH_FIELD_LEN];		//分發號
 	WORD wAssignNum;						//分發號數量
@@ -247,7 +260,8 @@ typedef struct BATCH_SHARE_SYST_PARAMCCL_ : public BATCH_SHARE_SYST_BASE{
 	WORD wNO_C10;							//C10小板剪切編號
 	WORD wNO_C12;							//C12小板剪切編號
 }BATCH_SHARE_SYST_PARAMCCL;
-typedef struct BATCH_SHARE_SYST_INFO1_{
+typedef struct BATCH_SHARE_SYST_INFO1_
+{
 	BYTE cSizeReady : 1;	//CCD尺寸檢測儀器準備好
 	BYTE cSizeRunning : 1;	//CCD尺寸檢測儀器運行
 	BYTE cCCDReady : 1;		//CCD表現檢測儀器準備好
@@ -255,48 +269,53 @@ typedef struct BATCH_SHARE_SYST_INFO1_{
 	BYTE cReserve1 : 4;		//保留欄位
 	BYTE cReserve2;			//保留欄位
 }BATCH_SHARE_SYST_INFO1;
-typedef struct BATCH_SHARE_SYST_INFO2_{
+typedef struct BATCH_SHARE_SYST_INFO2_
+{
 	BYTE cCCDError1 : 1;	//CCD表現檢測儀器故障
 	BYTE cSizeError1 : 1;	//CCD尺寸檢測儀器故障
 	BYTE cReserve1 : 6;		//保留欄位
 	BYTE cReserve2;			//保留欄位
 }BATCH_SHARE_SYST_INFO2;
-struct BATCH_SHARE_SYST_INFO{
+struct BATCH_SHARE_SYST_INFO
+{
 	BATCH_SHARE_SYST_INFO1 xInfo1;
 	BATCH_SHARE_SYST_INFO2 xInfo2;
 };
-typedef struct BATCH_SHARE_SYST_RESULTCCL_{
-	float fReal_One_Y;		//小板實際長度1
-	float fReal_Two_Y;		//小板實際長度2
-	float fReal_One_X;		//小板實際寬度1
-	float fReal_Two_X;		//小板實際寬度2
-	WORD wDiff_One_Y;		//小板長度實際公差1
-	WORD wDiff_Two_Y;		//小板長度實際公差2
-	WORD wDiff_One_X;		//小板寬度實際公差1
-	WORD wDiff_Two_X;		//小板寬度實際公差2
-	WORD wDiff_One_XY;		//小板對角線實際公差1
-	WORD wDiff_Two_XY;		//小板對角線實際公差2
-	WORD wFrontLevel;		//正面判斷級別
-	char cFrontCode[30];	//正面判斷代碼, 字串需要為2的倍數(回寫最小單位為WORD)
-	WORD wBackLevel;		//反面判斷級別
-	char cBackCode[30];		//反面判斷代碼, 字串需要為2的倍數(回寫最小單位為WORD)
-	WORD wSize_G10;			//尺寸判斷級別(G10)
-	WORD wSize_G12;			//尺寸判斷級別(G12)
-	WORD wSize_G14;			//尺寸判斷級別(G14)
-
-	WORD wResultLevel;		//小版物料級別
-	WORD wNum_AA;			//小版AA級數量
-	WORD wNum_A;			//小版A級數量
-	WORD wNum_P;			//小版P級數量
-	WORD wQualifyRate;		//訂單合格率
-	WORD wDiff_XY;			//級差實際檢測值
+typedef struct BATCH_SHARE_SYST_RESULTCCL_
+{
+	float fReal_One_Y;		        //小板實際長度1
+	float fReal_Two_Y;		        //小板實際長度2
+	float fReal_One_X;		        //小板實際寬度1
+	float fReal_Two_X;		        //小板實際寬度2
+	WORD wDiff_One_Y;		        //小板長度實際公差1
+	WORD wDiff_Two_Y;		        //小板長度實際公差2
+	WORD wDiff_One_X;		        //小板寬度實際公差1
+	WORD wDiff_Two_X;		        //小板寬度實際公差2
+	WORD wDiff_One_XY;		        //小板對角線實際公差1
+	WORD wDiff_Two_XY;		        //小板對角線實際公差2
+	WORD wFrontLevel;		        //正面判斷級別
+	char cFrontCode[30];	        //正面判斷代碼, 字串需要為2的倍數(回寫最小單位為WORD)
+	WORD wBackLevel;		        //反面判斷級別
+	char cBackCode[30];		        //反面判斷代碼, 字串需要為2的倍數(回寫最小單位為WORD)
+	WORD wSize_G10;			        //尺寸判斷級別(G10)
+	WORD wSize_G12;			        //尺寸判斷級別(G12)
+	WORD wSize_G14;			        //尺寸判斷級別(G14)
+							        
+	WORD wResultLevel;		        //小版物料級別
+	WORD wNum_AA;			        //小版AA級數量
+	WORD wNum_A;			        //小版A級數量
+	WORD wNum_P;			        //小版P級數量
+	WORD wQualifyRate;		        //訂單合格率
+	WORD wDiff_XY;			        //級差實際檢測值
 	float fFrontDefectSize[5];		//九宮格中正面前五大缺陷大小1~5
 	float fBackDefectSize[5];		//九宮格中反面前五大缺陷大小1~5
 	WORD wFrontDefectLocation[5];	//九宮格中正面前五大缺陷位置1~5
 	WORD wBackDefectLocation[5];	//九宮格中反面前五大缺陷位置1~5
-	WORD wIndex;			//小板編號, 僅東莞松八廠需回傳
+	WORD wIndex;			        //小板編號, 僅東莞松八廠需回傳
 }BATCH_SHARE_SYST_RESULTCCL;
-typedef struct BATCH_SHARE_SYST_INITPARAM_{
+
+typedef struct BATCH_SHARE_SYST_INITPARAM_
+{
 	int nCustomerType;
 	int nSubCustomerType;
 	int nFormat;

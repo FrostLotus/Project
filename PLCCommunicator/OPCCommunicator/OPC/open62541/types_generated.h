@@ -248,7 +248,8 @@ typedef struct {
  * MonitoredItemCreateResult
  * ^^^^^^^^^^^^^^^^^^^^^^^^^
  */
-typedef struct {
+typedef struct 
+{
     UA_StatusCode statusCode;
     UA_UInt32 monitoredItemId;
     UA_Double revisedSamplingInterval;
@@ -1981,12 +1982,13 @@ typedef struct {
 /**
  * BrowseResult
  * ^^^^^^^^^^^^
- * The result of a browse operation. */
+ * The result of a browse operation. 
+ * 瀏覽結果*/
 typedef struct {
     UA_StatusCode statusCode;
     UA_ByteString continuationPoint;
-    size_t referencesSize;
-    UA_ReferenceDescription *references;
+    size_t referencesSize;//參考數量
+    UA_ReferenceDescription *references;//數量對應參考
 } UA_BrowseResult;
 
 #define UA_TYPES_BROWSERESULT 156
@@ -2142,8 +2144,8 @@ typedef struct {
 /**
  * BrowseRequest
  * ^^^^^^^^^^^^^
- * Browse the references for one or more nodes from the server address space. */
-
+ * Browse the references for one or more nodes from the server address space. 
+ * 瀏覽請求*/
 typedef struct 
 {
     UA_RequestHeader requestHeader;//回應標頭
@@ -2337,8 +2339,8 @@ typedef struct {
 typedef struct 
 {
     UA_ResponseHeader responseHeader;
-    size_t resultsSize;
-    UA_BrowseResult *results;
+    size_t resultsSize;//節點數量
+    UA_BrowseResult *results;//對應節點數量之結果
     size_t diagnosticInfosSize;
     UA_DiagnosticInfo *diagnosticInfos;
 } UA_BrowseResponse;
