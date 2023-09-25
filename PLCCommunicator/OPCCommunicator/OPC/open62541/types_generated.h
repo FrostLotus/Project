@@ -2143,12 +2143,14 @@ typedef struct {
  * BrowseRequest
  * ^^^^^^^^^^^^^
  * Browse the references for one or more nodes from the server address space. */
-typedef struct {
-    UA_RequestHeader requestHeader;
-    UA_ViewDescription view;
-    UA_UInt32 requestedMaxReferencesPerNode;
-    size_t nodesToBrowseSize;
-    UA_BrowseDescription *nodesToBrowse;
+
+typedef struct 
+{
+    UA_RequestHeader requestHeader;//回應標頭
+    UA_ViewDescription view;//瀏覽顯示
+    UA_UInt32 requestedMaxReferencesPerNode;//最大參考回應節點數
+    size_t nodesToBrowseSize;//Size
+    UA_BrowseDescription *nodesToBrowse;//瀏覽節點位置
 } UA_BrowseRequest;
 
 #define UA_TYPES_BROWSEREQUEST 167
@@ -2330,8 +2332,10 @@ typedef struct {
 /**
  * BrowseResponse
  * ^^^^^^^^^^^^^^
- * Browse the references for one or more nodes from the server address space. */
-typedef struct {
+ * Browse the references for one or more nodes from the server address space.
+ * 從伺服器位址空間瀏覽一個或多個節點的引用 */
+typedef struct 
+{
     UA_ResponseHeader responseHeader;
     size_t resultsSize;
     UA_BrowseResult *results;

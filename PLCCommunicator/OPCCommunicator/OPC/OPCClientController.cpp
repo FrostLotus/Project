@@ -121,35 +121,42 @@ void COPCClientController::ProcessTimer(UINT_PTR nEventId)
 		Connect();
 	}
 }
+///<summary></summary>
 void COPCClientController::GetMonitorNodes(vector<std::pair<CString, UA_NodeId>> &vNode)
 {
-	if (m_pUA_new && m_pUA_clear && m_p__UA_Client_Service && m_pUA_TYPES && m_pUA_String_fromChars){
-		UA_NodeId id; 
-		id.namespaceIndex = m_nRootNS;
-		id.identifierType = UA_NODEIDTYPE_STRING;
-		id.identifier.string = m_pUA_String_fromChars(m_strRootID);
-		UA_BrowseRequest bReq = { 0 };
-		UA_BrowseRequest_init(&bReq);
-		bReq.requestedMaxReferencesPerNode = 0;
-		bReq.nodesToBrowse = (UA_BrowseDescription*)m_pUA_new(m_pUA_TYPES + UA_TYPES_BROWSEDESCRIPTION);
-		bReq.nodesToBrowseSize = 1;
-		bReq.nodesToBrowse[0].nodeId = id;
+	if (m_pUA_new && m_pUA_clear && m_p__UA_Client_Service && m_pUA_TYPES && m_pUA_String_fromChars)//確認初始化有成功
+	{
+		//id容器設置(底層(變數)資料夾)
+		UA_NodeId id;
+		id.namespaceIndex = m_nRootNS;//= 1
+		id.identifierType = UA_NODEIDTYPE_STRING;//3
+		id.identifier.string = m_pUA_String_fromChars(m_strRootID);//L"PL25_PL2502043"變數資料夾
 
-		bReq.nodesToBrowse[0].resultMask = UA_BROWSERESULTMASK_ALL; /* return everything */
+		UA_BrowseRequest bRequest = { 0 };
+		UA_BrowseRequest_init(&bRequest);//初始化
+		bRequest.requestedMaxReferencesPerNode = 0;
+		bRequest.nodesToBrowse = (UA_BrowseDescription*)m_pUA_new(m_pUA_TYPES + UA_TYPES_BROWSEDESCRIPTION);//節點加入Type格式
+		bRequest.nodesToBrowseSize = 1;
+		bRequest.nodesToBrowse[0].nodeId = id;//節點加入初始位置
+		bRequest.nodesToBrowse[0].resultMask = UA_BROWSERESULTMASK_ALL; /* return everything */
 
-		UA_BrowseResponse bResp;
-		m_p__UA_Client_Service(m_pClient, &bReq, m_pUA_TYPES + UA_TYPES_BROWSEREQUEST,
-			&bResp, m_pUA_TYPES + UA_TYPES_BROWSERESPONSE);
-		m_pUA_clear(&bReq, m_pUA_TYPES + UA_TYPES_BROWSEREQUEST);
+		UA_BrowseResponse bResponse;
+		m_p__UA_Client_Service(m_pClient,                              //UA_Client* client
+							   &bRequest,                              //const void* request
+							   m_pUA_TYPES + UA_TYPES_BROWSEREQUEST,   //const UA_DataType * requestType
+							   &bResponse,                             //void* response
+							   m_pUA_TYPES + UA_TYPES_BROWSERESPONSE   //const UA_DataType* responseType
+							   );
+		m_pUA_clear(&bRequest, m_pUA_TYPES + UA_TYPES_BROWSEREQUEST);
 
 		CString strLog;
-		strLog.Format(L"bResp.resultsSize %d ", bResp.resultsSize);
-		ON_OPC_NOTIFY(strLog);
-		for (size_t i = 0; i < bResp.resultsSize; ++i) {
-			strLog.Format(L"bResp.results[i].referencesSize %d ", bResp.results[i].referencesSize);
+		strLog.Format(L"bResp.resultsSize %d ", bResponse.resultsSize);
+		ON_OPC_NOTIFY(strLog);//丟去給訊息處理 最後會貼在Log列表
+		for (size_t i = 0; i < bResponse.resultsSize; ++i) {
+			strLog.Format(L"bResp.results[i].referencesSize %d ", bResponse.results[i].referencesSize);
 			ON_OPC_NOTIFY(strLog);
-			for (size_t j = 0; j < bResp.results[i].referencesSize; ++j) {
-				UA_ReferenceDescription *ref = &(bResp.results[i].references[j]);
+			for (size_t j = 0; j < bResponse.results[i].referencesSize; ++j) {
+				UA_ReferenceDescription *ref = &(bResponse.results[i].references[j]);
 				CString strDisplayName((char*)ref->displayName.text.data, ref->displayName.text.length);
 				BOOL bFind = FALSE;
 				for (auto &strMonitor : m_vMonitorNode){
@@ -182,80 +189,97 @@ void COPCClientController::GetMonitorNodes(vector<std::pair<CString, UA_NodeId>>
 
 		if (m_pUA_clear && m_pUA_TYPES){
 			//clear old resp
-			m_pUA_clear(&bResp, m_pUA_TYPES + UA_TYPES_BROWSERESPONSE);
+			m_pUA_clear(&bResponse, m_pUA_TYPES + UA_TYPES_BROWSERESPONSE);
 		}
 	}
 }
+///<summary>Client連線狀況對策</summary>
 void COPCClientController::DoStateCallback(UA_Client *client, UA_ClientState eState)
 {
-	switch (eState){
-	case UA_CLIENTSTATE_DISCONNECTED:         /* The client is disconnected */
-		if (m_tTimer){
-			::KillTimer(NULL, m_tTimer);
-			m_tTimer = NULL;
-		}
-		if (m_bForceClose){
-			ON_OPC_NOTIFY(L"Force Disconnect");
-		}
-		else{
-			ON_OPC_NOTIFY(L"Disconnect, reconnect again");
-			if (m_tReconnectTimer == NULL){
-				m_tReconnectTimer = SetTimer(NULL, TIMER_ID_RECONNECT, 3000, OnTimer);
+	switch (eState)
+	{
+
+		case UA_CLIENTSTATE_DISCONNECTED:          /* The client is disconnected */
+			if (m_tTimer)
+			{
+				::KillTimer(NULL, m_tTimer);
+				m_tTimer = NULL;
 			}
-		}
-		NotifyAOI(WM_OPC_RETURN_STATUS_CMD, 0);
-		break;
-	case UA_CLIENTSTATE_WAITING_FOR_ACK:      /* The Client has sent HEL and waiting */
-		break;
-	case UA_CLIENTSTATE_CONNECTED:          /* A TCP connection to the server is open */
-		NotifyAOI(WM_OPC_RETURN_STATUS_CMD, 1);
-		break;
-	case UA_CLIENTSTATE_SECURECHANNEL:        /* A SecureChannel to the server is open */
-		break;
-	case UA_CLIENTSTATE_SESSION:            /* A session with the server is open */
-		break;
-	case UA_CLIENTSTATE_SESSION_DISCONNECTED: /* Disconnected vs renewed? */
-		break;
-	case UA_CLIENTSTATE_SESSION_RENEWED:      /* A session with the server is open (renewed) */
-		break;
+			if (m_bForceClose)
+			{
+				ON_OPC_NOTIFY(L"Force Disconnect");
+			}
+			else
+			{
+				ON_OPC_NOTIFY(L"Disconnect, reconnect again");
+				if (m_tReconnectTimer == NULL)
+				{
+					m_tReconnectTimer = SetTimer(NULL, TIMER_ID_RECONNECT, 3000, OnTimer);
+				}
+			}
+			NotifyAOI(WM_OPC_RETURN_STATUS_CMD, 0);
+			break;
+		case UA_CLIENTSTATE_WAITING_FOR_ACK:      /* The Client has sent HEL and waiting */
+			break;
+		case UA_CLIENTSTATE_CONNECTED:            /* A TCP connection to the server is open */
+			NotifyAOI(WM_OPC_RETURN_STATUS_CMD, 1);
+			break;
+		case UA_CLIENTSTATE_SECURECHANNEL:        /* A SecureChannel to the server is open */
+			break;
+		case UA_CLIENTSTATE_SESSION:              /* A session with the server is open */
+			break;
+		case UA_CLIENTSTATE_SESSION_DISCONNECTED: /* Disconnected vs renewed? */
+			break;
+		case UA_CLIENTSTATE_SESSION_RENEWED:      /* A session with the server is open (renewed) */
+			break;
 	}
 }
+///<summary>Client連線狀況Callback</summary>
 void COPCClientController::stateCallback(UA_Client *client, UA_ClientState eState)
 {
-	if (pThis){
+	if (pThis)
+	{
 		pThis->DoStateCallback(client, eState);
 	}
 }
+///<summary>連線</summary>
 void COPCClientController::Connect()
 {
-	if (m_pUA_Client_new){
-		if (!m_pClient && m_pUA_Client_getConfig && m_pUA_ClientConfig_setDefault){
-			m_pClient = m_pUA_Client_new();
+	if (m_pUA_Client_new)//新連線
+	{
+		if (!m_pClient && m_pUA_Client_getConfig && m_pUA_ClientConfig_setDefault)
+		{
+			m_pClient = m_pUA_Client_new();//繼承
 
 			UA_ClientConfig *cc = m_pUA_Client_getConfig(m_pClient);
 			m_pUA_ClientConfig_setDefault(cc);
 			/* default timeout is 5 seconds. Set it to 500ms */
 			cc->timeout = 500;
-			cc->stateCallback = stateCallback;
+			cc->stateCallback = stateCallback;//增加Clientstate的回呼
 		}
 	}
-	UA_StatusCode dwRetval = UA_STATUSCODE_BADUNEXPECTEDERROR;
-	if (m_pUA_Client_connect){
-		dwRetval = m_pUA_Client_connect(m_pClient, m_strConnectURL);
+	UA_StatusCode dwRetval = UA_STATUSCODE_BADUNEXPECTEDERROR;//預設錯誤
+	if (m_pUA_Client_connect)//若連線
+	{
+		dwRetval = m_pUA_Client_connect(m_pClient, m_strConnectURL);//client,endpointUrl
 	}
-	if (dwRetval == UA_STATUSCODE_GOOD){
+	if (dwRetval == UA_STATUSCODE_GOOD)
+	{
 		TRACE("Connect to server on %s\n", m_strConnectURL);
 		CString strLog;
 		strLog.Format(L"Connect to server on %s\n", CString(m_strConnectURL));
 		ON_OPC_NOTIFY(strLog);
-		if (m_tTimer == NULL){
+		if (m_tTimer == NULL)
+		{
 			m_tTimer = SetTimer(NULL, TIMER_ID_ITERATE, 1000, OnTimer);
 		}
 		DiscoverNode();
 	}
-	else{
+	else
+	{
 		ON_OPC_NOTIFY(L"Connect fail, reconnect again");
-		if (m_tReconnectTimer == NULL){
+		if (m_tReconnectTimer == NULL)
+		{
 			m_tReconnectTimer = SetTimer(NULL, TIMER_ID_RECONNECT, 3000, OnTimer);
 		}
 	}
@@ -299,7 +323,7 @@ void COPCClientController::ON_OPEN_OPC(LPARAM lp)
 
 			ON_OPC_PARAM(L"ROOT", strOrignID);
 			m_strRootID = CStringA(strOrignID);
-			m_nRootNS = xData.nRootIdNamespace;
+			m_nRootNS = xData.nRootIdNamespace;//= 1
 
 			m_strConnectURL = CString(xData.cOPCIP);
 			Connect();
@@ -360,49 +384,66 @@ void COPCClientController::ON_SET_MONITOR_NDOE(vector<CString> vMonitor)
 {
 	m_vMonitorNode = vMonitor;
 }
-void COPCClientController::DoClientCallBack(UA_Client *client, UA_UInt32 subId, void *subContext,
-	UA_UInt32 monId, void *monContext, UA_DataValue *value)
+void COPCClientController::DoClientCallBack(UA_Client *client, UA_UInt32 subId, void *subContext,UA_UInt32 monId, void *monContext, UA_DataValue *value)
 {
 	UpdateNode(monId, value);
 }
-static void ClientCallBack(UA_Client *client, UA_UInt32 subId, void *subContext,
-	UA_UInt32 monId, void *monContext, UA_DataValue *value)
+static void ClientCallBack(UA_Client *client, UA_UInt32 subId, void *subContext,UA_UInt32 monId, void *monContext, UA_DataValue *value)
 {
 	pThis->DoClientCallBack(client, subId, subContext, monId, monContext, value);
 }
 void COPCClientController::DiscoverNode()
 {
-	if (m_pClient){
-		vector<std::pair<CString, UA_NodeId>> vMonitorNode;
-		GetMonitorNodes(vMonitorNode);
-		UA_CreateSubscriptionRequest request = UA_CreateSubscriptionRequest_default();
-		UA_CreateSubscriptionResponse response = m_pUA_Client_Subscriptions_create(m_pClient, request,
-			NULL, NULL, NULL);
-		for (auto &xNode : vMonitorNode){
-			if (m_pUA_Client_Subscriptions_create && m_pUA_Client_MonitoredItems_createDataChange){
-
-				if (response.responseHeader.serviceResult == UA_STATUSCODE_GOOD){
+	if (m_pClient)//若連線
+	{
+		vector<std::pair<CString, UA_NodeId>> vMonitorNode;//創建監控節點vector
+		GetMonitorNodes(vMonitorNode);//取得監控節點
+		UA_CreateSubscriptionRequest request = UA_CreateSubscriptionRequest_default();//請求
+		UA_CreateSubscriptionResponse response = m_pUA_Client_Subscriptions_create(m_pClient, request, NULL, NULL, NULL);//回應
+		for (auto &xNode : vMonitorNode)
+		{
+			if (m_pUA_Client_Subscriptions_create && m_pUA_Client_MonitoredItems_createDataChange)
+			{
+				if (response.responseHeader.serviceResult == UA_STATUSCODE_GOOD)
+				{
 					UA_MonitoredItemCreateRequest xMonRequest = UA_MonitoredItemCreateRequest_default(xNode.second);
-					UA_MonitoredItemCreateResult monResponse = m_pUA_Client_MonitoredItems_createDataChange(m_pClient,
-						response.subscriptionId, UA_TIMESTAMPSTORETURN_BOTH, xMonRequest, NULL, ClientCallBack, NULL);
-					if (monResponse.statusCode == UA_STATUSCODE_GOOD){
+					UA_MonitoredItemCreateResult monResponse = m_pUA_Client_MonitoredItems_createDataChange(
+															   m_pClient,
+															   response.subscriptionId, 
+															   UA_TIMESTAMPSTORETURN_BOTH, 
+															   xMonRequest, 
+															   NULL, 
+															   ClientCallBack, 
+															   NULL
+															  );
+					if (monResponse.statusCode == UA_STATUSCODE_GOOD)
+					{
 						CString strLog;
 						strLog.Format(L"monitor ok type:%d disp:%s, field %s, subid:%d", xNode.second.identifierType, xNode.first, CString((char*)xNode.second.identifier.string.data, xNode.second.identifier.string.length), response.subscriptionId);
 						theApp.InsertDebugLog(strLog, LOG_OPC);
 						SET_MONITOR_ID(xNode.first, xNode.second, monResponse.monitoredItemId);
 					}
-					else{
+					else
+					{
 						CString strLog;
-						strLog.Format(L"monitor fail type:%d disp:%s, field %s, status:%d", xNode.second.identifierType, xNode.first, CString((char*)xNode.second.identifier.string.data, xNode.second.identifier.string.length), response.subscriptionId, monResponse.statusCode);
+						strLog.Format(L"monitor fail type:%d disp:%s, field %s, status:%d", 
+									  xNode.second.identifierType, 
+									  xNode.first, 
+									  CString((char*)xNode.second.identifier.string.data, 
+									  xNode.second.identifier.string.length), 
+									  response.subscriptionId, 
+									  monResponse.statusCode
+									 );
 						theApp.InsertDebugLog(strLog, LOG_OPC);
 					}
 				}
 				else{
 					CString strLog;
-					strLog.Format(L"Subscriptions_create fail type:%d disp:%s, field %s, status:%d"
-						, xNode.second.identifierType, xNode.first
-						, CString((char*)xNode.second.identifier.string.data, xNode.second.identifier.string.length)
-						, response.responseHeader.serviceResult);
+					strLog.Format(L"Subscriptions_create fail type:%d disp:%s, field %s, status:%d", 
+						          xNode.second.identifierType, xNode.first, 
+						          CString((char*)xNode.second.identifier.string.data, xNode.second.identifier.string.length), 
+						          response.responseHeader.serviceResult
+								 );
 					theApp.InsertDebugLog(strLog, LOG_OPC);
 				}
 			}

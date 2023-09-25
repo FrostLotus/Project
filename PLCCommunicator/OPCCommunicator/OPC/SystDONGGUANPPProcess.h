@@ -6,11 +6,12 @@
 class CSystDONGGUANPPProcess :public COPCClientController
 {
 public:
+
 	CSystDONGGUANPPProcess();
 	virtual ~CSystDONGGUANPPProcess();
 
 protected:
-
+	///<summary>專案節點列舉</summary>
 	enum OPC_FIELD_
 	{
 		//下發
@@ -107,36 +108,50 @@ protected:
 		FIELD_Z_QXFLAG,					//缺陷刷新标志
 		FIELD_MAX,                      //全域最大值(enum最後值)
 	};
-
 	///<summary>回傳本專案節點最大值</summary>
 	virtual int GetNodeSize(){ return FIELD_MAX; };
+	///<summary>取得節點項目</summary>
 	virtual NodeItem *GetNodeItem(int nIndex0Base);
-
+	///<summary>更新NodeValue資料</summary>
 	virtual void UpdateNode(int nMonId, const UA_DataValue *pValue);
+	///<summary>設定監視ID</summary>
 	virtual void SET_MONITOR_ID(CString strKey, UA_NodeId xNodeId, int nSubId);
-
+	///<summary>AOI資料接收觸發</summary>
 	virtual void ON_RECEIVE_AOIDATA(OPCDataType eType);
 private:
+	///<summary>初始化項目</summary>
 	void Init();
+	///<summary>關閉程式處置參數</summary>
 	void Finalize();
+	///<summary>載入YJD</summary>
 	void LoadYJD();
+	///<summary>取指定檔案夾</summary>
 	CString GetYJDFolder();
+	///<summary>將節點加入監控</summary>
 	void IninOPCClient();
+	///<summary>執行緒處理</summary>
 	static DWORD __stdcall Thread_Process(void* pvoid);
+	///<summary>處理工單資料</summary>
 	void ProcessNewBatch();
+	///<summary>處理瑕疵資料</summary>
 	void ProcessInspData();
+	///<summary>處理工單資料後</summary>
 	void ProcessNewBatchDone();
 #ifdef WRITE_OPCFIELD_THREAD
 	void MarkInspFlag(bool bValue);
 	void MarkNewbatchFlag(bool bValue);
 #endif
+	///<summary>Get節點資料</summary>
 	BOOL GetUANodeId(int nField, UA_NodeId& xNodeId);
-
+	///<summary>寫入Float</summary>
 	void WriteFloat(int nField, float fData);
+	///<summary>寫入int</summary>
 	void WriteInt(int nField, int nData);
+	///<summary>寫入String</summary>
 	void WriteString(int nField, char* pStr, int nLen);
-
+	///<summary>Log工單資料</summary>
 	void LogNewbatchData(OPCNewBatchDongguan& xData);
+	///<summary>儲存R3</summary>
 	void SaveR3Data(OPCNewBatchDongguan& xData);
 private:
 	enum
@@ -163,7 +178,7 @@ private:
 		CASE_NEWBATCH_FALG_FALSE,
 #endif
 	};
-
+	///<summary>訂閱節點結構</summary>
 	struct SubscribeNodeItem : public NodeItem
 	{
 		int nMonId;//MonitorId 監視ID
@@ -180,6 +195,8 @@ private:
 	CRITICAL_SECTION m_xLock;
 	CRITICAL_SECTION m_xBatch;
 #endif
+	///<summary>[vector]缺陷資料</summary>
 	std::vector<OPCInspData> m_vInspData;
+	///<summary>[vector]工單資料</summary>
 	std::vector<OPCBatchData> m_vBatchData;
 };

@@ -8,49 +8,103 @@ using namespace std;
 
 typedef UA_Client* (WINAPI fUA_Client_new)(void);
 typedef fUA_Client_new* pUA_Client_new;
-typedef UA_ClientConfig* (WINAPI fUA_Client_getConfig)(UA_Client *Client);
+typedef UA_ClientConfig* (WINAPI fUA_Client_getConfig)
+(
+	UA_Client *Client
+);
 typedef fUA_Client_getConfig* pUA_Client_getConfig;
-typedef UA_StatusCode(WINAPI fUA_ClientConfig_setDefault)(UA_ClientConfig *config);
+typedef UA_StatusCode(WINAPI fUA_ClientConfig_setDefault)
+(
+	UA_ClientConfig *config
+);
 typedef fUA_ClientConfig_setDefault* pUA_ClientConfig_setDefault;
-typedef UA_StatusCode(WINAPI fUA_Client_connect)(UA_Client *client, const char *endpointUrl);
+typedef UA_StatusCode(WINAPI fUA_Client_connect)
+(
+	UA_Client *client,
+	const char *endpointUrl
+);
 typedef fUA_Client_connect* pUA_Client_connect;
-typedef UA_StatusCode(WINAPI fUA_Client_disconnect)(UA_Client *client);
+typedef UA_StatusCode(WINAPI fUA_Client_disconnect)
+(
+	UA_Client *client
+);
 typedef fUA_Client_disconnect* pUA_Client_disconnect;
-typedef void (WINAPI fUA_Client_delete)(UA_Client *Client);
+typedef void (WINAPI fUA_Client_delete)
+(
+	UA_Client *Client
+);
 typedef fUA_Client_delete* pUA_Client_delete;
-typedef UA_StatusCode(WINAPI fUA_Client_run_iterate)(UA_Client *client, UA_UInt16 timeout);
+typedef UA_StatusCode(WINAPI fUA_Client_run_iterate)
+(
+	UA_Client *client,
+	UA_UInt16 timeout
+);
 typedef fUA_Client_run_iterate* pUA_Client_run_iterate;
-typedef UA_CreateSubscriptionResponse(WINAPI fUA_Client_Subscriptions_create)(UA_Client *client,
-	const UA_CreateSubscriptionRequest request,
-	void *subscriptionContext,
-	UA_Client_StatusChangeNotificationCallback statusChangeCallback,
-	UA_Client_DeleteSubscriptionCallback deleteCallback);
+typedef UA_CreateSubscriptionResponse(WINAPI fUA_Client_Subscriptions_create)
+(
+	UA_Client *client,
+    const UA_CreateSubscriptionRequest request,
+    void *subscriptionContext,
+    UA_Client_StatusChangeNotificationCallback statusChangeCallback,
+    UA_Client_DeleteSubscriptionCallback deleteCallback
+);
 typedef fUA_Client_Subscriptions_create* pUA_Client_Subscriptions_create;
-typedef UA_MonitoredItemCreateResult(WINAPI fUA_Client_MonitoredItems_createDataChange)(UA_Client *client, UA_UInt32 subscriptionId,
-	UA_TimestampsToReturn timestampsToReturn, const UA_MonitoredItemCreateRequest item,
-	void *context, UA_Client_DataChangeNotificationCallback callback,
-	UA_Client_DeleteMonitoredItemCallback deleteCallback);
+typedef UA_MonitoredItemCreateResult(WINAPI fUA_Client_MonitoredItems_createDataChange)
+(
+	UA_Client *client, 																					
+	UA_UInt32 subscriptionId,																					
+	UA_TimestampsToReturn timestampsToReturn,
+	const UA_MonitoredItemCreateRequest item,																					
+	void *context, UA_Client_DataChangeNotificationCallback callback,																			
+	UA_Client_DeleteMonitoredItemCallback deleteCallback
+);
 typedef fUA_Client_MonitoredItems_createDataChange* pUA_Client_MonitoredItems_createDataChange;
-typedef void(WINAPI fUA_clear)(void *p, const UA_DataType *type);
+typedef void(WINAPI fUA_clear)
+(
+	void *p,
+	const UA_DataType *type
+);
 typedef fUA_clear* pUA_clear;
-typedef void*(WINAPI fUA_new)(const UA_DataType *type);
+typedef void*(WINAPI fUA_new)
+(
+	const UA_DataType *type
+);
 typedef fUA_new* pUA_new;
-typedef void(WINAPI f__UA_Client_Service)(UA_Client *client, const void *request,
-	const UA_DataType *requestType, void *response,
-	const UA_DataType *responseType);
+typedef void(WINAPI f__UA_Client_Service)
+(
+	UA_Client *client, 
+	const void *request,
+	const UA_DataType *requestType,
+	void *response,
+	const UA_DataType *responseType
+);
 typedef f__UA_Client_Service* p__UA_Client_Service;
 
-typedef UA_String(WINAPI fUA_String_fromChars)(const char *src);
+typedef UA_String(WINAPI fUA_String_fromChars)
+(
+	const char *src
+);
 typedef fUA_String_fromChars* pUA_String_fromChars;
 
-typedef void(WINAPI fUA_Variant_setScalar)(UA_Variant *v, void * UA_RESTRICT p, const UA_DataType *type);
+typedef void(WINAPI fUA_Variant_setScalar)
+(
+	UA_Variant *v,
+	void * UA_RESTRICT p,
+	const UA_DataType *type
+);
 typedef fUA_Variant_setScalar* pUA_Variant_setScalar;
 
-typedef UA_StatusCode(WINAPI f__UA_Client_writeAttribute)(UA_Client *client, const UA_NodeId *nodeId,
-	UA_AttributeId attributeId, const void *in,
-	const UA_DataType *inDataType);
+typedef UA_StatusCode(WINAPI f__UA_Client_writeAttribute)
+(
+	UA_Client *client, 
+	const UA_NodeId *nodeId,
+	UA_AttributeId attributeId, 
+	const void *in,
+	const UA_DataType *inDataType
+);
 typedef f__UA_Client_writeAttribute* p__UA_Client_writeAttribute;
-class COPCClientController: public COPCProcessBase{
+class COPCClientController: public COPCProcessBase
+{
 public:
 	COPCClientController();
 	virtual ~COPCClientController();
@@ -61,9 +115,7 @@ protected:
 	void WriteIntField(UA_NodeId& xNodeId, WORD wData);
 	UA_StatusCode WriteBOOLField(UA_NodeId& xNodeId, BOOL bData);
 	void WriteStringField(UA_NodeId& xNodeId, char *pStr);
-
 	void ON_SET_MONITOR_NDOE(vector<CString> vMonitor);
-
 	virtual void ON_OPEN_OPC(LPARAM lp);
 	virtual void ON_CLOSE_OPC();
 	virtual void SET_MONITOR_ID(CString strKey, UA_NodeId xNodeId, int nMonId) = 0;
@@ -76,7 +128,6 @@ private:
 	void LIB_INIT();
 	void LIB_LOAD();
 	void LIB_FREE();
-
 	static void CALLBACK OnTimer(HWND hwnd, UINT uMsg, UINT_PTR nEventId, DWORD dwTimer);
 	void ProcessTimer(UINT_PTR nEventId);
 	void GetMonitorNodes(vector<std::pair<CString, UA_NodeId>>& vNode);

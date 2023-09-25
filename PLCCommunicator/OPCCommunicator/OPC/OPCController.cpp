@@ -29,6 +29,16 @@ void COPCController::Init()
 	m_pOPCThread = NULL;
 	LIB_INIT();
 }
+void COPCController::Finalize()
+{
+	m_bOPCRunning = FALSE;
+	if (m_pOPCThread) {
+		::WaitForSingleObject(m_pOPCThread->m_hThread, INFINITE);
+		delete m_pOPCThread;
+		m_pOPCThread = NULL;
+	}
+	LIB_FREE();
+}
 void COPCController::LIB_INIT()
 {
 	m_hDL_Dll_OPEN62541 = NULL;
@@ -124,16 +134,7 @@ void COPCController::LIB_LOAD()
 		ON_OPC_NOTIFY(strLog + L"Fail");
 	}
 }
-void COPCController::Finalize()
-{
-	m_bOPCRunning = FALSE;
-	if (m_pOPCThread){
-		::WaitForSingleObject(m_pOPCThread->m_hThread, INFINITE);
-		delete m_pOPCThread;
-		m_pOPCThread = NULL;
-	}
-	LIB_FREE();
-}
+
 void COPCController::RunOPCServer()
 {
 	m_bOPCRunning = TRUE;
@@ -260,18 +261,12 @@ void COPCController::AddServerVariable()
 	}
 }
 
-void COPCController::DoServerCallback(UA_Server *server, UA_UInt32 monitoredItemId,
-	void *monitoredItemContext, const UA_NodeId *nodeId,
-	void *nodeContext, UA_UInt32 attributeId,
-	const UA_DataValue *value)
+void COPCController::DoServerCallback(UA_Server *server, UA_UInt32 monitoredItemId,void *monitoredItemContext, const UA_NodeId *nodeId,void *nodeContext, UA_UInt32 attributeId,const UA_DataValue *value)
 {
 	UA_String uaString = nodeId->identifier.string;
 	UpdateNode(uaString, value);
 }
-void ServerCallback(UA_Server *server, UA_UInt32 monitoredItemId,
-	void *monitoredItemContext, const UA_NodeId *nodeId,
-	void *nodeContext, UA_UInt32 attributeId,
-	const UA_DataValue *value)
+void ServerCallback(UA_Server *server, UA_UInt32 monitoredItemId,void *monitoredItemContext, const UA_NodeId *nodeId,void *nodeContext, UA_UInt32 attributeId,const UA_DataValue *value)
 {
 	pThis->DoServerCallback(server, monitoredItemId, monitoredItemContext, nodeId, nodeContext, attributeId, value);
 }

@@ -49,7 +49,8 @@ typedef void (*UA_Client_StatusChangeNotificationCallback)
  * PublishingEnabled: true
  * Priority: 0 */
 static UA_INLINE UA_CreateSubscriptionRequest
-UA_CreateSubscriptionRequest_default(void) {
+UA_CreateSubscriptionRequest_default(void) 
+{
     UA_CreateSubscriptionRequest request;
     UA_CreateSubscriptionRequest_init(&request);
 

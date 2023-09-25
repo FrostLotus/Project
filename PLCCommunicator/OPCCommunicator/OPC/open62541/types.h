@@ -266,10 +266,9 @@ UA_EXPORT extern const UA_Guid UA_GUID_NULL;
 typedef UA_String UA_ByteString;
 
 static UA_INLINE UA_Boolean
-UA_ByteString_equal(const UA_ByteString *string1,
-                    const UA_ByteString *string2) {
-    return UA_String_equal((const UA_String*)string1,
-                           (const UA_String*)string2);
+UA_ByteString_equal(const UA_ByteString *string1,const UA_ByteString *string2) 
+{
+    return UA_String_equal((const UA_String*)string1,(const UA_String*)string2);
 }
 
 /* Allocates memory of size length for the bytestring.
@@ -280,7 +279,8 @@ UA_ByteString_allocBuffer(UA_ByteString *bs, size_t length);
 UA_EXPORT extern const UA_ByteString UA_BYTESTRING_NULL;
 
 static UA_INLINE UA_ByteString
-UA_BYTESTRING(char *chars) {
+UA_BYTESTRING(char *chars) 
+{
     UA_ByteString bs; bs.length = 0; bs.data = NULL;
     if(!chars)
         return bs;
@@ -288,7 +288,8 @@ UA_BYTESTRING(char *chars) {
 }
 
 static UA_INLINE UA_ByteString
-UA_BYTESTRING_ALLOC(const char *chars) {
+UA_BYTESTRING_ALLOC(const char *chars) 
+{
     UA_String str = UA_String_fromChars(chars); UA_ByteString bstr;
     bstr.length = str.length; bstr.data = str.data; return bstr;
 }
@@ -305,7 +306,8 @@ typedef UA_String UA_XmlElement;
  * NodeId
  * ^^^^^^
  * An identifier for a node in the address space of an OPC UA Server. */
-enum UA_NodeIdType {
+enum UA_NodeIdType 
+{
     UA_NODEIDTYPE_NUMERIC    = 0, /* In the binary encoding, this can also
                                    * become 1 or 2 (two-byte and four-byte
                                    * encoding of small numeric nodeids) */
@@ -314,10 +316,12 @@ enum UA_NodeIdType {
     UA_NODEIDTYPE_BYTESTRING = 5
 };
 
-typedef struct {
+typedef struct 
+{
     UA_UInt16 namespaceIndex;
     enum UA_NodeIdType identifierType;
-    union {
+    union 
+    {
         UA_UInt32     numeric;
         UA_String     string;
         UA_Guid       guid;
