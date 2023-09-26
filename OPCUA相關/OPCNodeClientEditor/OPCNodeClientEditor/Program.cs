@@ -19,7 +19,39 @@ namespace OPCNodeClientEditor
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+
+            ApplicationInstance application = new ApplicationInstance();
+            application.ApplicationType = ApplicationType.Client;
+            application.ConfigSectionName = "OPCUAClient";
+
+
+            try
+            {
+                // process and command line arguments.
+                if (application.ProcessCommandLine())
+                {
+                    return;
+                }
+
+                // load the application configuration.
+                application.LoadApplicationConfiguration(false).Wait();
+
+                // check the application certificate.
+                application.CheckApplicationInstanceCertificate(false, 0).Wait();
+
+                // run the application interactively.
+                Application.Run(new MainForm());
+            }
+            catch (Exception e)
+            {
+
+                //ExceptionDlg.Show(application.ApplicationName, e);
+                return;
+            }
+
+
+
+            //Application.Run(new MainForm());
         }
     }
 }
