@@ -10,7 +10,8 @@
 #define ERR_DLL_NOT_LOAD	9999
 #define ERR_PARAM_ERROR		9998
 
-enum CPU_SERIES{
+enum CPU_SERIES
+{
 	Q_SERIES,			//Q¨t¦C
 	FX3U_SERIES,		//FX3U¨t¦C
 	FX5U_SERIES,		//FX5U¨t¦C

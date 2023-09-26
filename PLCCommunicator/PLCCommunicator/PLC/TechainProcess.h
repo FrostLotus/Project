@@ -25,7 +25,7 @@ class CTechainProcess :public CPLCProcessBase{
 public:
 	CTechainProcess();
 	virtual ~CTechainProcess();
-	virtual int GetFieldSize() { return FIELD_MAX; };
+	virtual int GetFieldSize() { return FIELD_MAX; };//14
 
 	enum PLC_FIELD_{
 		FIELD_BEGIN = 0,

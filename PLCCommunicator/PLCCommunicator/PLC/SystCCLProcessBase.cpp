@@ -7,28 +7,36 @@
 #define CCL_NOTIFYVALUE_COMMAND	101
 
 CSystCCLProcessBase* CSystCCLProcessBase::m_this = NULL;
+///<summary>[Constructor]初始化</summary>
 CSystCCLProcessBase::CSystCCLProcessBase()
 {
 	Init();
 }
+///<summary>[Constructor]終處置</summary>
 CSystCCLProcessBase::~CSystCCLProcessBase()
 {
 	Finalize();
 }
+
 long CSystCCLProcessBase::ON_OPEN_PLC(LPARAM lp)
 {
 	long lRtn = CPLCProcessBase::ON_OPEN_PLC(lp);
 
-	if (lRtn == 0){
-		for (int i = 0; i < TIMER_MAX; i++){
+	if (lRtn == 0)
+	{
+		for (int i = 0; i < TIMER_MAX; i++)
+		{
 #ifdef USE_TEST_TIMER
-			if (i == TIMER_TEST || TIMER_RESULT == i/*make write time reasonable*/){
+			if (i == TIMER_TEST || TIMER_RESULT == i/*make write time reasonable*/)
+			{
 				m_tTimerEvent[i] = SetTimer(NULL, i, 500, QueryTimer);
 			}
-			else
+			else {}
+
 #endif
-				BOOL bSettimer = TRUE;
-			switch (i){
+			BOOL bSettimer = TRUE;
+			switch (i)
+			{
 			case TIMER_CUSTOM_ACTION:
 				bSettimer = IS_SUPPORT_CUSTOM_ACTION();
 				break;
@@ -36,58 +44,72 @@ long CSystCCLProcessBase::ON_OPEN_PLC(LPARAM lp)
 				bSettimer = TRUE;
 				break;
 			}
-			if (bSettimer)
+			if (bSettimer) 
+			{
 				m_tTimerEvent[i] = SetTimer(NULL, i, TIMER_INTERVAL, QueryTimer);
+			}
 		}
-		for (int i = NULL; i < EV_COUNT; i++) m_hEvent[i] = ::CreateEvent(NULL, TRUE, FALSE, NULL);
+		for (int i = NULL; i < EV_COUNT; i++) 
+		{
+			m_hEvent[i] = ::CreateEvent(NULL, TRUE, FALSE, NULL);
+		} 
 		m_hThread = ::CreateThread(NULL, NULL, Thread_Result, this, NULL, NULL);
 	}
-
 	return lRtn;
 }
+///<summary>視窗控制碼觸發</summary>
 void CSystCCLProcessBase::ON_GPIO_NOTIFY(WPARAM wp, LPARAM lp)
 {
-	switch (wp){
-	case WM_AOI_RESPONSE_CMD:
+	switch (wp)
+	{
+	case WM_AOI_RESPONSE_CMD://AOI
 		ProcessAOIResponse(lp);
 		break;
-	case WM_SYST_RESULTCCL_CMD:
+	case WM_SYST_RESULTCCL_CMD://系統回傳
 		ProcessResult();
 		break;
-	case WM_SYST_INFO_CHANGE:
+	case WM_SYST_INFO_CHANGE://
 		BATCH_SHARE_SYST_INFO xInfo;
 		memset(&xInfo, 0, sizeof(xInfo));
 		theApp.InsertDebugLog(L"WM_SYST_INFO_CHANGE", LOG_DEBUG);
-		if (USM_ReadData((unsigned char*)&xInfo, sizeof(xInfo))){
+		if (USM_ReadData((unsigned char*)&xInfo, sizeof(xInfo)))
+		{
 			SetInfoField(xInfo);
 		}
 		break;
 	}
 }
+///<summary>初始項目</summary>
 void CSystCCLProcessBase::Init()
 {
 	m_this = this;
 	NotifyAOI(WM_SYST_PARAMINIT_CMD, NULL);
 }
+///<summary>終處置項目</summary>
 void CSystCCLProcessBase::Finalize()
 {
-	for (int i = 0; i < TIMER_MAX; i++){
+	for (int i = 0; i < TIMER_MAX; i++)
+	{
 		::KillTimer(NULL, m_tTimerEvent[i]);
 	}
 }
+///<summary>處理AOI回應</summary>
 void CSystCCLProcessBase::ProcessAOIResponse(LPARAM lp)
 {
-	switch (lp){
+	switch (lp)//控制碼
+	{
 	case WM_SYST_PARAMCCL_CMD: //AOI切換完成->復位
 	{
 		WORD wReceive = _ttoi(GET_PLC_FIELD_VALUE(FIELD_COMMAND_RECEIVED));
 		WORD wCommand = _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCL_COMMAND));
-		if (wCommand == CCL_NOTIFYVALUE_COMMAND){
+		if (wCommand == CCL_NOTIFYVALUE_COMMAND)
+		{
 			WORD wReceive = 100;
 			SET_PLC_FIELD_DATA(FIELD_COMMAND_RECEIVED, sizeof(WORD), (BYTE*)&wReceive);
 			theApp.InsertDebugLog(L"reset FIELD_COMMAND_RECEIVED", LOG_DEBUG);
 		}
-		else{
+		else
+		{
 			CString str;
 #ifdef USE_IN_COMMUNICATOR
 			str.Format(L"field error, FIELD_COMMAND_RECEIVED:%s, FIELD_CCL_COMMAND:%s", GET_PLC_FIELD_VALUE(FIELD_COMMAND_RECEIVED), GET_PLC_FIELD_VALUE(FIELD_CCL_COMMAND));
@@ -108,14 +130,16 @@ void CSystCCLProcessBase::ProcessResult()
 	int nFloatSize = sizeof(float);
 	CString strLog, strTemp;
 
-
-
-	auto SetData = [&](DWORD dwAddFlag, void *pDst, int nSize, CString strAddLog, int nLogType){
-		if (dwFlag & dwAddFlag){
-			if (USM_ReadData((BYTE*)pDst, nSize, nOffset)){
+	auto SetData = [&](DWORD dwAddFlag, void *pDst, int nSize, CString strAddLog, int nLogType)
+	{
+		if (dwFlag & dwAddFlag)
+		{
+			if (USM_ReadData((BYTE*)pDst, nSize, nOffset))
+			{
 				nOffset += nSize;
 				CString strTemp;
-				switch (nLogType){
+				switch (nLogType)
+				{
 				case LOG_FLOAT: //float
 					strTemp.Format(L" %s: %f\r\n", strAddLog, *(float*)pDst);
 					break;
@@ -132,7 +156,8 @@ void CSystCCLProcessBase::ProcessResult()
 	};
 
 	theApp.InsertDebugLog(L"ProcessResult", LOG_DEBUG);
-	if (USM_ReadData((unsigned char*)&dwFlag, sizeof(dwFlag))){
+	if (USM_ReadData((unsigned char*)&dwFlag, sizeof(dwFlag)))
+	{
 		nOffset += sizeof(DWORD);
 		strTemp.Format(L"ProcessResult Flag:%d ", dwFlag);
 		strLog += strTemp;

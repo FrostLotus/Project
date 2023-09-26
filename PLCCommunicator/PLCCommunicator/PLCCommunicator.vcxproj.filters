@@ -51,74 +51,74 @@
     <ClInclude Include="..\SharedComponent\AppProcess.h">
       <Filter>SharedComponent</Filter>
     </ClInclude>
-    <ClInclude Include="..\SharedComponent\ActSupportMsg_i.h">
-      <Filter>PLC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\SharedComponent\ActDefine.h">
-      <Filter>PLC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\SharedComponent\ActProgType_i.h">
-      <Filter>PLC</Filter>
-    </ClInclude>
-    <ClInclude Include="PLC\SystCCLProcessSUZHOU.h">
-      <Filter>PLC</Filter>
-    </ClInclude>
-    <ClInclude Include="PLC\SystFCCLProcess.h">
-      <Filter>PLC</Filter>
-    </ClInclude>
-    <ClInclude Include="PLC\MelSecIOController.h">
-      <Filter>PLC</Filter>
-    </ClInclude>
-    <ClInclude Include="PLC\PLCProcessBase.h">
-      <Filter>PLC</Filter>
-    </ClInclude>
-    <ClInclude Include="PLC\SystCCLProcessBase.h">
-      <Filter>PLC</Filter>
-    </ClInclude>
-    <ClInclude Include="PLC\SystCCLProcessDONGGUAN.h">
-      <Filter>PLC</Filter>
-    </ClInclude>
-    <ClInclude Include="PLC\SystCCLProcessJIUJIANG.h">
-      <Filter>PLC</Filter>
-    </ClInclude>
-    <ClInclude Include="PLC\SystWebCooperProcessSocket.h">
-      <Filter>PLC</Filter>
-    </ClInclude>
-    <ClInclude Include="PLC\BaseClientSocket.h">
-      <Filter>PLC</Filter>
-    </ClInclude>
-    <ClInclude Include="PLC\MelsecPlcSocket.h">
-      <Filter>PLC</Filter>
-    </ClInclude>
-    <ClInclude Include="PLC\PLCDataHandler.h">
-      <Filter>PLC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\SharedComponent\DataHandlerBase.h">
-      <Filter>PLC</Filter>
-    </ClInclude>
     <ClInclude Include="ZergLog.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
-    <ClInclude Include="PLC\SystCCLProcessCHANGSHU.h">
-      <Filter>PLC</Filter>
+    <ClInclude Include="..\SharedComponent\ActDefine.h">
+      <Filter>標頭檔</Filter>
     </ClInclude>
-    <ClInclude Include="PLC\SystPPProcess.h">
-      <Filter>PLC</Filter>
+    <ClInclude Include="..\SharedComponent\ActProgType_i.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SharedComponent\ActSupportMsg_i.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\BaseClientSocket.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SharedComponent\DataHandlerBase.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\MelSecIOController.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\MelsecPlcSocket.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\PLCDataHandler.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\PLCProcessBase.h">
+      <Filter>標頭檔</Filter>
     </ClInclude>
     <ClInclude Include="PLC\ScribdPPProcess.h">
-      <Filter>PLC</Filter>
+      <Filter>標頭檔</Filter>
     </ClInclude>
-    <ClInclude Include="PLC\TagProcess_FX5U.h">
-      <Filter>PLC</Filter>
+    <ClInclude Include="PLC\SystCCLProcessBase.h">
+      <Filter>標頭檔</Filter>
     </ClInclude>
-    <ClInclude Include="PLC\TechainProcess.h">
-      <Filter>PLC</Filter>
+    <ClInclude Include="PLC\SystCCLProcessCHANGSHU.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\SystCCLProcessDONGGUAN.h">
+      <Filter>標頭檔</Filter>
     </ClInclude>
     <ClInclude Include="PLC\SystCCLProcessDONGGUAN_SONG8.h">
-      <Filter>PLC</Filter>
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\SystCCLProcessJIUJIANG.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\SystCCLProcessSUZHOU.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\SystFCCLProcess.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\SystPPProcess.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\SystWebCooperProcessSocket.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\TagProcess_FX5U.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\TechainProcess.h">
+      <Filter>標頭檔</Filter>
     </ClInclude>
     <ClInclude Include="PLC\TGProcess.h">
-      <Filter>PLC</Filter>
+      <Filter>標頭檔</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

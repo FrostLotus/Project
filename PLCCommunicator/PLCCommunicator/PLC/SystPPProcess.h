@@ -6,7 +6,7 @@ public:
 	CSystPPProcess(); 
 	virtual ~CSystPPProcess();
 
-	virtual int GetFieldSize() { return FIELD_MAX; };
+	virtual int GetFieldSize() { return FIELD_MAX; };//9
 
 	enum PLC_FIELD_{
 		FIELD_BEGIN = 0,

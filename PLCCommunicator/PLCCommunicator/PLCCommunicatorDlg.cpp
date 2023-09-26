@@ -1,5 +1,4 @@
 // PLCCommunicatorDlg.cpp : 實作檔
-
 #include "stdafx.h"
 #include "PLCCommunicator.h"
 #include "PLCCommunicatorDlg.h"
@@ -28,17 +27,16 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
 // CPLCCommunicatorDlg 對話方塊
 #define RECONNECT_TIMER 1
-#define INFO_TIMER 2
+#define INFO_TIMER      2
 #define INFO_MAX		50
 
 #define CLR_BATCH	RGB(0,0,0)
 #define CLR_NOTIFY	RGB(0xFF, 0, 0)
 #define CLR_RESULT	RGB(0x80, 0x80, 0x80)
 #define CLR_SKIP	RGB(0x80, 0, 0)
-
+///<summary>[Constructor]初始化</summary>
 CPLCCommunicatorDlg::CPLCCommunicatorDlg(BOOL bNoShow, CWnd* pParent /*=NULL*/)
 	: CDialogEx(CPLCCommunicatorDlg::IDD, pParent)
 {
@@ -46,10 +44,12 @@ CPLCCommunicatorDlg::CPLCCommunicatorDlg(BOOL bNoShow, CWnd* pParent /*=NULL*/)
 	m_bNoShow = bNoShow;
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
+///<summary>[Constructor]終處置</summary>
 CPLCCommunicatorDlg::~CPLCCommunicatorDlg()
 {
 	Finalize();
 }
+
 void CPLCCommunicatorDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
@@ -79,15 +79,19 @@ END_MESSAGE_MAP()
 void CPLCCommunicatorDlg::OnQueryAll()
 {
 #ifdef USE_IN_COMMUNICATOR
-	theApp.InsertDebugLog(L"UI QUERYALL");
+	theApp.InsertDebugLog(L"UI QUERYALL");//log
 #endif
 #ifndef USE_MC_PROTOCOL
-	if (m_pPLCProcessBase){
+	if (m_pPLCProcessBase)
+	{
 		int nMax = m_pPLCProcessBase->GetFieldSize();
-		for (int i = 0; i < nMax; i++){
+		for (int i = 0; i < nMax; i++)
+		{
 			PLC_DATA_ITEM_* pItem = m_pPLCProcessBase->GetPLCAddressInfo(i, FALSE);
-			if (pItem && pItem->xAction != ACTION_SKIP)
+			if (pItem && pItem->xAction != ACTION_SKIP) 
+			{
 				m_pPLCProcessBase->GET_PLC_FIELD_DATA(i);
+			}
 		}
 	}
 #else
@@ -542,7 +546,8 @@ void CPLCCommunicatorDlg::Init()
 {
 	theApp.InsertDebugLog(L"Start");
 	SetWindowText(PLC_COMMUNICATOR_NAME);
-	for (int i = LOCK_BEGIN; i < LOCK_MAX; i++){
+	for (int i = LOCK_BEGIN; i < LOCK_MAX; i++)
+	{
 		InitializeCriticalSection(&m_xLock[i]);
 	}
 #ifndef USE_MC_PROTOCOL
@@ -651,32 +656,38 @@ void CPLCCommunicatorDlg::InitUiRectPos()
 }
 void CPLCCommunicatorDlg::InitUI()
 {
-	for (int i = UI_BTN_BEGIN; i < UI_BTN_END; i++){
+	for (int i = UI_BTN_BEGIN; i < UI_BTN_END; i++)
+	{
 		m_xUi[i].pBtn = new CButton;
 		m_xUi[i].pBtn->Create(m_xUi[i].strCaption, WS_VISIBLE | WS_CHILD, m_xUi[i].rcUi, this, i);
 		g_AoiFont.SetWindowFont(m_xUi[i].pBtn, FontDef::typeT1);
 	}
-	for (int i = UI_CHKBTN_BEGIN; i < UI_CHKBTN_END; i++){
+	for (int i = UI_CHKBTN_BEGIN; i < UI_CHKBTN_END; i++)
+	{
 		m_xUi[i].pBtn = new CButton;
 		m_xUi[i].pBtn->Create(m_xUi[i].strCaption, WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX, m_xUi[i].rcUi, this, i);
 		g_AoiFont.SetWindowFont(m_xUi[i].pBtn, FontDef::typeT1);
 	}
-	for (int i = UI_LC_BEGIN; i < UI_LC_END; i++){
+	for (int i = UI_LC_BEGIN; i < UI_LC_END; i++)
+	{
 		m_xUi[i].pList = new CListCtrl;
 		m_xUi[i].pList->Create(WS_CHILD | WS_VISIBLE | WS_BORDER | LVS_REPORT | LVS_OWNERDATA, m_xUi[i].rcUi, this, i);
 		m_xUi[i].pList->SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
 		g_AoiFont.SetWindowFont(m_xUi[i].pList, FontDef::typeT1);
-		if (i == UI_LC_PLCADDRESS){
+		if (i == UI_LC_PLCADDRESS)
+		{
 			m_xUi[i].pList->InsertColumn(LIST_COL_FIELD, L"Field", LVCFMT_LEFT, 180);
 			m_xUi[i].pList->InsertColumn(LIST_COL_ADDRESS, L"Address", LVCFMT_LEFT, 90);
 			m_xUi[i].pList->InsertColumn(LIST_COL_VALUE, L"Value", LVCFMT_LEFT, 90);
 			m_xUi[i].pList->InsertColumn(LIST_COL_TIME, L"Time", LVCFMT_LEFT, 90);
 		}
-		else if (i == UI_LC_PLCPARAM){
+		else if (i == UI_LC_PLCPARAM)
+		{
 			m_xUi[i].pList->InsertColumn(LIST_COL_TITLE, L"Info", LVCFMT_LEFT, 130);
 			m_xUi[i].pList->InsertColumn(LIST_COL_DATA, L"Data", LVCFMT_LEFT, 100);
 		}
-		else if (i == UI_LC_INFO){
+		else if (i == UI_LC_INFO)
+		{
 			m_xUi[i].pList->InsertColumn(LIST_COL_TITLE, L"Time", LVCFMT_LEFT, 80);
 			m_xUi[i].pList->InsertColumn(LIST_COL_DATA, L"Info", LVCFMT_LEFT, 180);
 		}

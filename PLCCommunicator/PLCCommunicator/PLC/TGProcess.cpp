@@ -113,5 +113,5 @@ long CTGProcess::GET_PLC_FIELD_DATA(vector<int> vField)
 }
 int CTGProcess::GetFieldSize()
 { 
-	return CSystPPProcess::GetFieldSize() + FIELD_MAX;
+	return CSystPPProcess::GetFieldSize() + FIELD_MAX;//9+7=16
 }

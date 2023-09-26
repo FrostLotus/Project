@@ -2,45 +2,53 @@
 #include "PLCProcessBase.h"
 #include <mutex>
 
-struct PLC_INPUT{
+struct PLC_INPUT
+{
 	int nPin0Base;
 	DWORD dwPos;
 };
-enum OUTPUT_MODE{
+enum OUTPUT_MODE
+{
 	MODE_NOUSE = 0,
 	MODE_DIRECTIO,
 	MODE_TIME,
 	MODE_DIST
 };
-enum OUTPUT_PIN_TYPE{
+enum OUTPUT_PIN_TYPE
+{
 	TYPE_TAG,	//貼標機
 	TYPE_STOP,	//捲狀停機
 	TYPE_SPLIT,	//片狀剔除
 };
-struct OUTPUT_PIN_INFO{
+struct OUTPUT_PIN_INFO
+{
 	OUTPUT_PIN_TYPE eType;
 	int nResponse;//反應時間(ms)
 	int nDuration;//持續時間(ms)
 	BOOL bHighPotenial; //0:Default Low/1:Default High
 	OUTPUT_MODE eMode; //0:不輸出/1:直接輸出/2:時間模式/3:距離模式
 };
-struct ENCODER_POS{
+struct ENCODER_POS
+{
 	OUTPUT_PIN_TYPE eType;
 	DWORD dwStartEncoder;
 	DWORD dwEndEncoder;
 };
-struct INPUT_PIN_NOTIFY{
+struct INPUT_PIN_NOTIFY
+{
 	int nPin0Base;
 	DWORD dwEncoder;
 };
-class CTagProcess_FX5U :public CPLCProcessBase{
+class CTagProcess_FX5U :public CPLCProcessBase
+{
 public:
 	CTagProcess_FX5U();
 	virtual ~CTagProcess_FX5U();
 
-	virtual int GetFieldSize() { return FIELD_MAX; };
+	virtual int GetFieldSize() { return FIELD_MAX; };//29
 
-	enum PLC_FIELD_{
+	enum PLC_FIELD_
+	{
 		FIELD_BEGIN = 0,
 		FIELD_VERSION = FIELD_BEGIN,
 		FIELD_WATCHDOG,	//watchdog輸出
@@ -73,7 +81,8 @@ public:
 		FIELD_ENCODER_X11,				//Encoder:過布接頭 (X011)
 		FIELD_MAX
 	};
-	enum OUTPUT_PIN_QUERY_FLAG{
+	enum OUTPUT_PIN_QUERY_FLAG
+	{
 		PIN_6,
 		PIN_7,
 		PIN_11,
@@ -105,12 +114,14 @@ private:
 private:
 	static CTagProcess_FX5U* m_this;
 	PLC_DATA_ITEM_ **m_pPLC_FIELD_INFO;
-	enum {
+	enum 
+	{
 		TIMER_WATCHDOG,			//watch dog
 		TIMER_QUERY,
 		TIMER_MAX
 	};
-	enum{
+	enum
+	{
 		NOTIFY_BIT_X1=1, //A軸
 		NOTIFY_BIT_X2=2, //B軸
 		NOTIFY_BIT_X3=3, //拖白布
@@ -123,7 +134,8 @@ private:
 	UINT_PTR m_tTimerEvent[TIMER_MAX];
 	UINT m_uCurEncoder;
 
-	struct TAG_PARAM{
+	struct TAG_PARAM
+	{
 		int nWatchDogTimeOut; //second. X秒沒有寫入FIELD_WATCHDOG就會輸出訊號
 		int nVersion;//版本
 	};

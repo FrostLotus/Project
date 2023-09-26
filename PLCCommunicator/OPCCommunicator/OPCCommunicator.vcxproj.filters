@@ -39,9 +39,6 @@
     <ClInclude Include="Resource.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
-    <ClInclude Include="OPC\OPCController.h">
-      <Filter>OPC</Filter>
-    </ClInclude>
     <ClInclude Include="..\SharedComponent\AppProcess.h">
       <Filter>SharedComponent</Filter>
     </ClInclude>
@@ -51,17 +48,20 @@
     <ClInclude Include="..\SharedComponent\AppLogProcess.h">
       <Filter>SharedComponent</Filter>
     </ClInclude>
-    <ClInclude Include="OPC\OPCProcessBase.h">
-      <Filter>OPC</Filter>
-    </ClInclude>
     <ClInclude Include="OPC\SystPPProcess.h">
-      <Filter>OPC</Filter>
-    </ClInclude>
-    <ClInclude Include="OPC\OPCClientController.h">
-      <Filter>OPC</Filter>
+      <Filter>標頭檔</Filter>
     </ClInclude>
     <ClInclude Include="OPC\SystDONGGUANPPProcess.h">
-      <Filter>OPC</Filter>
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="OPC\OPCProcessBase.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="OPC\OPCController.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="OPC\OPCClientController.h">
+      <Filter>標頭檔</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

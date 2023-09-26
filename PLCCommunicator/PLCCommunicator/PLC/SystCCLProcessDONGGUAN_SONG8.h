@@ -1,7 +1,8 @@
 #pragma once
 #include "SystCCLProcessBase.h"
 
-class CSystCCLProcessDONGGUAN_SONG8 :public CSystCCLProcessBase{
+class CSystCCLProcessDONGGUAN_SONG8 :public CSystCCLProcessBase
+{
 public:
 	CSystCCLProcessDONGGUAN_SONG8();
 	virtual ~CSystCCLProcessDONGGUAN_SONG8();

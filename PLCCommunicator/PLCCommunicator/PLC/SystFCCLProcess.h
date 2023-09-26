@@ -7,7 +7,7 @@ class CSystFCCLProcess :public CPLCProcessBase{
 public:
 	CSystFCCLProcess();
 	virtual ~CSystFCCLProcess();
-	virtual int GetFieldSize(){ return FIELD_MAX; };
+	virtual int GetFieldSize(){ return FIELD_MAX; };//3
 	virtual PLC_DATA_ITEM_* GetPLCAddressInfo(int nFieldId, BOOL bSkip);
 
 	enum PLC_SYST_FCCL_FIELD_{

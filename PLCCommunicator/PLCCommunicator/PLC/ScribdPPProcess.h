@@ -48,7 +48,7 @@ public:
 	CScribdPPProcess();
 	virtual ~CScribdPPProcess();
 
-	virtual int GetFieldSize(){ return FIELD_MAX; };
+	virtual int GetFieldSize(){ return FIELD_MAX; };//20
 	virtual PLC_DATA_ITEM_* GetPLCAddressInfo(int nFieldId, BOOL bSkip);
 	enum PLC_SCRIBD_CCL_FIELD_{
 		FIELD_VERSION = 0,					//ª©¥»¸¹

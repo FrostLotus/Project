@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "PLCProcessBase.h"
 #include "PLCCommunicator.h"
-
+//#define OFF_LINE;
 CPLCProcessBase::CPLCProcessBase()
 {
 	Init();
@@ -10,6 +10,7 @@ CPLCProcessBase::~CPLCProcessBase()
 {
 	Finalize();
 }
+///<summary>初始化項目</summary>
 void CPLCProcessBase::Init()
 {
 	m_pPLCInitData = NULL;
@@ -19,40 +20,49 @@ void CPLCProcessBase::Init()
 	m_pAOIUsm = new usm<unsigned char>(BATCH_AOI_MEM_ID, TRUE);
 	m_pPLCUsm = new usm<unsigned char>(BATCH_COMMUNICATOR_MEM_ID, TRUE);
 }
+///<summary>終處置項目</summary>
 void CPLCProcessBase::Finalize()
 {
-	if (m_pPLCInitData){
+	if (m_pPLCInitData)
+	{
 		delete[] m_pPLCInitData;
 		m_pPLCInitData = NULL;
 	}
-	if (m_pAOIUsm){
+	if (m_pAOIUsm)
+	{
 		delete m_pAOIUsm;
 		m_pAOIUsm = NULL;
 	}
-	if (m_pPLCUsm){
+	if (m_pPLCUsm)
+	{
 		delete m_pPLCUsm;
 		m_pPLCUsm = NULL;
 	}
 }
+
 long CPLCProcessBase::ON_OPEN_PLC(LPARAM lp)
 {
 	long lRtn = ERR_DLL_NOT_LOAD;
-
-	if (m_pPLCInitData == NULL){ //first open, read data from shared memory
+	if (m_pPLCInitData == NULL)
+	{ //first open, read data from shared memory
 		int nDataSize = 0;
-		if (lp == WM_SYST_PARAMINIT_CMD){
+		if (lp == WM_SYST_PARAMINIT_CMD)//參數建立
+		{
 			BATCH_SHARE_SYSTCCL_INITPARAM *pData = new BATCH_SHARE_SYSTCCL_INITPARAM;
 			memset(pData, 0, sizeof(BATCH_SHARE_SYSTCCL_INITPARAM));
 			m_pPLCInitData = (BYTE*)pData;
 			nDataSize = sizeof(BATCH_SHARE_SYSTCCL_INITPARAM);
 		}
-		else if (lp == WM_SYST_PP_PARAMINIT_CMD){
+		else if (lp == WM_SYST_PP_PARAMINIT_CMD)//PP參數建立
+		{
 			BATCH_SHARE_SYSTPP_INITPARAM_ *pData = new BATCH_SHARE_SYSTPP_INITPARAM_;
 			memset(pData, 0, sizeof(BATCH_SHARE_SYSTPP_INITPARAM_));
 			m_pPLCInitData = (BYTE*)pData;
 			nDataSize = sizeof(BATCH_SHARE_SYSTPP_INITPARAM_);
 		}
-		if (m_pPLCInitData && nDataSize){
+		//-------------------------------------
+		if (m_pPLCInitData && nDataSize)//
+		{
 			theApp.InsertDebugLog(L"ON_OPEN_PLC", LOG_DEBUG);
 #ifdef OFF_LINE
 			CString str= L"192.168.2.29";
@@ -64,7 +74,6 @@ long CPLCProcessBase::ON_OPEN_PLC(LPARAM lp)
 #endif
 			{
 				SET_INIT_PARAM(lp, m_pPLCInitData);
-
 				ON_SET_PLCPARAM(*(BATCH_SHARE_SYSTCCL_INITPARAM*)m_pPLCInitData);
 			}
 		}
@@ -149,38 +158,49 @@ void CPLCProcessBase::GET_PLC_RANDOM_DATA(vector<int> &vField, CString &strField
 		}
 	}
 }
+///<summary>取得對應ID(field)之值(BYTE)</summary>
 BYTE *CPLCProcessBase::GET_PLC_FIELD_BYTE_VALUE(int nFieldId)
 {
 	int nFieldSize = GetFieldSize();
-	if (nFieldId >= 0 && nFieldId < nFieldSize){
+	if (nFieldId >= 0 && nFieldId < nFieldSize)//範圍內
+	{
 		const PLC_DATA_ITEM_ *pCur = GetPLCAddressInfo(nFieldId, FALSE);
-		if (pCur)
+		if (pCur) //取得
+		{
 			return m_pPLCData[nFieldId].pData;
+		}
 	}
 	return NULL;
 }
+///<summary>讀取PLC數值</summary>
 CString CPLCProcessBase::GET_PLC_FIELD_VALUE(int nFieldId)
 {
-	int nFieldSize = GetFieldSize();
+	int nFieldSize = GetFieldSize();//最大值
 	CString strDes;
-	if (nFieldId >= 0 && nFieldId < nFieldSize){
+	if (nFieldId >= 0 && nFieldId < nFieldSize)//範圍內
+	{
 		const PLC_DATA_ITEM_ *pCur = GetPLCAddressInfo(nFieldId, FALSE);
-		if (pCur){
-			switch (pCur->xValType){
-			case PLC_TYPE_STRING:
+		if (pCur)
+		{
+			switch (pCur->xValType)//type
+			{
+			case PLC_TYPE_STRING://string
 				strDes.Format(_T("%s"), CString((unsigned char*)m_pPLCData[nFieldId].pData));
 				break;
-			case PLC_TYPE_WORD:
-				if (pCur->uStartBit != -1 && pCur->uEndBit != -1){
+			case PLC_TYPE_WORD://word
+				if (pCur->uStartBit != -1 && pCur->uEndBit != -1)//不是預設值
+				{
 					int nValue = (int)*(unsigned short*)m_pPLCData[nFieldId].pData;
 					int nTemp = 0;
-					for (UINT i = pCur->uStartBit; i <= pCur->uEndBit; i++){
+					for (UINT i = pCur->uStartBit; i <= pCur->uEndBit; i++)
+					{
 						nTemp |= (nValue & 1 << i);
 					}
 					nTemp = nTemp >> pCur->uStartBit;
 					strDes.Format(_T("%d"), nTemp);
 				}
-				else{
+				else
+				{
 					if (pCur->bSigned)
 						strDes.Format(_T("%d"), (int)*(short*)m_pPLCData[nFieldId].pData);
 					else
@@ -414,15 +434,18 @@ long CPLCProcessBase::GET_PLC_FIELD_DATA(int nFieldId)
 {
 	return GET_PLC_FIELD_DATA(nFieldId, m_pPLCData[nFieldId].pData);
 }
+///<summary>初始化項目</summary>
 void CPLCProcessBase::INIT_PLCDATA()
 {
 	int nMax = GetFieldSize();
 	m_pPLCData = new PLCDATA[nMax];
 	memset(m_pPLCData, 0, sizeof(PLCDATA)* nMax);
-	for (int i = 0; i < GetFieldSize(); i++){
+	for (int i = 0; i < GetFieldSize(); i++)
+	{
 		PLC_DATA_ITEM_* pItem = GetPLCAddressInfo(i, FALSE);
 		int nDataSize = pItem->cLen;
-		if (pItem->xValType == PLC_TYPE_STRING){
+		if (pItem->xValType == PLC_TYPE_STRING)
+		{
 			nDataSize = pItem->cLen + 1;
 		}
 		m_pPLCData[i].pData = new BYTE[nDataSize];

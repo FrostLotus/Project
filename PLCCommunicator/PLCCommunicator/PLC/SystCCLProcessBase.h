@@ -6,13 +6,15 @@
 #define USE_TEST_TIMER //timer固定發送測試資料
 #endif
 //rename later, not yet
-class CSystCCLProcessBase :public CPLCProcessBase{
+class CSystCCLProcessBase :public CPLCProcessBase
+{
 public:
 	CSystCCLProcessBase();
 	virtual ~CSystCCLProcessBase();
-	virtual int GetFieldSize() { return FIELD_MAX; };
+	virtual int GetFieldSize() { return FIELD_MAX; };//115
 
-	enum PLC_FIELD_{
+	enum PLC_FIELD_
+	{
 		FIELD_ORDER = 0,			//工單
 		FIELD_MATERIAL,				//料號
 		FIELD_MODEL,				//模號

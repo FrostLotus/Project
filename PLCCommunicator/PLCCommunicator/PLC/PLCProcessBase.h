@@ -5,14 +5,16 @@
 #define TIMER_INTERVAL 1000
 #define QUERYSTATION_NAME	L"AOI_QueryStation(Server)"
 
-enum PLC_VALUE_TYPE_{
+enum PLC_VALUE_TYPE_
+{
 	PLC_TYPE_STRING,
 	PLC_TYPE_WORD,
 	PLC_TYPE_FLOAT,
 	PLC_TYPE_DWORD,
 	PLC_TYPE_BIT,
 };
-enum PLC_ACTION_TYPE_{
+enum PLC_ACTION_TYPE_
+{
 	ACTION_SKIP,
 	ACTION_NOTIFY,
 	ACTION_BATCH,
@@ -20,12 +22,26 @@ enum PLC_ACTION_TYPE_{
 	ACTION_RESULT,
 };
 
-typedef struct PLC_DATA_ITEM_{
+typedef struct PLC_DATA_ITEM_
+{
 public:
-	PLC_DATA_ITEM_(){
-
+	PLC_DATA_ITEM_()
+	{
 	}
-	PLC_DATA_ITEM_(CString strFieldName, int nFieldType, PLC_VALUE_TYPE_ eValueType, PLC_ACTION_TYPE_ eActionType, BYTE cLen, CString strDeviceType, UINT uAddress, UINT uStartBit = -1, UINT uEndBit = -1){
+	PLC_DATA_ITEM_
+	(
+		CString strFieldName,
+		int nFieldType,
+		PLC_VALUE_TYPE_ eValueType, 
+		PLC_ACTION_TYPE_ eActionType, 
+		BYTE cLen, 
+		CString strDeviceType, 
+		UINT uAddress, 
+		UINT uStartBit = -1, 
+		UINT uEndBit = -1
+	)
+	{
+		//初始化
 		memset(this->strFieldName, 0, sizeof(this->strFieldName));
 		lstrcpy(this->strFieldName, strFieldName.GetBuffer());
 		this->xFieldType = nFieldType;
@@ -52,7 +68,8 @@ public:
 }PLC_DATA_ITEM;
 
 
-class CPLCProcessBase : public CMelSecIOController{
+class CPLCProcessBase : public CMelSecIOController
+{
 public:
 	CPLCProcessBase();
 	virtual ~CPLCProcessBase();
@@ -100,11 +117,13 @@ private:
 private:
 	usm<unsigned char> *m_pAOIUsm;
 	usm<unsigned char> *m_pPLCUsm;
-
-	struct PLCDATA{
+	///<summary>PLC資料結構</summary>
+	struct PLCDATA
+	{
 		BYTE * pData;
 		__time64_t xTime;
 	};
+	///<summary>PLC資料</summary>
 	PLCDATA *m_pPLCData;
 
 	BOOL m_bFlushAnyway;
