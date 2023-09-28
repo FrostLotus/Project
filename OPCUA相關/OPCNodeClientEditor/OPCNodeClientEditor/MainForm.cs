@@ -17,7 +17,6 @@ namespace OPCNodeClientEditor
     {
         private MonitoredItemNotificationEventHandler m_monitoredItem_Notification;
         private ApplicationConfiguration m_configuration;
-        private Session m_session;
 
 
         private delegate void ReflashListView();
@@ -61,17 +60,20 @@ namespace OPCNodeClientEditor
                 {
                     CParam.ServerURL = Txt_ServerURL.Text;
                     await CParam.m_OpcUaClient.ConnectServer(CParam.ServerURL);
+
                     //顯示
                     Lab_ConnectStatus.Text = "連線成功";
                     Btn_Connect.BackColor = Color.Green;
-                    ServerFlags = emServerFlag.Start;
+                    
                     //將variable讀回Variablelist中
                     CParam.NodeItemPullOut(CParam.StartNodeTag);
+                    CParam.AddVariableToSubscription(MonitoredItem_Callback);
                     //將variable加入監聽清單
-                    VariableAddListen();
+                    //VariableAddListen();
 
                     //從list印至listview中
                     UpdateListViewInvoke();
+                    ServerFlags = emServerFlag.Start;
                 }
                 catch (Exception ex)
                 {
@@ -157,34 +159,10 @@ namespace OPCNodeClientEditor
         public void VariableAddListen()
         {
             string[] MonitorNodeTags = new string[CParam.VariableList.Count];
-            int itmp = 0;
-            //將變數餵入監聽列表
-            foreach (OpcDataVariable<object> roll in CParam.VariableList)
-            {
-                roll._BaseDataVariableState.OnSimpleWriteValue += new NodeValueSimpleEventHandler(UpdateStatus);
 
-
-                MonitorNodeTags[itmp] = roll._OpcDataItem.VaribleTag;
-                itmp++;
-            }
-            // create the callback.
-            m_monitoredItem_Notification = new MonitoredItemNotificationEventHandler(MonitoredItem_Notification);
+            
         }
-        public ServiceResult UpdateStatus(ISystemContext context, NodeState node, ref object value)
-        {
-            Console.WriteLine($"變數{node.NodeId} = {value.ToString()}");
-            //餵回去變更值
-            foreach (OpcDataVariable<object> roll in CParam.VariableList)
-            {
-                if (roll._BaseDataVariableState.NodeId.Identifier == node.NodeId.Identifier)
-                {
-                    roll._BaseDataVariableState.Value = value;
-                    //roll._OpcDataItem.Value = value;
-                }
-            }
-            UpdateListViewInvoke();
-            return ServiceResult.Good;
-        }
+       
         public void UpdateListViewInvoke()
         {
             //判斷物件是否在同一個執行緒上
@@ -250,69 +228,44 @@ namespace OPCNodeClientEditor
                 //}
             }
         }
-        private void OnEventsFired(Subscription subscription, DataChangeNotification notification, IList<string> stringTable)
-        {
-            Console.WriteLine("change1");
-            for (int i = 0; i < notification.MonitoredItems.Count; i++)
-            {
-                //MonitoredItem monitoredItem = subscription.FindItemByClientHandle(notification.Events[i].ClientHandle);
-                //_Context.QueueRequest(IntegratorConstants.FunctionType.Alert, monitoreditem.DisplayName);
-            }
-        }
-        public void ValueChange(MonitoredItem monitoredItem, MonitoredItemNotificationEventArgs args)
-        {
-            Console.WriteLine("change2");
-        }
 
-        private void MonitoredItem_Notification(MonitoredItem monitoredItem, MonitoredItemNotificationEventArgs e)
+        private void MonitoredItem_Callback(MonitoredItem monitoredItem, MonitoredItemNotificationEventArgs args)
         {
-            if (this.InvokeRequired)
+            if (ServerFlags == emServerFlag.Start)
             {
-                this.BeginInvoke(new MonitoredItemNotificationEventHandler(MonitoredItem_Notification), monitoredItem, e);
-                return;
-            }
-
-            try
-            {
-                if (m_session == null)
+                if (InvokeRequired)
                 {
+                    Invoke(new Action<MonitoredItem, MonitoredItemNotificationEventArgs>(MonitoredItem_Callback), monitoredItem, args);
                     return;
                 }
-
-                MonitoredItemNotification notification = e.NotificationValue as MonitoredItemNotification;
-
-                if (notification == null)
+                MonitoredItemNotification notification = args.NotificationValue as MonitoredItemNotification;
+                if (notification != null)
                 {
-                    return;
+                    foreach (var roll in CParam.VariableList)
+                    {
+                        if (roll._BaseDataVariableState.DisplayName.Text == monitoredItem.DisplayName)
+                        {
+
+                            //roll._BaseDataVariableState.Value = monitoredItem.LastValue;
+                            //roll._OpcDataItem.Value = monitoredItem.LastValue;
+                            roll._BaseDataVariableState.Value = CParam.m_OpcUaClient.ReadNode(roll._OpcDataItem.VaribleTag);
+                            roll._OpcDataItem.Value = CParam.m_OpcUaClient.ReadNode(roll._OpcDataItem.VaribleTag);
+
+
+
+                        }
+                    }
+                    UpdateVariableList();
                 }
-
-                ListViewItem item = (ListViewItem)monitoredItem.Handle;
-
-                item.SubItems[5].Text = Utils.Format("{0}", notification.Value.WrappedValue);
-                item.SubItems[6].Text = Utils.Format("{0}", notification.Value.StatusCode);
-                item.SubItems[7].Text = Utils.Format("{0:HH:mm:ss.fff}", notification.Value.SourceTimestamp.ToLocalTime());
             }
-            catch (Exception exception)
-            {
-                ClientUtils.HandleException(this.Text, exception);
-            }
+
         }
 
-        private void MonitoredItem()
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            //檢查目前是否允許操作。
-            if (m_session == null)
-            {
-                return;
-            }
-            //新增MonitoredItem
-            foreach (var roll in CParam.VariableList)
-            {
-
-            }
-
+            CParam.RemoveSubscription();
+            CParam.m_OpcUaClient.Disconnect();
         }
-
     }
 
 }

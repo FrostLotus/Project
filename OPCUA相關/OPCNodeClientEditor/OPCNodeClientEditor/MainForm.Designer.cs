@@ -289,6 +289,7 @@ namespace OPCNodeClientEditor
             this.Controls.Add(this.groupBox5);
             this.Name = "MainForm";
             this.Text = "Form1";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.Gbx_NodeList.ResumeLayout(false);
             this.Gbx_NodeList.PerformLayout();

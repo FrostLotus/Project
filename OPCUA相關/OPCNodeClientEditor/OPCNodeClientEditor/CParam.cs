@@ -1,4 +1,5 @@
 ﻿using Opc.Ua;
+using Opc.Ua.Client;
 using OpcUaHelper;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,9 @@ namespace OPCNodeClientEditor
 
         public static List<FolderState> FolderList = new List<FolderState>();//檔案夾節點列表
         public static List<OpcDataVariable<object>> VariableList = new List<OpcDataVariable<object>>();//變數列表
-  
+
+        private static Dictionary<string, Subscription> Subscriptions = new Dictionary<string, Subscription>();        // 系统所有的节点信息
+
         public static void NodeItemPullOut(string startNodetag)
         {
             //StringVariableList.Clear();
@@ -68,7 +71,7 @@ namespace OPCNodeClientEditor
                 MessageBox.Show(ex.Message, "ItemPullOut", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        private static void NodeFolderPullOut(ExpandedNodeId nodeid,string parent)
+        private static void NodeFolderPullOut(ExpandedNodeId nodeid, string parent)
         {
             try
             {
@@ -88,7 +91,7 @@ namespace OPCNodeClientEditor
                                 NodeFolderPullOut(item.NodeId, rootMy.NodeId.Identifier.ToString());
                                 break;
                             case "Variable"://變數
-                                VariableToList(item,parent);
+                                VariableToList(item, parent);
                                 break;
                             case "Method"://方法
                                 //TBD
@@ -102,7 +105,7 @@ namespace OPCNodeClientEditor
                 MessageBox.Show(ex.Message, "FolderPullOut", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        private static void VariableToList(ReferenceDescription rdescription,string parent)
+        private static void VariableToList(ReferenceDescription rdescription, string parent)
         {
             //FolderState rootNode = FindFolder(rdescription.NodeId.FolderName);
             OpcDataVariable<object> tmpData;
@@ -194,11 +197,73 @@ namespace OPCNodeClientEditor
                             break;
                     }
                 }
-                
+
             }
             //StringVariableList.Add(tmpOpcDataItem);//剩下DataType value要抓
         }
 
+        public static void AddVariableToSubscription(Action<MonitoredItem, MonitoredItemNotificationEventArgs> callback)
+        {
+            //新增一訂閱項目
+            Subscription m_subscription = new Subscription(m_OpcUaClient.Session.DefaultSubscription)
+            {
+                PublishingEnabled = true,
+                PublishingInterval = 0,
+                KeepAliveCount = uint.MaxValue,
+                LifetimeCount = uint.MaxValue,
+                MaxNotificationsPerPublish = uint.MaxValue,
+                Priority = 100,
+                DisplayName = "Normal"
+            };
+            //將所有變數加入MonitoredItem =>最後加進subscription
+            foreach (var roll in VariableList)
+            {
+                var item = new MonitoredItem
+                {
+                    StartNodeId = roll._BaseDataVariableState.NodeId,
+                    AttributeId = Attributes.Value,
+                    DisplayName = roll._BaseDataVariableState.DisplayName.Text,
+                    SamplingInterval = 100,
+                };
+                item.Notification += (MonitoredItem monitoredItem, MonitoredItemNotificationEventArgs args) =>
+                  {
+                      callback?.Invoke(monitoredItem, args);
+                  };
+                m_subscription.AddItem(item);
+            }
+            //subscription加入連結對話中
+            m_OpcUaClient.Session.AddSubscription(m_subscription);
+            m_subscription.Create();
+
+            //對於訂閱列表的增減
+            lock (Subscriptions)
+            {
+                if (Subscriptions.ContainsKey("Normal"))
+                {
+                    // remove
+                    Subscriptions["Normal"].Delete(true);
+                    m_OpcUaClient.Session.RemoveSubscription(Subscriptions["Normal"]);
+                    Subscriptions["Normal"].Dispose();
+                    Subscriptions["Normal"] = m_subscription;
+                }
+                else
+                {
+                    Subscriptions.Add("Normal", m_subscription);
+                }
+            }
+        }
+
+        public static void RemoveSubscription()
+        {
+            //對於訂閱列表的減
+            lock (Subscriptions)
+            {
+                Subscriptions["Normal"].Delete(true);
+                m_OpcUaClient.Session.RemoveSubscription(Subscriptions["Normal"]);
+                Subscriptions["Normal"].Dispose();
+                Subscriptions.Remove("Normal");
+            }
+        }
         //------------------------------------------------------
         protected static FolderState FindFolder(string Parent)
         {
