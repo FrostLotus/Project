@@ -21,8 +21,6 @@ namespace OPCNodeClientEditor
 
         public static OpcUaClient m_OpcUaClient;// = new OpcUaClient();//OpcUaHelper
 
-        //public static List<OpcDataFolder> StringFolderList = new List<OpcDataFolder>();//檔案夾暫存列表
-        //public static List<OpcDataItem> StringVariableList = new List<OpcDataItem>();//變數列表
         public static List<FolderState> FolderList = new List<FolderState>();//檔案夾節點列表
         public static List<OpcDataVariable<object>> VariableList = new List<OpcDataVariable<object>>();//變數列表
   
@@ -107,7 +105,7 @@ namespace OPCNodeClientEditor
         private static void VariableToList(ReferenceDescription rdescription,string parent)
         {
             //FolderState rootNode = FindFolder(rdescription.NodeId.FolderName);
-            OpcDataVariable<object> tmpData = new OpcDataVariable<object>();
+            OpcDataVariable<object> tmpData;
 
             OpcDataItem tmpOpcDataItem = new OpcDataItem
             {
@@ -134,13 +132,14 @@ namespace OPCNodeClientEditor
                             {
 
                                 _BaseDataVariableState = CreateVariable(FindFolder(parent),
-                                                                        rdescription.BrowseName.Name, 
+                                                                        rdescription.BrowseName.Name,
                                                                         DataTypeIds.String,
                                                                         ValueRanks.Scalar,
                                                                         null,
                                                                         roll.Value),
                                 _OpcDataItem = tmpOpcDataItem
                             };
+                            VariableList.Add(tmpData);
                             break;
                         case "Boolean":
                             tmpOpcDataItem.DataType = "Bool";
@@ -156,6 +155,7 @@ namespace OPCNodeClientEditor
                                                                         roll.Value),
                                 _OpcDataItem = tmpOpcDataItem
                             };
+                            VariableList.Add(tmpData);
                             break;
                         case "Float":
                             tmpOpcDataItem.DataType = "Real";
@@ -171,6 +171,7 @@ namespace OPCNodeClientEditor
                                                                         roll.Value),
                                 _OpcDataItem = tmpOpcDataItem
                             };
+                            VariableList.Add(tmpData);
                             break;
                         case "Int32":
                             tmpOpcDataItem.DataType = "Word";
@@ -189,12 +190,13 @@ namespace OPCNodeClientEditor
                                                                         roll.Value),
                                 _OpcDataItem = tmpOpcDataItem
                             };
+                            VariableList.Add(tmpData);
                             break;
                     }
                 }
+                
             }
             //StringVariableList.Add(tmpOpcDataItem);//剩下DataType value要抓
-            VariableList.Add(tmpData);
         }
 
         //------------------------------------------------------

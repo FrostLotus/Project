@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -18,12 +18,10 @@ namespace OPCNodeClientEditor
         private MonitoredItemNotificationEventHandler m_monitoredItem_Notification;
         private ApplicationConfiguration m_configuration;
         private Session m_session;
-        private bool m_connectedOnce;
-        private Subscription m_subscription;
+
 
         private delegate void ReflashListView();
         public emServerFlag ServerFlags = emServerFlag.Stop;
-        string[] MonitorNodeTags;
 
         //=================================================================================
         public MainForm()
@@ -71,7 +69,7 @@ namespace OPCNodeClientEditor
                     CParam.NodeItemPullOut(CParam.StartNodeTag);
                     //將variable加入監聽清單
                     VariableAddListen();
-                    
+
                     //從list印至listview中
                     UpdateListViewInvoke();
                 }
@@ -169,38 +167,6 @@ namespace OPCNodeClientEditor
                 MonitorNodeTags[itmp] = roll._OpcDataItem.VaribleTag;
                 itmp++;
             }
-            //-------------------------------------------------------
-            //Subscription m_subscription = new Subscription(CParam.m_OpcUaClient.Session.DefaultSubscription)
-            //{
-            //    PublishingEnabled = true,
-            //    PublishingInterval = 0,
-            //    KeepAliveCount = uint.MaxValue,
-            //    LifetimeCount = uint.MaxValue,
-            //    MaxNotificationsPerPublish = uint.MaxValue,
-            //    Priority = 100,
-            //    //DisplayName = key
-            //};
-            //for (int i = 0; i < MonitorNodeTags.Length; i++)
-            //{
-            //    var item = new MonitoredItem
-            //    {
-            //        StartNodeId = new NodeId(MonitorNodeTags[i]),
-            //        AttributeId = Attributes.Value,
-            //        DisplayName = MonitorNodeTags[i],
-            //        SamplingInterval = 100
-            //    };
-            //    //CParam.m_OpcUaClient.Session.InnerChannel.ModifyMonitoredItems+=
-            //    ////item
-            //    item.Notification += new MonitoredItemNotificationEventHandler(ValueChange);
-
-            //    ////ModifyMonitoredItemsResponseMessage
-            //    m_subscription.AddItem(item);
-            //}
-            
-            //CParam.m_OpcUaClient.Session.AddSubscription(m_subscription);
-            //m_subscription.Create();
-            //CParam.m_OpcUaClient.Session.DefaultSubscription.FastDataChangeCallback += OnEventsFired;
-
             // create the callback.
             m_monitoredItem_Notification = new MonitoredItemNotificationEventHandler(MonitoredItem_Notification);
         }
@@ -340,7 +306,7 @@ namespace OPCNodeClientEditor
                 return;
             }
             //新增MonitoredItem
-            foreach(var roll in CParam.VariableList)
+            foreach (var roll in CParam.VariableList)
             {
 
             }
@@ -348,5 +314,5 @@ namespace OPCNodeClientEditor
         }
 
     }
-    
+
 }
