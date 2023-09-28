@@ -46,12 +46,12 @@ namespace OPCNodeClientEditor
             this.label10 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.Btn_ReflashList = new System.Windows.Forms.Button();
             this.Lsv_VariableList = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.Btn_ReflashList = new System.Windows.Forms.Button();
             this.Gbx_NodeList.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.SuspendLayout();
@@ -62,7 +62,7 @@ namespace OPCNodeClientEditor
             this.Txt_ServerURL.Name = "Txt_ServerURL";
             this.Txt_ServerURL.Size = new System.Drawing.Size(548, 22);
             this.Txt_ServerURL.TabIndex = 69;
-            this.Txt_ServerURL.Text = "opc.tcp://127.0.0.1:62547/DataAccessServer";
+            this.Txt_ServerURL.Text = "opc.tcp://127.0.0.1:9048/NodeServer";
             // 
             // Btn_Connect
             // 
@@ -225,6 +225,16 @@ namespace OPCNodeClientEditor
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "變數列表";
             // 
+            // Btn_ReflashList
+            // 
+            this.Btn_ReflashList.Location = new System.Drawing.Point(210, 238);
+            this.Btn_ReflashList.Name = "Btn_ReflashList";
+            this.Btn_ReflashList.Size = new System.Drawing.Size(118, 23);
+            this.Btn_ReflashList.TabIndex = 3;
+            this.Btn_ReflashList.Text = "更新列表";
+            this.Btn_ReflashList.UseVisualStyleBackColor = true;
+            this.Btn_ReflashList.Click += new System.EventHandler(this.Btn_ReflashList_Click);
+            // 
             // Lsv_VariableList
             // 
             this.Lsv_VariableList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -264,16 +274,6 @@ namespace OPCNodeClientEditor
             this.columnHeader4.Text = "值";
             this.columnHeader4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.columnHeader4.Width = 140;
-            // 
-            // Btn_ReflashList
-            // 
-            this.Btn_ReflashList.Location = new System.Drawing.Point(210, 238);
-            this.Btn_ReflashList.Name = "Btn_ReflashList";
-            this.Btn_ReflashList.Size = new System.Drawing.Size(118, 23);
-            this.Btn_ReflashList.TabIndex = 3;
-            this.Btn_ReflashList.Text = "更新列表";
-            this.Btn_ReflashList.UseVisualStyleBackColor = true;
-            this.Btn_ReflashList.Click += new System.EventHandler(this.Btn_ReflashList_Click);
             // 
             // MainForm
             // 

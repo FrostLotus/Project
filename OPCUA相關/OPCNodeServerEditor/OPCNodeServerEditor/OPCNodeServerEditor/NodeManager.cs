@@ -10,11 +10,10 @@ namespace OPCNodeServerEditor
 {
     public class NodeManager : CustomNodeManager2
     {
-       
         private ReferenceServerConfiguration Configuration;//基本為空
         private List<BaseDataVariableState<int>> TimeTickList = new List<BaseDataVariableState<int>>();//變數狀態
         private System.Timers.Timer NodeTimer = null;
-
+        public static object m_Lock;
         public static ServerSystemContext m_SystemContext;
         private IList<IReference> references = null;//節點參考列表
         private INodeManager server;
@@ -48,6 +47,7 @@ namespace OPCNodeServerEditor
             CParam.VariableList.Clear();
             lock (Lock)
             {
+                
                 //加載預定義節點
                 LoadPredefinedNodes(SystemContext, externalReferences);
                 //節點參考列表
