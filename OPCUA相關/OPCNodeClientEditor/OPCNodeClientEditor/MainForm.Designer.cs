@@ -66,12 +66,13 @@ namespace OPCNodeClientEditor
             // 
             // Btn_Connect
             // 
+            this.Btn_Connect.BackColor = System.Drawing.Color.Coral;
             this.Btn_Connect.Location = new System.Drawing.Point(487, 11);
             this.Btn_Connect.Name = "Btn_Connect";
             this.Btn_Connect.Size = new System.Drawing.Size(75, 26);
             this.Btn_Connect.TabIndex = 68;
             this.Btn_Connect.Text = "連線";
-            this.Btn_Connect.UseVisualStyleBackColor = true;
+            this.Btn_Connect.UseVisualStyleBackColor = false;
             this.Btn_Connect.Click += new System.EventHandler(this.Btn_Connect_Click);
             // 
             // label13

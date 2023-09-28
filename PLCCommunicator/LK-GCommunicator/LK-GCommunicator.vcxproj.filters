@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="原始程式檔">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="標頭檔">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="資源檔">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="LK-G">
+      <UniqueIdentifier>{fe08ed97-0b3b-40cd-b8bb-36be90f96f9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SharedComponent">
+      <UniqueIdentifier>{9e6ed182-4126-47c3-8c28-66525291aac4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SharedComponent\SerialComm">
+      <UniqueIdentifier>{8cb58c45-18d5-4b95-88d7-34a9f230afcd}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="LK-GCommunicator.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="LK-GCommunicatorDlg.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SharedComponent\SerialComm\Serial.h">
+      <Filter>SharedComponent\SerialComm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SharedComponent\SerialComm\SerialEx.h">
+      <Filter>SharedComponent\SerialComm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SharedComponent\SerialComm\SerialMFC.h">
+      <Filter>SharedComponent\SerialComm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SharedComponent\SerialComm\SerialWnd.h">
+      <Filter>SharedComponent\SerialComm</Filter>
+    </ClInclude>
+    <ClInclude Include="LK-G\SerialComBase.h">
+      <Filter>LK-G</Filter>
+    </ClInclude>
+    <ClInclude Include="LK-G\ThickCommunicator.h">
+      <Filter>LK-G</Filter>
+    </ClInclude>
+    <ClInclude Include="LK-G\ThickMachineManager.h">
+      <Filter>LK-G</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SharedComponent\AoiFont.h">
+      <Filter>SharedComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SharedComponent\AppLogProcess.h">
+      <Filter>SharedComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SharedComponent\AppProcess.h">
+      <Filter>SharedComponent</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="LK-GCommunicator.cpp">
+      <Filter>原始程式檔</Filter>
+    </ClCompile>
+    <ClCompile Include="LK-GCommunicatorDlg.cpp">
+      <Filter>原始程式檔</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>原始程式檔</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SharedComponent\SerialComm\Serial.cpp">
+      <Filter>SharedComponent\SerialComm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SharedComponent\SerialComm\SerialEx.cpp">
+      <Filter>SharedComponent\SerialComm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SharedComponent\SerialComm\SerialWnd.cpp">
+      <Filter>SharedComponent\SerialComm</Filter>
+    </ClCompile>
+    <ClCompile Include="LK-G\SerialComBase.cpp">
+      <Filter>LK-G</Filter>
+    </ClCompile>
+    <ClCompile Include="LK-G\ThickCommunicator.cpp">
+      <Filter>LK-G</Filter>
+    </ClCompile>
+    <ClCompile Include="LK-G\ThickMachineManager.cpp">
+      <Filter>LK-G</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SharedComponent\AoiFont.cpp">
+      <Filter>SharedComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SharedComponent\AppLogProcess.cpp">
+      <Filter>SharedComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SharedComponent\AppProcess.cpp">
+      <Filter>SharedComponent</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="LK-GCommunicator.rc">
+      <Filter>資源檔</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\LKGCommunicator.rc2">
+      <Filter>資源檔</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\LK-GCommunicator.ico">
+      <Filter>資源檔</Filter>
+    </Image>
+  </ItemGroup>
+</Project>

@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -71,7 +71,7 @@ namespace OPCNodeClientEditor
                     CParam.NodeItemPullOut(CParam.StartNodeTag);
                     //將variable加入監聽清單
                     VariableAddListen();
-
+                    
                     //從list印至listview中
                     UpdateListViewInvoke();
                 }
@@ -196,7 +196,7 @@ namespace OPCNodeClientEditor
             //    ////ModifyMonitoredItemsResponseMessage
             //    m_subscription.AddItem(item);
             //}
-
+            
             //CParam.m_OpcUaClient.Session.AddSubscription(m_subscription);
             //m_subscription.Create();
             //CParam.m_OpcUaClient.Session.DefaultSubscription.FastDataChangeCallback += OnEventsFired;
@@ -331,6 +331,22 @@ namespace OPCNodeClientEditor
                 ClientUtils.HandleException(this.Text, exception);
             }
         }
-    }
 
+        private void MonitoredItem()
+        {
+            //檢查目前是否允許操作。
+            if (m_session == null)
+            {
+                return;
+            }
+            //新增MonitoredItem
+            foreach(var roll in CParam.VariableList)
+            {
+
+            }
+
+        }
+
+    }
+    
 }
