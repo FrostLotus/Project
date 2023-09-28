@@ -256,6 +256,11 @@ AppPackages/
 *.app
 
 
+#PLC
+*.PLC
+
+
 #####
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)
 #####
+/PLCCommunicator/OPCCommunicator/SYST_DATA/_R3DATA.txt
