@@ -15,6 +15,7 @@ namespace OPCNodeServerEditor
         private List<BaseDataVariableState<int>> TimeTickList = new List<BaseDataVariableState<int>>();//變數狀態
         private System.Timers.Timer NodeTimer = null;
 
+        public static ServerSystemContext m_SystemContext;
         private IList<IReference> references = null;//節點參考列表
         private INodeManager server;
 
@@ -25,6 +26,8 @@ namespace OPCNodeServerEditor
             : base(server, configuration, "http://opcfoundation.org/Quickstarts/ReferenceApplications")
         {
             //CustomNodeManager2內部參數
+            m_SystemContext = SystemContext;
+
             SystemContext.NodeIdFactory = this;
             // 取得節點管理器配置(基本無物)
             Configuration = configuration.ParseExtension<ReferenceServerConfiguration>();

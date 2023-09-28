@@ -21,7 +21,7 @@ namespace OPCNodeServerEditor
         public MainForm(ApplicationInstance application)
         {
             InitializeComponent();
-            ViewBarTimer.Interval = 5000;
+            ViewBarTimer.Interval = 250;
             ViewBarTimer.Tick += UpdateTimer_Tick;
             ///-----------------------------------------
             //設定SERVER
@@ -252,7 +252,7 @@ namespace OPCNodeServerEditor
                             }
                             CParam.VariableList[i]._BaseDataVariableState.StatusCode = StatusCodes.Good;
                             CParam.VariableList[i]._BaseDataVariableState.Timestamp = DateTime.Now;
-                            
+                            CParam.VariableList[i]._BaseDataVariableState.ClearChangeMasks(NodeManager.m_SystemContext, false);
                         }
                     }
                     //更新ListView
@@ -478,6 +478,24 @@ namespace OPCNodeServerEditor
                     item.SubItems.Add(String.Format("{0}", subscription.MonitoredItemCount));//總數
 
                     item.SubItems.Add(String.Format("{0}", subscription.Diagnostics.NextSequenceNumber));//S/N
+                    subscription.GetMonitoredItems(out uint[] serverHandles, out uint[] clientHandles);
+                    //Console.WriteLine($"#++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    //for (int ia=0;ia< serverHandles.Length; ia++)
+                    //{
+                    //    Console.WriteLine($"#serverHandles[{ia}]=");
+                    //    Console.WriteLine($"serverHandle = {serverHandles[ia]}");
+                        
+                    //}
+                    //for (int ib = 0; ib < clientHandles.Length; ib++)
+                    //{
+                    //    Console.WriteLine($"#clientHandles[{ib}]=");
+                    //    Console.WriteLine($"clientHandle = {serverHandles[ib]}");
+
+                    //}
+                    //Console.WriteLine($"#====");
+                    //Console.WriteLine($"NotificationsCount = {subscription.GetMonitoredItems}");
+                    //Console.WriteLine($"SessionId.Identifier = {subscription.Diagnostics.SessionId.Identifier}");
+                    //Console.WriteLine($"SessionId.NamespaceIndex = {subscription.Diagnostics.SessionId.NamespaceIndex}");
                 }
                 Lsv_Subscriptions.Items.Add(item);//反應回控制項
             }
