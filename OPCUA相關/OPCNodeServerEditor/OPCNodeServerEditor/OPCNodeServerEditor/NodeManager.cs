@@ -10,11 +10,11 @@ namespace OPCNodeServerEditor
 {
     public class NodeManager : CustomNodeManager2
     {
-       
         private ReferenceServerConfiguration Configuration;//基本為空
         private List<BaseDataVariableState<int>> TimeTickList = new List<BaseDataVariableState<int>>();//變數狀態
         private System.Timers.Timer NodeTimer = null;
-
+        public static object m_Lock;
+        public static ServerSystemContext m_SystemContext;
         private IList<IReference> references = null;//節點參考列表
         private INodeManager server;
 
@@ -25,6 +25,8 @@ namespace OPCNodeServerEditor
             : base(server, configuration, "http://opcfoundation.org/Quickstarts/ReferenceApplications")
         {
             //CustomNodeManager2內部參數
+            m_SystemContext = SystemContext;
+
             SystemContext.NodeIdFactory = this;
             // 取得節點管理器配置(基本無物)
             Configuration = configuration.ParseExtension<ReferenceServerConfiguration>();
@@ -45,6 +47,7 @@ namespace OPCNodeServerEditor
             CParam.VariableList.Clear();
             lock (Lock)
             {
+                
                 //加載預定義節點
                 LoadPredefinedNodes(SystemContext, externalReferences);
                 //節點參考列表
@@ -231,26 +234,26 @@ namespace OPCNodeServerEditor
         {
             BaseDataVariableState<T> variable = new BaseDataVariableState<T>(parent)
             {
-                SymbolicName = name,
-                ReferenceTypeId = ReferenceTypes.Organizes,
-                TypeDefinitionId = VariableTypeIds.BaseDataVariableType,
+                SymbolicName = name,//
+                ReferenceTypeId = ReferenceTypes.Organizes,//組織架構下
+                TypeDefinitionId = VariableTypeIds.BaseDataVariableType,//變數
 
-                BrowseName = new QualifiedName(name),//, NamespaceIndex),
-                DisplayName = new LocalizedText(name),
-                Description = description,
+                BrowseName = new QualifiedName(name),//, NamespaceIndex),//瀏覽名稱
+                DisplayName = new LocalizedText(name),//顯示名稱
+                Description = description,//描述
 
-                WriteMask = AttributeWriteMask.DisplayName | AttributeWriteMask.Description,
-                UserWriteMask = AttributeWriteMask.DisplayName | AttributeWriteMask.Description,
+                WriteMask = AttributeWriteMask.DisplayName | AttributeWriteMask.Description,//公開屬性供Client修改
+                UserWriteMask = AttributeWriteMask.DisplayName | AttributeWriteMask.Description,//公開屬性供Client修改
 
-                DataType = dataType,
-                ValueRank = valueRank,
-                AccessLevel = AccessLevels.CurrentReadOrWrite,
-                UserAccessLevel = AccessLevels.CurrentReadOrWrite,
-                Historizing = false,
-                Value = defaultValue,
-                StatusCode = StatusCodes.Good,
-                Timestamp = DateTime.Now,
-                NodeId = (parent == null)
+                DataType = dataType,//TYPE
+                ValueRank = valueRank,//變數形式
+                AccessLevel = AccessLevels.CurrentReadOrWrite,//可否讀寫
+                UserAccessLevel = AccessLevels.CurrentReadOrWrite,//Client可否讀寫
+                Historizing = false,//是否紀錄舊有歷史紀錄
+                Value = defaultValue,//變數值
+                StatusCode = StatusCodes.Good,//狀態碼
+                Timestamp = DateTime.Now,//紀錄目前時間
+                NodeId = (parent == null)//節點位置
                 ? new NodeId(name, NamespaceIndex)
                 : new NodeId(parent.NodeId.ToString() + "/" + name),
             };

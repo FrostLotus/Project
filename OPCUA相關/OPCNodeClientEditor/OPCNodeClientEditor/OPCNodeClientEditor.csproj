@@ -219,6 +219,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CParam.cs" />
     <Compile Include="ExceptionDlg.cs">
       <SubType>Form</SubType>
     </Compile>

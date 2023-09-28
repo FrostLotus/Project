@@ -21,7 +21,7 @@ namespace OPCNodeServerEditor
         public MainForm(ApplicationInstance application)
         {
             InitializeComponent();
-            ViewBarTimer.Interval = 5000;
+            ViewBarTimer.Interval = 250;
             ViewBarTimer.Tick += UpdateTimer_Tick;
             ///-----------------------------------------
             //設定SERVER
@@ -213,50 +213,53 @@ namespace OPCNodeServerEditor
         {
             try
             {
-                int selectedIndex = -1;
-                //單純修改值
-                if (Lsv_VariableList.SelectedIndices.Count <= 0)
+                lock (NodeManager.m_Lock)
                 {
-                    MessageBox.Show("在列表中無選擇 沒有修改目標");
-                }
-                else
-                {
-                    selectedIndex = Lsv_VariableList.SelectedIndices[0];
-                }
-                //-------------------------------------------------------
-                if (selectedIndex != -1)//有選取  確認有無刪除項目
-                {
-                    for (int i = 0; i < CParam.VariableList.Count; i++)
+                    int selectedIndex = -1;
+                    //單純修改值
+                    if (Lsv_VariableList.SelectedIndices.Count <= 0)
                     {
-                        //找相同index
-                        if (Convert.ToInt32(Txt_Index.Text) == CParam.VariableList[i]._OpcDataItem.Index)
-                        {
-                            //依格式餵入
-                            switch (CParam.VariableList[i]._OpcDataItem.DataType)
-                            {
-                                case "String":
-                                    CParam.VariableList[i]._BaseDataVariableState.Value = Txt_Value.Text;
-                                    break;
-                                case "Real":
-                                    CParam.VariableList[i]._BaseDataVariableState.Value = float.Parse(Txt_Value.Text);
-                                    break;
-                                case "Bool":
-                                    CParam.VariableList[i]._BaseDataVariableState.Value = (Txt_Value.Text=="0")?false:true;
-                                    break;
-                                case "Word":
-                                    if (int.TryParse(Txt_Value.Text, out int tmp))
-                                    {
-                                        CParam.VariableList[i]._BaseDataVariableState.Value = tmp;
-                                    }
-                                    break;
-                            }
-                            CParam.VariableList[i]._BaseDataVariableState.StatusCode = StatusCodes.Good;
-                            CParam.VariableList[i]._BaseDataVariableState.Timestamp = DateTime.Now;
-                            
-                        }
+                        MessageBox.Show("在列表中無選擇 沒有修改目標");
                     }
-                    //更新ListView
-                    UpdateVariableList();
+                    else
+                    {
+                        selectedIndex = Lsv_VariableList.SelectedIndices[0];
+                    }
+                    //-------------------------------------------------------
+                    if (selectedIndex != -1)//有選取  確認有無刪除項目
+                    {
+                        for (int i = 0; i < CParam.VariableList.Count; i++)
+                        {
+                            //找相同index
+                            if (Convert.ToInt32(Txt_Index.Text) == CParam.VariableList[i]._OpcDataItem.Index)
+                            {
+                                //依格式餵入
+                                switch (CParam.VariableList[i]._OpcDataItem.DataType)
+                                {
+                                    case "String":
+                                        CParam.VariableList[i]._BaseDataVariableState.Value = Txt_Value.Text;
+                                        break;
+                                    case "Real":
+                                        CParam.VariableList[i]._BaseDataVariableState.Value = float.Parse(Txt_Value.Text);
+                                        break;
+                                    case "Bool":
+                                        CParam.VariableList[i]._BaseDataVariableState.Value = (Txt_Value.Text == "0") ? false : true;
+                                        break;
+                                    case "Word":
+                                        if (int.TryParse(Txt_Value.Text, out int tmp))
+                                        {
+                                            CParam.VariableList[i]._BaseDataVariableState.Value = tmp;
+                                        }
+                                        break;
+                                }
+                                CParam.VariableList[i]._BaseDataVariableState.StatusCode = StatusCodes.Good;
+                                CParam.VariableList[i]._BaseDataVariableState.Timestamp = DateTime.Now;
+                                CParam.VariableList[i]._BaseDataVariableState.ClearChangeMasks(NodeManager.m_SystemContext, false);
+                            }
+                        }
+                        //更新ListView
+                        UpdateVariableList();
+                    }
                 }
             }
             catch(Exception ex)
@@ -478,6 +481,24 @@ namespace OPCNodeServerEditor
                     item.SubItems.Add(String.Format("{0}", subscription.MonitoredItemCount));//總數
 
                     item.SubItems.Add(String.Format("{0}", subscription.Diagnostics.NextSequenceNumber));//S/N
+                    subscription.GetMonitoredItems(out uint[] serverHandles, out uint[] clientHandles);
+                    //Console.WriteLine($"#++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    //for (int ia=0;ia< serverHandles.Length; ia++)
+                    //{
+                    //    Console.WriteLine($"#serverHandles[{ia}]=");
+                    //    Console.WriteLine($"serverHandle = {serverHandles[ia]}");
+                        
+                    //}
+                    //for (int ib = 0; ib < clientHandles.Length; ib++)
+                    //{
+                    //    Console.WriteLine($"#clientHandles[{ib}]=");
+                    //    Console.WriteLine($"clientHandle = {serverHandles[ib]}");
+
+                    //}
+                    //Console.WriteLine($"#====");
+                    //Console.WriteLine($"NotificationsCount = {subscription.GetMonitoredItems}");
+                    //Console.WriteLine($"SessionId.Identifier = {subscription.Diagnostics.SessionId.Identifier}");
+                    //Console.WriteLine($"SessionId.NamespaceIndex = {subscription.Diagnostics.SessionId.NamespaceIndex}");
                 }
                 Lsv_Subscriptions.Items.Add(item);//反應回控制項
             }
