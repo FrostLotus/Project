@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="原始程式檔">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="標頭檔">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="資源檔">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="SharedComponent">
+      <UniqueIdentifier>{ed4339a5-4a37-4814-beca-e6fb818d5a08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OPC">
+      <UniqueIdentifier>{286f7670-74af-4f38-ba70-e65de5cb2baf}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="OPCCommunicator.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="OPCCommunicatorDlg.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SharedComponent\AppProcess.h">
+      <Filter>SharedComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SharedComponent\AoiFont.h">
+      <Filter>SharedComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SharedComponent\AppLogProcess.h">
+      <Filter>SharedComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="OPC\SystPPProcess.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="OPC\SystDONGGUANPPProcess.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="OPC\OPCProcessBase.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="OPC\OPCController.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="OPC\OPCClientController.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="OPCCommunicator.cpp">
+      <Filter>原始程式檔</Filter>
+    </ClCompile>
+    <ClCompile Include="OPCCommunicatorDlg.cpp">
+      <Filter>原始程式檔</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>原始程式檔</Filter>
+    </ClCompile>
+    <ClCompile Include="OPC\OPCController.cpp">
+      <Filter>OPC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SharedComponent\AoiFont.cpp">
+      <Filter>SharedComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SharedComponent\AppLogProcess.cpp">
+      <Filter>SharedComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SharedComponent\AppProcess.cpp">
+      <Filter>SharedComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="OPC\OPCProcessBase.cpp">
+      <Filter>OPC</Filter>
+    </ClCompile>
+    <ClCompile Include="OPC\SystPPProcess.cpp">
+      <Filter>OPC</Filter>
+    </ClCompile>
+    <ClCompile Include="OPC\OPCClientController.cpp">
+      <Filter>OPC</Filter>
+    </ClCompile>
+    <ClCompile Include="OPC\SystDONGGUANPPProcess.cpp">
+      <Filter>OPC</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="OPCCommunicator.rc">
+      <Filter>資源檔</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\OPCCommunicator.rc2">
+      <Filter>資源檔</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\OPCCommunicator.ico">
+      <Filter>資源檔</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
