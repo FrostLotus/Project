@@ -15,17 +15,18 @@ namespace OPCNodeClientEditor
     /// </summary>
     public class CParam
     {
+
         public static string ServerURL;//對應server位置
         public static int IterationIndex = 1;//變數索引
         public static string StartNodeTag = "ns=2;s=A";//預設節點
         public static ushort NamespaceIndex = 2;
 
-        public static OpcUaClient m_OpcUaClient;// = new OpcUaClient();//OpcUaHelper
-
+        public static OpcUaClient m_OpcUaClient = new OpcUaClient();//OpcUaHelper
         public static List<FolderState> FolderList = new List<FolderState>();//檔案夾節點列表
         public static List<OpcDataVariable<object>> VariableList = new List<OpcDataVariable<object>>();//變數列表
 
-        private static Dictionary<string, Subscription> Subscriptions = new Dictionary<string, Subscription>();        // 系统所有的节点信息
+        private static Dictionary<string, Subscription> Subscriptions = new Dictionary<string, Subscription>();// 系统所有的节点信息
+        
 
         public static void NodeItemPullOut(string startNodetag)
         {
@@ -105,9 +106,10 @@ namespace OPCNodeClientEditor
                 MessageBox.Show(ex.Message, "FolderPullOut", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+        //
         private static void VariableToList(ReferenceDescription rdescription, string parent)
         {
-            //FolderState rootNode = FindFolder(rdescription.NodeId.FolderName);
+
             OpcDataVariable<object> tmpData;
 
             OpcDataItem tmpOpcDataItem = new OpcDataItem
@@ -201,37 +203,48 @@ namespace OPCNodeClientEditor
             }
             //StringVariableList.Add(tmpOpcDataItem);//剩下DataType value要抓
         }
-
+        /// <summary>變數加入監控項目項回推訂閱項</summary>
         public static void AddVariableToSubscription(Action<MonitoredItem, MonitoredItemNotificationEventArgs> callback)
         {
-            //新增一訂閱項目
+            
+            //新增一本Client訂閱項目
             Subscription m_subscription = new Subscription(m_OpcUaClient.Session.DefaultSubscription)
             {
                 PublishingEnabled = true,
                 PublishingInterval = 0,
-                KeepAliveCount = uint.MaxValue,
-                LifetimeCount = uint.MaxValue,
-                MaxNotificationsPerPublish = uint.MaxValue,
+                KeepAliveCount = uint.MaxValue,//10
+                LifetimeCount = uint.MaxValue,//10
+                MaxNotificationsPerPublish = uint.MaxValue,//1000
                 Priority = 100,
                 DisplayName = "Normal"
             };
-            //將所有變數加入MonitoredItem =>最後加進subscription
+            
+
+            //將所有變數加入MonitoredItem =>最後加進subscription殼中
             foreach (var roll in VariableList)
             {
-                var item = new MonitoredItem
+                MonitoredItem item = new MonitoredItem(m_subscription.DefaultItem)
                 {
+
                     StartNodeId = roll._BaseDataVariableState.NodeId,
                     AttributeId = Attributes.Value,
                     DisplayName = roll._BaseDataVariableState.DisplayName.Text,
+                    MonitoringMode = MonitoringMode.Reporting,
                     SamplingInterval = 100,
+                    QueueSize = 0
+
                 };
+                Console.WriteLine($"//-------------------------------------");
+                Console.WriteLine($"ID = {roll._BaseDataVariableState.NodeId.Identifier}");
+                Console.WriteLine($"Attributes.Value = {Attributes.Value}");
+                Console.WriteLine($"DisplayName = {roll._BaseDataVariableState.DisplayName.Text}");
                 item.Notification += (MonitoredItem monitoredItem, MonitoredItemNotificationEventArgs args) =>
                   {
                       callback?.Invoke(monitoredItem, args);
                   };
                 m_subscription.AddItem(item);
             }
-            //subscription加入連結對話中
+            //subscription加入連結對話(session)中
             m_OpcUaClient.Session.AddSubscription(m_subscription);
             m_subscription.Create();
 
@@ -252,11 +265,10 @@ namespace OPCNodeClientEditor
                 }
             }
         }
-
+        /// <summary>將本訂閱項目移除</summary>
         public static void RemoveSubscription()
         {
-            //對於訂閱列表的減
-            lock (Subscriptions)
+            lock (Subscriptions)//訂閱移除
             {
                 Subscriptions["Normal"].Delete(true);
                 m_OpcUaClient.Session.RemoveSubscription(Subscriptions["Normal"]);
@@ -265,6 +277,43 @@ namespace OPCNodeClientEditor
             }
         }
         //------------------------------------------------------
+        public static void UpdateValue(string strIndex, string value)
+        {
+            for (int i = 0; i < CParam.VariableList.Count; i++)
+            {
+                //找相同index
+                if (Convert.ToInt32(strIndex) == CParam.VariableList[i]._OpcDataItem.Index)
+                {
+                    //依格式餵入
+                    switch (CParam.VariableList[i]._OpcDataItem.DataType)
+                    {
+                        case "String":
+                            CParam.m_OpcUaClient.WriteNode(CParam.VariableList[i]._OpcDataItem.VaribleTag, value);
+                            Console.WriteLine(String.Format("{0:hh:mm:ss.ff}", DateTime.Now));
+                            CParam.VariableList[i]._BaseDataVariableState.Value = value;
+                            break;
+                        case "Real":
+                            CParam.m_OpcUaClient.WriteNode(CParam.VariableList[i]._OpcDataItem.VaribleTag, float.Parse(value));
+                            Console.WriteLine(String.Format("{0:hh:mm:ss.ff}", DateTime.Now));
+                            CParam.VariableList[i]._BaseDataVariableState.Value = float.Parse(value);
+                            break;
+                        case "Bool":
+                            CParam.m_OpcUaClient.WriteNode(CParam.VariableList[i]._OpcDataItem.VaribleTag, (value == "0") ? false : true);
+                            Console.WriteLine(String.Format("{0:hh:mm:ss.ff}", DateTime.Now));
+                            CParam.VariableList[i]._BaseDataVariableState.Value = (value == "0") ? false : true;
+                            break;
+                        case "Word":
+                            if (int.TryParse(value, out int tmp))
+                            {
+                                CParam.m_OpcUaClient.WriteNode(CParam.VariableList[i]._OpcDataItem.VaribleTag, tmp);
+                                Console.WriteLine(String.Format("{0:hh:mm:ss.ff}", DateTime.Now));
+                                CParam.VariableList[i]._BaseDataVariableState.Value = tmp;
+                            }
+                            break;
+                    }
+                }
+            }
+        }
         protected static FolderState FindFolder(string Parent)
         {
             FolderState re = new FolderState(null);
@@ -337,23 +386,20 @@ namespace OPCNodeClientEditor
         }
 
     }
-    public class OpcDataFolder
-    {
-        //資料夾用
-        public string Parent { get; set; }
-        //通用
-        public string FolderName { get; set; }//以(string)NodeID.Identifier作為唯一資料夾名稱追查
-    }
     public class OpcDataItem
     {
-        //通用
-        public string VaribleTag { get; set; }//以(string)NodeID作為唯一節點名稱追查(Tag) 僅此即可更改值
-        //變數用
-        public int Index { get; set; }//變數序
-        public string ItemName { get; set; }//對應中文名稱(client不顯示)
-        public string NodeID { get; set; }//ID名稱
-        public string DataType { get; set; }//數值類型:word(uint)
-        public object Value { get; set; }//數值
+        /// <summary>NodeID作為唯一節點名稱追查(Tag)</summary>
+        public string VaribleTag { get; set; }
+        /// <summary>變數目錄</summary>
+        public int Index { get; set; }
+        /// <summary>對應中文名稱(client不顯示)</summary>
+        public string ItemName { get; set; }
+        /// <summary>BrowseName瀏覽名稱</summary>
+        public string NodeID { get; set; }
+        /// <summary>變數類型</summary>
+        public string DataType { get; set; }
+        /// <summary>初始讀取數值</summary>
+        public object Value { get; set; }
     }
     public class OpcDataVariable<T>
     {

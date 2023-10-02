@@ -83,6 +83,8 @@ namespace OPCNodeServerEditor
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.Lab_ActiveTimeNow = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBox1.SuspendLayout();
             this.Gbx_NodeList.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -457,6 +459,8 @@ namespace OPCNodeServerEditor
             this.StatusBAR.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.Lab_Time,
             this.Lab_ServerTimeNow,
+            this.toolStripStatusLabel1,
+            this.Lab_ActiveTimeNow,
             this.Lab_sessions,
             this.Lab_sessionsCount,
             this.Lab_subscriptions,
@@ -581,6 +585,19 @@ namespace OPCNodeServerEditor
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Server位址";
             // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(66, 17);
+            this.toolStripStatusLabel1.Text = "運行時間:";
+            // 
+            // Lab_ActiveTimeNow
+            // 
+            this.Lab_ActiveTimeNow.Name = "Lab_ActiveTimeNow";
+            this.Lab_ActiveTimeNow.Size = new System.Drawing.Size(55, 17);
+            this.Lab_ActiveTimeNow.Text = "00:00:00";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -668,6 +685,8 @@ namespace OPCNodeServerEditor
         private System.Windows.Forms.TextBox Txt_Initial;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripStatusLabel Lab_ActiveTimeNow;
     }
 }
 

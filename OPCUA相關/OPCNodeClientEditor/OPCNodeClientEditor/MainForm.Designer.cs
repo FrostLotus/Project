@@ -46,14 +46,21 @@ namespace OPCNodeClientEditor
             this.label10 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.Btn_ReflashList = new System.Windows.Forms.Button();
             this.Lsv_VariableList = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.Lab_ServerTimeNow = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.Lab_ConnectNow = new System.Windows.Forms.ToolStripStatusLabel();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.Gbx_NodeList.SuspendLayout();
             this.groupBox5.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // Txt_ServerURL
@@ -118,6 +125,7 @@ namespace OPCNodeClientEditor
             // 
             this.Txt_Index.Location = new System.Drawing.Point(83, 31);
             this.Txt_Index.Name = "Txt_Index";
+            this.Txt_Index.ReadOnly = true;
             this.Txt_Index.Size = new System.Drawing.Size(145, 22);
             this.Txt_Index.TabIndex = 25;
             // 
@@ -125,6 +133,7 @@ namespace OPCNodeClientEditor
             // 
             this.Txt_ItemName.Location = new System.Drawing.Point(83, 71);
             this.Txt_ItemName.Name = "Txt_ItemName";
+            this.Txt_ItemName.ReadOnly = true;
             this.Txt_ItemName.Size = new System.Drawing.Size(145, 22);
             this.Txt_ItemName.TabIndex = 30;
             // 
@@ -132,6 +141,7 @@ namespace OPCNodeClientEditor
             // 
             this.Txt_NodeId.Location = new System.Drawing.Point(289, 71);
             this.Txt_NodeId.Name = "Txt_NodeId";
+            this.Txt_NodeId.ReadOnly = true;
             this.Txt_NodeId.Size = new System.Drawing.Size(144, 22);
             this.Txt_NodeId.TabIndex = 26;
             // 
@@ -154,6 +164,7 @@ namespace OPCNodeClientEditor
             // 
             // Cbb_DataType
             // 
+            this.Cbb_DataType.Enabled = false;
             this.Cbb_DataType.FormattingEnabled = true;
             this.Cbb_DataType.Items.AddRange(new object[] {
             "String",
@@ -217,7 +228,6 @@ namespace OPCNodeClientEditor
             // 
             // groupBox5
             // 
-            this.groupBox5.Controls.Add(this.Btn_ReflashList);
             this.groupBox5.Controls.Add(this.Lsv_VariableList);
             this.groupBox5.Location = new System.Drawing.Point(12, 71);
             this.groupBox5.Name = "groupBox5";
@@ -225,16 +235,6 @@ namespace OPCNodeClientEditor
             this.groupBox5.TabIndex = 63;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "變數列表";
-            // 
-            // Btn_ReflashList
-            // 
-            this.Btn_ReflashList.Location = new System.Drawing.Point(210, 238);
-            this.Btn_ReflashList.Name = "Btn_ReflashList";
-            this.Btn_ReflashList.Size = new System.Drawing.Size(118, 23);
-            this.Btn_ReflashList.TabIndex = 3;
-            this.Btn_ReflashList.Text = "更新列表";
-            this.Btn_ReflashList.UseVisualStyleBackColor = true;
-            this.Btn_ReflashList.Click += new System.EventHandler(this.Btn_ReflashList_Click);
             // 
             // Lsv_VariableList
             // 
@@ -245,10 +245,10 @@ namespace OPCNodeClientEditor
             this.columnHeader4});
             this.Lsv_VariableList.FullRowSelect = true;
             this.Lsv_VariableList.HideSelection = false;
-            this.Lsv_VariableList.Location = new System.Drawing.Point(13, 21);
+            this.Lsv_VariableList.Location = new System.Drawing.Point(6, 21);
             this.Lsv_VariableList.MultiSelect = false;
             this.Lsv_VariableList.Name = "Lsv_VariableList";
-            this.Lsv_VariableList.Size = new System.Drawing.Size(526, 211);
+            this.Lsv_VariableList.Size = new System.Drawing.Size(539, 244);
             this.Lsv_VariableList.TabIndex = 2;
             this.Lsv_VariableList.UseCompatibleStateImageBehavior = false;
             this.Lsv_VariableList.View = System.Windows.Forms.View.Details;
@@ -276,24 +276,86 @@ namespace OPCNodeClientEditor
             this.columnHeader4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.columnHeader4.Width = 140;
             // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel1,
+            this.Lab_ServerTimeNow,
+            this.toolStripStatusLabel3,
+            this.Lab_ConnectNow});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 503);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(758, 22);
+            this.statusStrip1.TabIndex = 70;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(66, 17);
+            this.toolStripStatusLabel1.Text = "目前時間:";
+            // 
+            // Lab_ServerTimeNow
+            // 
+            this.Lab_ServerTimeNow.Name = "Lab_ServerTimeNow";
+            this.Lab_ServerTimeNow.Size = new System.Drawing.Size(55, 17);
+            this.Lab_ServerTimeNow.Text = "00:00:00";
+            // 
+            // toolStripStatusLabel3
+            // 
+            this.toolStripStatusLabel3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(38, 17);
+            this.toolStripStatusLabel3.Text = "狀態:";
+            // 
+            // Lab_ConnectNow
+            // 
+            this.Lab_ConnectNow.Name = "Lab_ConnectNow";
+            this.Lab_ConnectNow.Size = new System.Drawing.Size(43, 17);
+            this.Lab_ConnectNow.Text = "未連線";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Enabled = false;
+            this.textBox1.Location = new System.Drawing.Point(581, 43);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(89, 22);
+            this.textBox1.TabIndex = 29;
+            this.textBox1.Text = "3";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("新細明體", 10F);
+            this.label1.Location = new System.Drawing.Point(579, 18);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(173, 14);
+            this.label1.TabIndex = 32;
+            this.label1.Text = "斷線重連時間(暫時唯讀)/秒";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(574, 500);
+            this.ClientSize = new System.Drawing.Size(758, 525);
+            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.Txt_ServerURL);
             this.Controls.Add(this.Btn_Connect);
             this.Controls.Add(this.label13);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.Lab_ConnectStatus);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.Gbx_NodeList);
             this.Controls.Add(this.groupBox5);
             this.Name = "MainForm";
             this.Text = "Form1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
-            this.Load += new System.EventHandler(this.MainForm_Load);
             this.Gbx_NodeList.ResumeLayout(false);
             this.Gbx_NodeList.PerformLayout();
             this.groupBox5.ResumeLayout(false);
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -323,7 +385,13 @@ namespace OPCNodeClientEditor
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
-        private System.Windows.Forms.Button Btn_ReflashList;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripStatusLabel Lab_ServerTimeNow;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
+        private System.Windows.Forms.ToolStripStatusLabel Lab_ConnectNow;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label1;
     }
 }
 

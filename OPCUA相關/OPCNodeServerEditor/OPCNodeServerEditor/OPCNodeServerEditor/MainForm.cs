@@ -15,13 +15,14 @@ namespace OPCNodeServerEditor
 {
     public partial class MainForm : Form
     {
+        public DateTime ActiveTime = DateTime.Now;//程式開啟時間
         public emServerFlag ServerFlags = emServerFlag.Stop;
         public static Timer ViewBarTimer = new Timer();
         private delegate void ReflashListView();
         public MainForm(ApplicationInstance application)
         {
             InitializeComponent();
-            ViewBarTimer.Interval = 250;
+            ViewBarTimer.Interval = 1000;
             ViewBarTimer.Tick += UpdateTimer_Tick;
             ///-----------------------------------------
             //設定SERVER
@@ -327,6 +328,9 @@ namespace OPCNodeServerEditor
                 Txt_Initial.Enabled = true;
                 Txt_Value.Enabled = false;
 
+                Lsv_Sessions.Clear();
+                Lsv_Subscriptions.Clear();
+
                 Lab_Status.Text = $"Server停止";
                 ServerFlags = emServerFlag.Stop;
             }
@@ -415,7 +419,8 @@ namespace OPCNodeServerEditor
         {
             try
             {
-                Lab_ServerTimeNow.Text = String.Format("{0:hh:mm:ss.fff}", DateTime.Now);
+                Lab_ServerTimeNow.Text = String.Format("{0:hh:mm:ss.ff}", DateTime.Now);
+                Lab_ActiveTimeNow.Text = (DateTime.Now - ActiveTime).ToString();
                 UpdateSessions();
                 Lab_sessionsCount.Text = Convert.ToString(Lsv_Sessions.Items.Count);
                 UpdateSubscriptions();
@@ -529,17 +534,6 @@ namespace OPCNodeServerEditor
             //    Lsv_VariableList.Items[selectedIndex].EnsureVisible(); // 确保选中项可见
             //}
             //Lsv_VariableList.Sort();
-        }
-        public void UpdateSession(Session session, SessionEventReason e)
-        {
-            //僅session啟動時讀的了
-            lock (session.DiagnosticsLock)//鎖執行緒
-            {
-                Console.WriteLine($"Session觸發:\n" +
-                                  $"SessionName =  {session.SessionDiagnostics.SessionName}\n" +
-                                  $"Id = {session.Id}" +
-                                  $"最後連線時間 = {session.SessionDiagnostics.ClientLastContactTime.ToLocalTime()}");
-            }
         }
         public ServiceResult UpdateStatus(ISystemContext context, NodeState node, ref object value)
         {

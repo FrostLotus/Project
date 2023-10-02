@@ -10,39 +10,50 @@ using System.Windows.Forms;
 using OpcUaHelper;
 using Opc.Ua;
 using Opc.Ua.Client;
+using System.Diagnostics;
 
 namespace OPCNodeClientEditor
 {
     public partial class MainForm : Form
     {
-        private MonitoredItemNotificationEventHandler m_monitoredItem_Notification;
-        private ApplicationConfiguration m_configuration;
-
-
         private delegate void ReflashListView();
         public emServerFlag ServerFlags = emServerFlag.Stop;
+        public Timer ViewBarTimer = new Timer();
 
+        public Stopwatch swStopwatch = new Stopwatch();
         //=================================================================================
+        /// <summary>[constructor]初始化</summary>
         public MainForm()
         {
             InitializeComponent();
+            //----------------------------------
+            //ViewBarTimer.Interval = 1000;
+            //ViewBarTimer.Tick += UpdateTimer;
+            //ViewBarTimer.Start();
+
+            CParam.m_OpcUaClient.ReconnectPeriod = Convert.ToInt32(textBox1.Text);//重連線時間覆寫
+            
+
+            CParam.m_OpcUaClient.OpcStatusChange += M_OpcUaClient_OpcStatusChange;
+            CParam.m_OpcUaClient.ConnectComplete += M_OpcUaClient_ConnectComplete;
+
         }
-        private void MainForm_Load(object sender, EventArgs e)
-        {
-        }
+        //------------------------------------------
+        /// <summary>[ListView]目錄選取</summary>
         private void Lsv_VariableList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //時間最後行不觸發
-            if (Lsv_VariableList.SelectedIndices.Count > 0 && Lsv_VariableList.SelectedIndices[0] < Lsv_VariableList.Items.Count - 1)
+            //若為時間最後行則不觸發
+            if ((Lsv_VariableList.SelectedIndices.Count > 0) && (Lsv_VariableList.SelectedIndices[0] < Lsv_VariableList.Items.Count - 1))
             {
                 //將值變更為選取項目
                 int selectedIndex = Lsv_VariableList.SelectedIndices[0];
                 Console.WriteLine($"選取第{selectedIndex}行");
-                Txt_Index.Text = CParam.VariableList[selectedIndex]._OpcDataItem.Index.ToString();
-                Txt_ItemName.Text = CParam.VariableList[selectedIndex]._OpcDataItem.ItemName.ToString();
-                Txt_NodeId.Text = CParam.VariableList[selectedIndex]._OpcDataItem.NodeID.ToString();
-                Cbb_DataType.SelectedItem = CParam.VariableList[selectedIndex]._OpcDataItem.DataType.ToString();
-                Txt_Value.Text = CParam.VariableList[selectedIndex]._BaseDataVariableState.Value.ToString();//暫存_VALUE
+                //下列修改項目
+                Txt_Index.Text =             CParam.VariableList[selectedIndex]._OpcDataItem.Index.ToString();
+                Txt_ItemName.Text =          CParam.VariableList[selectedIndex]._OpcDataItem.ItemName.ToString();
+                Txt_NodeId.Text =            CParam.VariableList[selectedIndex]._OpcDataItem.NodeID.ToString();
+                Cbb_DataType.SelectedItem =  CParam.VariableList[selectedIndex]._OpcDataItem.DataType.ToString();
+                Txt_Value.Text =             CParam.VariableList[selectedIndex]._BaseDataVariableState.Value.ToString();//暫存_VALUE
             }
             else
             {
@@ -51,29 +62,16 @@ namespace OPCNodeClientEditor
                 //不做等第二次
             }
         }
+        /// <summary>[Button]連線</summary>
         private async void Btn_Connect_Click(object sender, EventArgs e)
         {
-            CParam.m_OpcUaClient = new OpcUaClient();
-            if (ServerFlags == emServerFlag.Stop)
+            if (ServerFlags == emServerFlag.Stop)//若為未連線
             {
                 try
                 {
                     CParam.ServerURL = Txt_ServerURL.Text;
                     await CParam.m_OpcUaClient.ConnectServer(CParam.ServerURL);
-
-                    //顯示
-                    Lab_ConnectStatus.Text = "連線成功";
-                    Btn_Connect.BackColor = Color.Green;
-                    
-                    //將variable讀回Variablelist中
-                    CParam.NodeItemPullOut(CParam.StartNodeTag);
-                    CParam.AddVariableToSubscription(MonitoredItem_Callback);
-                    //將variable加入監聽清單
-                    //VariableAddListen();
-
-                    //從list印至listview中
-                    UpdateListViewInvoke();
-                    ServerFlags = emServerFlag.Start;
+                    //若連線成功成功則跳入M_OpcUaClient_ConnectComplete
                 }
                 catch (Exception ex)
                 {
@@ -83,64 +81,28 @@ namespace OPCNodeClientEditor
             }
             else if (ServerFlags == emServerFlag.Start)
             {
+                //關閉連線
+                CParam.RemoveSubscription();
                 CParam.m_OpcUaClient.Disconnect();
                 ServerFlags = emServerFlag.Stop;
+                Btn_Connect.Text = "重新連線";
                 Btn_Connect.BackColor = Color.Coral;
             }
         }
+        /// <summary>[Button]更新數值</summary>
         private void Btn_UpdateValue_Click(object sender, EventArgs e)
         {
             try
             {
-                int selectedIndex = -1;
                 //單純修改值
                 if (Lsv_VariableList.SelectedIndices.Count <= 0)
                 {
-                    MessageBox.Show("在列表中無選擇 沒有修改目標");
+                    MessageBox.Show("在列表中無選擇 沒有修改目標", "UpdateValue",MessageBoxButtons.OK,MessageBoxIcon.Warning);
                 }
                 else
                 {
-                    selectedIndex = Lsv_VariableList.SelectedIndices[0];
-                }
-                //-------------------------------------------------------
-                if (selectedIndex != -1)//有選取  確認有無刪除項目
-                {
-                    for (int i = 0; i < CParam.VariableList.Count; i++)
-                    {
-                        //找相同index
-                        if (Convert.ToInt32(Txt_Index.Text) == CParam.VariableList[i]._OpcDataItem.Index)
-                        {
-                            //依格式餵入
-                            switch (CParam.VariableList[i]._OpcDataItem.DataType)
-                            {
-                                case "String":
-                                    CParam.m_OpcUaClient.WriteNode(CParam.VariableList[i]._OpcDataItem.VaribleTag, Txt_Value.Text);
-                                    Console.WriteLine(String.Format("{0:hh:mm:ss.fff}", DateTime.Now));
-                                    CParam.VariableList[i]._BaseDataVariableState.Value = Txt_Value.Text;
-                                    break;
-                                case "Real":
-                                    CParam.m_OpcUaClient.WriteNode(CParam.VariableList[i]._OpcDataItem.VaribleTag, float.Parse(Txt_Value.Text));
-                                    Console.WriteLine(String.Format("{0:hh:mm:ss.fff}", DateTime.Now));
-                                    CParam.VariableList[i]._BaseDataVariableState.Value = float.Parse(Txt_Value.Text);
-                                    break;
-                                case "Bool":
-                                    CParam.m_OpcUaClient.WriteNode(CParam.VariableList[i]._OpcDataItem.VaribleTag, (Txt_Value.Text == "0") ? false : true);
-                                    Console.WriteLine(String.Format("{0:hh:mm:ss.fff}", DateTime.Now));
-                                    CParam.VariableList[i]._BaseDataVariableState.Value = (Txt_Value.Text == "0") ? false : true;
-                                    break;
-                                case "Word":
-                                    if (int.TryParse(Txt_Value.Text, out int tmp))
-                                    {
-                                        CParam.m_OpcUaClient.WriteNode(CParam.VariableList[i]._OpcDataItem.VaribleTag, tmp);
-                                        Console.WriteLine(String.Format("{0:hh:mm:ss.fff}", DateTime.Now));
-                                        CParam.VariableList[i]._BaseDataVariableState.Value = tmp;
-                                    }
-                                    break;
-                            }
-                        }
-                    }
-                    //更新ListView
-                    UpdateListViewInvoke();
+                    CParam.UpdateValue(Txt_Index.Text, Txt_Value.Text);//更新數值
+                    UpdateListViewInvoke();//更新ListView
                 }
             }
             catch (Exception ex)
@@ -148,21 +110,17 @@ namespace OPCNodeClientEditor
                 MessageBox.Show($"{ex.Message} \n可能輸入值不匹配type", "Btn_UpdateValue", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        private void Btn_ReflashList_Click(object sender, EventArgs e)
+        /// <summary>[Form]關閉視窗</summary>
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            //將variable讀回list中
-            CParam.NodeItemPullOut(CParam.StartNodeTag);
-            //從list印至listview中
-            UpdateListViewInvoke();
+            if(ServerFlags == emServerFlag.Start)
+            {
+                CParam.RemoveSubscription();
+                CParam.m_OpcUaClient.Disconnect();
+            }
         }
-        //=====================================================================
-        public void VariableAddListen()
-        {
-            string[] MonitorNodeTags = new string[CParam.VariableList.Count];
-
-            
-        }
-       
+        //=================================================================================
+        /// <summary>更新列表Invoke</summary>
         public void UpdateListViewInvoke()
         {
             //判斷物件是否在同一個執行緒上
@@ -177,95 +135,129 @@ namespace OPCNodeClientEditor
                 UpdateVariableList();
             }
         }
+        /// <summary>更新列表</summary>
         private void UpdateVariableList()
         {
+            swStopwatch.Restart();
             Lsv_VariableList.Items.Clear();//清除Listview中項目
             for (int i = 0; i < CParam.VariableList.Count; i++)
             {
-                ListViewItem item = new ListViewItem($"{CParam.VariableList[i]._OpcDataItem.Index}");
-                item.SubItems.Add($"{CParam.VariableList[i]._OpcDataItem.ItemName}");
-                item.SubItems.Add($"{CParam.VariableList[i]._OpcDataItem.NodeID}");
+                ListViewItem item = new ListViewItem($"{CParam.VariableList[i]._OpcDataItem.Index}");//目錄
+                item.SubItems.Add($"{CParam.VariableList[i]._OpcDataItem.ItemName}");//名稱
+                item.SubItems.Add($"{CParam.VariableList[i]._OpcDataItem.NodeID}");//顯示ID
                 item.SubItems.Add($"{CParam.VariableList[i]._BaseDataVariableState.Value}");//以node內value為準
                 Lsv_VariableList.Items.Add(item);//反應回控制項
             }
-            ListViewItem tmpTime = new ListViewItem(String.Format("{0:hh:mm:ss.fff}", DateTime.Now));
+            ListViewItem tmpTime = new ListViewItem(String.Format("{0:hh:mm:ss.ff}", DateTime.Now));//顯示最後更新時間
             Lsv_VariableList.Items.Add(tmpTime);
+            //時間測試------
+            swStopwatch.Stop();
+            TimeSpan trim = swStopwatch.Elapsed;
+
+            Console.WriteLine("迴圈1次時間: " + trim + "\n目前時間: " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.ff tt"));
         }
-        private void SubCallback(string key, MonitoredItem monitoredItem, MonitoredItemNotificationEventArgs args)
+        private void MonitoredItem_Callback(MonitoredItem monitoredItem, MonitoredItemNotificationEventArgs e)
         {
+            // 判斷物件是否在同一個執行緒上
             if (InvokeRequired)
             {
-                Invoke(new Action<string, MonitoredItem, MonitoredItemNotificationEventArgs>(SubCallback), key, monitoredItem, args);
+                BeginInvoke(new Action<MonitoredItem, MonitoredItemNotificationEventArgs>(MonitoredItem_Callback), monitoredItem, e);
                 return;
             }
-
-            if (key == "A")
-            {
-                // 如果有多个的订阅值都关联了当前的方法，可以通过key和monitoredItem来区分
-                MonitoredItemNotification notification = args.NotificationValue as MonitoredItemNotification;
-                if (notification != null)
-                {
-                    //textBox3.Text = notification.Value.WrappedValue.Value.ToString();
-                }
-            }
-            else if (key == "B")
-            {
-                // 需要区分出来每个不同的节点信息
-                MonitoredItemNotification notification = args.NotificationValue as MonitoredItemNotification;
-
-                //目前不管
-                //if (monitoredItem.StartNodeId.ToString() == MonitorNodeTags[0])
-                //{
-                //    //textBox5.Text = notification.Value.WrappedValue.Value.ToString();
-                //}
-                //else if (monitoredItem.StartNodeId.ToString() == MonitorNodeTags[1])
-                //{
-                //    //textBox9.Text = notification.Value.WrappedValue.Value.ToString();
-                //}
-                //else if (monitoredItem.StartNodeId.ToString() == MonitorNodeTags[2])
-                //{
-                //    //textBox10.Text = notification.Value.WrappedValue.Value.ToString();
-                //}
-            }
-        }
-
-        private void MonitoredItem_Callback(MonitoredItem monitoredItem, MonitoredItemNotificationEventArgs args)
-        {
+            //若Client端初始化建立顯示完成  才做觸發的動作
             if (ServerFlags == emServerFlag.Start)
             {
-                if (InvokeRequired)
-                {
-                    Invoke(new Action<MonitoredItem, MonitoredItemNotificationEventArgs>(MonitoredItem_Callback), monitoredItem, args);
-                    return;
-                }
-                MonitoredItemNotification notification = args.NotificationValue as MonitoredItemNotification;
-                if (notification != null)
+                //監控項目內部通知項目
+                MonitoredItemNotification notification = e.NotificationValue as MonitoredItemNotification;
+                if (notification != null)//若無
                 {
                     foreach (var roll in CParam.VariableList)
                     {
+                        //將對應修改的值對應名稱 讀取新值寫入列表
                         if (roll._BaseDataVariableState.DisplayName.Text == monitoredItem.DisplayName)
                         {
-
-                            //roll._BaseDataVariableState.Value = monitoredItem.LastValue;
-                            //roll._OpcDataItem.Value = monitoredItem.LastValue;
-                            roll._BaseDataVariableState.Value = CParam.m_OpcUaClient.ReadNode(roll._OpcDataItem.VaribleTag);
-                            roll._OpcDataItem.Value = CParam.m_OpcUaClient.ReadNode(roll._OpcDataItem.VaribleTag);
-
-
-
+                            roll._BaseDataVariableState.Value = notification.Value.WrappedValue;
+                            roll._OpcDataItem.Value = notification.Value.WrappedValue;
+                            //roll._BaseDataVariableState.Value = CParam.m_OpcUaClient.ReadNode(roll._OpcDataItem.VaribleTag);
+                            //roll._OpcDataItem.Value = CParam.m_OpcUaClient.ReadNode(roll._OpcDataItem.VaribleTag);
                         }
                     }
-                    UpdateVariableList();
+                    //刷新變數列表
+                    UpdateListViewInvoke();
                 }
             }
-
         }
 
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        private void M_OpcUaClient_OpcStatusChange(object sender, OpcUaStatusEventArgs e)
         {
-            CParam.RemoveSubscription();
-            CParam.m_OpcUaClient.Disconnect();
+            if (InvokeRequired)
+            {
+                BeginInvoke(  new Action( () => { M_OpcUaClient_OpcStatusChange(sender, e); } )  );
+                return;
+            }
+            //若異常
+            if (e.Error)
+            {
+                Lab_ConnectNow.BackColor = Color.Red;
+            }
+            else
+            {
+                //正常狀態
+                Lab_ConnectNow.BackColor = SystemColors.Control;
+            }
+
+            Lab_ConnectNow.Text = e.Text;//狀態輸出
         }
+        private void M_OpcUaClient_ConnectComplete(object sender, EventArgs e)
+        {
+            try
+            {
+                OpcUaClient client = (OpcUaClient)sender;
+                if (client.Connected)
+                {
+                    //顯示
+                    Lab_ConnectStatus.Text = "連線成功";
+                    Btn_Connect.Text = "連線中";
+                    Btn_Connect.BackColor = Color.Green;
+
+                    //將variable讀進Variablelist中 且建立參考節點
+                    CParam.NodeItemPullOut(CParam.StartNodeTag);
+                    //將variable加入監聽清單
+                    CParam.AddVariableToSubscription(MonitoredItem_Callback);
+                    //從list印至listview中
+                    UpdateListViewInvoke();
+                    ServerFlags = emServerFlag.Start;
+                }
+            }
+            catch (Exception exception)
+            {
+                ClientUtils.HandleException(Text, exception);
+            }
+        }
+        private void UpdateTimer(object sender, EventArgs e)
+        {
+            try
+            {
+                Lab_ServerTimeNow.Text = String.Format("{0:hh:mm:ss.ff}", DateTime.Now);
+                if (CParam.m_OpcUaClient.Connected && ServerFlags == emServerFlag.Start)
+                {
+                    Lab_ConnectNow.Text = "連線中";
+                }
+                else if(ServerFlags == emServerFlag.Stop)
+                {
+                    Lab_ConnectNow.Text = "未連線";
+                }
+                else if (!CParam.m_OpcUaClient.Connected && ServerFlags == emServerFlag.Start)
+                {
+                    Lab_ConnectNow.Text = "連線中斷";
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "有連線問題", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
     }
 
 }
