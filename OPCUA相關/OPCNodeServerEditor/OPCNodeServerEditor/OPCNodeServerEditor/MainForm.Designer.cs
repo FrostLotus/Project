@@ -70,6 +70,8 @@ namespace OPCNodeServerEditor
             this.StatusBAR = new System.Windows.Forms.StatusStrip();
             this.Lab_Time = new System.Windows.Forms.ToolStripStatusLabel();
             this.Lab_ServerTimeNow = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.Lab_ActiveTimeNow = new System.Windows.Forms.ToolStripStatusLabel();
             this.Lab_sessions = new System.Windows.Forms.ToolStripStatusLabel();
             this.Lab_sessionsCount = new System.Windows.Forms.ToolStripStatusLabel();
             this.Lab_subscriptions = new System.Windows.Forms.ToolStripStatusLabel();
@@ -83,8 +85,6 @@ namespace OPCNodeServerEditor
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.Lab_ActiveTimeNow = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBox1.SuspendLayout();
             this.Gbx_NodeList.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -486,6 +486,19 @@ namespace OPCNodeServerEditor
             this.Lab_ServerTimeNow.Size = new System.Drawing.Size(55, 17);
             this.Lab_ServerTimeNow.Text = "00:00:00";
             // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(66, 17);
+            this.toolStripStatusLabel1.Text = "運行時間:";
+            // 
+            // Lab_ActiveTimeNow
+            // 
+            this.Lab_ActiveTimeNow.Name = "Lab_ActiveTimeNow";
+            this.Lab_ActiveTimeNow.Size = new System.Drawing.Size(55, 17);
+            this.Lab_ActiveTimeNow.Text = "00:00:00";
+            // 
             // Lab_sessions
             // 
             this.Lab_sessions.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
@@ -533,7 +546,7 @@ namespace OPCNodeServerEditor
             this.groupBox5.Size = new System.Drawing.Size(551, 209);
             this.groupBox5.TabIndex = 49;
             this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "變數列表";
+            this.groupBox5.Text = "自訂變數列表";
             // 
             // Lsv_VariableList
             // 
@@ -584,19 +597,6 @@ namespace OPCNodeServerEditor
             this.groupBox6.TabIndex = 47;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Server位址";
-            // 
-            // toolStripStatusLabel1
-            // 
-            this.toolStripStatusLabel1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(66, 17);
-            this.toolStripStatusLabel1.Text = "運行時間:";
-            // 
-            // Lab_ActiveTimeNow
-            // 
-            this.Lab_ActiveTimeNow.Name = "Lab_ActiveTimeNow";
-            this.Lab_ActiveTimeNow.Size = new System.Drawing.Size(55, 17);
-            this.Lab_ActiveTimeNow.Text = "00:00:00";
             // 
             // MainForm
             // 

@@ -255,6 +255,7 @@ namespace OPCNodeServerEditor
                             CParam.VariableList[i]._BaseDataVariableState.StatusCode = StatusCodes.Good;
                             CParam.VariableList[i]._BaseDataVariableState.Timestamp = DateTime.Now;
                             CParam.VariableList[i]._BaseDataVariableState.ClearChangeMasks(NodeManager.m_SystemContext, false);
+                            Console.WriteLine("update數值更新目前時間: " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff"));
                         }
                     }
                     //更新ListView
@@ -308,7 +309,7 @@ namespace OPCNodeServerEditor
             {
                 CParam.UsingApplication.Server.Stop();
 
-                UpdateTimer_Stop();
+                //UpdateTimer_Stop();
                 //Form方面
                 Btn_Stop.Enabled = false;
                 Btn_Stop.BackColor = Color.ForestGreen;
@@ -328,8 +329,8 @@ namespace OPCNodeServerEditor
                 Txt_Initial.Enabled = true;
                 Txt_Value.Enabled = false;
 
-                Lsv_Sessions.Clear();
-                Lsv_Subscriptions.Clear();
+                //Lsv_Sessions.Clear();
+                //Lsv_Subscriptions.Clear();
 
                 Lab_Status.Text = $"Server停止";
                 ServerFlags = emServerFlag.Stop;
@@ -419,18 +420,20 @@ namespace OPCNodeServerEditor
         {
             try
             {
-                Lab_ServerTimeNow.Text = String.Format("{0:hh:mm:ss.ff}", DateTime.Now);
-                Lab_ActiveTimeNow.Text = (DateTime.Now - ActiveTime).ToString();
+                Lab_ServerTimeNow.Text = String.Format("{0:hh:mm:ss.ff}", DateTime.Now);//目前時間
+                Lab_ActiveTimeNow.Text = (DateTime.Now - ActiveTime).ToString(@"dd\.hh\:mm\:ss");//運作時間
+                Lab_sessionsCount.Text = Convert.ToString(Lsv_Sessions.Items.Count);//連線會話數量
+                Lab_subscriptionsCount.Text = Convert.ToString(Lsv_Subscriptions.Items.Count);//訂閱數量
+
                 UpdateSessions();
-                Lab_sessionsCount.Text = Convert.ToString(Lsv_Sessions.Items.Count);
                 UpdateSubscriptions();
-                Lab_subscriptionsCount.Text = Convert.ToString(Lsv_Subscriptions.Items.Count);
+
                 int itemTotal = 0;
                 for (int i = 0; i < Lsv_Subscriptions.Items.Count; i++)
                 {
                     itemTotal += Convert.ToInt32(Lsv_Subscriptions.Items[i].SubItems[2].Text);
                 }
-                Lab_itemsCount.Text = Convert.ToString(itemTotal);
+                Lab_itemsCount.Text = Convert.ToString(itemTotal);//全部監控項目
             }
             catch (Exception ex)
             {
@@ -440,77 +443,79 @@ namespace OPCNodeServerEditor
         private void UpdateSessions()
         {
             Lsv_Sessions.Items.Clear();//清除Listview中項目
-            IList<Session> sessions = CParam._NodeServer.CurrentInstance.SessionManager.GetSessions();//從SessionManager取得連結數
 
-            for (int i = 0; i < sessions.Count; i++)
+            if (ServerFlags == emServerFlag.Start)
             {
-                Session session = sessions[i];
-                //UpdateStatus(session, SessionEventReason.Activated);
-                lock (session.DiagnosticsLock)//鎖執行緒
+                IList<Session> sessions = CParam._NodeServer.CurrentInstance.SessionManager.GetSessions();//從SessionManager取得連結數
+
+                for (int i = 0; i < sessions.Count; i++)
                 {
-                    ListViewItem item = new ListViewItem(session.SessionDiagnostics.SessionName);
-                    //若偵測項不為空
-                    if (session.Identity != null)
+                    Session session = sessions[i];
+                    lock (session.DiagnosticsLock)//鎖執行緒
                     {
-                        item.SubItems.Add(session.Identity.DisplayName);//新增顯示連線名稱
+                        ListViewItem item = new ListViewItem(session.SessionDiagnostics.SessionName);
+                        //若偵測項不為空
+                        if (session.Identity != null)
+                        {
+                            item.SubItems.Add(session.Identity.DisplayName);//新增顯示連線名稱
+                            item.SubItems.Add(String.Format("{0}", session.Id));//ID
+                            item.SubItems.Add(String.Format("{0:HH:mm:ss.ff}", session.SessionDiagnostics.ClientLastContactTime.ToLocalTime()));//最後連線時間
+                        }
+                        else
+                        {
+                            item.SubItems.Add(String.Empty);//加空
+                        }
+                        Lsv_Sessions.Items.Add(item);//反應回控制項
                     }
-                    else
-                    {
-                        item.SubItems.Add(String.Empty);//加空
-                    }
-                    item.SubItems.Add(String.Format("{0}", session.Id));//ID
-                    item.SubItems.Add(String.Format("{0:HH:mm:ss.fff}", session.SessionDiagnostics.ClientLastContactTime.ToLocalTime()));//最後連線時間
-
-                    Lsv_Sessions.Items.Add(item);//反應回控制項
-
                 }
-            }
-            // adjust 控制項外觀寬度
-            for (int i = 0; i < Lsv_Sessions.Columns.Count; i++)
-            {
-                Lsv_Sessions.Columns[i].Width = -2;
+                // adjust 控制項外觀寬度
+                for (int i = 0; i < Lsv_Sessions.Columns.Count; i++)
+                {
+                    Lsv_Sessions.Columns[i].Width = -2;
+                }
             }
         }
         private void UpdateSubscriptions()
         {
             Lsv_Subscriptions.Items.Clear();//清除Listview中項目
-            IList<Subscription> subscriptions = CParam._NodeServer.CurrentInstance.SubscriptionManager.GetSubscriptions();//從SessionManager取得訂閱數
-            for (int i = 0; i < subscriptions.Count; i++)
+
+            if (ServerFlags == emServerFlag.Start)
             {
-                Subscription subscription = subscriptions[i];
-                ListViewItem item = new ListViewItem(subscription.Id.ToString());
-                lock (subscription.DiagnosticsLock)
+                IList<Subscription> subscriptions = CParam._NodeServer.CurrentInstance.SubscriptionManager.GetSubscriptions();//從SessionManager取得訂閱數
+                for (int i = 0; i < subscriptions.Count; i++)
                 {
-                    item.SubItems.Add(String.Format("{0}", (int)subscription.PublishingInterval));//更新時間
-                    item.SubItems.Add(String.Format("{0}", subscription.MonitoredItemCount));//總數
+                    Subscription subscription = subscriptions[i];
+                    ListViewItem item = new ListViewItem(subscription.Id.ToString());
+                    lock (subscription.DiagnosticsLock)
+                    {
+                        item.SubItems.Add(String.Format("{0}", (int)subscription.PublishingInterval));//更新時間
+                        item.SubItems.Add(String.Format("{0}", subscription.MonitoredItemCount));//總數
 
-                    item.SubItems.Add(String.Format("{0}", subscription.Diagnostics.NextSequenceNumber));//S/N
-                    subscription.GetMonitoredItems(out uint[] serverHandles, out uint[] clientHandles);
-                    //Console.WriteLine($"#++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-                    //for (int ia=0;ia< serverHandles.Length; ia++)
-                    //{
-                    //    Console.WriteLine($"#serverHandles[{ia}]=");
-                    //    Console.WriteLine($"serverHandle = {serverHandles[ia]}");
+                        item.SubItems.Add(String.Format("{0}", subscription.Diagnostics.NextSequenceNumber));//S/N
+                        subscription.GetMonitoredItems(out uint[] serverHandles, out uint[] clientHandles);
+                    }
+                    Lsv_Subscriptions.Items.Add(item);//反應回控制項
+                    //test-----------------------------
+                    Console.WriteLine($"subscriptions[{i}].MonitoredItemCount = {subscriptions[i].MonitoredItemCount}");//10
+                    Console.WriteLine($"subscriptions[{i}].PublishingInterval = {subscriptions[i].PublishingInterval}");//100
+                    Console.WriteLine($"subscriptions[{i}].Diagnostics.DataChangeNotificationsCount = {subscriptions[i].Diagnostics.DataChangeNotificationsCount}");//一開始監控數量10 若修改值則++
+                    Console.WriteLine($"subscriptions[{i}].Diagnostics.PublishRequestCount = {subscriptions[i].Diagnostics.PublishRequestCount}");//發行1 若修改值則++
+                    Console.WriteLine($"subscriptions[{i}].Diagnostics.CurrentKeepAliveCount = {subscriptions[i].Diagnostics.CurrentKeepAliveCount}");//change+10  若修改值則歸0
+                    Console.WriteLine($"subscriptions[{i}].Diagnostics.CurrentLifetimeCount = {subscriptions[i].Diagnostics.CurrentLifetimeCount}");//0
+                    Console.WriteLine($"subscriptions[{i}].Diagnostics.MonitoredItemCount = {subscriptions[i].Diagnostics.MonitoredItemCount}");//10
+                    Console.WriteLine($"subscriptions[{i}].Diagnostics.MaxKeepAliveCount = {subscriptions[i].Diagnostics.MaxKeepAliveCount}");//36000
+                    Console.WriteLine($"subscriptions[{i}].Diagnostics.MaxLifetimeCount = {subscriptions[i].Diagnostics.MaxLifetimeCount}");//108000
+                    Console.WriteLine($"subscriptions[{i}].Diagnostics.PublishingInterval = {subscriptions[i].Diagnostics.PublishingInterval}");//100
 
-                    //}
-                    //for (int ib = 0; ib < clientHandles.Length; ib++)
-                    //{
-                    //    Console.WriteLine($"#clientHandles[{ib}]=");
-                    //    Console.WriteLine($"clientHandle = {serverHandles[ib]}");
-
-                    //}
-                    //Console.WriteLine($"#====");
-                    //Console.WriteLine($"NotificationsCount = {subscription.GetMonitoredItems}");
-                    //Console.WriteLine($"SessionId.Identifier = {subscription.Diagnostics.SessionId.Identifier}");
-                    //Console.WriteLine($"SessionId.NamespaceIndex = {subscription.Diagnostics.SessionId.NamespaceIndex}");
+                    Console.WriteLine($"//-------------------------------------------------------------------------------------------");
                 }
-                Lsv_Subscriptions.Items.Add(item);//反應回控制項
-            }
 
-            for (int i = 0; i < Lsv_Subscriptions.Columns.Count; i++)
-            {
-                Lsv_Subscriptions.Columns[i].Width = -2;
+                for (int i = 0; i < Lsv_Subscriptions.Columns.Count; i++)
+                {
+                    Lsv_Subscriptions.Columns[i].Width = -2;
+                }
             }
+            
 
         }
         private void UpdateVariableList()
@@ -526,7 +531,7 @@ namespace OPCNodeServerEditor
                 CParam.StringVariableList[i].Value = CParam.VariableList[i]._BaseDataVariableState.Value;//使CreateAddressSpace重新運作不直接拿原本INI值拿暫存
                 Lsv_VariableList.Items.Add(item);//反應回控制項
             }
-            ListViewItem tmpTime = new ListViewItem(String.Format("{0:hh:mm:ss.fff}", DateTime.Now));
+            ListViewItem tmpTime = new ListViewItem(String.Format("{0:hh:mm:ss.ffff}", DateTime.Now));
             Lsv_VariableList.Items.Add(tmpTime);
             //if (selectedIndex >= 0 && selectedIndex < Lsv_VariableList.Items.Count)
             //{
