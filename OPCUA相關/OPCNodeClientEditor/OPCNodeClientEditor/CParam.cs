@@ -20,13 +20,17 @@ namespace OPCNodeClientEditor
         public static int IterationIndex = 1;//變數索引
         public static string StartNodeTag = "ns=2;s=A";//預設節點
         public static ushort NamespaceIndex = 2;
+        public static int Sampling = 100;
+        public static int Publish = 100; 
+        public static int KeepAlive = 3000;
+
 
         public static OpcUaClient m_OpcUaClient = new OpcUaClient();//OpcUaHelper
+
         public static List<FolderState> FolderList = new List<FolderState>();//檔案夾節點列表
         public static List<OpcDataVariable<object>> VariableList = new List<OpcDataVariable<object>>();//變數列表
 
         private static Dictionary<string, Subscription> Subscriptions = new Dictionary<string, Subscription>();// 系统所有的节点信息
-        
 
         public static void NodeItemPullOut(string startNodetag)
         {
@@ -211,11 +215,11 @@ namespace OPCNodeClientEditor
             Subscription m_subscription = new Subscription(m_OpcUaClient.Session.DefaultSubscription)
             {
                 PublishingEnabled = true,
-                PublishingInterval = 0,
-                KeepAliveCount = uint.MaxValue,//10
-                LifetimeCount = uint.MaxValue,//10
-                MaxNotificationsPerPublish = uint.MaxValue,//1000
-                Priority = 100,
+                PublishingInterval = Publish,//defaultf:100  最低100
+                KeepAliveCount = uint.MaxValue,//KeepAlive斷線觸發次數   defaultf:10
+                LifetimeCount = uint.MaxValue,//Lifetime斷線觸發次數     default:10
+                MaxNotificationsPerPublish = uint.MaxValue,//一次最大消息發行          default:1000   
+                Priority = 100,//優先度
                 DisplayName = "Normal"
             };
             
@@ -230,7 +234,7 @@ namespace OPCNodeClientEditor
                     AttributeId = Attributes.Value,
                     DisplayName = roll._BaseDataVariableState.DisplayName.Text,
                     MonitoringMode = MonitoringMode.Reporting,
-                    SamplingInterval = 100,
+                    SamplingInterval = Sampling,
                     QueueSize = 0
 
                 };
@@ -276,6 +280,8 @@ namespace OPCNodeClientEditor
                 Subscriptions.Remove("Normal");
             }
         }
+
+        
         //------------------------------------------------------
         public static void UpdateValue(string strIndex, string value)
         {
@@ -289,24 +295,24 @@ namespace OPCNodeClientEditor
                     {
                         case "String":
                             CParam.m_OpcUaClient.WriteNode(CParam.VariableList[i]._OpcDataItem.VaribleTag, value);
-                            Console.WriteLine(String.Format("{0:hh:mm:ss.ff}", DateTime.Now));
+                            Console.WriteLine(String.Format("{0:hh:mm:ss.ffff}", DateTime.Now));
                             CParam.VariableList[i]._BaseDataVariableState.Value = value;
                             break;
                         case "Real":
                             CParam.m_OpcUaClient.WriteNode(CParam.VariableList[i]._OpcDataItem.VaribleTag, float.Parse(value));
-                            Console.WriteLine(String.Format("{0:hh:mm:ss.ff}", DateTime.Now));
+                            Console.WriteLine(String.Format("{0:hh:mm:ss.ffff}", DateTime.Now));
                             CParam.VariableList[i]._BaseDataVariableState.Value = float.Parse(value);
                             break;
                         case "Bool":
                             CParam.m_OpcUaClient.WriteNode(CParam.VariableList[i]._OpcDataItem.VaribleTag, (value == "0") ? false : true);
-                            Console.WriteLine(String.Format("{0:hh:mm:ss.ff}", DateTime.Now));
+                            Console.WriteLine(String.Format("{0:hh:mm:ss.ffff}", DateTime.Now));
                             CParam.VariableList[i]._BaseDataVariableState.Value = (value == "0") ? false : true;
                             break;
                         case "Word":
                             if (int.TryParse(value, out int tmp))
                             {
                                 CParam.m_OpcUaClient.WriteNode(CParam.VariableList[i]._OpcDataItem.VaribleTag, tmp);
-                                Console.WriteLine(String.Format("{0:hh:mm:ss.ff}", DateTime.Now));
+                                Console.WriteLine(String.Format("{0:hh:mm:ss.ffff}", DateTime.Now));
                                 CParam.VariableList[i]._BaseDataVariableState.Value = tmp;
                             }
                             break;

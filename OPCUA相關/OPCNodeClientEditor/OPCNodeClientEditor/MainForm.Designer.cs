@@ -56,18 +56,32 @@ namespace OPCNodeClientEditor
             this.Lab_ServerTimeNow = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.Lab_ConnectNow = new System.Windows.Forms.ToolStripStatusLabel();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.Txt_ReconnectTime = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.Txt_ClientName = new System.Windows.Forms.TextBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.Txt_SubscriptionPublish = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.Txt_MonitoredItemSampling = new System.Windows.Forms.TextBox();
+            this.Txt_SessionKeepAlive = new System.Windows.Forms.TextBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.Txt_SessionTimeout = new System.Windows.Forms.TextBox();
             this.Gbx_NodeList.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // Txt_ServerURL
             // 
-            this.Txt_ServerURL.Location = new System.Drawing.Point(13, 43);
+            this.Txt_ServerURL.Location = new System.Drawing.Point(18, 43);
             this.Txt_ServerURL.Name = "Txt_ServerURL";
-            this.Txt_ServerURL.Size = new System.Drawing.Size(548, 22);
+            this.Txt_ServerURL.Size = new System.Drawing.Size(539, 22);
             this.Txt_ServerURL.TabIndex = 69;
             this.Txt_ServerURL.Text = "opc.tcp://127.0.0.1:9048/NodeServer";
             // 
@@ -131,7 +145,7 @@ namespace OPCNodeClientEditor
             // 
             // Txt_ItemName
             // 
-            this.Txt_ItemName.Location = new System.Drawing.Point(83, 71);
+            this.Txt_ItemName.Location = new System.Drawing.Point(83, 68);
             this.Txt_ItemName.Name = "Txt_ItemName";
             this.Txt_ItemName.ReadOnly = true;
             this.Txt_ItemName.Size = new System.Drawing.Size(145, 22);
@@ -139,7 +153,7 @@ namespace OPCNodeClientEditor
             // 
             // Txt_NodeId
             // 
-            this.Txt_NodeId.Location = new System.Drawing.Point(289, 71);
+            this.Txt_NodeId.Location = new System.Drawing.Point(288, 68);
             this.Txt_NodeId.Name = "Txt_NodeId";
             this.Txt_NodeId.ReadOnly = true;
             this.Txt_NodeId.Size = new System.Drawing.Size(144, 22);
@@ -147,7 +161,7 @@ namespace OPCNodeClientEditor
             // 
             // Btn_UpdateValue
             // 
-            this.Btn_UpdateValue.Location = new System.Drawing.Point(446, 25);
+            this.Btn_UpdateValue.Location = new System.Drawing.Point(446, 62);
             this.Btn_UpdateValue.Name = "Btn_UpdateValue";
             this.Btn_UpdateValue.Size = new System.Drawing.Size(99, 30);
             this.Btn_UpdateValue.TabIndex = 41;
@@ -190,7 +204,7 @@ namespace OPCNodeClientEditor
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("新細明體", 10F);
-            this.label8.Location = new System.Drawing.Point(10, 110);
+            this.label8.Location = new System.Drawing.Point(6, 107);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(39, 14);
             this.label8.TabIndex = 37;
@@ -200,7 +214,7 @@ namespace OPCNodeClientEditor
             // 
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("新細明體", 10F);
-            this.label9.Location = new System.Drawing.Point(6, 74);
+            this.label9.Location = new System.Drawing.Point(6, 71);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(66, 14);
             this.label9.TabIndex = 33;
@@ -210,7 +224,7 @@ namespace OPCNodeClientEditor
             // 
             this.label10.AutoSize = true;
             this.label10.Font = new System.Drawing.Font("新細明體", 10F);
-            this.label10.Location = new System.Drawing.Point(234, 74);
+            this.label10.Location = new System.Drawing.Point(234, 71);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(51, 14);
             this.label10.TabIndex = 34;
@@ -315,37 +329,158 @@ namespace OPCNodeClientEditor
             this.Lab_ConnectNow.Size = new System.Drawing.Size(43, 17);
             this.Lab_ConnectNow.Text = "未連線";
             // 
-            // textBox1
+            // Txt_ReconnectTime
             // 
-            this.textBox1.Enabled = false;
-            this.textBox1.Location = new System.Drawing.Point(581, 43);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(89, 22);
-            this.textBox1.TabIndex = 29;
-            this.textBox1.Text = "3";
+            this.Txt_ReconnectTime.Enabled = false;
+            this.Txt_ReconnectTime.Location = new System.Drawing.Point(9, 39);
+            this.Txt_ReconnectTime.Name = "Txt_ReconnectTime";
+            this.Txt_ReconnectTime.Size = new System.Drawing.Size(98, 22);
+            this.Txt_ReconnectTime.TabIndex = 29;
+            this.Txt_ReconnectTime.Text = "3";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("新細明體", 10F);
-            this.label1.Location = new System.Drawing.Point(579, 18);
+            this.label1.Location = new System.Drawing.Point(6, 22);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(173, 14);
             this.label1.TabIndex = 32;
             this.label1.Text = "斷線重連時間(暫時唯讀)/秒";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("新細明體", 10F);
+            this.label2.Location = new System.Drawing.Point(6, 64);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(83, 14);
+            this.label2.TabIndex = 32;
+            this.label2.Text = "Client端名稱";
+            // 
+            // Txt_ClientName
+            // 
+            this.Txt_ClientName.Enabled = false;
+            this.Txt_ClientName.Location = new System.Drawing.Point(9, 81);
+            this.Txt_ClientName.Name = "Txt_ClientName";
+            this.Txt_ClientName.Size = new System.Drawing.Size(98, 22);
+            this.Txt_ClientName.TabIndex = 29;
+            this.Txt_ClientName.Text = "Test_Client";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.label7);
+            this.groupBox1.Controls.Add(this.label5);
+            this.groupBox1.Controls.Add(this.Txt_SubscriptionPublish);
+            this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Controls.Add(this.Txt_MonitoredItemSampling);
+            this.groupBox1.Controls.Add(this.Txt_SessionKeepAlive);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.Txt_ReconnectTime);
+            this.groupBox1.Controls.Add(this.Txt_ClientName);
+            this.groupBox1.Location = new System.Drawing.Point(568, 11);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(177, 298);
+            this.groupBox1.TabIndex = 71;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "設定";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("新細明體", 10F);
+            this.label7.Location = new System.Drawing.Point(6, 148);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(117, 14);
+            this.label7.TabIndex = 32;
+            this.label7.Text = "SubscriptionPublish";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("新細明體", 10F);
+            this.label5.Location = new System.Drawing.Point(6, 191);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(141, 14);
+            this.label5.TabIndex = 32;
+            this.label5.Text = "MonitoredItemSampling";
+            // 
+            // Txt_SubscriptionPublish
+            // 
+            this.Txt_SubscriptionPublish.Location = new System.Drawing.Point(10, 165);
+            this.Txt_SubscriptionPublish.Name = "Txt_SubscriptionPublish";
+            this.Txt_SubscriptionPublish.Size = new System.Drawing.Size(97, 22);
+            this.Txt_SubscriptionPublish.TabIndex = 29;
+            this.Txt_SubscriptionPublish.Text = "100";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("新細明體", 10F);
+            this.label4.Location = new System.Drawing.Point(6, 106);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(100, 14);
+            this.label4.TabIndex = 32;
+            this.label4.Text = "KeepAlive_Time";
+            // 
+            // Txt_MonitoredItemSampling
+            // 
+            this.Txt_MonitoredItemSampling.Location = new System.Drawing.Point(10, 208);
+            this.Txt_MonitoredItemSampling.Name = "Txt_MonitoredItemSampling";
+            this.Txt_MonitoredItemSampling.Size = new System.Drawing.Size(97, 22);
+            this.Txt_MonitoredItemSampling.TabIndex = 29;
+            this.Txt_MonitoredItemSampling.Text = "100";
+            // 
+            // Txt_SessionKeepAlive
+            // 
+            this.Txt_SessionKeepAlive.Location = new System.Drawing.Point(9, 123);
+            this.Txt_SessionKeepAlive.Name = "Txt_SessionKeepAlive";
+            this.Txt_SessionKeepAlive.Size = new System.Drawing.Size(97, 22);
+            this.Txt_SessionKeepAlive.TabIndex = 29;
+            this.Txt_SessionKeepAlive.Text = "3000";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.label3);
+            this.groupBox2.Controls.Add(this.Txt_SessionTimeout);
+            this.groupBox2.Location = new System.Drawing.Point(568, 326);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(177, 143);
+            this.groupBox2.TabIndex = 71;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "取得";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("新細明體", 10F);
+            this.label3.Location = new System.Drawing.Point(7, 23);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(94, 14);
+            this.label3.TabIndex = 32;
+            this.label3.Text = "SessionTimeout";
+            // 
+            // Txt_SessionTimeout
+            // 
+            this.Txt_SessionTimeout.Enabled = false;
+            this.Txt_SessionTimeout.Location = new System.Drawing.Point(10, 40);
+            this.Txt_SessionTimeout.Name = "Txt_SessionTimeout";
+            this.Txt_SessionTimeout.Size = new System.Drawing.Size(97, 22);
+            this.Txt_SessionTimeout.TabIndex = 29;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(758, 525);
+            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.Txt_ServerURL);
             this.Controls.Add(this.Btn_Connect);
             this.Controls.Add(this.label13);
-            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.Lab_ConnectStatus);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.Gbx_NodeList);
             this.Controls.Add(this.groupBox5);
             this.Name = "MainForm";
@@ -356,6 +491,10 @@ namespace OPCNodeClientEditor
             this.groupBox5.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -390,8 +529,20 @@ namespace OPCNodeClientEditor
         private System.Windows.Forms.ToolStripStatusLabel Lab_ServerTimeNow;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
         private System.Windows.Forms.ToolStripStatusLabel Lab_ConnectNow;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox Txt_ReconnectTime;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox Txt_ClientName;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox Txt_SessionKeepAlive;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox Txt_SessionTimeout;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox Txt_MonitoredItemSampling;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox Txt_SubscriptionPublish;
     }
 }
 

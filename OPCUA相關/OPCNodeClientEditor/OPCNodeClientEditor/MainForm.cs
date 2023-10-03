@@ -27,12 +27,16 @@ namespace OPCNodeClientEditor
         {
             InitializeComponent();
             //----------------------------------
-            //ViewBarTimer.Interval = 1000;
+            //ViewBarTimer.Interval = 300;
             //ViewBarTimer.Tick += UpdateTimer;
             //ViewBarTimer.Start();
 
-            CParam.m_OpcUaClient.ReconnectPeriod = Convert.ToInt32(textBox1.Text);//重連線時間覆寫
+            CParam.m_OpcUaClient.ReconnectPeriod = Convert.ToInt32(Txt_ReconnectTime.Text);//重連線時間覆寫
+            CParam.m_OpcUaClient.OpcUaName = Txt_ClientName.Text;//Client 於Server顯示名稱
+
             
+
+
 
             CParam.m_OpcUaClient.OpcStatusChange += M_OpcUaClient_OpcStatusChange;
             CParam.m_OpcUaClient.ConnectComplete += M_OpcUaClient_ConnectComplete;
@@ -70,7 +74,16 @@ namespace OPCNodeClientEditor
                 try
                 {
                     CParam.ServerURL = Txt_ServerURL.Text;
+                    CParam.KeepAlive = Convert.ToInt32(Txt_SessionKeepAlive.Text);//對話存活確認發送
+                    CParam.Publish = Convert.ToInt32(Txt_SubscriptionPublish.Text);//訂閱項目發行時間
+                    CParam.Sampling = Convert.ToInt32(Txt_MonitoredItemSampling.Text);//監控項目採樣率
+                    //CParam.KeepAlive = Convert.ToInt32(Txt_SessionKeepAlive.Text);
+
+                    //Server連結  若要調整timeout部分要重建Connect內部seesion的建立問題 包含endpoint 與 keepAlive
                     await CParam.m_OpcUaClient.ConnectServer(CParam.ServerURL);
+
+                    Txt_SessionTimeout.Text = CParam.m_OpcUaClient.Session.SessionTimeout.ToString();
+                    //CParam.m_OpcUaClient.Session.
                     //若連線成功成功則跳入M_OpcUaClient_ConnectComplete
                 }
                 catch (Exception ex)
@@ -102,6 +115,7 @@ namespace OPCNodeClientEditor
                 else
                 {
                     CParam.UpdateValue(Txt_Index.Text, Txt_Value.Text);//更新數值
+                    Console.WriteLine("UpdateValue時間: " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
                     UpdateListViewInvoke();//更新ListView
                 }
             }
@@ -127,8 +141,10 @@ namespace OPCNodeClientEditor
             if (this.InvokeRequired)
             {
                 //當InvokeRequired為true時，表示在不同的執行緒上，所以進行委派的動作!!
-                ReflashListView del = new ReflashListView(UpdateListViewInvoke);
-                this.Invoke(del, null);//委託自己
+                //ReflashListView del = new ReflashListView(UpdateListViewInvoke);
+                //this.Invoke(del, null);//委託自己
+
+                Invoke(new Action(() => { UpdateListViewInvoke(); }));
             }
             else
             {
@@ -148,13 +164,13 @@ namespace OPCNodeClientEditor
                 item.SubItems.Add($"{CParam.VariableList[i]._BaseDataVariableState.Value}");//以node內value為準
                 Lsv_VariableList.Items.Add(item);//反應回控制項
             }
-            ListViewItem tmpTime = new ListViewItem(String.Format("{0:hh:mm:ss.ff}", DateTime.Now));//顯示最後更新時間
+            ListViewItem tmpTime = new ListViewItem(String.Format("{0:hh:mm:ss.fff}", DateTime.Now));//顯示最後更新時間
             Lsv_VariableList.Items.Add(tmpTime);
             //時間測試------
             swStopwatch.Stop();
             TimeSpan trim = swStopwatch.Elapsed;
 
-            Console.WriteLine("迴圈1次時間: " + trim + "\n目前時間: " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.ff tt"));
+            Console.WriteLine("迴圈1次時間: " + trim + "\n目前時間: " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
         }
         private void MonitoredItem_Callback(MonitoredItem monitoredItem, MonitoredItemNotificationEventArgs e)
         {
@@ -180,6 +196,7 @@ namespace OPCNodeClientEditor
                             roll._OpcDataItem.Value = notification.Value.WrappedValue;
                             //roll._BaseDataVariableState.Value = CParam.m_OpcUaClient.ReadNode(roll._OpcDataItem.VaribleTag);
                             //roll._OpcDataItem.Value = CParam.m_OpcUaClient.ReadNode(roll._OpcDataItem.VaribleTag);
+                            Console.WriteLine("Callback數值更新目前時間: " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
                         }
                     }
                     //刷新變數列表
@@ -190,21 +207,14 @@ namespace OPCNodeClientEditor
 
         private void M_OpcUaClient_OpcStatusChange(object sender, OpcUaStatusEventArgs e)
         {
+            //判斷物件是否在同一個執行緒上
             if (InvokeRequired)
             {
                 BeginInvoke(  new Action( () => { M_OpcUaClient_OpcStatusChange(sender, e); } )  );
                 return;
             }
-            //若異常
-            if (e.Error)
-            {
-                Lab_ConnectNow.BackColor = Color.Red;
-            }
-            else
-            {
-                //正常狀態
-                Lab_ConnectNow.BackColor = SystemColors.Control;
-            }
+            //                                     若異常              正常狀態
+            Lab_ConnectNow.BackColor = e.Error ? Color.Red : SystemColors.Control;
 
             Lab_ConnectNow.Text = e.Text;//狀態輸出
         }
@@ -219,6 +229,11 @@ namespace OPCNodeClientEditor
                     Lab_ConnectStatus.Text = "連線成功";
                     Btn_Connect.Text = "連線中";
                     Btn_Connect.BackColor = Color.Green;
+
+                    CParam.KeepAlive = Convert.ToInt32(Txt_SessionKeepAlive.Text);
+                    CParam.m_OpcUaClient.Session.KeepAliveInterval = CParam.KeepAlive;//對話存活確認發送
+                    CParam.Publish = Convert.ToInt32(Txt_SubscriptionPublish.Text);// 訂閱項目發行時間
+                    CParam.Sampling = Convert.ToInt32(Txt_MonitoredItemSampling.Text);//監控項目採樣率
 
                     //將variable讀進Variablelist中 且建立參考節點
                     CParam.NodeItemPullOut(CParam.StartNodeTag);
