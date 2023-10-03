@@ -187,17 +187,13 @@ namespace OPCNodeClientEditor
                 MonitoredItemNotification notification = e.NotificationValue as MonitoredItemNotification;
                 if (notification != null)//若無
                 {
-                    foreach (var roll in CParam.VariableList)
+                    //將對應修改的值對應名稱 讀取新值寫入列表
+                    foreach (var roll in CParam.VariableList.Where(
+                    roll => roll._BaseDataVariableState.DisplayName.Text == monitoredItem.DisplayName))
                     {
-                        //將對應修改的值對應名稱 讀取新值寫入列表
-                        if (roll._BaseDataVariableState.DisplayName.Text == monitoredItem.DisplayName)
-                        {
-                            roll._BaseDataVariableState.Value = notification.Value.WrappedValue;
-                            roll._OpcDataItem.Value = notification.Value.WrappedValue;
-                            //roll._BaseDataVariableState.Value = CParam.m_OpcUaClient.ReadNode(roll._OpcDataItem.VaribleTag);
-                            //roll._OpcDataItem.Value = CParam.m_OpcUaClient.ReadNode(roll._OpcDataItem.VaribleTag);
-                            Console.WriteLine("Callback數值更新目前時間: " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
-                        }
+                        roll._BaseDataVariableState.Value = notification.Value.WrappedValue;
+                        roll._OpcDataItem.Value = notification.Value.WrappedValue;
+                        Console.WriteLine("Callback數值更新目前時間: " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
                     }
                     //刷新變數列表
                     UpdateListViewInvoke();
