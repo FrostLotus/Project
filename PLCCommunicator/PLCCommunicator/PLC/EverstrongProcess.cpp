@@ -93,6 +93,7 @@ void EverstrongProcess::Finalize()
 		::KillTimer(NULL, m_tTimerEvent[i]);
 	}
 }
+//---------------------------------------------
 ///<summary>處理AOI回應</summary>
 void EverstrongProcess::ProcessAOIResponse(LPARAM lp)
 {
@@ -100,19 +101,19 @@ void EverstrongProcess::ProcessAOIResponse(LPARAM lp)
 	{
 	case WM_SYST_PARAMCCL_CMD: //AOI切換完成->復位
 	{
-		WORD wReceive = _ttoi(GET_PLC_FIELD_VALUE(FIELD_COMMAND_RECEIVED));
+		WORD wReceive = _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCD_COMMAND_RECEIVED));
 		WORD wCommand = _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCL_COMMAND));
 		if (wCommand == CCL_NOTIFYVALUE_COMMAND)
 		{
 			WORD wReceive = 100;
-			SET_PLC_FIELD_DATA(FIELD_COMMAND_RECEIVED, sizeof(WORD), (BYTE*)&wReceive);
+			SET_PLC_FIELD_DATA(FIELD_CCD_COMMAND_RECEIVED, sizeof(WORD), (BYTE*)&wReceive);
 			theApp.InsertDebugLog(L"reset FIELD_COMMAND_RECEIVED", LOG_DEBUG);
 		}
 		else
 		{
 			CString str;
 #ifdef USE_IN_COMMUNICATOR
-			str.Format(L"field error, FIELD_COMMAND_RECEIVED:%s, FIELD_CCL_COMMAND:%s", GET_PLC_FIELD_VALUE(FIELD_COMMAND_RECEIVED), GET_PLC_FIELD_VALUE(FIELD_CCL_COMMAND));
+			str.Format(L"field error, FIELD_COMMAND_RECEIVED:%s, FIELD_CCL_COMMAND:%s", GET_PLC_FIELD_VALUE(FIELD_CCD_COMMAND_RECEIVED), GET_PLC_FIELD_VALUE(FIELD_CCL_COMMAND));
 			theApp.InsertDebugLog(str);
 #endif
 		}
@@ -295,32 +296,33 @@ void EverstrongProcess::ProcessTimer(UINT_PTR nEventId)
 				}
 				break;
 			case TIMER_COMMAND_RECEIVED:
-				GET_PLC_FIELD_DATA(FIELD_COMMAND_RECEIVED);
+				GET_PLC_FIELD_DATA(FIELD_CCD_COMMAND_RECEIVED);
 				break;
 			case TIMER_RESULT:
-				GET_PLC_FIELD_DATA(FIELD_RESULT);
+				GET_PLC_FIELD_DATA(FIELD_CCD_RESULT);
 				if (GET_FLUSH_ANYWAY()){
 					::SetEvent(m_hEvent[EV_WRITE]);
 				}
 				else{
-					if (GET_PLC_FIELD_VALUE(FIELD_RESULT) == L"0"){ //ready to write
+					if (GET_PLC_FIELD_VALUE(FIELD_CCD_RESULT) == L"0"){ //ready to write
 						::SetEvent(m_hEvent[EV_WRITE]);
 					}
 					else{
 						CString str;
-						str.Format(L"PLC not ready to receive insp result, Field value: %s \n", GET_PLC_FIELD_VALUE(FIELD_RESULT));
+						str.Format(L"PLC not ready to receive insp result, Field value: %s \n", GET_PLC_FIELD_VALUE(FIELD_CCD_RESULT));
 						theApp.InsertDebugLog(str);
 					}
 				}
 				//not yet
 				break;
 			case TIMER_RESULT_RECEIVED:
-				GET_PLC_FIELD_DATA(FIELD_RESULT_RECEIVED);
-				if (GET_PLC_FIELD_VALUE(FIELD_RESULT_RECEIVED) == L"300"){
+				GET_PLC_FIELD_DATA(FIELD_CCD_RESULT_RECEIVED);
+				if (GET_PLC_FIELD_VALUE(FIELD_CCD_RESULT_RECEIVED) == L"300")
+				{
 					TRACE(L"PLC has received result! \n");
-					PLC_DATA_ITEM_ *pResultReceived = GetPLCAddressInfo(FIELD_RESULT_RECEIVED, FALSE);
+					PLC_DATA_ITEM_ *pResultReceived = GetPLCAddressInfo(FIELD_CCD_RESULT_RECEIVED, FALSE);
 					WORD wValue = 0;
-					SET_PLC_FIELD_DATA(FIELD_RESULT_RECEIVED, sizeof(WORD), (BYTE*)&wValue); //復位
+					SET_PLC_FIELD_DATA(FIELD_CCD_RESULT_RECEIVED, sizeof(WORD), (BYTE*)&wValue); //復位
 				}
 				break;
 			case TIMER_C10:
@@ -360,9 +362,9 @@ void EverstrongProcess::ON_CCL_NEWBATCH()
 	memset(&xData, 0, sizeof(BATCH_SHARE_SYST_PARAMCCL));
 	wcscpy_s(xData.cName, GET_PLC_FIELD_VALUE(FIELD_ORDER).GetBuffer());
 	wcscpy_s(xData.cMaterial, GET_PLC_FIELD_VALUE(FIELD_MATERIAL).GetBuffer());
-	wcscpy_s(xData.cModel, GET_PLC_FIELD_VALUE(FIELD_MODEL).GetBuffer());
-	wcscpy_s(xData.cAssign, GET_PLC_FIELD_VALUE(FIELD_ASSIGN).GetBuffer());
-	xData.wAssignNum			= _ttoi(GET_PLC_FIELD_VALUE(FIELD_ASSIGNNUM));
+	//wcscpy_s(xData.cModel, GET_PLC_FIELD_VALUE(FIELD_MODEL).GetBuffer());
+	//wcscpy_s(xData.cAssign, GET_PLC_FIELD_VALUE(FIELD_ASSIGN).GetBuffer());
+	//xData.wAssignNum			= _ttoi(GET_PLC_FIELD_VALUE(FIELD_ASSIGNNUM));
 	xData.wSplitNum				= _ttoi(GET_PLC_FIELD_VALUE(FIELD_SPLITNUM));
 	xData.wSplit_One_Y			= _ttoi(GET_PLC_FIELD_VALUE(FIELD_SPLIT_ONE_Y));
 	xData.wSplit_Two_Y			= _ttoi(GET_PLC_FIELD_VALUE(FIELD_SPLIT_TWO_Y));
@@ -370,22 +372,21 @@ void EverstrongProcess::ON_CCL_NEWBATCH()
 	xData.wSplit_One_X			= _ttoi(GET_PLC_FIELD_VALUE(FIELD_SPLIT_ONE_X));
 	xData.wSplit_Two_X			= _ttoi(GET_PLC_FIELD_VALUE(FIELD_SPLIT_TWO_X));
 	xData.wSplit_Three_X		= _ttoi(GET_PLC_FIELD_VALUE(FIELD_SPLIT_THREE_X));
-	xData.fThickSize			= (float)_ttof(GET_PLC_FIELD_VALUE(FIELD_THICK_SIZE));
-	xData.fThickCCL				= (float)_ttof(GET_PLC_FIELD_VALUE(FIELD_THICK_CCL));
-	wcscpy_s(xData.cCCLType, GET_PLC_FIELD_VALUE(FIELD_CCL_TYPE).GetBuffer());
-	xData.wGrayScale			= _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCL_GRAYSCALE));
-	xData.wPixel_AA				= _ttoi(GET_PLC_FIELD_VALUE(FIELD_LEVEL_AA_PIXEL));
-	xData.wPixel_A				= _ttoi(GET_PLC_FIELD_VALUE(FIELD_LEVEL_A_PIXEL));
-	xData.wPixel_P				= _ttoi(GET_PLC_FIELD_VALUE(FIELD_LEVEL_P_PIXEL));
-	xData.wDiff_One_Y			= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_Y));
-	xData.wDiff_One_X			= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_X));
-	xData.wDiff_One_XY			= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_XY));
+	//xData.fThickSize			= (float)_ttof(GET_PLC_FIELD_VALUE(FIELD_THICK_SIZE));
+	//xData.fThickCCL				= (float)_ttof(GET_PLC_FIELD_VALUE(FIELD_THICK_CCL));
+	//wcscpy_s(xData.cCCLType, GET_PLC_FIELD_VALUE(FIELD_CCL_TYPE).GetBuffer());
+	//xData.wGrayScale			= _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCL_GRAYSCALE));
+	//xData.wPixel_AA				= _ttoi(GET_PLC_FIELD_VALUE(FIELD_LEVEL_AA_PIXEL));
+	//xData.wPixel_A				= _ttoi(GET_PLC_FIELD_VALUE(FIELD_LEVEL_A_PIXEL));
+	//xData.wPixel_P				= _ttoi(GET_PLC_FIELD_VALUE(FIELD_LEVEL_P_PIXEL));
+	//xData.wDiff_One_Y			= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_Y));
+	//xData.wDiff_One_X			= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_X));
+	//xData.wDiff_One_XY			= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_XY));
 
 	xData.wDiff_One_Y_Min		= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_Y_MIN));
 	xData.wDiff_One_Y_Max		= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_Y_MAX));
 	xData.wDiff_One_X_Min		= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_X_MIN));
 	xData.wDiff_One_X_Max		= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_X_MAX));
-
 	xData.wDiff_One_XY_Min		= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_XY_MIN));
 	xData.wDiff_One_XY_Max		= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_XY_MAX));
 	
@@ -400,16 +401,17 @@ void EverstrongProcess::ON_CCL_NEWBATCH()
 	xData.wDiff_Three_Y_Max		= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_THREE_Y_MAX));
 	xData.wDiff_Three_X_Min		= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_THREE_X_MIN));
 	xData.wDiff_Three_X_Max		= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_THREE_X_MAX));
-	xData.wDiff_Three_XY_Min		= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_THREE_XY_MIN));
-	xData.wDiff_Three_XY_Max		= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_THREE_XY_MAX));
+	xData.wDiff_Three_XY_Min	= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_THREE_XY_MIN));
+	xData.wDiff_Three_XY_Max	= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_THREE_XY_MAX));
 
-	xData.wNum_AA				= _ttoi(GET_PLC_FIELD_VALUE(FIELD_AA_NUM));
+	//xData.wNum_AA				= _ttoi(GET_PLC_FIELD_VALUE(FIELD_AA_NUM));
 
-	xData.wNO_C06				= _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCL_NO_C06));
+	//xData.wNO_C06				= _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCL_NO_C06));
 	xData.wNO_C10				= _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCL_NO_C10));
-	xData.wNO_C12				= _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCL_NO_C12));
+	//xData.wNO_C12				= _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCL_NO_C12));
 
-	if (USM_WriteData((BYTE*)&xData, sizeof(xData))){
+	if (USM_WriteData((BYTE*)&xData, sizeof(xData)))
+	{
 		//log data, not yet
 		NotifyAOI(WM_SYST_PARAMCCL_CMD, NULL);
 	}
@@ -478,11 +480,12 @@ void EverstrongProcess::WriteResult(BATCH_SHARE_SYST_RESULTCCL &xData)
 #endif
 
 	SET_PLC_FIELD_DATA(FIELD_FRONT_LEVEL, 2, (BYTE*)&xData.wFrontLevel);
-	SET_PLC_FIELD_DATA(FIELD_FRONT_CODE, sizeof(xData.cFrontCode), (BYTE*)&xData.cFrontCode);
+	//SET_PLC_FIELD_DATA(FIELD_FRONT_CODE, sizeof(xData.cFrontCode), (BYTE*)&xData.cFrontCode);
 	SET_PLC_FIELD_DATA(FIELD_BACK_LEVEL, 2, (BYTE*)&xData.wBackLevel);
-	SET_PLC_FIELD_DATA(FIELD_BACK_CODE, sizeof(xData.cBackCode), (BYTE*)&xData.cBackCode);
+	//SET_PLC_FIELD_DATA(FIELD_BACK_CODE, sizeof(xData.cBackCode), (BYTE*)&xData.cBackCode);
 
-	if (IS_SUPPORT_FLOAT_REALSIZE()){
+	if (IS_SUPPORT_FLOAT_REALSIZE())
+	{
 		SET_PLC_FIELD_DATA(FIELD_REAL_Y_ONE, 4, (BYTE*)&xData.fReal_One_Y);
 		SET_PLC_FIELD_DATA(FIELD_REAL_Y_TWO, 4, (BYTE*)&xData.fReal_Two_Y);
 		SET_PLC_FIELD_DATA(FIELD_REAL_X_ONE, 4, (BYTE*)&xData.fReal_One_X);
@@ -499,7 +502,7 @@ void EverstrongProcess::WriteResult(BATCH_SHARE_SYST_RESULTCCL &xData)
 
 	//write flag
 	WORD wResult = 200;
-	SET_PLC_FIELD_DATA(FIELD_RESULT, 2, (BYTE*)&wResult);
+	SET_PLC_FIELD_DATA(FIELD_CCD_RESULT, 2, (BYTE*)&wResult);
 
 #ifdef USE_IN_COMMUNICATOR
 	theApp.InsertDebugLog(L"Write Insp done!", LOG_DEBUG);

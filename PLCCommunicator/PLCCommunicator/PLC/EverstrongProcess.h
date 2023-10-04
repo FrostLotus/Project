@@ -11,78 +11,83 @@ class EverstrongProcess :public CPLCProcessBase
 public:
 	EverstrongProcess();
 	virtual ~EverstrongProcess();
-	virtual int GetFieldSize() { return FIELD_MAX; };//115
+	virtual int GetFieldSize() { return FIELD_MAX; };//70
 
 	enum PLC_FIELD_
 	{
 		//下發------------------------------------------------
 		FIELD_BEGIN = 0,
-		FIELD_ORDER = 1,			       //訂單號
-		FIELD_SN,					       //批號
-		FIELD_QUANTITY,				       //工單產品數量
-		FIELD_SPLITNUM,				       //一開幾數
-		FIELD_SPLIT_ONE_Y,			       //第一張大小板長
-		FIELD_SPLIT_TWO_Y,			       //第二張大小板長
-		FIELD_SPLIT_THREE_Y,		       //第三張大小板長
-		FIELD_SPLIT_ONE_X,			       //第一張大小板寬
-		FIELD_SPLIT_TWO_X,			       //第二張大小板寬
-		FIELD_SPLIT_THREE_X,		       //第三張大小板寬
-		FIELD_MATERIAL = 14,		       //訂單物料代碼
-		FIELD_DIFF_ONE_Y_MIN,		       //第一個大小版經向公差下限
-		FIELD_DIFF_ONE_Y_MAX,		       //第一個大小版經向公差上限
-		FIELD_DIFF_ONE_X_MIN,		       //第一個大小版緯向公差下限
-		FIELD_DIFF_ONE_X_MAX,		       //第一個大小版緯向公差上限
-		FIELD_DIFF_ONE_XY_MIN,		       //第一個大小版對角線公差下限
-		FIELD_DIFF_ONE_XY_MAX,		       //第一個大小版對角線公差上限
+		FIELD_ORDER = 1,			       //訂單號					                        D1000~D1009		  string[20]
+		FIELD_SN,					       //批號					                        D1010~D1019		  string[20]
+		FIELD_QUANTITY,				       //工單產品數量				                        D1020			  word
+		FIELD_SPLITNUM,				       //一開幾數					                        D1021			  word
+		FIELD_SPLIT_ONE_Y,			       //第一張大小板長			                        D1022~D1023		  real
+		FIELD_SPLIT_TWO_Y,			       //第二張大小板長			                        D1024~D1025		  real
+		FIELD_SPLIT_THREE_Y,		       //第三張大小板長			                        D1026~D1027		  real
+		FIELD_SPLIT_ONE_X,			       //第一張大小板寬			                        D1028~D1028		  real
+		FIELD_SPLIT_TWO_X,			       //第二張大小板寬			                        D1030~D1031		  real
+		FIELD_SPLIT_THREE_X,		       //第三張大小板寬			                        D1032~D1033		  real
+		FIELD_MATERIAL = 14,		       //訂單物料代碼				                        D1037~D1046		  string[20]
 
-		FIELD_DIFF_TWO_Y_MIN,		       //第二個大小版經向公差下限
-		FIELD_DIFF_TWO_Y_MAX,		       //第二個大小版經向公差上限
-		FIELD_DIFF_TWO_X_MIN,		       //第二個大小版緯向公差下限
-		FIELD_DIFF_TWO_X_MAX,		       //第二個大小版緯向公差上限
-		FIELD_DIFF_TWO_XY_MIN,		       //第二個大小版對角線公差下限
-		FIELD_DIFF_TWO_XY_MAX,		       //第二個大小版對角線公差上限
+		FIELD_DIFF_ONE_Y_MIN,		       //第一個大小版經向公差下限							D1047			  word
+		FIELD_DIFF_ONE_Y_MAX,		       //第一個大小版經向公差上限							D1048			  word
+		FIELD_DIFF_ONE_X_MIN,		       //第一個大小版緯向公差下限							D1049			  word
+		FIELD_DIFF_ONE_X_MAX,		       //第一個大小版緯向公差上限							D1050			  word
+		FIELD_DIFF_ONE_XY_MIN,		       //第一個大小版對角線公差下限							D1051			  word
+		FIELD_DIFF_ONE_XY_MAX,		       //第一個大小版對角線公差上限							D1052			  word
 
-		FIELD_DIFF_THREE_Y_MIN,		       //第三個大小版經向公差下限
-		FIELD_DIFF_THREE_Y_MAX,		       //第三個大小版經向公差上限
-		FIELD_DIFF_THREE_X_MIN,		       //第三個大小版緯向公差下限
-		FIELD_DIFF_THREE_X_MAX,		       //第三個大小版緯向公差上限
-		FIELD_DIFF_THREE_XY_MIN,	       //第三個大小版對角線公差下限
-		FIELD_DIFF_THREE_XY_MAX,	       //第三個大小版對角線公差上限
+		FIELD_DIFF_TWO_Y_MIN,		       //第二個大小版經向公差下限							D1053			  word
+		FIELD_DIFF_TWO_Y_MAX,		       //第二個大小版經向公差上限							D1054			  word
+		FIELD_DIFF_TWO_X_MIN,		       //第二個大小版緯向公差下限							D1055			  word
+		FIELD_DIFF_TWO_X_MAX,		       //第二個大小版緯向公差上限							D1056			  word
+		FIELD_DIFF_TWO_XY_MIN,		       //第二個大小版對角線公差下限							D1057			  word
+		FIELD_DIFF_TWO_XY_MAX,		       //第二個大小版對角線公差上限							D1058			  word
+
+		FIELD_DIFF_THREE_Y_MIN,		       //第三個大小版經向公差下限							D1059			  word
+		FIELD_DIFF_THREE_Y_MAX,		       //第三個大小版經向公差上限							D1060			  word
+		FIELD_DIFF_THREE_X_MIN,		       //第三個大小版緯向公差下限							D1061			  word
+		FIELD_DIFF_THREE_X_MAX,		       //第三個大小版緯向公差上限							D1062			  word
+		FIELD_DIFF_THREE_XY_MIN,	       //第三個大小版對角線公差下限							D1063			  word
+		FIELD_DIFF_THREE_XY_MAX,	       //第三個大小版對角線公差上限							D1064			  word
 		//上傳---------------------------------------------
-		FIELD_CCL_COMMAND = 34,		       //指令下發(1/0)
-		FIELD_CCL_NO_C10,			       //板剪切編(開板後序號)
-		FIELD_REAL_Y_ONE,			       //板實際長度1
-		FIELD_REAL_Y_TWO,			       //板實際長度2
-		FIELD_REAL_X_ONE,			       //板實際寬度1
-		FIELD_REAL_X_TWO,			       //板實際寬度2
 
-		FIELD_REAL_DIFF_ONE_Y,		       //板長度實際公差1
-		FIELD_REAL_DIFF_TWO_Y,		       //板長度實際公差2
-		FIELD_REAL_DIFF_ONE_X,		       //板寬度實際公差1
-		FIELD_REAL_DIFF_TWO_X,		       //板寬度實際公差2
-		FIELD_REAL_DIFF_ONE_XY,		       //板對角線實際公差1
-		FIELD_REAL_DIFF_TWO_XY,		       //板對角線實際公差2
+		FIELD_CCL_COMMAND = 34,		       //指令下發(1/0)									 D1066			  word
+		FIELD_CCL_NO_C10,			       //板剪切編(開板後序號)								 D1067			  word
+		
+		FIELD_REAL_Y_ONE,			       //板實際長度1										 D1300~D1301	  real
+		FIELD_REAL_Y_TWO,			       //板實際長度2										 D1302~D1303	  real
+		FIELD_REAL_X_ONE,			       //板實際寬度1										 D1304~D1305	  real
+		FIELD_REAL_X_TWO,			       //板實際寬度2										 D1306~D1307	  real																				 
+		FIELD_REAL_DIFF_ONE_Y,		       //板長度實際公差1									 D1308~D1309	  real
+		FIELD_REAL_DIFF_TWO_Y,		       //板長度實際公差2									 D1310~D1311	  real
+		FIELD_REAL_DIFF_ONE_X,		       //板寬度實際公差1									 D1312~D1313	  real
+		FIELD_REAL_DIFF_TWO_X,		       //板寬度實際公差2									 D1314~D1315	  real
+		FIELD_REAL_DIFF_ONE_XY,		       //板對角線實際公差1									 D1316~D1317	  real
+		FIELD_REAL_DIFF_TWO_XY,		       //板對角線實際公差2									 D1318~D1319	  real
+																											  
+		FIELD_FRONT_LEVEL = 46,		       //表現正面判斷級別(1 = OK,2 = NG)               	 D1320			  word
+		FIELD_BACK_LEVEL = 48,		       //表現反面判斷級別(1 = OK,2 = NG)				     D1336			  word
+		FIELD_SIZE_G10 = 50,		       //大小版尺寸判斷級別OK = 1,NG = 2 一開一 一個版		 D1352			  word
+		FIELD_SIZE_G12,				       //大小版尺寸判斷級別OK = 1,NG = 2 一開二 兩個版		 D1353			  word
+		FIELD_SIZE_G14,				       //大小版尺寸判斷級別OK = 1,NG = 2 一開三 三個板		 D1354			  word
 
-		FIELD_FRONT_LEVEL = 46,		       //表現正面判斷級別(1 = OK,2 = NG)
-		FIELD_BACK_LEVEL = 48,		       //表現反面判斷級別(1 = OK,2 = NG)
-		FIELD_SIZE_G10 = 50,		       //大小版尺寸判斷級別OK = 1,NG = 2 一開一 一個版
-		FIELD_SIZE_G12,				       //大小版尺寸判斷級別OK = 1,NG = 2 一開二 兩個版
-		FIELD_SIZE_G14,				       //大小版尺寸判斷級別OK = 1,NG = 2 一開三 三個板
+		FIELD_CCD_COMMAND_RECEIVED,        //CCD接收 MES  資料完成  [指令收到]					 D1355			  word
 
-		FIELD_CCD_MES_DATA,                //CCD接收 MES  資料完成
-		FIELD_CCD_RESULT,			       //CCD發送檢測結果
-		FIELD_CCD_RECEIVE,			       //CCD接收PLC接收檢測結果完成
-		FIELD_RESULT_OK = 57,		       //版OK数量
-		FIELD_RESULT_NG,			       //版NG数量
-		FIELD_RESULT_QUALIFYRATE = 60,	   //訂單合格率
-		FIELD_BATCH_MESSAGE = 62,		   //通知MES工單資訊
-		FIELD_INSP_SETTING,				   //檢測設定
-		FIELD_LIGHT_SETTING,			   //光源設定
-		FIELD_START_TIME,				   //檢測開始時間
-		FIELD_END_TIME,					   //檢測結束時間
-		FIELD_ORDER_1,					   //訂單號
-		FIELD_SN_1,						   //批號
-		FIELD_MATERIAL_1,				   //訂單物料代碼
+		FIELD_CCD_RESULT,			       //CCD發送檢測結果									 D1356			  word
+		FIELD_CCD_RESULT_RECEIVED,		   //CCD接收PLC接收檢測結果完成							 D1357			  word
+			
+		FIELD_RESULT_OK = 57,		       //版OK数量										 D1359			  word
+		FIELD_RESULT_NG,			       //版NG数量										 D1360			  word
+		FIELD_RESULT_QUALIFYRATE = 60,	   //訂單合格率										 D1362~D1363	  real
+		FIELD_BATCH_MESSAGE = 62,		   //通知MES工單資訊									 D1366			  word
+		FIELD_INSP_SETTING,				   //檢測設定											 D1367~D1371	  string[10]
+		FIELD_LIGHT_SETTING,			   //光源設定											 D1372~D1376	  string[10]
+		FIELD_START_TIME,				   //檢測開始時間										 D1377~D1385	  string[18]
+		FIELD_END_TIME,					   //檢測結束時間										 D1387~D1395	  string[18]
+		FIELD_ORDER_1,					   //訂單號											 D2000~D2009	  string[20]
+		FIELD_SN_1,						   //批號											 D2010~D2019	  string[20]
+		FIELD_MATERIAL_1,				   //訂單物料代碼										 D2037~D2046	  string[20]
+		
 		FIELD_MAX
 	};
 	
@@ -113,7 +118,8 @@ private:
 	void SetInfoField(BATCH_SHARE_SYST_INFO &xInfo);
 private:
 
-	enum {
+	enum 
+	{
 		TIMER_COMMAND,			//指令下發
 		TIMER_COMMAND_RECEIVED,	//指令收到
 		TIMER_RESULT,			//檢驗結果

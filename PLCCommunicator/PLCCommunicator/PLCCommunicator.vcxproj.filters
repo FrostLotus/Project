@@ -120,6 +120,9 @@
     <ClInclude Include="PLC\TGProcess.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
+    <ClInclude Include="PLC\EverstrongProcess.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PLCCommunicator.cpp">
@@ -201,6 +204,9 @@
       <Filter>PLC</Filter>
     </ClCompile>
     <ClCompile Include="PLC\TGProcess.cpp">
+      <Filter>PLC</Filter>
+    </ClCompile>
+    <ClCompile Include="PLC\EverstrongProcess.cpp">
       <Filter>PLC</Filter>
     </ClCompile>
   </ItemGroup>

@@ -175,7 +175,8 @@ private:
 	void SetInfoField(BATCH_SHARE_SYST_INFO &xInfo);
 private:
 
-	enum {
+	enum 
+	{
 		TIMER_COMMAND,			//指令下發
 		TIMER_COMMAND_RECEIVED,	//指令收到
 		TIMER_RESULT,			//檢驗結果
