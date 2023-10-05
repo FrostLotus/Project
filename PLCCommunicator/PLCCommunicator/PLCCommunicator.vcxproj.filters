@@ -19,26 +19,68 @@
     <Filter Include="PLC">
       <UniqueIdentifier>{59b3a578-286b-4a00-aa10-37c93a907d1b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="標頭檔\Other">
+      <UniqueIdentifier>{b18b7dfc-4738-4a25-938b-87818cde02ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="標頭檔\Process">
+      <UniqueIdentifier>{3df35d8a-dc9c-4bcc-b588-38a23546b4c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="標頭檔\Process\CCL">
+      <UniqueIdentifier>{50618651-bd12-4354-b45c-865637b41beb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="標頭檔\Process\PPP">
+      <UniqueIdentifier>{07bfaecf-0f2b-4c19-80d2-0f0e0fc672cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="標頭檔\PLC">
+      <UniqueIdentifier>{3427ed71-5a36-46eb-99d4-3ec519efd1cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="標頭檔\Process\Other">
+      <UniqueIdentifier>{fb6f71a0-3bc1-4ea6-b6d5-79fb53975d88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="標頭檔\DataHeader">
+      <UniqueIdentifier>{884078af-94f0-4f72-a06f-fdfc72df9f77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="標頭檔\Process\CCL\customer">
+      <UniqueIdentifier>{7fd7fda7-fb5b-4e67-92c9-26f5c64fb84f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="標頭檔\Process\PPP\customer">
+      <UniqueIdentifier>{c5c23a3f-deae-4cde-89ef-2ff2ab4b2137}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="標頭檔\Process\FCCL">
+      <UniqueIdentifier>{573d1d9b-c6a2-4259-b349-f742dd7af71f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PLC\PLC">
+      <UniqueIdentifier>{1425eb8c-1c90-474b-ab6c-50577ee9b04d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PLC\Process">
+      <UniqueIdentifier>{f1e1285c-f07c-41a9-850d-b931ede5ea00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PLC\Process\Other">
+      <UniqueIdentifier>{d187f7ba-a127-4dd3-ad58-c3d00143714c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PLC\Process\FCCL">
+      <UniqueIdentifier>{654b95f1-c3d0-4730-9404-c12c4a0dafc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PLC\Process\PPP">
+      <UniqueIdentifier>{70de8624-de56-4f37-a3bb-bd6b7093b62c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PLC\Process\PPP\customer">
+      <UniqueIdentifier>{088219ec-87f8-458f-b1ac-8a1e82deecd1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PLC\DataHeader">
+      <UniqueIdentifier>{7d06455a-b8ff-4e5a-b087-56db413b7258}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PLC\Process\CCL">
+      <UniqueIdentifier>{005cb00a-3822-4fdf-8d71-389229746513}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PLC\Process\CCL\customer">
+      <UniqueIdentifier>{19a91f86-832a-4fa9-ad49-562862df091a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PLCCommunicator.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
-    <ClInclude Include="PLCCommunicatorDlg.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
     <ClInclude Include="..\SharedComponent\AoiFont.h">
       <Filter>SharedComponent</Filter>
     </ClInclude>
@@ -51,77 +93,95 @@
     <ClInclude Include="..\SharedComponent\AppProcess.h">
       <Filter>SharedComponent</Filter>
     </ClInclude>
-    <ClInclude Include="ZergLog.h">
-      <Filter>標頭檔</Filter>
+    <ClInclude Include="PLCCommunicatorDlg.h">
+      <Filter>原始程式檔</Filter>
     </ClInclude>
-    <ClInclude Include="..\SharedComponent\ActDefine.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
-    <ClInclude Include="..\SharedComponent\ActProgType_i.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
-    <ClInclude Include="..\SharedComponent\ActSupportMsg_i.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
-    <ClInclude Include="PLC\BaseClientSocket.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
-    <ClInclude Include="..\SharedComponent\DataHandlerBase.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
-    <ClInclude Include="PLC\MelSecIOController.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
-    <ClInclude Include="PLC\MelsecPlcSocket.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
-    <ClInclude Include="PLC\PLCDataHandler.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
-    <ClInclude Include="PLC\PLCProcessBase.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
-    <ClInclude Include="PLC\ScribdPPProcess.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
-    <ClInclude Include="PLC\SystCCLProcessBase.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
-    <ClInclude Include="PLC\SystCCLProcessCHANGSHU.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
-    <ClInclude Include="PLC\SystCCLProcessDONGGUAN.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
-    <ClInclude Include="PLC\SystCCLProcessDONGGUAN_SONG8.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
-    <ClInclude Include="PLC\SystCCLProcessJIUJIANG.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
-    <ClInclude Include="PLC\SystCCLProcessSUZHOU.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
-    <ClInclude Include="PLC\SystFCCLProcess.h">
-      <Filter>標頭檔</Filter>
+    <ClInclude Include="PLCCommunicator.h">
+      <Filter>原始程式檔</Filter>
     </ClInclude>
     <ClInclude Include="PLC\SystPPProcess.h">
-      <Filter>標頭檔</Filter>
+      <Filter>標頭檔\Process\PPP</Filter>
     </ClInclude>
-    <ClInclude Include="PLC\SystWebCooperProcessSocket.h">
-      <Filter>標頭檔</Filter>
+    <ClInclude Include="PLC\SystCCLProcessBase.h">
+      <Filter>標頭檔\Process\CCL</Filter>
     </ClInclude>
-    <ClInclude Include="PLC\TagProcess_FX5U.h">
-      <Filter>標頭檔</Filter>
+    <ClInclude Include="..\SharedComponent\ActDefine.h">
+      <Filter>標頭檔\PLC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SharedComponent\ActProgType_i.h">
+      <Filter>標頭檔\PLC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SharedComponent\ActSupportMsg_i.h">
+      <Filter>標頭檔\PLC</Filter>
+    </ClInclude>
+    <ClInclude Include="ZergLog.h">
+      <Filter>標頭檔\Other</Filter>
     </ClInclude>
     <ClInclude Include="PLC\TechainProcess.h">
-      <Filter>標頭檔</Filter>
+      <Filter>標頭檔\Process\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>標頭檔\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\TagProcess_FX5U.h">
+      <Filter>標頭檔\PLC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SharedComponent\DataHandlerBase.h">
+      <Filter>標頭檔\DataHeader</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\SystCCLProcessCHANGSHU.h">
+      <Filter>標頭檔\Process\CCL\customer</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\SystCCLProcessDONGGUAN.h">
+      <Filter>標頭檔\Process\CCL\customer</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\SystCCLProcessDONGGUAN_SONG8.h">
+      <Filter>標頭檔\Process\CCL\customer</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\SystCCLProcessJIUJIANG.h">
+      <Filter>標頭檔\Process\CCL\customer</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\SystCCLProcessSUZHOU.h">
+      <Filter>標頭檔\Process\CCL\customer</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\MelSecIOController.h">
+      <Filter>標頭檔\PLC</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\EverStrProcessBase.h">
+      <Filter>標頭檔\Process\CCL</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\MelsecPlcSocket.h">
+      <Filter>標頭檔\PLC</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\PLCDataHandler.h">
+      <Filter>標頭檔\DataHeader</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\PLCProcessBase.h">
+      <Filter>標頭檔\Process</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>標頭檔\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\ScribdPPProcess.h">
+      <Filter>標頭檔\Process\PPP</Filter>
     </ClInclude>
     <ClInclude Include="PLC\TGProcess.h">
-      <Filter>標頭檔</Filter>
+      <Filter>標頭檔\Process\PPP\customer</Filter>
     </ClInclude>
-    <ClInclude Include="PLC\EverstrongProcess.h">
-      <Filter>標頭檔</Filter>
+    <ClInclude Include="PLC\SystFCCLProcess.h">
+      <Filter>標頭檔\Process\FCCL</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>標頭檔\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\SystWebCooperProcessSocket.h">
+      <Filter>標頭檔\PLC</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\BaseClientSocket.h">
+      <Filter>標頭檔\PLC</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC\EverStrProcess.h">
+      <Filter>標頭檔\Process\CCL\customer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -143,71 +203,74 @@
     <ClCompile Include="..\SharedComponent\AppProcess.cpp">
       <Filter>SharedComponent</Filter>
     </ClCompile>
-    <ClCompile Include="..\SharedComponent\ActProgType_i.c">
-      <Filter>PLC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\SharedComponent\ActSupportMsg_i.c">
-      <Filter>PLC</Filter>
-    </ClCompile>
-    <ClCompile Include="PLC\SystFCCLProcess.cpp">
-      <Filter>PLC</Filter>
-    </ClCompile>
-    <ClCompile Include="PLC\MelSecIOController.cpp">
-      <Filter>PLC</Filter>
-    </ClCompile>
-    <ClCompile Include="PLC\PLCProcessBase.cpp">
-      <Filter>PLC</Filter>
-    </ClCompile>
     <ClCompile Include="PLC\SystCCLProcessBase.cpp">
-      <Filter>PLC</Filter>
-    </ClCompile>
-    <ClCompile Include="PLC\SystCCLProcessDONGGUAN.cpp">
-      <Filter>PLC</Filter>
-    </ClCompile>
-    <ClCompile Include="PLC\SystCCLProcessJIUJIANG.cpp">
-      <Filter>PLC</Filter>
-    </ClCompile>
-    <ClCompile Include="PLC\SystCCLProcessSUZHOU.cpp">
-      <Filter>PLC</Filter>
-    </ClCompile>
-    <ClCompile Include="PLC\SystWebCooperProcessSocket.cpp">
-      <Filter>PLC</Filter>
-    </ClCompile>
-    <ClCompile Include="PLC\BaseClientSocket.cpp">
-      <Filter>PLC</Filter>
-    </ClCompile>
-    <ClCompile Include="PLC\MelsecPlcSocket.cpp">
-      <Filter>PLC</Filter>
-    </ClCompile>
-    <ClCompile Include="PLC\PLCDataHandler.cpp">
-      <Filter>PLC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\SharedComponent\DataHandlerBase.cpp">
-      <Filter>PLC</Filter>
-    </ClCompile>
-    <ClCompile Include="PLC\SystCCLProcessCHANGSHU.cpp">
-      <Filter>PLC</Filter>
-    </ClCompile>
-    <ClCompile Include="PLC\SystPPProcess.cpp">
-      <Filter>PLC</Filter>
-    </ClCompile>
-    <ClCompile Include="PLC\ScribdPPProcess.cpp">
-      <Filter>PLC</Filter>
-    </ClCompile>
-    <ClCompile Include="PLC\TagProcess_FX5U.cpp">
-      <Filter>PLC</Filter>
+      <Filter>PLC\Process\CCL</Filter>
     </ClCompile>
     <ClCompile Include="PLC\TechainProcess.cpp">
-      <Filter>PLC</Filter>
+      <Filter>PLC\Process\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="PLC\SystCCLProcessCHANGSHU.cpp">
+      <Filter>PLC\Process\CCL\customer</Filter>
+    </ClCompile>
+    <ClCompile Include="PLC\SystCCLProcessDONGGUAN.cpp">
+      <Filter>PLC\Process\CCL\customer</Filter>
     </ClCompile>
     <ClCompile Include="PLC\SystCCLProcessDONGGUAN_SONG8.cpp">
-      <Filter>PLC</Filter>
+      <Filter>PLC\Process\CCL\customer</Filter>
+    </ClCompile>
+    <ClCompile Include="PLC\SystCCLProcessJIUJIANG.cpp">
+      <Filter>PLC\Process\CCL\customer</Filter>
+    </ClCompile>
+    <ClCompile Include="PLC\SystCCLProcessSUZHOU.cpp">
+      <Filter>PLC\Process\CCL\customer</Filter>
+    </ClCompile>
+    <ClCompile Include="PLC\MelsecPlcSocket.cpp">
+      <Filter>PLC\PLC</Filter>
+    </ClCompile>
+    <ClCompile Include="PLC\MelSecIOController.cpp">
+      <Filter>PLC\PLC</Filter>
+    </ClCompile>
+    <ClCompile Include="PLC\TagProcess_FX5U.cpp">
+      <Filter>PLC\PLC</Filter>
+    </ClCompile>
+    <ClCompile Include="PLC\SystWebCooperProcessSocket.cpp">
+      <Filter>PLC\PLC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SharedComponent\ActSupportMsg_i.c">
+      <Filter>PLC\PLC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SharedComponent\ActProgType_i.c">
+      <Filter>PLC\PLC</Filter>
+    </ClCompile>
+    <ClCompile Include="PLC\EverStrProcessBase.cpp">
+      <Filter>PLC\Process\CCL</Filter>
+    </ClCompile>
+    <ClCompile Include="PLC\SystFCCLProcess.cpp">
+      <Filter>PLC\Process\FCCL</Filter>
+    </ClCompile>
+    <ClCompile Include="PLC\SystPPProcess.cpp">
+      <Filter>PLC\Process\PPP</Filter>
+    </ClCompile>
+    <ClCompile Include="PLC\ScribdPPProcess.cpp">
+      <Filter>PLC\Process\PPP</Filter>
     </ClCompile>
     <ClCompile Include="PLC\TGProcess.cpp">
-      <Filter>PLC</Filter>
+      <Filter>PLC\Process\PPP\customer</Filter>
     </ClCompile>
-    <ClCompile Include="PLC\EverstrongProcess.cpp">
-      <Filter>PLC</Filter>
+    <ClCompile Include="PLC\BaseClientSocket.cpp">
+      <Filter>PLC\PLC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SharedComponent\DataHandlerBase.cpp">
+      <Filter>PLC\DataHeader</Filter>
+    </ClCompile>
+    <ClCompile Include="PLC\PLCDataHandler.cpp">
+      <Filter>PLC\DataHeader</Filter>
+    </ClCompile>
+    <ClCompile Include="PLC\PLCProcessBase.cpp">
+      <Filter>PLC\Process</Filter>
+    </ClCompile>
+    <ClCompile Include="PLC\EverStrProcess.cpp">
+      <Filter>PLC\Process\CCL\customer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

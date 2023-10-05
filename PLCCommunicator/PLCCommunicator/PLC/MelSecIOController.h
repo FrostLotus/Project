@@ -18,36 +18,43 @@ enum CPU_SERIES
 	R_SERIES,			//R¨t¦C		
 	MAX_SERIES,
 };
-class IPLCProcess{
+class IPLCProcess
+{
 public:
 	IPLCProcess(){ m_pIn = NULL; m_pOut = NULL; }
 	void AttachIn(IPLCProcess *pLink) { m_pIn = pLink; };
 	void AttachOut(IPLCProcess *pLink) { m_pOut = pLink; };
 	//in
-	virtual void ON_GPIO_NOTIFY(WPARAM wp, LPARAM lp){
+	virtual void ON_GPIO_NOTIFY(WPARAM wp, LPARAM lp)
+	{
 		if (m_pIn)
 			m_pIn->ON_GPIO_NOTIFY(wp, lp);
 	}
-	virtual long ON_OPEN_PLC(LPARAM lp){
+	virtual long ON_OPEN_PLC(LPARAM lp)
+	{
 		if (m_pIn)
 			return m_pIn->ON_OPEN_PLC(lp);
 		else
 			return FALSE;
 	}
 	//out
-	virtual void ON_PLC_NOTIFY(CString strMsg){
+	virtual void ON_PLC_NOTIFY(CString strMsg)
+	{
 		if (m_pOut)
 			m_pOut->ON_PLC_NOTIFY(strMsg);
 	}
-	virtual void ON_SET_PLCPARAM(BATCH_SHARE_SYSTCCL_INITPARAM &xParam){
+	virtual void ON_SET_PLCPARAM(BATCH_SHARE_SYSTCCL_INITPARAM &xParam)
+	{
 		if (m_pOut)
 			m_pOut->ON_SET_PLCPARAM(xParam);
 	}
-	virtual void ON_PLCDATA_CHANGE(int nFieldId, void* pData, int nSizeInByte){
+	virtual void ON_PLCDATA_CHANGE(int nFieldId, void* pData, int nSizeInByte)
+	{
 		if (m_pOut)
 			m_pOut->ON_PLCDATA_CHANGE(nFieldId, pData, nSizeInByte);
 	}
-	virtual void ON_BATCH_PLCDATA_CHANGE(int nFieldFirst, int nFieldLast){
+	virtual void ON_BATCH_PLCDATA_CHANGE(int nFieldFirst, int nFieldLast)
+	{
 		if (m_pOut)
 			m_pOut->ON_BATCH_PLCDATA_CHANGE(nFieldFirst, nFieldLast);
 	}

@@ -389,7 +389,8 @@
     <ClInclude Include="PLCCommunicator.h" />
     <ClInclude Include="PLCCommunicatorDlg.h" />
     <ClInclude Include="PLC\BaseClientSocket.h" />
-    <ClInclude Include="PLC\EverstrongProcess.h" />
+    <ClInclude Include="PLC\EverStrProcess.h" />
+    <ClInclude Include="PLC\EverStrProcessBase.h" />
     <ClInclude Include="PLC\MelSecIOController.h" />
     <ClInclude Include="PLC\MelsecPlcSocket.h" />
     <ClInclude Include="PLC\PLCDataHandler.h" />
@@ -440,7 +441,8 @@
     <ClCompile Include="PLCCommunicator.cpp" />
     <ClCompile Include="PLCCommunicatorDlg.cpp" />
     <ClCompile Include="PLC\BaseClientSocket.cpp" />
-    <ClCompile Include="PLC\EverstrongProcess.cpp" />
+    <ClCompile Include="PLC\EverStrProcess.cpp" />
+    <ClCompile Include="PLC\EverStrProcessBase.cpp" />
     <ClCompile Include="PLC\MelSecIOController.cpp" />
     <ClCompile Include="PLC\MelsecPlcSocket.cpp" />
     <ClCompile Include="PLC\PLCDataHandler.cpp" />

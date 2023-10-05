@@ -17,18 +17,19 @@ CTechainProcess* CTechainProcess::m_this = NULL;
 void CTechainProcess::Init()
 {
 	m_hMainProcessWnd = ::FindWindow(NULL, TECHAIN_NAME);
-	const PLC_DATA_ITEM_ ct_PLC_FIELD[FIELD_MAX] = {
+	const PLC_DATA_ITEM_ ct_PLC_FIELD[FIELD_MAX] = 
+	{
 		{ L"Version",					FIELD_VERSION,						PLC_TYPE_WORD,	ACTION_BATCH, 2, L"D",		200 },
 		{ L"閥(開關)1",					FIELD_VALVE_SWITCH1,				PLC_TYPE_BIT,	ACTION_BATCH, 2, L"Y",		0 },
 		{ L"閥(開關)2",					FIELD_VALVE_SWITCH2,				PLC_TYPE_BIT,	ACTION_BATCH, 2, L"Y",		1 },
-		{ L"定位輸出(數位)",			FIELD_ANCHOR_DIGITAL,				PLC_TYPE_BIT,	ACTION_BATCH, 2, L"Y",		2 },
-		{ L"電磁閥",					FIELD_ELE,							PLC_TYPE_BIT,	ACTION_BATCH, 2, L"Y",		3 },
-		{ L"定位輸出(類比)",			FIELD_ANCHOR_ANALOG,				PLC_TYPE_WORD,	ACTION_BATCH, 2, L"SD",	    6300 },
+		{ L"定位輸出(數位)",				FIELD_ANCHOR_DIGITAL,				PLC_TYPE_BIT,	ACTION_BATCH, 2, L"Y",		2 },
+		{ L"電磁閥",						FIELD_ELE,							PLC_TYPE_BIT,	ACTION_BATCH, 2, L"Y",		3 },
+		{ L"定位輸出(類比)",				FIELD_ANCHOR_ANALOG,				PLC_TYPE_WORD,	ACTION_BATCH, 2, L"SD",	    6300 },
 		{ L"Ch1:閥(數值)1",				FIELD_VALVE_VALUE1,					PLC_TYPE_WORD,	ACTION_BATCH, 2, L"SD",	    6661 },
 		{ L"Ch2:閥(數值)2",				FIELD_VALVE_VALUE2,					PLC_TYPE_WORD,	ACTION_BATCH, 2, L"SD",	    6701 },
 		{ L"Ch3:測量壓力",				FIELD_PRESSURE,						PLC_TYPE_WORD,	ACTION_BATCH, 2, L"SD",	    6741 },
 		{ L"Ch4:測量溫度",				FIELD_TEMPERATURE,					PLC_TYPE_WORD,	ACTION_BATCH, 2, L"SD",	    6781 },
-		{ L"Ch5:驅動器壓力",			FIELD_DRIVE,						PLC_TYPE_WORD,	ACTION_BATCH, 2, L"SD",	    7021 },
+		{ L"Ch5:驅動器壓力",				FIELD_DRIVE,						PLC_TYPE_WORD,	ACTION_BATCH, 2, L"SD",	    7021 },
 		{ L"Ch6:開度回饋",				FIELD_FEEDBACK,						PLC_TYPE_WORD,	ACTION_BATCH, 2, L"SD",	    7061 },
 		{ L"Ch7:VOC",					FIELD_VOC_1,						PLC_TYPE_WORD,	ACTION_BATCH, 2, L"SD",	    7102 },
 		{ L"Ch8:VOC",					FIELD_VOC_2,						PLC_TYPE_WORD,	ACTION_BATCH, 2, L"SD",	    7142 },

@@ -15,10 +15,13 @@
 #include "SystPPProcess.h"
 #include "TechainProcess.h"
 #include "TGProcess.h"
+
+#include "EverstrongProcess.h"  //2023/10/5 甬強新增
 #ifdef _DEBUG
 #include "TagProcess_FX5U.h"
 #endif
 #else
+#include "TagProcess_FX5U.h"                 //應該不用
 #include "PLC\SystWebCooperProcessSocket.h"
 #include "PLC\SystCCLProcessSocket.h"
 #endif
@@ -36,6 +39,7 @@
 #define CLR_NOTIFY	RGB(0xFF, 0, 0)
 #define CLR_RESULT	RGB(0x80, 0x80, 0x80)
 #define CLR_SKIP	RGB(0x80, 0, 0)
+//========================================================================================
 ///<summary>[Constructor]初始化</summary>
 CPLCCommunicatorDlg::CPLCCommunicatorDlg(BOOL bNoShow, CWnd* pParent /*=NULL*/)
 	: CDialogEx(CPLCCommunicatorDlg::IDD, pParent)
@@ -55,7 +59,7 @@ void CPLCCommunicatorDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 }
 
-BEGIN_MESSAGE_MAP(CPLCCommunicatorDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CPLCCommunicatorDlg, CDialogEx)//類似增加Listener的方式
 #ifdef SHOW_DEBUG_BTN
 	ON_BN_CLICKED(UI_BTN_QUERYALL, OnQueryAll)
 	ON_BN_CLICKED(UI_BTN_TESTWRITE, OnTestWrite)

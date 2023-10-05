@@ -4,7 +4,7 @@
 
 #define TIMER_INTERVAL 1000
 #define QUERYSTATION_NAME	L"AOI_QueryStation(Server)"
-
+///<summary>項目數值格式</summary>
 enum PLC_VALUE_TYPE_
 {
 	PLC_TYPE_STRING,
@@ -13,12 +13,12 @@ enum PLC_VALUE_TYPE_
 	PLC_TYPE_DWORD,
 	PLC_TYPE_BIT,
 };
+///<summary>項目處理模式</summary>
 enum PLC_ACTION_TYPE_
 {
 	ACTION_SKIP,
 	ACTION_NOTIFY,
 	ACTION_BATCH,
-
 	ACTION_RESULT,
 };
 

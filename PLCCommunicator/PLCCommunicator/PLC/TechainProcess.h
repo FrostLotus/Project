@@ -3,7 +3,8 @@
 
 #define TECHAIN_NAME L"SENSOR_VIEWER"
 
-enum PLC_TECHAIN_MESSAGE{
+enum PLC_TECHAIN_MESSAGE
+{
 	PTM_VERSION_ERROR,
 	//PTM_START,				//開始
 	//PTM_END,				//結束
@@ -21,13 +22,15 @@ enum PLC_TECHAIN_MESSAGE{
 	PTM_VOC_1,				//VOC1
 	PTM_VOC_2,				//VOC2
 };
-class CTechainProcess :public CPLCProcessBase{
+class CTechainProcess :public CPLCProcessBase
+{
 public:
 	CTechainProcess();
 	virtual ~CTechainProcess();
 	virtual int GetFieldSize() { return FIELD_MAX; };//14
 
-	enum PLC_FIELD_{
+	enum PLC_FIELD_
+	{
 		FIELD_BEGIN = 0,
 		FIELD_VERSION = FIELD_BEGIN,
 		FIELD_VALVE_SWITCH1,	//閥(開關)1

@@ -1,14 +1,15 @@
 #pragma once
 #include "PLCProcessBase.h"
 
-class CSystPPProcess :public CPLCProcessBase{
+class CSystPPProcess :public CPLCProcessBase
+{
 public:
 	CSystPPProcess(); 
 	virtual ~CSystPPProcess();
-
 	virtual int GetFieldSize() { return FIELD_MAX; };//9
 
-	enum PLC_FIELD_{
+	enum PLC_FIELD_
+	{
 		FIELD_BEGIN = 0,
 		FIELD_WATCHDOG = FIELD_BEGIN,
 		FIELD_SWITCH_SHEET_WEB,
@@ -46,14 +47,16 @@ private:
 private:
 	static CSystPPProcess* m_this;
 	PLC_DATA_ITEM_ **m_pPLC_FIELD_INFO;
-	enum {
+	enum 
+	{
 		//TIMER_WATCHDOG,			//watch dog
 		TIMER_INPUT,
 		TIMER_MAX
 	};
 	UINT_PTR m_tTimerEvent[TIMER_MAX];
 	
-	struct PP_PARAM{
+	struct PP_PARAM
+	{
 		int nWatchDogTimeOut; //second. X秒沒有寫入FIELD_WATCHDOG就會輸出訊號
 		int nVersion;//版本
 		int nWSMode;

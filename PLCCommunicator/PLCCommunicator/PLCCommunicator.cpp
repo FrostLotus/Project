@@ -1,7 +1,4 @@
-
 // PLCCommunicator.cpp : 定義應用程式的類別行為。
-//
-
 #include "stdafx.h"
 #include "PLCCommunicator.h"
 #include "PLCCommunicatorDlg.h"
@@ -11,10 +8,8 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
-
-// CPLCCommunicatorApp
-
+//=================================================================
+/// CPLCCommunicatorApp
 BEGIN_MESSAGE_MAP(CPLCCommunicatorApp, CWinApp)
 	ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
 END_MESSAGE_MAP()
@@ -50,18 +45,13 @@ LONG WINAPI OnCallback_ZergExcpHandler(struct _EXCEPTION_POINTERS* lpstException
 	{
 		bShow = false;
 	}
-
 	::WriteZergLog(lpstExceptionInfo, strCurrentPathA + "\\", bShow, true);
 	::TerminateProcess(GetCurrentProcess(), 1);
 
 
 	return EXCEPTION_EXECUTE_HANDLER; //This usually results in process termination.
 }
-
-
-
 // CPLCCommunicatorApp 建構
-
 CPLCCommunicatorApp::CPLCCommunicatorApp()
 {
 	// 支援重新啟動管理員
@@ -71,9 +61,7 @@ CPLCCommunicatorApp::CPLCCommunicatorApp()
 	// 將所有重要的初始設定加入 InitInstance 中
 }
 
-
 // 僅有的一個 CPLCCommunicatorApp 物件
-
 CPLCCommunicatorApp theApp;
 
 

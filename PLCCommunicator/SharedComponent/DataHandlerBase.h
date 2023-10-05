@@ -275,6 +275,10 @@ typedef struct BATCH_SHARE_SYST_PARAMCCL_ : public BATCH_SHARE_SYST_BASE
 	WORD wNO_C12;							//C12小板剪切編號
 }BATCH_SHARE_SYST_PARAMCCL;
 
+//typedef struct
+
+
+
 /// <summary>系統工單分享項目_資訊1</summary>
 typedef struct BATCH_SHARE_SYST_INFO1_
 {
@@ -299,6 +303,8 @@ struct BATCH_SHARE_SYST_INFO
 	BATCH_SHARE_SYST_INFO1 xInfo1;
 	BATCH_SHARE_SYST_INFO2 xInfo2;
 };
+
+
 /// <summary>系統工單分享回應項目_CCL</summary>
 typedef struct BATCH_SHARE_SYST_RESULTCCL_
 {
@@ -345,12 +351,14 @@ typedef struct BATCH_SHARE_SYST_INITPARAM_
 
 //--------		MX		--------------------------
 /// <summary>[BATCH=>MX-Component]初始化參數</summary>
-typedef struct BATCH_SHARE_MX_INITPARAM_ {
+typedef struct BATCH_SHARE_MX_INITPARAM_ 
+{
 	long lCPU;
 	TCHAR cPLCIP[MAX_BATCH_FIELD_LEN];
 	UINT lStartAddress;
 }BATCH_SHARE_MX_INITPARAM;
-typedef struct BATCH_SHARE_MX_PINSTATUS_ {
+typedef struct BATCH_SHARE_MX_PINSTATUS_ 
+{
 	int nIndex0Base;
 	BOOL bHighLeve;
 }BATCH_SHARE_MX_PINSTATUS;
@@ -414,18 +422,21 @@ typedef struct BATCH_SHARE_EMC_PPEND_ : public BATCH_SHARE_EMC_BASE_ {
 	float fLength;									//每卷米數
 }BATCH_SHARE_EMC_PPEND;
 
-enum EMC_ERROR {
+enum EMC_ERROR 
+{
 	EMC_FIELD_NOTCOMPLETE,	//欄位不齊全
 	EMC_TIMEOUT,			//TIMEOUT
 
 };
-enum LOG_TYPE {
+enum LOG_TYPE 
+{
 	LOG_FLOAT,
 	LOG_WORD,
 	LOG_CSTRING,
 	LOG_NONE,
 };
-typedef struct BATCH_SHARE_EMC_ERRORINFO_ {
+typedef struct BATCH_SHARE_EMC_ERRORINFO_ 
+{
 	EMC_ERROR eErrorType;								//錯誤代碼
 	TCHAR cErrorMsg[MAX_BATCH_FIELD_LEN];				//錯誤訊息
 }BATCH_SHARE_EMC_ERRORINFO;
@@ -439,7 +450,8 @@ enum SYST_INFO_FIELD {
 	CCD_ERROR = 0x20,	 //CCD表現檢測儀器故障
 };
 
-class CDataHandlerBase {
+class CDataHandlerBase 
+{
 public:
 	CDataHandlerBase(CString strMemID = L"");
 	virtual ~CDataHandlerBase();

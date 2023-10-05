@@ -95,7 +95,6 @@ public:
 		FIELD_SIZE_ERROR_1,			//尺寸故障
 
 		FIELD_COMMAND_RECEIVED,		//指令收到
-
 		FIELD_RESULT,				//檢驗結果
 		FIELD_RESULT_RECEIVED,		//檢驗結果收到
 
@@ -107,11 +106,11 @@ public:
 		FIELD_RESULT_DIFF_XY,		//級差實際檢測值
 		FIELD_RESULT_MES,			//通知MES
 
-		FIELD_BATCH_MES,		//通知MES工單資訊
-		FIELD_INSP_SETTING,		//檢測設定
-		FIELD_LIGHT_SETTING,	//光源設定
-		FIELD_START_TIME,		//檢測開始時間
-		FIELD_END_TIME,			//檢測結束時間
+		FIELD_BATCH_MES,		    //通知MES工單資訊
+		FIELD_INSP_SETTING,		    //檢測設定
+		FIELD_LIGHT_SETTING,	    //光源設定
+		FIELD_START_TIME,		    //檢測開始時間
+		FIELD_END_TIME,			    //檢測結束時間
 		FIELD_FRONT_DEFECT_SIZE_1,	//九宮格中正面前五大缺陷大小1
 		FIELD_FRONT_DEFECT_SIZE_2,	//九宮格中正面前五大缺陷大小2
 		FIELD_FRONT_DEFECT_SIZE_3,	//九宮格中正面前五大缺陷大小3
@@ -150,7 +149,6 @@ public:
 	
 protected:
 	virtual long ON_OPEN_PLC(LPARAM lp);
-	//IPLCProcess
 	virtual void ON_GPIO_NOTIFY(WPARAM wp, LPARAM lp);
 
 	virtual void DoWriteResult(BATCH_SHARE_SYST_RESULTCCL &xData) = 0;
