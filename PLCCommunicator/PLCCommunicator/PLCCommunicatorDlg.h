@@ -12,7 +12,8 @@
 #include "MelsecPlcSocket.h"
 #endif
 
-struct PLC_PARAM{
+struct PLC_PARAM
+{
 	CString strPLCIp;
 	AOI_CUSTOMERTYPE_ eCustomerType;
 	AOI_SUBCUSTOMERTYPE_ eSubCustomerType;
@@ -22,33 +23,40 @@ struct PLC_PARAM{
 	PLC_FRAME_TYPE eFrameType;
 #endif
 };
-struct WND_OBJ{
+
+struct WND_OBJ
+{
 	RECT rcUi;
 	UINT nID;
 	CListCtrl* pList;
-	CButton *pBtn;
+	CButton* pBtn;
 	CString strCaption;
-	CEdit *pEdit;
+	CEdit* pEdit;
 	COLORREF xColor;
-	WND_OBJ(){
+	WND_OBJ()
+	{
 		memset(&rcUi, 0, sizeof(rcUi));
 		nID = 0;
 		pList = NULL;
 		pBtn = NULL;
 		pEdit = NULL;
 	}
-	~WND_OBJ(){
-		if (pList){
+	~WND_OBJ()
+	{
+		if (pList)
+		{
 			pList->DestroyWindow();
 			delete pList;
 			pList = NULL;
 		}
-		if (pBtn){
+		if (pBtn)
+		{
 			pBtn->DestroyWindow();
 			delete pBtn;
 			pBtn = NULL;
 		}
-		if (pEdit){
+		if (pEdit)
+		{
 			pEdit->DestroyWindow();
 			delete pEdit;
 			pEdit = NULL;
@@ -64,14 +72,14 @@ class CPLCCommunicatorDlg : public CDialogEx
 	, public ISocketCallBack
 #endif
 {
-// 建構
+	// 建構
 public:
 	CPLCCommunicatorDlg(BOOL bNoShow, CWnd* pParent = NULL);	// 標準建構函式
 	~CPLCCommunicatorDlg();
-// 對話方塊資料
+	// 對話方塊資料
 	enum { IDD = IDD_PLCCOMMUNICATOR_DIALOG };
 
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 支援
 protected:
 #ifdef USE_MC_PROTOCOL
@@ -79,16 +87,17 @@ protected:
 	virtual void ConnStatusCallBack(AOI_SOCKET_STATE xState);
 	virtual void OnDeviceNotify(int nType, int nVal, CString strDes);
 	virtual void OnPLCNewBatch(CString strOrder, CString strMaterial);
-	virtual void OnPLCSYSTParam(BATCH_SHARE_SYST_PARAMCCL *pData);
+	virtual void OnPLCSYSTParam(BATCH_SHARE_SYST_PARAMCCL* pData);
 	virtual void OnC10Change(WORD wC10);
 	void HandleAOIResponse(LPARAM lParam);
-	enum {
+	enum
+	{
 		OP_CREATE = 0,
 		OP_DESTROY,
 	};
 	void OpPLC(int nOpCode);
 #endif
-// 程式碼實作
+	// 程式碼實作
 protected:
 	HICON m_hIcon;
 
@@ -99,9 +108,9 @@ protected:
 	afx_msg LRESULT OnCmdProcess(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnCmdGPIO(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnWindowPosChanging(WINDOWPOS FAR* lpwndpos);
-	afx_msg void OnLvnGetdispinfoPLCAddress(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnLvnGetdispinfoPLCParam(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnLvnGetdispinfoInfo(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnLvnGetdispinfoPLCAddress(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnLvnGetdispinfoPLCParam(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnLvnGetdispinfoInfo(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnCustomdrawList(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnTimer(UINT_PTR);
 	DECLARE_MESSAGE_MAP()
@@ -111,7 +120,7 @@ private:
 	void InitUI();
 	void Finalize();
 	void DrawInfo();
-	void AddInfoText(CString &strInfo);
+	void AddInfoText(CString& strInfo);
 	void InitPLCProcess();
 private:
 	std::vector<std::pair<CString, __time64_t>> m_vPLCInfo;
@@ -125,17 +134,20 @@ private:
 
 	PLC_PARAM m_xParam;
 
-	enum{
+	enum
+	{
 		LIST_COL_FIELD = 0,
 		LIST_COL_ADDRESS,
 		LIST_COL_VALUE,
 		LIST_COL_TIME,
 	};
-	enum{
+	enum
+	{
 		LIST_COL_TITLE,
 		LIST_COL_DATA,
 	};
-	enum{
+	enum
+	{
 		UI_ITEM_BEGIN,
 		//LABEL
 		UI_LABEL_BEGIN,
@@ -169,7 +181,8 @@ private:
 	};
 	WND_OBJ m_xUi[UI_ITEM_END];
 
-	enum{
+	enum
+	{
 		LOCK_BEGIN = 0,
 		LOCK_INFO = LOCK_BEGIN,
 		LOCK_MAX,
@@ -179,13 +192,13 @@ private:
 	UINT_PTR  m_tTimerReconnect;
 	UINT_PTR  m_tTimer;
 #ifndef USE_MC_PROTOCOL
-	CPLCProcessBase *m_pPLCProcessBase;
+	CPLCProcessBase* m_pPLCProcessBase;
 	virtual void ON_PLC_NOTIFY(CString strMsg);
-	virtual void ON_SET_PLCPARAM(BATCH_SHARE_SYSTCCL_INITPARAM &xParam); 
+	virtual void ON_SET_PLCPARAM(BATCH_SHARE_SYSTCCL_INITPARAM& xParam);
 	virtual void ON_PLCDATA_CHANGE(int nFieldId, void* pData, int nSizeInByte);
 	virtual void ON_BATCH_PLCDATA_CHANGE(int nFieldFirst, int nFieldLast);
 #else
-	CMelsecPlcSocket *m_pPLC;
-	CPLCDataHandler *m_pPLCDataHandler;
+	CMelsecPlcSocket* m_pPLC;
+	CPLCDataHandler* m_pPLCDataHandler;
 #endif
 };

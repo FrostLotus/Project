@@ -22,14 +22,14 @@ void CMelSecIOController::ListAllIP()
 
 	if (!ulLen)
 	{
-		return ;
+		return;
 	}
 	pAdptInfo = (IP_ADAPTER_INFO*)::new BYTE[ulLen];
 
 	::GetAdaptersInfo(pAdptInfo, &ulLen);
 
 	pNextAd = pAdptInfo;
-	
+
 	while (pNextAd)
 	{
 		CString strIp(pNextAd->IpAddressList.IpAddress.String);
@@ -40,7 +40,7 @@ void CMelSecIOController::ListAllIP()
 	delete (BYTE*)pAdptInfo;
 }
 
-long CMelSecIOController::OpenDevice(BATCH_SHARE_SYSTCCL_INITPARAM &xData)
+long CMelSecIOController::OpenDevice(BATCH_SHARE_SYSTCCL_INITPARAM& xData)
 {
 	LIB_LOAD();
 
@@ -51,8 +51,10 @@ long CMelSecIOController::OpenDevice(BATCH_SHARE_SYSTCCL_INITPARAM &xData)
 #endif
 	//log Param
 	CString strMsg;
-	auto LogData = [&](CString strInfo, long lData){
-		if (bLog){
+	auto LogData = [&](CString strInfo, long lData)
+	{
+		if (bLog)
+		{
 			strMsg.Format(L"%s: %ld", strInfo, lData);
 			theApp.InsertDebugLog(strMsg, LOG_SYSTEM);
 			ON_PLC_NOTIFY(strMsg);
@@ -63,8 +65,9 @@ long CMelSecIOController::OpenDevice(BATCH_SHARE_SYSTCCL_INITPARAM &xData)
 	LogData(L"T_StationNo", xData.lTargetStationNo);
 	LogData(L"PCNetworkNo", xData.lPCNetworkNo);
 	LogData(L"PCStationNo", xData.lPCStationNo);
-	
-	if (m_pIProgType){
+
+	if (m_pIProgType)
+	{
 		SetMXParam(m_pIProgType, xData);
 		BSTR bStr = m_strIp.AllocSysString();
 
@@ -72,7 +75,8 @@ long CMelSecIOController::OpenDevice(BATCH_SHARE_SYSTCCL_INITPARAM &xData)
 
 		::SysFreeString(bStr);
 		m_pIProgType->put_ActProtocolType(PROTOCOL_TCPIP);
-		if (bLog){
+		if (bLog)
+		{
 			LONG lTimeOut = 0;
 			m_pIProgType->get_ActTimeOut(&lTimeOut);
 			LogData(L"TimeOutSetting", lTimeOut);
@@ -81,13 +85,16 @@ long CMelSecIOController::OpenDevice(BATCH_SHARE_SYSTCCL_INITPARAM &xData)
 	}
 
 	long lRtn = ERR_DLL_NOT_LOAD;
-	if (m_pIProgType){
+	if (m_pIProgType)
+	{
 		m_pIProgType->Open(&lRtn);
-		if (lRtn == 0){
+		if (lRtn == 0)
+		{
 			m_bInit = TRUE;
 			ON_PLC_NOTIFY(L"open PLC ok");
 		}
-		else{
+		else
+		{
 			strMsg.Format(L"open PLC fail: %ld", lRtn);
 			ON_PLC_NOTIFY(strMsg);
 		}
@@ -95,45 +102,48 @@ long CMelSecIOController::OpenDevice(BATCH_SHARE_SYSTCCL_INITPARAM &xData)
 	return lRtn;
 }
 #ifdef BATCH_READ_WRITE
-long CMelSecIOController::ReadAddress(CString strDevType, int nStartDeviceNumber, int nSize, WORD *pValue)
+long CMelSecIOController::ReadAddress(CString strDevType, int nStartDeviceNumber, int nSize, WORD* pValue)
 {
 	int nReadSize = nSize;
 	if (nReadSize <= 0 || !pValue)
 		return 0;
 
-	short *pRead = NULL;
+	short* pRead = NULL;
 	long lRtn = ReadAddress(strDevType, nStartDeviceNumber, nReadSize, &pRead);
 
-	BYTE *pSrc = (BYTE*)pRead, *pDst = (BYTE*)pValue;
-	if (lRtn == 0 && pRead) {
-		for (int i = 0; i < nReadSize; i++) {
+	BYTE* pSrc = (BYTE*)pRead, * pDst = (BYTE*)pValue;
+	if (lRtn == 0 && pRead)
+	{
+		for (int i = 0; i < nReadSize; i++)
+		{
 			memcpy(pDst, pSrc, sizeof(short));
 			pSrc += sizeof(short);
 			pDst += sizeof(WORD);
 		}
 		delete[]pRead;
 	}
-	
+
 	return lRtn;
 }
-long CMelSecIOController::ReadAddress(CString strDevType, int nStartDeviceNumber, int nSize, float *pValue)
+long CMelSecIOController::ReadAddress(CString strDevType, int nStartDeviceNumber, int nSize, float* pValue)
 {
 	int nReadSize = nSize * 2;  // one float is stored in 2 word
 	if (nReadSize <= 0)
 		return 0;
 
+	short* pRead = NULL;//輸出
+	long lRtn = ReadAddress(strDevType, nStartDeviceNumber, nReadSize, &pRead); //ReadDeviceBlock2
 
-	short *pRead = NULL;
-	long lRtn = ReadAddress(strDevType, nStartDeviceNumber, nReadSize, &pRead);
-
-	BYTE *pSrc = (BYTE*)pRead, *pDst = (BYTE*)pValue;
-	if (lRtn == 0 && pRead) {
-		for (int i = 0; i < nSize; i++) {
-			memcpy(pDst, pSrc, sizeof(float));
+	BYTE* pSrc = (BYTE*)pRead, * pDst = (BYTE*)pValue;//各種建立size?
+	if (lRtn == 0 && pRead)
+	{
+		for (int i = 0; i < nSize; i++)
+		{
+			memcpy(pDst, pSrc, sizeof(float));//實際複製鍵入pValue
 			pSrc += sizeof(float);
 			pDst += sizeof(float);
 		}
-		delete[]pRead;
+		delete[]pRead;//回收
 	}
 
 	return lRtn;
@@ -144,12 +154,14 @@ long CMelSecIOController::ReadAddress(CString strDevType, int nStartDeviceNumber
 	if (nReadSize <= 0)
 		return 0;
 
-	short *pRead = NULL;
+	short* pRead = NULL;
 	long lRtn = ReadAddress(strDevType, nStartDeviceNumber, nReadSize, &pRead);
 
-	BYTE *pSrc = (BYTE*)pRead, *pDst = (BYTE*)pValue;
-	if (lRtn == 0 && pRead) {
-		for (int i = 0; i < nSize; i++) {
+	BYTE* pSrc = (BYTE*)pRead, * pDst = (BYTE*)pValue;
+	if (lRtn == 0 && pRead)
+	{
+		for (int i = 0; i < nSize; i++)
+		{
 			memcpy(pDst, pSrc, sizeof(BYTE));
 			pSrc += sizeof(BYTE);
 			pDst += sizeof(BYTE);
@@ -159,10 +171,11 @@ long CMelSecIOController::ReadAddress(CString strDevType, int nStartDeviceNumber
 
 	return lRtn;
 }
-long CMelSecIOController::ReadRandom(CString &strList, int nSize , short *pData)
+long CMelSecIOController::ReadRandom(CString& strList, int nSize, short* pData)
 {
 	long lRtn = ERR_DLL_NOT_LOAD;
-	if (m_pIProgType){
+	if (m_pIProgType)
+	{
 		EnterCriticalSection(&m_xLock);
 		BSTR bStr = strList.AllocSysString();
 		m_pIProgType->ReadDeviceRandom2(bStr, nSize, pData, &lRtn);
@@ -171,10 +184,11 @@ long CMelSecIOController::ReadRandom(CString &strList, int nSize , short *pData)
 	}
 	return lRtn;
 }
-long CMelSecIOController::ReadOneAddress(CString strDevType, int nStartDeviceNumber, short *pValue)
+long CMelSecIOController::ReadOneAddress(CString strDevType, int nStartDeviceNumber, short* pValue)
 {
 	long lRtn = ERR_DLL_NOT_LOAD;
-	if (m_pIProgType){
+	if (m_pIProgType)
+	{
 		EnterCriticalSection(&m_xLock);
 		memset(pValue, 0, sizeof(short));
 		CString strDevice;
@@ -186,45 +200,47 @@ long CMelSecIOController::ReadOneAddress(CString strDevType, int nStartDeviceNum
 	}
 	return lRtn;
 }
-long CMelSecIOController::ReadAddress(CString strDevType, int nStartDeviceNumber, int nSizeInWord, short **ppValue)
+long CMelSecIOController::ReadAddress(CString strDevType, int nStartDeviceNumber, int nSizeInWord, short** ppValue)
 {
 	long lRtn = ERR_DLL_NOT_LOAD;
 #ifndef SUPPORT_AOI
-	if (nSizeInWord){
-		if (m_pIProgType){
-			EnterCriticalSection(&m_xLock);
+	if (nSizeInWord)
+	{
+		if (m_pIProgType)
+		{
+			EnterCriticalSection(&m_xLock);//Lock ON
 			*ppValue = new short[nSizeInWord];
 			memset(*ppValue, 0, nSizeInWord * sizeof(short));
 			CString strDevice;
-			strDevice.Format(L"%s%d", strDevType, nStartDeviceNumber);
+			strDevice.Format(L"%s%d", strDevType, nStartDeviceNumber);//D1000
 			BSTR bStr = strDevice.AllocSysString();
 			m_pIProgType->ReadDeviceBlock2(bStr, nSizeInWord, *ppValue, &lRtn);
 			::SysFreeString(bStr);
-			LeaveCriticalSection(&m_xLock);
+			LeaveCriticalSection(&m_xLock);//Lock OFF
 		}
 	}
 #endif
 	return lRtn;
 }
-long CMelSecIOController::WriteAddress(CString strDevType, int nDeviceNumber, int nSizeInByte, WORD *pWrite)
+long CMelSecIOController::WriteAddress(CString strDevType, int nDeviceNumber, int nSizeInByte, WORD* pWrite)
 {
 	int nWriteSize = nSizeInByte / 2;
 	int nWordCount = nSizeInByte / sizeof(WORD);
 	if (nWriteSize <= 0)
 		return 0;
 
-	long lRtn = WriteAddress(strDevType, nDeviceNumber, nWriteSize, (short *)pWrite);
+	long lRtn = WriteAddress(strDevType, nDeviceNumber, nWriteSize, (short*)pWrite);
 
 	return lRtn;
 }
-long CMelSecIOController::WriteAddress(CString strDevType, int nDeviceNumber, int nSizeInByte, float *pWrite)
+long CMelSecIOController::WriteAddress(CString strDevType, int nDeviceNumber, int nSizeInByte, float* pWrite)
 {
 	int nWriteSize = nSizeInByte / 2;
 	int nFloatCount = nSizeInByte / sizeof(float);
 	if (nWriteSize <= 0)
 		return 0;
 
-	long lRtn = WriteAddress(strDevType, nDeviceNumber, nWriteSize, (short *)pWrite);
+	long lRtn = WriteAddress(strDevType, nDeviceNumber, nWriteSize, (short*)pWrite);
 
 	return lRtn;
 }
@@ -234,16 +250,18 @@ long CMelSecIOController::WriteAddress(CString strDevType, int nDeviceNumber, in
 	if (nWriteSize <= 0)
 		return 0;
 
-	long lRtn = WriteAddress(strDevType, nDeviceNumber, nWriteSize, (short *)pWrite);
+	long lRtn = WriteAddress(strDevType, nDeviceNumber, nWriteSize, (short*)pWrite);
 
 	return lRtn;
 }
-long CMelSecIOController::WriteAddress(CString strDevType, int nStartDeviceNumber, int nSizeInWord, short *pValue)
+long CMelSecIOController::WriteAddress(CString strDevType, int nStartDeviceNumber, int nSizeInWord, short* pValue)
 {
 	long lRtn = ERR_DLL_NOT_LOAD;
 #ifndef SUPPORT_AOI
-	if (nSizeInWord){
-		if (m_pIProgType){
+	if (nSizeInWord)
+	{
+		if (m_pIProgType)
+		{
 			EnterCriticalSection(&m_xLock);
 			CString strDevice;
 			strDevice.Format(L"%s%d", strDevType, nStartDeviceNumber);
@@ -256,10 +274,11 @@ long CMelSecIOController::WriteAddress(CString strDevType, int nStartDeviceNumbe
 #endif
 	return lRtn;
 }
-long CMelSecIOController::WriteRandom(CString &strList, int nSize, short *pData)
+long CMelSecIOController::WriteRandom(CString& strList, int nSize, short* pData)
 {
 	long lRtn = ERR_DLL_NOT_LOAD;
-	if (m_pIProgType){
+	if (m_pIProgType)
+	{
 		EnterCriticalSection(&m_xLock);
 		BSTR bStr = strList.AllocSysString();
 		m_pIProgType->WriteDeviceRandom2(bStr, nSize, pData, &lRtn);
@@ -272,7 +291,8 @@ long CMelSecIOController::WriteOneAddress(CString strDevice, short nValue)
 {
 	long lRtn = ERR_DLL_NOT_LOAD;
 #ifndef SUPPORT_AOI
-	if (m_pIProgType){
+	if (m_pIProgType)
+	{
 		EnterCriticalSection(&m_xLock);
 		BSTR bStr = strDevice.AllocSysString();
 		m_pIProgType->SetDevice2(bStr, nValue, &lRtn);
@@ -285,36 +305,40 @@ long CMelSecIOController::WriteOneAddress(CString strDevice, short nValue)
 CString CMelSecIOController::GetErrorMessage(long lErrCode)
 {
 	CString strRtn;
-	switch (lErrCode){
-	case 0:
-		strRtn = L"Success";
-		break;
-	case ERR_DLL_NOT_LOAD:
-		strRtn = L"DLL not Load";
-		break;
-	case ERR_PARAM_ERROR:
-		strRtn = L"Parameter Error";
-		break;
-	default:
-		BOOL bRtnDefault = TRUE;
-		if (m_pISupportMsg){
-			BSTR bs = NULL;
-			long lRtn = 0;
-			m_pISupportMsg->GetErrorMessage(lErrCode, &bs, &lRtn);
-			if (lRtn == 0){
-				bRtnDefault = FALSE;
-				strRtn = bs;
+	switch (lErrCode)
+	{
+		case 0:
+			strRtn = L"Success";
+			break;
+		case ERR_DLL_NOT_LOAD:
+			strRtn = L"DLL not Load";
+			break;
+		case ERR_PARAM_ERROR:
+			strRtn = L"Parameter Error";
+			break;
+		default:
+			BOOL bRtnDefault = TRUE;
+			if (m_pISupportMsg)
+			{
+				BSTR bs = NULL;
+				long lRtn = 0;
+				m_pISupportMsg->GetErrorMessage(lErrCode, &bs, &lRtn);
+				if (lRtn == 0)
+				{
+					bRtnDefault = FALSE;
+					strRtn = bs;
+				}
 			}
-		}
-		if (bRtnDefault){
-			strRtn.Format(L"0x%08x", lErrCode);
-		}
-		break;
+			if (bRtnDefault)
+			{
+				strRtn.Format(L"0x%08x", lErrCode);
+			}
+			break;
 	}
 	return strRtn;
 }
 #endif
-CString CMelSecIOController::GetDeviceCString(GPIO_ITEM &xItem)
+CString CMelSecIOController::GetDeviceCString(GPIO_ITEM& xItem)
 {
 	CString strRtn;
 	strRtn.Format(L"%c%X", xItem.cDeviceCode, xItem.uAddress);
@@ -324,19 +348,19 @@ CString CMelSecIOController::GetCPUType()
 {
 	switch (GetCPU())
 	{
-	case CPU_SERIES::FX3U_SERIES:
-		return L"FX3U Series";
-		break;
-	case CPU_SERIES::FX5U_SERIES:
-		return L"FX5U Series";
-		break;
-	case CPU_SERIES::R_SERIES:
-		return L"R Series";
-		break;
-	case CPU_SERIES::Q_SERIES:
-	default:
-		return L"Q Series";
-		break;
+		case CPU_SERIES::FX3U_SERIES:
+			return L"FX3U Series";
+			break;
+		case CPU_SERIES::FX5U_SERIES:
+			return L"FX5U Series";
+			break;
+		case CPU_SERIES::R_SERIES:
+			return L"R Series";
+			break;
+		case CPU_SERIES::Q_SERIES:
+		default:
+			return L"Q Series";
+			break;
 	}
 }
 void CMelSecIOController::Init()
@@ -349,7 +373,8 @@ void CMelSecIOController::Init()
 void CMelSecIOController::Finalize()
 {
 	long lRtn = 0;
-	if (m_pIProgType){
+	if (m_pIProgType)
+	{
 		m_pIProgType->Close(&lRtn);
 	}
 	LIB_FREE();
@@ -358,38 +383,45 @@ void CMelSecIOController::Finalize()
 void CMelSecIOController::LIB_LOAD()
 {
 	CoInitialize(NULL);
-	if (m_pIProgType == NULL){
+	if (m_pIProgType == NULL)
+	{
 		HRESULT	hr = CoCreateInstance(CLSID_ActProgType,
 			NULL,
 			CLSCTX_INPROC_SERVER,
 			IID_IActProgType,
 			(LPVOID*)&m_pIProgType);
 
-		if (!SUCCEEDED(hr)){
+		if (!SUCCEEDED(hr))
+		{
 			ON_PLC_NOTIFY(L"Load ActProgType.dll Fail");
 		}
-		else{
+		else
+		{
 			ON_PLC_NOTIFY(L"Load ActProgType.dll ok");
 		}
 	}
-	if (m_pISupportMsg == NULL){
+	if (m_pISupportMsg == NULL)
+	{
 		HRESULT	hr = CoCreateInstance(CLSID_ActSupportMsg,
 			NULL,
 			CLSCTX_INPROC_SERVER,
 			IID_IActSupportMsg,
 			(LPVOID*)&m_pISupportMsg);
 
-		if (!SUCCEEDED(hr)){
+		if (!SUCCEEDED(hr))
+		{
 			ON_PLC_NOTIFY(L"Load ActSupportMsg.dll Fail");
 		}
-		else{
+		else
+		{
 			ON_PLC_NOTIFY(L"Load ActSupportMsg.dll ok");
 		}
 	}
 }
 void CMelSecIOController::LIB_FREE()
 {
-	if (m_pIProgType){
+	if (m_pIProgType)
+	{
 		m_pIProgType->Release();
 		m_pIProgType = NULL;
 		TRACE(L"Free DLL \n");

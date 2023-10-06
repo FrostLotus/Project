@@ -1,11 +1,8 @@
 // PLCCommunicator.h : PROJECT_NAME 應用程式的主要標頭檔
 //
-
 #pragma once
-
 #define WM_LOCAL_MSG	(WM_APP+100)
 #define WM_EXIT			(WM_APP+101)
-
 
 #ifndef __AFXWIN_H__
 	#error "對 PCH 包含此檔案前先包含 'stdafx.h'"

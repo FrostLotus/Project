@@ -28,11 +28,9 @@ LONG WINAPI OnCallback_ZergExcpHandler(struct _EXCEPTION_POINTERS* lpstException
 	CStringA strCurrentPathA;
 	strCurrentPathA = strCurrentPath;
 
-
 	CString strDebug;
 	strDebug.Format(_T("\n ....... xxxxxxxx OnCallback_ZergExcpHandler xxxxxxxx ....... \n"));
 	OutputDebugString(strDebug);
-
 
 	int nEnWriteZerg, nEnShowMsg;
 	ReadZergFunctionIni(nEnWriteZerg, nEnShowMsg);
@@ -48,7 +46,6 @@ LONG WINAPI OnCallback_ZergExcpHandler(struct _EXCEPTION_POINTERS* lpstException
 	::WriteZergLog(lpstExceptionInfo, strCurrentPathA + "\\", bShow, true);
 	::TerminateProcess(GetCurrentProcess(), 1);
 
-
 	return EXCEPTION_EXECUTE_HANDLER; //This usually results in process termination.
 }
 // CPLCCommunicatorApp 建構
@@ -60,13 +57,9 @@ CPLCCommunicatorApp::CPLCCommunicatorApp()
 	// TODO:  在此加入建構程式碼，
 	// 將所有重要的初始設定加入 InitInstance 中
 }
-
 // 僅有的一個 CPLCCommunicatorApp 物件
 CPLCCommunicatorApp theApp;
-
-
 // CPLCCommunicatorApp 初始設定
-
 BOOL CPLCCommunicatorApp::InitInstance()
 {
 	// 假如應用程式資訊清單指定使用 ComCtl32.dll 6 (含) 以後版本，

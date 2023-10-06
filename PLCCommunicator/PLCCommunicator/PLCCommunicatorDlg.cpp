@@ -16,7 +16,7 @@
 #include "TechainProcess.h"
 #include "TGProcess.h"
 
-#include "EverstrongProcess.h"  //2023/10/5 甬強新增
+#include "EverStrProcess.h"  //2023/10/5 甬強新增
 #ifdef _DEBUG
 #include "TagProcess_FX5U.h"
 #endif
@@ -92,14 +92,15 @@ void CPLCCommunicatorDlg::OnQueryAll()
 		for (int i = 0; i < nMax; i++)
 		{
 			PLC_DATA_ITEM_* pItem = m_pPLCProcessBase->GetPLCAddressInfo(i, FALSE);
-			if (pItem && pItem->xAction != ACTION_SKIP) 
+			if (pItem && pItem->xAction != ACTION_SKIP)
 			{
-				m_pPLCProcessBase->GET_PLC_FIELD_DATA(i);
+				m_pPLCProcessBase->GET_PLC_FIELD_DATA(i);//全部讀一次
 			}
 		}
 	}
 #else
-	if (m_pPLC){
+	if (m_pPLC)
+	{
 		m_pPLC->QUERY_ALL_BATCH_INFO();
 	}
 #endif
@@ -108,40 +109,46 @@ void CPLCCommunicatorDlg::OnTestWrite()
 {
 	theApp.InsertDebugLog(L"UI Test Write");
 #ifndef USE_MC_PROTOCOL
-	if (m_pPLCProcessBase){
-		if (m_pPLCProcessBase->HAS_CUSTOM_TEST()){ //for custom test
+	if (m_pPLCProcessBase)
+	{
+		if (m_pPLCProcessBase->HAS_CUSTOM_TEST())
+		{ //for custom test
 			m_pPLCProcessBase->DO_CUSTOM_TEST();
 		}
-		else{
+		else
+		{
 			int nMax = m_pPLCProcessBase->GetFieldSize();
 #ifdef SHOW_PERFORMANCE
 			LARGE_INTEGER xStart, xEnd, xFreq;
 			QueryPerformanceFrequency(&xFreq);
 			QueryPerformanceCounter(&xStart);
 #endif
-			for (int i = 0; i < nMax; i++){
+			for (int i = 0; i < nMax; i++)
+			{
 				PLC_DATA_ITEM_* pItem = m_pPLCProcessBase->GetPLCAddressInfo(i, FALSE);
-				if (pItem && pItem->xAction == ACTION_RESULT){
-					switch (pItem->xValType){
-					case PLC_TYPE_STRING:
-						if (i <= 0xFF)
+				if (pItem && pItem->xAction == ACTION_RESULT)
+				{
+					switch (pItem->xValType)
+					{
+						case PLC_TYPE_STRING:
+							if (i <= 0xFF)
+							{
+								char c[2]; memset(&c, 0, 2);
+								c[0] = 0x30 + i;
+								m_pPLCProcessBase->SET_PLC_FIELD_DATA(i, 2, (BYTE*)&c);
+							}
+							break;
+						case PLC_TYPE_WORD:
 						{
-							char c[2]; memset(&c, 0, 2);
-							c[0] = 0x30 + i;
-							m_pPLCProcessBase->SET_PLC_FIELD_DATA(i, 2, (BYTE*)&c);
+							m_pPLCProcessBase->SET_PLC_FIELD_DATA(i, sizeof(WORD), (BYTE*)&i);
 						}
 						break;
-					case PLC_TYPE_WORD:
-					{
-						m_pPLCProcessBase->SET_PLC_FIELD_DATA(i, sizeof(WORD), (BYTE*)&i);
-					}
-					break;
-					case PLC_TYPE_FLOAT:
-					{
-						float f = i * 1.0f;
-						m_pPLCProcessBase->SET_PLC_FIELD_DATA(i, sizeof(float), (BYTE*)&f);
-					}
-					break;
+						case PLC_TYPE_FLOAT:
+						{
+							float f = i * 1.0f;
+							m_pPLCProcessBase->SET_PLC_FIELD_DATA(i, sizeof(float), (BYTE*)&f);
+						}
+						break;
 					}
 				}
 			}
@@ -156,12 +163,14 @@ void CPLCCommunicatorDlg::OnTestWrite()
 }
 void CPLCCommunicatorDlg::OnFlushAll()
 {
-	CButton *pFlushAll = m_xUi[UI_BTN_FULSHALL].pBtn;
+	CButton* pFlushAll = m_xUi[UI_BTN_FULSHALL].pBtn;
 #ifndef USE_MC_PROTOCOL
-	if (m_pPLCProcessBase && pFlushAll){
+	if (m_pPLCProcessBase && pFlushAll)
+	{
 		m_pPLCProcessBase->SET_FLUSH_ANYWAY(pFlushAll->GetCheck());
 	}
-	if (pFlushAll){
+	if (pFlushAll)
+	{
 		if (pFlushAll->GetCheck())
 			theApp.InsertDebugLog(L"UI check flush");
 		else
@@ -225,10 +234,11 @@ HCURSOR CPLCCommunicatorDlg::OnQueryDragIcon()
 
 LRESULT CPLCCommunicatorDlg::OnCmdProcess(WPARAM wParam, LPARAM lParam)
 {
-	switch (wParam){
-	case WM_EXIT://exit
-		PostMessage(WM_CLOSE, NULL, NULL);
-		break;
+	switch (wParam)
+	{
+		case WM_EXIT://exit
+			PostMessage(WM_CLOSE, NULL, NULL);
+			break;
 	}
 	return 0;
 }
@@ -237,25 +247,29 @@ void CPLCCommunicatorDlg::ON_PLC_NOTIFY(CString strMsg)
 {
 	AddInfoText(strMsg);
 }
-void CPLCCommunicatorDlg::ON_SET_PLCPARAM(BATCH_SHARE_SYSTCCL_INITPARAM &xParam)
+void CPLCCommunicatorDlg::ON_SET_PLCPARAM(BATCH_SHARE_SYSTCCL_INITPARAM& xParam)
 {
 	m_xParam.strPLCIp = xParam.cPLCIP;
-	if (m_xUi[UI_LC_PLCPARAM].pList){
+	if (m_xUi[UI_LC_PLCPARAM].pList)
+	{
 		m_xUi[UI_LC_PLCPARAM].pList->SetItemCount(4);
 	}
-	if (m_xUi[UI_LC_PLCADDRESS].pList && m_pPLCProcessBase){
+	if (m_xUi[UI_LC_PLCADDRESS].pList && m_pPLCProcessBase)
+	{
 		m_xUi[UI_LC_PLCADDRESS].pList->SetItemCount(m_pPLCProcessBase->GetFieldSize());
 	}
 }
 void CPLCCommunicatorDlg::ON_PLCDATA_CHANGE(int nFieldId, void* pData, int nSizeInByte)
 {
-	if (m_xUi[UI_LC_PLCADDRESS].pList){
+	if (m_xUi[UI_LC_PLCADDRESS].pList)
+	{
 		m_xUi[UI_LC_PLCADDRESS].pList->RedrawItems(nFieldId, nFieldId);
 	}
 }
 void CPLCCommunicatorDlg::ON_BATCH_PLCDATA_CHANGE(int nFieldFirst, int nFieldLast)
 {
-	if (m_xUi[UI_LC_PLCADDRESS].pList){
+	if (m_xUi[UI_LC_PLCADDRESS].pList)
+	{
 		m_xUi[UI_LC_PLCADDRESS].pList->RedrawItems(nFieldFirst, nFieldLast);
 	}
 }
@@ -265,43 +279,48 @@ LRESULT CPLCCommunicatorDlg::OnCmdGPIO(WPARAM wParam, LPARAM lParam)
 #ifndef USE_MC_PROTOCOL
 	ON_GPIO_NOTIFY(wParam, lParam);
 #endif
-	switch (wParam){
-	case WM_CUSTOMERTYPE_INIT:
-		m_xParam.eCustomerType = (AOI_CUSTOMERTYPE_)(lParam >> 8 & 0xFF);
-		m_xParam.eSubCustomerType = (AOI_SUBCUSTOMERTYPE_)(lParam & 0xFF);
+	switch (wParam)
+	{
+		case WM_CUSTOMERTYPE_INIT:
+			m_xParam.eCustomerType = (AOI_CUSTOMERTYPE_)(lParam >>14 & 0xFF);
+			m_xParam.eSubCustomerType = (AOI_SUBCUSTOMERTYPE_)(lParam & 0xFF);
 #ifdef _DEBUG
-		//m_xParam.eCustomerType = AOI_CUSTOMERTYPE_::CUSTOMER_SYST_CCL;
+			//m_xParam.eCustomerType = AOI_CUSTOMERTYPE_::CUSTOMER_SYST_CCL;
 #endif
-		InitPLCProcess();
-		theApp.InsertDebugLog(L"init customer type done");
-		break;
-	case WM_AOI_RESPONSE_CMD:
+			InitPLCProcess();
+			theApp.InsertDebugLog(L"init customer type done");
+			break;
+		case WM_AOI_RESPONSE_CMD:
 #ifndef USE_MC_PROTOCOL
-		if (lParam == WM_SYST_PARAMINIT_CMD || lParam == WM_SYST_PP_PARAMINIT_CMD){
-			if (ON_OPEN_PLC(lParam) != 0){
-				//open failed start reconnect timer
-				if (m_tTimerReconnect == NULL){
-					m_tTimerReconnect = SetTimer(RECONNECT_TIMER, 3000, NULL);
+			if (lParam == WM_SYST_PARAMINIT_CMD || lParam == WM_SYST_PP_PARAMINIT_CMD)
+			{
+				if (ON_OPEN_PLC(lParam) != 0)
+				{
+					//open failed start reconnect timer
+					if (m_tTimerReconnect == NULL)
+					{
+						m_tTimerReconnect = SetTimer(RECONNECT_TIMER, 3000, NULL);
+					}
 				}
-			}
 #ifndef _DEBUG
-			ShowWindow(SW_MINIMIZE);
+				ShowWindow(SW_MINIMIZE);
 #endif
-		}
+			}
 #else
-		HandleAOIResponse(lParam);
+			HandleAOIResponse(lParam);
 #endif
-		break;
+			break;
 #ifdef USE_MC_PROTOCOL
-	case WM_SYST_INFO_CHANGE:
-		if (m_pPLCDataHandler && m_pPLC){
-			BATCH_SHARE_SYST_INFO xInfo;
-			memset(&xInfo, 0, sizeof(xInfo));
-			m_pPLCDataHandler->GetSYSTInfo_CCL(&xInfo);
-			m_pPLC->SetInfo(&xInfo);
-		}
+		case WM_SYST_INFO_CHANGE:
+			if (m_pPLCDataHandler && m_pPLC)
+			{
+				BATCH_SHARE_SYST_INFO xInfo;
+				memset(&xInfo, 0, sizeof(xInfo));
+				m_pPLCDataHandler->GetSYSTInfo_CCL(&xInfo);
+				m_pPLC->SetInfo(&xInfo);
+			}
 #endif
-		break;
+			break;
 	}
 	return 0;
 }
@@ -312,15 +331,16 @@ void CPLCCommunicatorDlg::OnWindowPosChanging(WINDOWPOS FAR* lpwndpos)
 
 	CDialog::OnWindowPosChanging(lpwndpos);
 }
-void CPLCCommunicatorDlg::OnLvnGetdispinfoPLCAddress(NMHDR *pNMHDR, LRESULT *pResult)
+void CPLCCommunicatorDlg::OnLvnGetdispinfoPLCAddress(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	NMLVDISPINFO* pDispInfo = reinterpret_cast< NMLVDISPINFO* >(pNMHDR);
+	NMLVDISPINFO* pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
 
 	*pResult = NULL;
 
 	int nMax = 0;
 #ifndef USE_MC_PROTOCOL
-	if (m_pPLCProcessBase){
+	if (m_pPLCProcessBase)
+	{
 		nMax = m_pPLCProcessBase->GetFieldSize();
 	}
 #else
@@ -329,127 +349,131 @@ void CPLCCommunicatorDlg::OnLvnGetdispinfoPLCAddress(NMHDR *pNMHDR, LRESULT *pRe
 #endif
 	CString strText;
 
-	if (LVIF_TEXT & pDispInfo->item.mask){
+	if (LVIF_TEXT & pDispInfo->item.mask)
+	{
 		if (pDispInfo->item.iItem == EOF || pDispInfo->item.iItem >= nMax) return;
 		switch (pDispInfo->item.iSubItem)
 		{
-		case LIST_COL_FIELD:
-		{
+			case LIST_COL_FIELD:
+			{
 #ifndef USE_MC_PROTOCOL
-			strText.Format(L"%s", m_pPLCProcessBase->GET_PLC_FIELD_NAME(pDispInfo->item.iItem));
+				strText.Format(L"%s", m_pPLCProcessBase->GET_PLC_FIELD_NAME(pDispInfo->item.iItem));
 #else
-			strText.Format(L"%s", m_pPLC->GET_PLC_FIELD_NAME(pDispInfo->item.iItem));
+				strText.Format(L"%s", m_pPLC->GET_PLC_FIELD_NAME(pDispInfo->item.iItem));
 #endif
-		}
-		break;
-		case LIST_COL_ADDRESS:
-		{
+			}
+			break;
+			case LIST_COL_ADDRESS:
+			{
 #ifndef USE_MC_PROTOCOL
-			strText.Format(L"%s", m_pPLCProcessBase->GET_PLC_FIELD_ADDRESS(pDispInfo->item.iItem)); 
+				strText.Format(L"%s", m_pPLCProcessBase->GET_PLC_FIELD_ADDRESS(pDispInfo->item.iItem));
 #else
-			strText.Format(L"%s", m_pPLC->GET_PLC_FIELD_ADDRESS(pDispInfo->item.iItem));
+				strText.Format(L"%s", m_pPLC->GET_PLC_FIELD_ADDRESS(pDispInfo->item.iItem));
 #endif
-		}
-		break;
-		case LIST_COL_VALUE:
-		{
+			}
+			break;
+			case LIST_COL_VALUE:
+			{
 #ifndef USE_MC_PROTOCOL
-			strText.Format(L"%s", m_pPLCProcessBase->GET_PLC_FIELD_VALUE(pDispInfo->item.iItem));
+				strText.Format(L"%s", m_pPLCProcessBase->GET_PLC_FIELD_VALUE(pDispInfo->item.iItem));
 #else
-			strText.Format(L"%s", m_pPLC->GET_PLC_FIELD_VALUE(pDispInfo->item.iItem));
+				strText.Format(L"%s", m_pPLC->GET_PLC_FIELD_VALUE(pDispInfo->item.iItem));
 #endif
-		}
-		break;
-		case LIST_COL_TIME:
-		{
+			}
+			break;
+			case LIST_COL_TIME:
+			{
 #ifndef USE_MC_PROTOCOL
-			strText.Format(L"%s", m_pPLCProcessBase->GET_PLC_FIELD_TIME(pDispInfo->item.iItem));
+				strText.Format(L"%s", m_pPLCProcessBase->GET_PLC_FIELD_TIME(pDispInfo->item.iItem));
 #else
-			strText.Format(L"%s", m_pPLC->GET_PLC_FIELD_TIME(pDispInfo->item.iItem));
+				strText.Format(L"%s", m_pPLC->GET_PLC_FIELD_TIME(pDispInfo->item.iItem));
 #endif
-		}
-		break;
+			}
+			break;
 		}
 		wcscpy_s(pDispInfo->item.pszText, strText.GetLength() + 1, strText);
 	}
 }
-void CPLCCommunicatorDlg::OnLvnGetdispinfoPLCParam(NMHDR *pNMHDR, LRESULT *pResult)
+void CPLCCommunicatorDlg::OnLvnGetdispinfoPLCParam(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	NMLVDISPINFO* pDispInfo = reinterpret_cast< NMLVDISPINFO* >(pNMHDR);
+	NMLVDISPINFO* pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
 
 	*pResult = NULL;
-	if (LVIF_TEXT & pDispInfo->item.mask){
+	if (LVIF_TEXT & pDispInfo->item.mask)
+	{
 		CString strText;
 		switch (pDispInfo->item.iSubItem)
 		{
-		case LIST_COL_TITLE:
-			switch (pDispInfo->item.iItem){
-			case 0:
-				strText.Format(L"IP");
-				break;
-			case 1:
+			case LIST_COL_TITLE:
+				switch (pDispInfo->item.iItem)
+				{
+					case 0:
+						strText.Format(L"IP");
+						break;
+					case 1:
 #ifndef USE_MC_PROTOCOL
-				strText.Format(L"CPU");
+						strText.Format(L"CPU");
 #else
-				strText.Format(L"Port");
+						strText.Format(L"Port");
 #endif
+						break;
+					case 2:
+						strText.Format(L"CustomerType");
+						break;
+					case 3:
+						strText.Format(L"SubCustomerType");
+						break;
+					case 4:
+						strText.Format(L"Format");
+						break;
+					case 5:
+						strText.Format(L"Frame");
+						break;
+				}
 				break;
-			case 2:
-				strText.Format(L"CustomerType");
-				break;
-			case 3:
-				strText.Format(L"SubCustomerType");
-				break;
-			case 4:
-				strText.Format(L"Format");
-				break;
-			case 5:
-				strText.Format(L"Frame");
-				break;
-			}
-			break;
-		case LIST_COL_DATA:
-			switch (pDispInfo->item.iItem){
-			case 0:
-				strText.Format(L"%s", m_xParam.strPLCIp);
-				break;
-			case 1:
+			case LIST_COL_DATA:
+				switch (pDispInfo->item.iItem)
+				{
+					case 0:
+						strText.Format(L"%s", m_xParam.strPLCIp);
+						break;
+					case 1:
 #ifndef USE_MC_PROTOCOL
-				if (m_pPLCProcessBase)
-					strText = m_pPLCProcessBase->GetCPUType();
+						if (m_pPLCProcessBase)
+							strText = m_pPLCProcessBase->GetCPUType();
 #else
-				strText.Format(L"%d", m_xParam.nPLCPort);
+						strText.Format(L"%d", m_xParam.nPLCPort);
 #endif
-				break;
-			case 2:
-				strText.Format(L"%d", m_xParam.eCustomerType);
-				break;
-			case 3:
-				strText.Format(L"%d", m_xParam.eSubCustomerType);
-				break;
+						break;
+					case 2:
+						strText.Format(L"%d", m_xParam.eCustomerType);
+						break;
+					case 3:
+						strText.Format(L"%d", m_xParam.eSubCustomerType);
+						break;
 #ifdef USE_MC_PROTOCOL
-			case 4:
-				if (m_xParam.nFormat == 0)
-					strText = L"Binary";
-				else if (m_xParam.nFormat == 1)
-					strText = L"ASCII";
-				break;
-			case 5:
-				if (m_xParam.eFrameType == PLC_FRAME_TYPE::FRAME_3E)
-					strText = L"3E";
-				else if (m_xParam.eFrameType == PLC_FRAME_TYPE::FRAME_4E)
-					strText = L"4E";
-				break;
+					case 4:
+						if (m_xParam.nFormat == 0)
+							strText = L"Binary";
+						else if (m_xParam.nFormat == 1)
+							strText = L"ASCII";
+						break;
+					case 5:
+						if (m_xParam.eFrameType == PLC_FRAME_TYPE::FRAME_3E)
+							strText = L"3E";
+						else if (m_xParam.eFrameType == PLC_FRAME_TYPE::FRAME_4E)
+							strText = L"4E";
+						break;
 #endif
-			}
-			break;
+				}
+				break;
 		}
 		wcscpy_s(pDispInfo->item.pszText, strText.GetLength() + 1, strText);
 	}
 }
-void CPLCCommunicatorDlg::OnLvnGetdispinfoInfo(NMHDR *pNMHDR, LRESULT *pResult)
+void CPLCCommunicatorDlg::OnLvnGetdispinfoInfo(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	NMLVDISPINFO* pDispInfo = reinterpret_cast< NMLVDISPINFO* >(pNMHDR);
+	NMLVDISPINFO* pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
 
 	*pResult = NULL;
 	if (pDispInfo->item.iItem == EOF || pDispInfo->item.iItem >= (int)m_vPLCInfo.size()) return;
@@ -457,16 +481,17 @@ void CPLCCommunicatorDlg::OnLvnGetdispinfoInfo(NMHDR *pNMHDR, LRESULT *pResult)
 	EnterCriticalSection(&m_xLock[LOCK_INFO]);
 	std::pair<CString, __time64_t> xPair = m_vPLCInfo.at(pDispInfo->item.iItem);
 	LeaveCriticalSection(&m_xLock[LOCK_INFO]);
-	if (LVIF_TEXT & pDispInfo->item.mask){
+	if (LVIF_TEXT & pDispInfo->item.mask)
+	{
 		CString strText;
 		switch (pDispInfo->item.iSubItem)
 		{
-		case LIST_COL_TITLE:
-			strText = CTime(xPair.second).Format(L"%H:%M:%S");
-			break;
-		case LIST_COL_DATA:
-			strText = xPair.first;
-			break;
+			case LIST_COL_TITLE:
+				strText = CTime(xPair.second).Format(L"%H:%M:%S");
+				break;
+			case LIST_COL_DATA:
+				strText = xPair.first;
+				break;
 		}
 		wcscpy_s(pDispInfo->item.pszText, strText.GetLength() + 1, strText);
 	}
@@ -494,7 +519,7 @@ void CPLCCommunicatorDlg::OnCustomdrawList(NMHDR* pNMHDR, LRESULT* pResult)
 		// We'll cycle the colors through red, green, and light blue.
 
 		COLORREF crText;
-		
+
 		PLC_ACTION_TYPE_ eType = ACTION_NOTIFY;
 #ifndef USE_MC_PROTOCOL
 		if (m_pPLCProcessBase) eType = m_pPLCProcessBase->GET_PLC_FIELD_ACTION((int)pLVCD->nmcd.dwItemSpec);
@@ -503,21 +528,21 @@ void CPLCCommunicatorDlg::OnCustomdrawList(NMHDR* pNMHDR, LRESULT* pResult)
 #endif
 		switch (eType)
 		{
-		case ACTION_NOTIFY:
-			crText = CLR_NOTIFY;
-			break;
-		case ACTION_BATCH:
-			crText = CLR_BATCH;
-			break;
-		case ACTION_RESULT:
-			crText = CLR_RESULT;
-			break;
-		case ACTION_SKIP:
-			crText = CLR_SKIP;
-			break;
-		default:
-			ASSERT(FALSE);
-			break;
+			case ACTION_NOTIFY:
+				crText = CLR_NOTIFY;
+				break;
+			case ACTION_BATCH:
+				crText = CLR_BATCH;
+				break;
+			case ACTION_RESULT:
+				crText = CLR_RESULT;
+				break;
+			case ACTION_SKIP:
+				crText = CLR_SKIP;
+				break;
+			default:
+				ASSERT(FALSE);
+				break;
 		}
 
 		// Store the color back in the NMLVCUSTOMDRAW struct.
@@ -529,19 +554,23 @@ void CPLCCommunicatorDlg::OnCustomdrawList(NMHDR* pNMHDR, LRESULT* pResult)
 }
 void CPLCCommunicatorDlg::OnTimer(UINT_PTR nEventId)
 {
-	if (nEventId == m_tTimerReconnect){
-		if (ON_OPEN_PLC(NULL) != 0){
+	if (nEventId == m_tTimerReconnect)
+	{
+		if (ON_OPEN_PLC(NULL) != 0)
+		{
 			CString strLog;
 			strLog.Format(L"open plc fail, reconnect in 3 sec");
 			theApp.InsertDebugLog(strLog, LOG_SYSTEM);
 			AddInfoText(strLog);
 		}
-		else{
+		else
+		{
 			KillTimer(m_tTimerReconnect);
 			m_tTimerReconnect = NULL;
 		}
 	}
-	else if (nEventId == m_tTimer){
+	else if (nEventId == m_tTimer)
+	{
 		m_xUi[UI_LABEL_TIME].strCaption = CTime::GetTickCount().Format(L"%Y/%m/%d %H:%M:%S");
 		InvalidateRect(&m_xUi[UI_LABEL_TIME].rcUi);
 	}
@@ -569,9 +598,11 @@ void CPLCCommunicatorDlg::Init()
 	theApp.InsertDebugLog(L"init customer type done");
 	ON_OPEN_PLC();
 #else
-	auto NotifyExe = [](CString strTarget, WPARAM wp, LPARAM lp){
+	auto NotifyExe = [](CString strTarget, WPARAM wp, LPARAM lp)
+	{
 		HWND hWnd = ::FindWindow(NULL, strTarget);
-		if (hWnd){
+		if (hWnd)
+		{
 			::PostMessage(hWnd, WM_GPIO_MSG, wp, lp);
 		}
 	};
@@ -585,72 +616,73 @@ void CPLCCommunicatorDlg::Init()
 }
 void CPLCCommunicatorDlg::InitUiRectPos()
 {
-	for (int i = UI_ITEM_BEGIN; i < UI_ITEM_END; i++){
+	for (int i = UI_ITEM_BEGIN; i < UI_ITEM_END; i++)
+	{
 		POINT ptBase = { 0, 0 };
 		POINT ptSize = { 0, 0 };
 		CString strCaption;
 		COLORREF xColor = NULL;
 		switch (i)
 		{
-		case UI_LABEL_BATCH:  
-			ptBase = { 470, 740 };
-			ptSize = { 145, 20 };
-			strCaption = L"下發";
-			xColor = CLR_BATCH;
-			break;
-		case UI_LABEL_NOTIFY:
-			ptBase = { 470, 760 };
-			ptSize = { 145, 20 };
-			strCaption = L"指令";
-			xColor = CLR_NOTIFY;
-			break;
-		case UI_LABEL_RESULT:
-			ptBase = { 470, 780 };
-			ptSize = { 145, 20 };
-			strCaption = L"檢測結果(資料來自AOI)";
-			xColor = CLR_RESULT;
-			break;
-		case UI_LABEL_SKIP:
-			ptBase = { 470, 800 };
-			ptSize = { 145, 20 };
-			strCaption = L"不使用";
-			xColor = CLR_SKIP;
-			break;
-		case UI_LABEL_TIME:
-			ptBase = { 470, 820 };
-			ptSize = { 145, 20 };
-			strCaption = L"";
-			xColor = CLR_BATCH;
-			break;
+			case UI_LABEL_BATCH:
+				ptBase = { 470, 740 };
+				ptSize = { 145, 20 };
+				strCaption = L"下發";
+				xColor = CLR_BATCH;
+				break;
+			case UI_LABEL_NOTIFY:
+				ptBase = { 470, 760 };
+				ptSize = { 145, 20 };
+				strCaption = L"指令";
+				xColor = CLR_NOTIFY;
+				break;
+			case UI_LABEL_RESULT:
+				ptBase = { 470, 780 };
+				ptSize = { 145, 20 };
+				strCaption = L"檢測結果(資料來自AOI)";
+				xColor = CLR_RESULT;
+				break;
+			case UI_LABEL_SKIP:
+				ptBase = { 470, 800 };
+				ptSize = { 145, 20 };
+				strCaption = L"不使用";
+				xColor = CLR_SKIP;
+				break;
+			case UI_LABEL_TIME:
+				ptBase = { 470, 820 };
+				ptSize = { 145, 20 };
+				strCaption = L"";
+				xColor = CLR_BATCH;
+				break;
 #ifdef SHOW_DEBUG_BTN
-		case UI_BTN_QUERYALL:
-			ptBase = { 300, 10 };
-			ptSize = { 145, 20 };
-			strCaption = L"QueryAll";
-			break;
-		case UI_BTN_TESTWRITE:
-			ptBase = { 445, 10 };
-			ptSize = { 145, 20 };
-			strCaption = L"TestWrite";
-			break;
-		case UI_BTN_FULSHALL:
-			ptBase = { 590, 10 };
-			ptSize = { 145, 20 };
-			strCaption = L"Flush Anyway";
-			break;
+			case UI_BTN_QUERYALL:
+				ptBase = { 300, 10 };
+				ptSize = { 145, 20 };
+				strCaption = L"QueryAll";
+				break;
+			case UI_BTN_TESTWRITE:
+				ptBase = { 445, 10 };
+				ptSize = { 145, 20 };
+				strCaption = L"TestWrite";
+				break;
+			case UI_BTN_FULSHALL:
+				ptBase = { 590, 10 };
+				ptSize = { 145, 20 };
+				strCaption = L"Flush Anyway";
+				break;
 #endif
-		case UI_LC_PLCADDRESS:
-			ptBase = { 10, 150 };
-			ptSize = { 450, 690 };
-			break;
-		case UI_LC_PLCPARAM:
-			ptBase = { 10, 10 };
-			ptSize = { 280, 130 };
-			break;
-		case UI_LC_INFO:
-			ptBase = { 470, 150 };
-			ptSize = { 280, 490 };
-			break;
+			case UI_LC_PLCADDRESS:
+				ptBase = { 10, 150 };
+				ptSize = { 450, 690 };
+				break;
+			case UI_LC_PLCPARAM:
+				ptBase = { 10, 10 };
+				ptSize = { 280, 130 };
+				break;
+			case UI_LC_INFO:
+				ptBase = { 470, 150 };
+				ptSize = { 280, 490 };
+				break;
 		}
 		m_xUi[i].rcUi = { ptBase.x, ptBase.y, ptBase.x + ptSize.x, ptBase.y + ptSize.y };
 		m_xUi[i].nID = i;
@@ -700,16 +732,19 @@ void CPLCCommunicatorDlg::InitUI()
 }
 void CPLCCommunicatorDlg::Finalize()
 {
-	if (m_tTimerReconnect){
+	if (m_tTimerReconnect)
+	{
 		KillTimer(m_tTimerReconnect);
 		m_tTimerReconnect = NULL;
 	}
-	if (m_tTimer){
+	if (m_tTimer)
+	{
 		KillTimer(m_tTimer);
 		m_tTimer = NULL;
 	}
 #ifndef USE_MC_PROTOCOL
-	if (m_pPLCProcessBase){
+	if (m_pPLCProcessBase)
+	{
 		((IPLCProcess*)this)->AttachIn(NULL);
 		m_pPLCProcessBase->AttachOut(NULL);
 
@@ -718,29 +753,32 @@ void CPLCCommunicatorDlg::Finalize()
 	}
 #else
 	OpPLC(OP_DESTROY);
-	if (m_pPLCDataHandler){
+	if (m_pPLCDataHandler)
+	{
 		delete m_pPLCDataHandler;
 		m_pPLCDataHandler = NULL;
 	}
 #endif
-	for (int i = LOCK_BEGIN; i < LOCK_MAX; i++){ 
+	for (int i = LOCK_BEGIN; i < LOCK_MAX; i++)
+	{
 		DeleteCriticalSection(&m_xLock[i]);
 	}
 }
 void CPLCCommunicatorDlg::DrawInfo()
 {
-	CDC *pDC = GetDC();
+	CDC* pDC = GetDC();
 	pDC->SetBkMode(TRANSPARENT);
 	pDC->SelectObject(g_AoiFont.GetFont(typeT1));
 
-	for (int i = UI_LABEL_BEGIN; i < UI_LABEL_END; i++){
+	for (int i = UI_LABEL_BEGIN; i < UI_LABEL_END; i++)
+	{
 		pDC->SetTextColor(m_xUi[i].xColor);
 		pDC->DrawText(m_xUi[i].strCaption, &m_xUi[i].rcUi, DT_LEFT);
 	}
 
 	ReleaseDC(pDC);
 }
-void CPLCCommunicatorDlg::AddInfoText(CString &strInfo)
+void CPLCCommunicatorDlg::AddInfoText(CString& strInfo)
 {
 	std::pair<CString, __time64_t> xPair(strInfo, CTime::GetCurrentTime().GetTime());
 	int nSize = 0;
@@ -753,7 +791,8 @@ void CPLCCommunicatorDlg::AddInfoText(CString &strInfo)
 	nSize = m_vPLCInfo.size();
 	LeaveCriticalSection(&m_xLock[LOCK_INFO]);
 
-	if (m_xUi[UI_LC_INFO].pList){
+	if (m_xUi[UI_LC_INFO].pList)
+	{
 		m_xUi[UI_LC_INFO].pList->Invalidate();
 		m_xUi[UI_LC_INFO].pList->EnsureVisible(nSize - 1, TRUE);
 	}
@@ -761,57 +800,65 @@ void CPLCCommunicatorDlg::AddInfoText(CString &strInfo)
 void CPLCCommunicatorDlg::InitPLCProcess()
 {
 #ifndef USE_MC_PROTOCOL
-	switch (m_xParam.eCustomerType){
+	switch (m_xParam.eCustomerType)
+	{
 #ifdef _DEBUG
-	case CUSTOMER_TAG:
-		m_pPLCProcessBase = new CTagProcess_FX5U;
-		break;
+		case CUSTOMER_TAG:
+			m_pPLCProcessBase = new CTagProcess_FX5U;
+			break;
 #endif
-	case CUSTOMER_SYST_WEB_COPPER:
-		m_pPLCProcessBase = new CSystFCCLProcess;
-		break;
-	case CUSTOMER_SYST_CCL:
-		switch (m_xParam.eSubCustomerType){
-		case SUB_CUSTOMER_DONGGUAN:
-			m_pPLCProcessBase = new CSystCCLProcessDONGGUAN;
+		case CUSTOMER_SYST_WEB_COPPER:
+			m_pPLCProcessBase = new CSystFCCLProcess;
 			break;
-		case SUB_CUSTOMER_DONGGUAN_SONG8:
-			m_pPLCProcessBase = new CSystCCLProcessDONGGUAN_SONG8;
+		case CUSTOMER_SYST_CCL:
+			switch (m_xParam.eSubCustomerType)
+			{
+				case SUB_CUSTOMER_DONGGUAN:
+					m_pPLCProcessBase = new CSystCCLProcessDONGGUAN;
+					break;
+				case SUB_CUSTOMER_DONGGUAN_SONG8:
+					m_pPLCProcessBase = new CSystCCLProcessDONGGUAN_SONG8;
+					break;
+				case SUB_CUSTOMER_JIUJIANG:
+					m_pPLCProcessBase = new CSystCCLProcessJIUJIANG;
+					break;
+				case SUB_CUSTOMER_SUZHOU:
+					m_pPLCProcessBase = new CSystCCLProcessSUZHOU;
+					break;
+				case SUB_CUSTOMER_CHANGSHU:
+					m_pPLCProcessBase = new CSystCCLProcessCHANGSHU;
+					break;
+				case SUB_CUSTOMER_CHANGSHU2:
+					m_pPLCProcessBase = new CSystCCLProcessCHANGSHU2;
+					break;
+
+			}
 			break;
-		case SUB_CUSTOMER_JIUJIANG:
-			m_pPLCProcessBase = new CSystCCLProcessJIUJIANG;
+		case CUSTOMER_SCRIBD_PP:
+		case CUSTOMER_SYST_PP:
+		case CUSTOMER_TUC_PP:
+		case CUSTOMER_ITEQ:
+		case CUSTOMER_EMC_PP:
+		case CUSTOMER_YINGHUA:
+			m_pPLCProcessBase = new CSystPPProcess;
 			break;
-		case SUB_CUSTOMER_SUZHOU:
-			m_pPLCProcessBase = new CSystCCLProcessSUZHOU;
+		case CUSTOMER_TECHAIN:
+			m_pPLCProcessBase = new CTechainProcess;
 			break;
-		case SUB_CUSTOMER_CHANGSHU:
-			m_pPLCProcessBase = new CSystCCLProcessCHANGSHU;
+		case CUSTOMER_TG:
+			m_pPLCProcessBase = new CTGProcess;
 			break;
-		case SUB_CUSTOMER_CHANGSHU2:
-			m_pPLCProcessBase = new CSystCCLProcessCHANGSHU2;
+		case CUSROMER_EVERSTRONG: //甬強  新增
+			m_pPLCProcessBase = new CEverStrProcess;
 			break;
-		}
-		break;
-	case CUSTOMER_SCRIBD_PP:
-	case CUSTOMER_SYST_PP:
-	case CUSTOMER_TUC_PP:
-	case CUSTOMER_ITEQ:
-	case CUSTOMER_EMC_PP:
-	case CUSTOMER_YINGHUA:
-		m_pPLCProcessBase = new CSystPPProcess;
-		break;
-	case CUSTOMER_TECHAIN:
-		m_pPLCProcessBase = new CTechainProcess;
-		break;
-	case CUSTOMER_TG:
-		m_pPLCProcessBase = new CTGProcess;
-		break;
 	}
-	if (m_pPLCProcessBase){
+	if (m_pPLCProcessBase)
+	{
 		((IPLCProcess*)this)->AttachIn(m_pPLCProcessBase);
 		m_pPLCProcessBase->AttachOut(this);
-		CButton *pFlushAll = m_xUi[UI_BTN_FULSHALL].pBtn;
-		if (pFlushAll){ //預設flush anyway為勾選
+		CButton* pFlushAll = m_xUi[UI_BTN_FULSHALL].pBtn;
+		if (pFlushAll)
+		{ //預設flush anyway為勾選
 			pFlushAll->SetCheck(TRUE);
 			OnFlushAll();
 		}
@@ -824,26 +871,26 @@ void CPLCCommunicatorDlg::ConnStatusCallBack(AOI_SOCKET_STATE xState)
 	CString strInfo;
 	switch (xState)
 	{
-	case NONE:
-		strInfo.Format(L"無連線");
-		break;
-	case CONNECTING:
-		strInfo.Format(L"連線中");
-		break;
-	case CONNECTED:
-		strInfo.Format(L"連線完成");
-		break;
-	case DISCONNECT:
-		strInfo.Format(L"連線中斷");
-		break;
-	case RECONNECT:
-		strInfo.Format(L"重新連線");
-		break;
-	case STOP:
-		strInfo.Format(L"連線結束");
-		break;
-	default:
-		break;
+		case NONE:
+			strInfo.Format(L"無連線");
+			break;
+		case CONNECTING:
+			strInfo.Format(L"連線中");
+			break;
+		case CONNECTED:
+			strInfo.Format(L"連線完成");
+			break;
+		case DISCONNECT:
+			strInfo.Format(L"連線中斷");
+			break;
+		case RECONNECT:
+			strInfo.Format(L"重新連線");
+			break;
+		case STOP:
+			strInfo.Format(L"連線結束");
+			break;
+		default:
+			break;
 	}
 	AddInfoText(strInfo);
 }
@@ -854,37 +901,40 @@ void CPLCCommunicatorDlg::OnDeviceNotify(int nType, int nVal, CString strDes)
 	CString strMsg;
 	switch (nType)
 	{
-	case CMelsecPlcSocket::PLC_ERR_NOTIFY:
-		bAddInfo = TRUE;
-		strMsg.Format(L"PLC ERROR:");
-		break;
-	case CMelsecPlcSocket::PLC_ADDRESS_VAL:
-		bAddInfo = TRUE;
-		strMsg.Format(L"Unexcepted Address:");
-		break;
-	case CMelsecPlcSocket::PLC_WRITE_NOTIFY:
-		strMsg.Format(L"PLC Write:");
-		break;
-	case CMelsecPlcSocket::PLC_INFO:
-		bAddInfo = TRUE;
-		strMsg.Format(L"PLC Info:");
-		break;
-	case CMelsecPlcSocket::PLC_READ_UPDATE:
-	case CMelsecPlcSocket::PLC_WRITE_UPDATE:
-		if (m_pPLC){
-			if (nType == CMelsecPlcSocket::PLC_READ_UPDATE)
-				strMsg.Format(L"PLC Read: Address %s", m_pPLC->GET_PLC_FIELD_ADDRESS(nVal));
-			else if (nType == CMelsecPlcSocket::PLC_WRITE_UPDATE)
-				strMsg.Format(L"PLC Write: Address %s", m_pPLC->GET_PLC_FIELD_ADDRESS(nVal));
-		}
-		if (m_xUi[UI_LC_PLCADDRESS].pList){
-			m_xUi[UI_LC_PLCADDRESS].pList->RedrawItems(nVal, nVal);
-		}
-		break;
-	default:
-		break;
+		case CMelsecPlcSocket::PLC_ERR_NOTIFY:
+			bAddInfo = TRUE;
+			strMsg.Format(L"PLC ERROR:");
+			break;
+		case CMelsecPlcSocket::PLC_ADDRESS_VAL:
+			bAddInfo = TRUE;
+			strMsg.Format(L"Unexcepted Address:");
+			break;
+		case CMelsecPlcSocket::PLC_WRITE_NOTIFY:
+			strMsg.Format(L"PLC Write:");
+			break;
+		case CMelsecPlcSocket::PLC_INFO:
+			bAddInfo = TRUE;
+			strMsg.Format(L"PLC Info:");
+			break;
+		case CMelsecPlcSocket::PLC_READ_UPDATE:
+		case CMelsecPlcSocket::PLC_WRITE_UPDATE:
+			if (m_pPLC)
+			{
+				if (nType == CMelsecPlcSocket::PLC_READ_UPDATE)
+					strMsg.Format(L"PLC Read: Address %s", m_pPLC->GET_PLC_FIELD_ADDRESS(nVal));
+				else if (nType == CMelsecPlcSocket::PLC_WRITE_UPDATE)
+					strMsg.Format(L"PLC Write: Address %s", m_pPLC->GET_PLC_FIELD_ADDRESS(nVal));
+			}
+			if (m_xUi[UI_LC_PLCADDRESS].pList)
+			{
+				m_xUi[UI_LC_PLCADDRESS].pList->RedrawItems(nVal, nVal);
+			}
+			break;
+		default:
+			break;
 	}
-	if (bAddInfo){
+	if (bAddInfo)
+	{
 		//write info
 		CString strInfo;
 		strInfo.Format(L"%s %s", strMsg, strDes);
@@ -895,7 +945,8 @@ void CPLCCommunicatorDlg::OnDeviceNotify(int nType, int nVal, CString strDes)
 }
 void CPLCCommunicatorDlg::OnPLCNewBatch(CString strOrder, CString strMaterial)
 {
-	if (m_pPLCDataHandler){
+	if (m_pPLCDataHandler)
+	{
 		BATCH_SHARE_SYST_BASE xData;
 		memset(&xData, 0, sizeof(xData));
 		wcscpy_s(xData.cMaterial, strMaterial.GetBuffer());
@@ -905,9 +956,10 @@ void CPLCCommunicatorDlg::OnPLCNewBatch(CString strOrder, CString strMaterial)
 		m_pPLCDataHandler->SetSYSTParam_WebCopper(&xData);
 	}
 }
-void CPLCCommunicatorDlg::OnPLCSYSTParam(BATCH_SHARE_SYST_PARAMCCL *pData)
+void CPLCCommunicatorDlg::OnPLCSYSTParam(BATCH_SHARE_SYST_PARAMCCL* pData)
 {
-	if (m_pPLCDataHandler){
+	if (m_pPLCDataHandler)
+	{
 		m_pPLCDataHandler->SetSYSYParam_CCL(pData);
 	}
 }
@@ -916,48 +968,53 @@ void CPLCCommunicatorDlg::OnC10Change(WORD wC10)
 	CString strLog;
 	strLog.Format(L"C10 Index: %d", wC10);
 	theApp.InsertDebugLog(strLog, LOG_PLCC10);
-	if (m_pPLCDataHandler){
+	if (m_pPLCDataHandler)
+	{
 		m_pPLCDataHandler->NotifyAOI(WM_SYST_C10CHANGE_CMD, wC10);
 	}
 }
 void CPLCCommunicatorDlg::HandleAOIResponse(LPARAM lParam)
 {
-	switch (lParam){
-	case WM_SYST_PARAMINIT_CMD:
-		if (m_pPLCDataHandler){
-			theApp.InsertDebugLog(L"[WM_PLCPARAM_CMD] ShareMem Begin Read");
-			BATCH_SHARE_SYST_INITPARAM xData;
-			memset(&xData, 0, sizeof(BATCH_SHARE_SYST_INITPARAM));
-			m_pPLCDataHandler->GetInitParam(&xData);
-			m_xParam.strPLCIp = xData.cPLCIP;
-			m_xParam.nPLCPort = xData.nPLCPort;
-			m_xParam.eCustomerType = (AOI_CUSTOMERTYPE_)xData.nCustomerType;
-			m_xParam.eSubCustomerType = (AOI_SUBCUSTOMERTYPE_)xData.nSubCustomerType;
-			m_xParam.nFormat = xData.nFormat;
-			m_xParam.eFrameType = (PLC_FRAME_TYPE)xData.nFrameType;
-
-			OpPLC(OP_CREATE);
-			CMelsecPlcSocket::PLC_MODE eMode = CMelsecPlcSocket::PLC_MODE::MODE_BINARY;
-			switch (m_xParam.nFormat)
+	switch (lParam)
+	{
+		case WM_SYST_PARAMINIT_CMD:
+			if (m_pPLCDataHandler)
 			{
-			case 0:
-				eMode = CMelsecPlcSocket::PLC_MODE::MODE_BINARY;
-				break;
-			case 1:
-				eMode = CMelsecPlcSocket::PLC_MODE::MODE_ASCII;
-				break;
-			}
-			if (m_pPLC){
-				m_pPLC->SetMode(eMode);
-			}
+				theApp.InsertDebugLog(L"[WM_PLCPARAM_CMD] ShareMem Begin Read");
+				BATCH_SHARE_SYST_INITPARAM xData;
+				memset(&xData, 0, sizeof(BATCH_SHARE_SYST_INITPARAM));
+				m_pPLCDataHandler->GetInitParam(&xData);
+				m_xParam.strPLCIp = xData.cPLCIP;
+				m_xParam.nPLCPort = xData.nPLCPort;
+				m_xParam.eCustomerType = (AOI_CUSTOMERTYPE_)xData.nCustomerType;
+				m_xParam.eSubCustomerType = (AOI_SUBCUSTOMERTYPE_)xData.nSubCustomerType;
+				m_xParam.nFormat = xData.nFormat;
+				m_xParam.eFrameType = (PLC_FRAME_TYPE)xData.nFrameType;
 
-			theApp.InsertDebugLog(L"[WM_PLCPARAM_CMD] ShareMem End Read");
-			m_xUi[UI_LC_INFO].pList->Invalidate();
-			m_xUi[UI_LC_PLCPARAM].pList->SetItemCount(6);
-		}
-		break;
+				OpPLC(OP_CREATE);
+				CMelsecPlcSocket::PLC_MODE eMode = CMelsecPlcSocket::PLC_MODE::MODE_BINARY;
+				switch (m_xParam.nFormat)
+				{
+					case 0:
+						eMode = CMelsecPlcSocket::PLC_MODE::MODE_BINARY;
+						break;
+					case 1:
+						eMode = CMelsecPlcSocket::PLC_MODE::MODE_ASCII;
+						break;
+				}
+				if (m_pPLC)
+				{
+					m_pPLC->SetMode(eMode);
+				}
+
+				theApp.InsertDebugLog(L"[WM_PLCPARAM_CMD] ShareMem End Read");
+				m_xUi[UI_LC_INFO].pList->Invalidate();
+				m_xUi[UI_LC_PLCPARAM].pList->SetItemCount(6);
+			}
+			break;
 	}
-	if (m_pPLC){
+	if (m_pPLC)
+	{
 		m_pPLC->ON_NOTIFY_AOI_RESPONSE(lParam);
 
 	}
@@ -965,40 +1022,46 @@ void CPLCCommunicatorDlg::HandleAOIResponse(LPARAM lParam)
 
 void CPLCCommunicatorDlg::OpPLC(int nOpCode)
 {
-	if (nOpCode == OP_CREATE){
+	if (nOpCode == OP_CREATE)
+	{
 		OpPLC(OP_DESTROY);
 
 
 		switch (m_xParam.eCustomerType)
 		{
-		case CUSTOMER_SYST_WEB_COPPER: //生益軟板
-			m_pPLC = new CSystWebCooperProcessSocket(this, m_xParam.eFrameType);
-			break;
+			case CUSTOMER_SYST_WEB_COPPER: //生益軟板
+				m_pPLC = new CSystWebCooperProcessSocket(this, m_xParam.eFrameType);
+				break;
 
-		default:
-			ASSERT(FALSE);
-			break;
+			default:
+				ASSERT(FALSE);
+				break;
 		}
 		int nMax = m_pPLC->GetFieldSize();
-		if (m_pPLC){
+		if (m_pPLC)
+		{
 			m_pPLC->SetConnectInfo(m_xParam.strPLCIp, m_xParam.nPLCPort);
 			m_pPLC->DoConnect();
 		}
 		//adjust windows size by the number of field
 
-		if (m_xUi[UI_LC_PLCADDRESS].pList){
+		if (m_xUi[UI_LC_PLCADDRESS].pList)
+		{
 			m_xUi[UI_LC_PLCADDRESS].pList->SetItemCount(nMax);
 		}
 
 		CenterWindow();
 
-		if (m_xUi[UI_BTN_FULSHALL].pBtn){ //預設flush anyway為勾選
+		if (m_xUi[UI_BTN_FULSHALL].pBtn)
+		{ //預設flush anyway為勾選
 			m_xUi[UI_BTN_FULSHALL].pBtn->SetCheck(TRUE);
 			if (m_pPLC) m_pPLC->OnCheckFlushAnyway(TRUE);
 		}
 	}
-	else if (nOpCode == OP_DESTROY){
-		if (m_pPLC){
+	else if (nOpCode == OP_DESTROY)
+	{
+		if (m_pPLC)
+		{
 			delete m_pPLC;
 			m_pPLC = NULL;
 		}

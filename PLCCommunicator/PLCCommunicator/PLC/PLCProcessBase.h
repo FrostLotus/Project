@@ -32,12 +32,12 @@ public:
 	(
 		CString strFieldName,
 		int nFieldType,
-		PLC_VALUE_TYPE_ eValueType, 
-		PLC_ACTION_TYPE_ eActionType, 
-		BYTE cLen, 
-		CString strDeviceType, 
-		UINT uAddress, 
-		UINT uStartBit = -1, 
+		PLC_VALUE_TYPE_ eValueType,
+		PLC_ACTION_TYPE_ eActionType,
+		BYTE cLen,
+		CString strDeviceType,
+		UINT uAddress,
+		UINT uStartBit = -1,
 		UINT uEndBit = -1
 	)
 	{
@@ -79,52 +79,53 @@ public:
 	virtual int GetFieldSize() = 0;
 	virtual PLC_DATA_ITEM_* GetPLCAddressInfo(int nFieldId, BOOL bSkip) = 0;
 
-	virtual void DO_CUSTOM_TEST(){ } //change it in inherit class if needed
+	virtual void DO_CUSTOM_TEST() { } //change it in inherit class if needed
 	virtual BOOL HAS_CUSTOM_TEST() { return FALSE; }
 
-	BYTE *GET_PLC_FIELD_BYTE_VALUE(int nFieldId);
+	BYTE* GET_PLC_FIELD_BYTE_VALUE(int nFieldId);
 	CString GET_PLC_FIELD_VALUE(int nFieldId);
 	CString GET_PLC_FIELD_TIME(int nFieldId);
 	CString GET_PLC_FIELD_ADDRESS(int nFieldId);
 	CString GET_PLC_FIELD_NAME(int nFieldId);
 	PLC_ACTION_TYPE_ GET_PLC_FIELD_ACTION(int nFieldId);
 	long GET_PLC_FIELD_DATA(int nFieldId);
-	long GET_PLC_FIELD_DATA(vector<int> &vField);
-	long SET_PLC_FIELD_DATA(int nFieldId, int nSizeInByte, BYTE *pData);
-	long SET_PLC_FIELD_DATA(vector<int> &vField, BYTE *pData);
-	long SET_PLC_FIELD_DATA_BIT(int nFieldStart, int nFieldEnd, int nSizeInByte, BYTE *pData);
-	
+	long GET_PLC_FIELD_DATA(vector<int>& vField);
+	long SET_PLC_FIELD_DATA(int nFieldId, int nSizeInByte, BYTE* pData);
+	long SET_PLC_FIELD_DATA(vector<int>& vField, BYTE* pData);
+	long SET_PLC_FIELD_DATA_BIT(int nFieldStart, int nFieldEnd, int nSizeInByte, BYTE* pData);
+
 	long SET_PLC_FIELD_DATA_BIT(int nField, int nBitPosition, BOOL bValue);
 
-	void SET_FLUSH_ANYWAY(BOOL bFlushAnyway){ m_bFlushAnyway = bFlushAnyway; };
-	BOOL GET_FLUSH_ANYWAY(){ return m_bFlushAnyway; };
+	void SET_FLUSH_ANYWAY(BOOL bFlushAnyway) { m_bFlushAnyway = bFlushAnyway; };
+	BOOL GET_FLUSH_ANYWAY() { return m_bFlushAnyway; };
 protected:
 	void INIT_PLCDATA();
 	void DESTROY_PLC_DATA();
 
-	BOOL USM_ReadData(BYTE *pData, int nSize, int nOffset = 0);
-	BOOL USM_WriteData(BYTE *pData, int nSize, int nOffset = 0);
+	BOOL USM_ReadData(BYTE* pData, int nSize, int nOffset = 0);
+	BOOL USM_WriteData(BYTE* pData, int nSize, int nOffset = 0);
 
 	//IPLCProcess
 	virtual long ON_OPEN_PLC(LPARAM lp);
 
-	virtual void SET_INIT_PARAM(LPARAM lp, BYTE *pData){};
+	virtual void SET_INIT_PARAM(LPARAM lp, BYTE* pData) {};
 private:
 	void Init();
 	void Finalize();
-	long GET_PLC_FIELD_DATA(int nFieldId, void *pData);
-	void GET_PLC_RANDOM_DATA(vector<int> &vField, CString &strField, int &nSizeInWord);
+	long GET_PLC_FIELD_DATA(int nFieldId, void* pData);
+	void GET_PLC_RANDOM_DATA(vector<int>& vField, CString& strField, int& nSizeInWord);
 private:
-	usm<unsigned char> *m_pAOIUsm;
-	usm<unsigned char> *m_pPLCUsm;
+	
+	usm<unsigned char>* m_pAOIUsm;
+	usm<unsigned char>* m_pPLCUsm;
 	///<summary>PLC資料結構</summary>
 	struct PLCDATA
 	{
-		BYTE * pData;
+		BYTE* pData;
 		__time64_t xTime;
 	};
 	///<summary>PLC資料</summary>
-	PLCDATA *m_pPLCData;
+	PLCDATA* m_pPLCData;
 
 	BOOL m_bFlushAnyway;
 	long m_lLastRtn;

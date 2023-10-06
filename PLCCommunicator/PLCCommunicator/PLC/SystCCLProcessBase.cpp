@@ -363,6 +363,7 @@ void CSystCCLProcessBase::ON_CCL_NEWBATCH()
 	wcscpy_s(xData.cModel, GET_PLC_FIELD_VALUE(FIELD_MODEL).GetBuffer());
 	wcscpy_s(xData.cAssign, GET_PLC_FIELD_VALUE(FIELD_ASSIGN).GetBuffer());
 	xData.wAssignNum			= _ttoi(GET_PLC_FIELD_VALUE(FIELD_ASSIGNNUM));
+
 	xData.wSplitNum				= _ttoi(GET_PLC_FIELD_VALUE(FIELD_SPLITNUM));
 	xData.wSplit_One_Y			= _ttoi(GET_PLC_FIELD_VALUE(FIELD_SPLIT_ONE_Y));
 	xData.wSplit_Two_Y			= _ttoi(GET_PLC_FIELD_VALUE(FIELD_SPLIT_TWO_Y));
@@ -370,13 +371,16 @@ void CSystCCLProcessBase::ON_CCL_NEWBATCH()
 	xData.wSplit_One_X			= _ttoi(GET_PLC_FIELD_VALUE(FIELD_SPLIT_ONE_X));
 	xData.wSplit_Two_X			= _ttoi(GET_PLC_FIELD_VALUE(FIELD_SPLIT_TWO_X));
 	xData.wSplit_Three_X		= _ttoi(GET_PLC_FIELD_VALUE(FIELD_SPLIT_THREE_X));
+
 	xData.fThickSize			= (float)_ttof(GET_PLC_FIELD_VALUE(FIELD_THICK_SIZE));
 	xData.fThickCCL				= (float)_ttof(GET_PLC_FIELD_VALUE(FIELD_THICK_CCL));
+
 	wcscpy_s(xData.cCCLType, GET_PLC_FIELD_VALUE(FIELD_CCL_TYPE).GetBuffer());
 	xData.wGrayScale			= _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCL_GRAYSCALE));
 	xData.wPixel_AA				= _ttoi(GET_PLC_FIELD_VALUE(FIELD_LEVEL_AA_PIXEL));
 	xData.wPixel_A				= _ttoi(GET_PLC_FIELD_VALUE(FIELD_LEVEL_A_PIXEL));
 	xData.wPixel_P				= _ttoi(GET_PLC_FIELD_VALUE(FIELD_LEVEL_P_PIXEL));
+
 	xData.wDiff_One_Y			= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_Y));
 	xData.wDiff_One_X			= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_X));
 	xData.wDiff_One_XY			= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_XY));
@@ -385,7 +389,6 @@ void CSystCCLProcessBase::ON_CCL_NEWBATCH()
 	xData.wDiff_One_Y_Max		= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_Y_MAX));
 	xData.wDiff_One_X_Min		= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_X_MIN));
 	xData.wDiff_One_X_Max		= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_X_MAX));
-
 	xData.wDiff_One_XY_Min		= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_XY_MIN));
 	xData.wDiff_One_XY_Max		= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_XY_MAX));
 	

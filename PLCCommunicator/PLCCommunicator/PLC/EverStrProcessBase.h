@@ -6,11 +6,11 @@
 #define USE_TEST_TIMER //timer固定發送測試資料
 #endif
 //rename later, not yet
-class EverStrProcessBase :public CPLCProcessBase
+class CEverStrProcessBase :public CPLCProcessBase
 {
 public:
-	EverStrProcessBase();
-	virtual ~EverStrProcessBase();
+	CEverStrProcessBase();
+	virtual ~CEverStrProcessBase();
 	virtual int GetFieldSize() { return FIELD_MAX; };//70
 	enum PLC_FIELD_
 	{
@@ -20,7 +20,7 @@ public:
 		FIELD_ORDER = 1,			       //訂單號					             1      D1000~D1009		  string[20]    
 		FIELD_SN,					       //批號					             2      D1010~D1019		  string[20]     =  FIELD_ASSIGN 分發號
 		FIELD_QUANTITY,				       //工單產品數量				             3      D1020			  word    =2     =  FIELD_ASSIGNNUM 分發號數量
-		
+
 		FIELD_SPLITNUM,				       //一開幾數					             4      D1021			  word    =2          
 		FIELD_SPLIT_ONE_Y,			       //第一張大小板長			             5      D1022~D1023		  real    =4          
 		FIELD_SPLIT_TWO_Y,			       //第二張大小板長			             6      D1024~D1025		  real    =4          
@@ -51,7 +51,7 @@ public:
 		FIELD_DIFF_THREE_X_MAX,		       //第三個大小版緯向公差上限				30		D1062			  word          
 		FIELD_DIFF_THREE_XY_MIN,	       //第三個大小版對角線公差下限				31		D1063			  word          
 		FIELD_DIFF_THREE_XY_MAX,	       //第三個大小版對角線公差上限				32		D1064			  word          
-		//上傳---------------------------------------------													           
+		//上傳---------------------------------------------------													           
 		FIELD_CCL_COMMAND = 34,		       //指令下發(1/0)						34		 D1066			  word          
 		FIELD_CCL_NO_C10,			       //板剪切編(開板後序號)					35		 D1067			  word          
 
@@ -90,7 +90,7 @@ public:
 		FIELD_ORDER_1,					   //訂單號								67		 D2000~D2009	  string[20]    
 		FIELD_SN_1,						   //批號								68		 D2010~D2019	  string[20]    
 		FIELD_MATERIAL_1,				   //訂單物料代碼							69		 D2037~D2046	  string[20]    
-		
+
 		FIELD_MAX
 	};
 protected:
@@ -98,12 +98,12 @@ protected:
 	virtual long ON_OPEN_PLC(LPARAM lp);
 	virtual void ON_GPIO_NOTIFY(WPARAM wp, LPARAM lp);
 
-	virtual void DoWriteResult(BATCH_SHARE_SYST_RESULTCCL &xData) = 0;
-	virtual void DoSetInfoField(BATCH_SHARE_SYST_INFO &xInfo) = 0;
-	virtual BOOL IS_SUPPORT_FLOAT_REALSIZE(){ return TRUE; }; //東莞松八廠實際尺寸欄位型態為word, 非float
+	virtual void DoWriteResult(BATCH_SHARE_SYST_RESULTCCL& xData) = 0;
+	virtual void DoSetInfoField(BATCH_SHARE_SYST_INFO& xInfo) = 0;
+	virtual BOOL IS_SUPPORT_FLOAT_REALSIZE() { return TRUE; }; //東莞松八廠實際尺寸欄位型態為word, 非float
 
 	virtual BOOL IS_SUPPORT_CUSTOM_ACTION() { return FALSE; } //是否支援客製化行為
-	virtual void DoCustomAction(){}; //客製化行為
+	virtual void DoCustomAction() {}; //客製化行為
 private:
 	void Init();
 	void Finalize();
@@ -116,12 +116,12 @@ private:
 	void ON_CCL_NEWBATCH();
 	void ON_C10_CHANGE(WORD wC10);
 
-	void PushResult(BATCH_SHARE_SYST_RESULTCCL &xResult);
-	void SetInfoField(BATCH_SHARE_SYST_INFO &xInfo);
+	void PushResult(BATCH_SHARE_SYST_RESULTCCL& xResult);
+	void SetInfoField(BATCH_SHARE_SYST_INFO& xInfo);
 
 private:
 
-	enum 
+	enum
 	{
 		TIMER_COMMAND,			//指令下發
 		TIMER_COMMAND_RECEIVED,	//指令收到
@@ -132,10 +132,10 @@ private:
 #ifdef USE_TEST_TIMER
 		TIMER_TEST,
 #endif
-		TIMER_MAX
+		TIMER_MAX         //TIMER迴圈一次事件總數
 	};
 	UINT_PTR m_tTimerEvent[TIMER_MAX];
-	static EverStrProcessBase* m_this;
+	static CEverStrProcessBase* m_this;
 
 	//write thread
 	enum
@@ -146,6 +146,7 @@ private:
 		CASE_EXIT = WAIT_OBJECT_0,
 		CASE_WRITE,
 	};
+
 	vector<BATCH_SHARE_SYST_RESULTCCL> m_vResult;
 	std::mutex m_oMutex;
 	HANDLE     m_hThread;
@@ -154,5 +155,5 @@ private:
 	PLC_DATA_ITEM_** m_pPLC_FIELD_INFO;
 
 	static DWORD __stdcall Thread_Result(void* pvoid);
-	void WriteResult(BATCH_SHARE_SYST_RESULTCCL &xData);
+	void WriteResult(BATCH_SHARE_SYST_RESULTCCL& xData);
 };

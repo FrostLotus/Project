@@ -1,10 +1,10 @@
 #pragma once
 #include "EverStrProcessBase.h"
 
-class EverStrProcess :public EverStrProcessBase {
+class CEverStrProcess :public CEverStrProcessBase {
 public:
-	EverStrProcess();
-	virtual ~EverStrProcess();
+	CEverStrProcess();
+	virtual ~CEverStrProcess();
 protected:
 	virtual PLC_DATA_ITEM_* GetPLCAddressInfo(int nFieldId, BOOL bSkip);
 	virtual void DoWriteResult(BATCH_SHARE_SYST_RESULTCCL &xData);
