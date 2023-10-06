@@ -101,8 +101,8 @@ using namespace std;
 
 #define AOI_MASTER_NAME                     _T("AOI Master")
 //=======================================================================================================
-/// <summary>め</summary>
-enum AOI_CUSTOMERTYPE_            //eric chao 201
+/// <summary>め</summary>    //eric chao 201
+enum AOI_CUSTOMERTYPE_            
 {
 	CUSTOMER_EMC_CCL = 0,		  //CCL
 	CUSTOMER_NANYA = 2,
@@ -154,7 +154,7 @@ typedef struct BATCH_SHARE_OPC_INITPARAM_
 	TCHAR cROOTID[MAX_BATCH_FIELD_LEN];
 
 }BATCH_SHARE_OPC_INITPARAM;
-/// <summary>[BATCH=>SYSTCCL]﹍て把计</summary>
+/// <summary>[BATCH=>CCL]PLC砰把计﹍て</summary>
 typedef struct BATCH_SHARE_SYSTCCL_INITPARAM_
 {
 	TCHAR cPLCIP[MAX_BATCH_FIELD_LEN];
@@ -165,14 +165,14 @@ typedef struct BATCH_SHARE_SYSTCCL_INITPARAM_
 	long lPCStationNo;				//璸衡诀凹腹
 }BATCH_SHARE_SYSTCCL_INITPARAM;
 /// <summary>[BATCH=>SYSTPP]﹍て把计</summary>
-struct BATCH_SHARE_SYSTPP_INITPARAM_ : public BATCH_SHARE_SYSTCCL_INITPARAM_
+typedef struct BATCH_SHARE_SYSTPP_INITPARAM_ : public BATCH_SHARE_SYSTCCL_INITPARAM_
 {
 	int nWatchDogTimeout;			//WatchDog timeout(second)
 	int nVersion;
 	int nWSMode;					//0:家Α/1:家Α
 	BOOL bFX5U;
 	int nNewbatchDelay;				//
-};
+}BATCH_SHARE_SYSTPP_INITPARAM;
 
 /// <summary>╰参莱Flag把计</summary>
 enum SYST_RESULT_FLAG

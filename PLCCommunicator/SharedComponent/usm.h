@@ -11,7 +11,7 @@ namespace BATCH_SHARE_MEMORY
 #define MAX_BATCH_FIELD_LEN 100
 #define BATCH_AGENT_MEM_ID _T("BATCH_AGENT_MEM")
 
-	typedef struct BATCH_SHARE_ITEM_ 
+	typedef struct BATCH_SHARE_ITEM_
 	{
 		TCHAR cName[MAX_BATCH_FIELD_LEN];
 		TCHAR cSerial[MAX_BATCH_FIELD_LEN];
@@ -19,7 +19,7 @@ namespace BATCH_SHARE_MEMORY
 		TCHAR cStation[MAX_BATCH_FIELD_LEN];
 		TCHAR cNum[MAX_BATCH_FIELD_LEN];
 	}BATCH_SHARE_ITEM;
-	typedef struct BATCH_SHARE_DATA_ 
+	typedef struct BATCH_SHARE_DATA_
 	{
 		int nTotal;
 		BATCH_SHARE_ITEM xItem[1];
@@ -171,7 +171,6 @@ public:
 		hMutexWriting = 0;
 	}
 
-
 	bool IsFirst() { return WasFirst; }
 	usm(const wchar_t* string_id = 0, bool Init = false, unsigned long long csz = 1048576, DWORD MaxTh = 100)
 	{
@@ -290,7 +289,7 @@ public:
 
 	const T* BeginRead(bool FailOnNotReady = false)
 	{
-		if (!Buff) 
+		if (!Buff)
 		{
 			return 0;
 		}
@@ -301,7 +300,7 @@ public:
 			if (x != WAIT_OBJECT_0)
 				return 0;
 		}
-		else 
+		else
 		{
 			WaitForSingleObject(hMutexWriting, INFINITE);
 		}
@@ -326,7 +325,9 @@ public:
 	{
 		const T* ptr = BeginRead(FailIfNotReady);
 		if (!ptr)
+		{
 			return (unsigned long long) - 1;
+		}
 		memcpy(b, ptr + offset, sz);
 		EndRead();
 		return sz;
@@ -382,7 +383,7 @@ public:
 			if (x != WAIT_OBJECT_0)
 				return 0;
 		}
-		else 
+		else
 		{
 			WaitForSingleObject(hMutexWriting, INFINITE);
 		}
