@@ -94,7 +94,7 @@ void CPLCCommunicatorDlg::OnQueryAll()
 			PLC_DATA_ITEM_* pItem = m_pPLCProcessBase->GetPLCAddressInfo(i, FALSE);
 			if (pItem && pItem->xAction != ACTION_SKIP)
 			{
-				m_pPLCProcessBase->GET_PLC_FIELD_DATA(i);//全部讀一次
+				m_pPLCProcessBase->GET_PLC_FIELD_DATA(i);//全部讀新狀態一次
 			}
 		}
 	}
@@ -294,9 +294,9 @@ LRESULT CPLCCommunicatorDlg::OnCmdGPIO(WPARAM wParam, LPARAM lParam)
 #ifndef USE_MC_PROTOCOL
 			if (lParam == WM_SYST_PARAMINIT_CMD || lParam == WM_SYST_PP_PARAMINIT_CMD)
 			{
-				if (ON_OPEN_PLC(lParam) != 0)
+				if (ON_OPEN_PLC(lParam) != 0)//判斷是否為空
 				{
-					//open failed start reconnect timer
+					//open failed start reconnect timer 重連
 					if (m_tTimerReconnect == NULL)
 					{
 						m_tTimerReconnect = SetTimer(RECONNECT_TIMER, 3000, NULL);
@@ -320,6 +320,7 @@ LRESULT CPLCCommunicatorDlg::OnCmdGPIO(WPARAM wParam, LPARAM lParam)
 				m_pPLC->SetInfo(&xInfo);
 			}
 #endif
+			theApp.InsertDebugLog(L"init AOI_RESPONSE done");
 			break;
 	}
 	return 0;
@@ -583,6 +584,7 @@ void CPLCCommunicatorDlg::Init()
 	{
 		InitializeCriticalSection(&m_xLock[i]);
 	}
+
 #ifndef USE_MC_PROTOCOL
 	m_pPLCProcessBase = NULL;
 #else
@@ -592,11 +594,13 @@ void CPLCCommunicatorDlg::Init()
 	InitUI();
 #ifndef USE_MC_PROTOCOL
 #ifdef OFF_LINE
-	m_xParam.eCustomerType = CUSTOMER_SYST_CCL;//(AOI_CUSTOMERTYPE_)(lParam >> 8 & 0xFF);
-	m_xParam.eSubCustomerType = SUB_CUSTOMER_SUZHOU;//(AOI_SUBCUSTOMERTYPE_)(lParam & 0xFF);
-	InitPLCProcess();
-	theApp.InsertDebugLog(L"init customer type done");
-	ON_OPEN_PLC();
+	m_xParam.eCustomerType = CUSROMER_EVERSTRONG;//(AOI_CUSTOMERTYPE_)(lParam >> 8 & 0xFF);
+	m_xParam.eSubCustomerType = SUB_CUSTOMER_NONE;//(AOI_SUBCUSTOMERTYPE_)(lParam & 0xFF);
+	OnCmdGPIO(WM_CUSTOMERTYPE_INIT, m_xParam.eCustomerType << 14 | m_xParam.eSubCustomerType);//設置客製
+	OnCmdGPIO(WM_AOI_RESPONSE_CMD, WM_SYST_PARAMINIT_CMD);//設置AOI
+	//InitPLCProcess();
+	//theApp.InsertDebugLog(L"init customer type done");
+	//ON_OPEN_PLC();
 #else
 	auto NotifyExe = [](CString strTarget, WPARAM wp, LPARAM lp)
 	{
@@ -831,7 +835,6 @@ void CPLCCommunicatorDlg::InitPLCProcess()
 				case SUB_CUSTOMER_CHANGSHU2:
 					m_pPLCProcessBase = new CSystCCLProcessCHANGSHU2;
 					break;
-
 			}
 			break;
 		case CUSTOMER_SCRIBD_PP:

@@ -31,8 +31,6 @@ long CEverStrProcessBase::ON_OPEN_PLC(LPARAM lp)
 			{
 				m_tTimerEvent[i] = SetTimer(NULL, i, 500, QueryTimer);
 			}
-			else {}
-
 #endif
 			BOOL bSettimer = TRUE;
 			switch (i)
@@ -137,6 +135,7 @@ void CEverStrProcessBase::ProcessResult()
 	int nWordSize = sizeof(WORD);
 	int nFloatSize = sizeof(float);
 	CString strLog, strTemp;
+
 	//設置DATA結構
 	auto SetData = [&](DWORD dwAddFlag, void* pDst, int nSize, CString strAddLog, int nLogType)
 	{
@@ -191,8 +190,8 @@ void CEverStrProcessBase::ProcessResult()
 		SetData(SRF_SIZE_G14, &xResult.wSize_G14, nWordSize, L"wSize_G14", LOG_WORD);
 
 		//SetData(SRF_RESULT_LEVEL, &xResult.wResultLevel, nWordSize, L"wResultLevel", LOG_WORD);
-		SetData(SRF_NUM_A, &xResult.wNum_A, nWordSize, L"wNum_A", LOG_WORD);//OK
-		SetData(SRF_NUM_P, &xResult.wNum_P, nWordSize, L"wNum_P", LOG_WORD);//NG
+		SetData(SRF_NUM_A, &xResult.wNum_A, nWordSize, L"wNum_A", LOG_WORD);//OK數量
+		SetData(SRF_NUM_P, &xResult.wNum_P, nWordSize, L"wNum_P", LOG_WORD);//NG數量
 		SetData(SRF_QUALIFY_RATE, &xResult.wQualifyRate, nWordSize, L"wQualifyRate", LOG_WORD);//Float=>Word
 
 		theApp.InsertDebugLog(strLog, LOG_DEBUG);
@@ -222,30 +221,32 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 					BATCH_SHARE_SYST_RESULTCCL_ xResult;
 					memset(&xResult, 0, sizeof(BATCH_SHARE_SYST_RESULTCCL_));
 					static int nCount = 0;
-					xResult.wDiff_One_Y = m_vResult.size();
-					xResult.wDiff_Two_Y = 2;
-					xResult.wDiff_One_X = 3;
-					xResult.wDiff_Two_X = 4;
-					xResult.wDiff_One_XY = 5;
-					xResult.wDiff_Two_XY = 6;
-					xResult.wFrontLevel = 7;
-					xResult.wFrontLocation = 8;
-					xResult.wBackLevel = 9;
-					xResult.wBackLocation = 10;
-					xResult.wSize_G10 = 11;
-					xResult.wSize_G12 = 12;
-					xResult.wSize_G14 = 13;
+					CStringA str;
 
 					xResult.fReal_One_Y = 1.1;
 					xResult.fReal_Two_Y = 2.2;
 					xResult.fReal_One_X = 3.3;
 					xResult.fReal_Two_X = 4.4;
 
-					CStringA str;
-					str.Format("12345678901234567890123456789a");
+					xResult.wDiff_One_Y = 1;
+					xResult.wDiff_Two_Y = 2;
+					xResult.wDiff_One_X = 3;
+					xResult.wDiff_Two_X = 4;
+
+					xResult.wDiff_One_XY = 5;
+					xResult.wDiff_Two_XY = 6;
+
+					xResult.wFrontLevel = 7;
+					str.Format("12345678901234567890123456789a");//8
 					memcpy(xResult.cFrontCode, str.GetBuffer(), _countof(xResult.cFrontCode));
-					str.Format("abcdefghijklmnopqrstuvwxyzabca");
+					//xResult.wFrontLocation = 8;
+					xResult.wBackLevel = 9;
+					str.Format("abcdefghijklmnopqrstuvwxyzabca");//10
 					memcpy(xResult.cBackCode, str.GetBuffer(), _countof(xResult.cBackCode));
+					//xResult.wBackLocation = 10;
+					xResult.wSize_G10 = 11;
+					xResult.wSize_G12 = 12;
+					xResult.wSize_G14 = 13;
 
 					xResult.wResultLevel = 1;
 					xResult.wNum_AA = 2;
@@ -254,16 +255,18 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 					xResult.wQualifyRate = 5;
 					xResult.wDiff_XY = 6;
 
-					BATCH_SHARE_SYST_INFO xInfo; memset(&xInfo, 0, sizeof(xInfo));
-					xInfo.xInfo1.cSizeReady = 1;
-					xInfo.xInfo1.cSizeRunning = 1;
-					xInfo.xInfo1.cCCDReady = 1;
-					xInfo.xInfo1.cCCDRunning = 1;
-					xInfo.xInfo2.cCCDError1 = 1;
-					xInfo.xInfo2.cSizeError1 = 1;
+					//BATCH_SHARE_SYST_INFO xInfo;
+					//memset(&xInfo, 0, sizeof(xInfo));
+					
+					//xInfo.xInfo1.cSizeReady = 1;
+					//xInfo.xInfo1.cSizeRunning = 1;
+					//xInfo.xInfo1.cCCDReady = 1;
+					//xInfo.xInfo1.cCCDRunning = 1;
+					//xInfo.xInfo2.cCCDError1 = 1;
+					//xInfo.xInfo2.cSizeError1 = 1;
 
 					PushResult(xResult);
-					SetInfoField(xInfo);
+					//SetInfoField(xInfo);
 				}
 				break;
 #endif
@@ -518,6 +521,8 @@ void CEverStrProcessBase::WriteResult(BATCH_SHARE_SYST_RESULTCCL& xData)
 	SET_PLC_FIELD_DATA(FIELD_REAL_DIFF_TWO_X, 2, (BYTE*)&xData.wDiff_Two_X);
 	SET_PLC_FIELD_DATA(FIELD_REAL_DIFF_ONE_XY, 2, (BYTE*)&xData.wDiff_One_XY);
 	SET_PLC_FIELD_DATA(FIELD_REAL_DIFF_TWO_XY, 2, (BYTE*)&xData.wDiff_Two_XY);
+
+
 
 	DoWriteResult(xData);
 

@@ -1,6 +1,4 @@
-
 // PLCCommunicatorDlg.h : 標頭檔
-//
 
 #pragma once
 #include <vector>
@@ -72,15 +70,15 @@ class CPLCCommunicatorDlg : public CDialogEx
 	, public ISocketCallBack
 #endif
 {
-	// 建構
+	//建構
 public:
-	CPLCCommunicatorDlg(BOOL bNoShow, CWnd* pParent = NULL);	// 標準建構函式
+	CPLCCommunicatorDlg(BOOL bNoShow, CWnd* pParent = NULL);//標準建構函式
 	~CPLCCommunicatorDlg();
-	// 對話方塊資料
+	//對話方塊資料
 	enum { IDD = IDD_PLCCOMMUNICATOR_DIALOG };
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 支援
+	virtual void DoDataExchange(CDataExchange* pDX);//DDX/DDV 支援
 protected:
 #ifdef USE_MC_PROTOCOL
 	//ISocketCallBack
@@ -97,11 +95,12 @@ protected:
 	};
 	void OpPLC(int nOpCode);
 #endif
-	// 程式碼實作
+
+//程式碼實作
 protected:
 	HICON m_hIcon;
 
-	// 產生的訊息對應函式
+	//產生的訊息對應函式
 	virtual BOOL OnInitDialog();
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
@@ -113,7 +112,7 @@ protected:
 	afx_msg void OnLvnGetdispinfoInfo(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnCustomdrawList(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnTimer(UINT_PTR);
-	DECLARE_MESSAGE_MAP()
+	DECLARE_MESSAGE_MAP()//宣告
 private:
 	void Init();
 	void InitUiRectPos();
@@ -124,29 +123,25 @@ private:
 	void InitPLCProcess();
 private:
 	std::vector<std::pair<CString, __time64_t>> m_vPLCInfo;
-
-
 #ifdef SHOW_DEBUG_BTN
 	afx_msg void OnQueryAll();
 	afx_msg void OnTestWrite();
 	afx_msg void OnFlushAll();
 #endif
-
 	PLC_PARAM m_xParam;
-
-	enum
+	enum LIST_COL
 	{
 		LIST_COL_FIELD = 0,
 		LIST_COL_ADDRESS,
 		LIST_COL_VALUE,
 		LIST_COL_TIME,
 	};
-	enum
+	enum LIST_COL_T
 	{
 		LIST_COL_TITLE,
 		LIST_COL_DATA,
 	};
-	enum
+	enum UI_ITEM
 	{
 		UI_ITEM_BEGIN,
 		//LABEL
@@ -180,8 +175,7 @@ private:
 		UI_ITEM_END,
 	};
 	WND_OBJ m_xUi[UI_ITEM_END];
-
-	enum
+	enum LOCK
 	{
 		LOCK_BEGIN = 0,
 		LOCK_INFO = LOCK_BEGIN,

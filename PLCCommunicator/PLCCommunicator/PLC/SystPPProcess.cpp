@@ -23,21 +23,26 @@ UINT THREAD_WATCHDOG(LPVOID lp)
 }
 void CSystPPProcess::DoWatchDogCheck()
 {
-	while (!m_bExit){
+	while (!m_bExit)
+	{
 		//if AOI exist and slave checkalive ok, then reset PLC watchdog timer
 		HWND hWnd = ::FindWindow(NULL, AOI_MASTER_NAME);
-		if (hWnd){
+		if (hWnd)
+		{
 			LRESULT nResult = ::SendMessageTimeout(hWnd, WM_NULL, 0, 0, SMTO_NORMAL, ctHungTime, NULL);
-			if (nResult != 0){ //send ok
+			if (nResult != 0)
+			{ //send ok
 				TriggerWatchDog(FALSE, FALSE);
 			}
-			else{//AOI hung
+			else
+			{//AOI hung
 				TriggerWatchDog(TRUE, TRUE);
 			}
 		}
-		else{
+		else
+		{
 			SetInspStatus(NULL, TRUE);
-		}		
+		}
 
 		::Sleep(ctWatchDogInterval);
 	}
@@ -68,40 +73,46 @@ void CSystPPProcess::Init()
 		{ L"非檢測中",						FIELD_INSP_STOP,					PLC_TYPE_BIT,	ACTION_BATCH,	2, L"Y",	0	},
 		{ L"檢測中",						FIELD_INSP_START,					PLC_TYPE_BIT,	ACTION_BATCH,	2, L"Y",	1	},
 	};
-	m_pPLC_FIELD_INFO = new PLC_DATA_ITEM_*[FIELD_MAX];
-	for (int i = 0; i < FIELD_MAX; i++){
+	m_pPLC_FIELD_INFO = new PLC_DATA_ITEM_ * [FIELD_MAX];
+	for (int i = 0; i < FIELD_MAX; i++)
+	{
 		m_pPLC_FIELD_INFO[i] = new PLC_DATA_ITEM;
 		memset(m_pPLC_FIELD_INFO[i], 0, sizeof(PLC_DATA_ITEM));
 
 		memcpy(m_pPLC_FIELD_INFO[i], &ctSYST_PLC_FIELD[i], sizeof(PLC_DATA_ITEM));
 	}
-	for (int i = 0; i < TIMER_MAX; i++){
+	for (int i = 0; i < TIMER_MAX; i++)
+	{
 		//if (i == TIMER_WATCHDOG)
 		//	m_tTimerEvent[i] = SetTimer(NULL, i, ctWatchDogInterval, QueryTimer);
 		//else
-			m_tTimerEvent[i] = SetTimer(NULL, i, 500, QueryTimer);
+		m_tTimerEvent[i] = SetTimer(NULL, i, 500, QueryTimer);
 	}
-	NotifyAOI(WM_SYST_PP_PARAMINIT_CMD, NULL); 
+	NotifyAOI(WM_SYST_PP_PARAMINIT_CMD, NULL);
 }
 void CSystPPProcess::SetInspStatus(BOOL bSuspend, BOOL bClearAll)
 {
 	WORD wStop = 0;
 	WORD wStart = 0;
 	CString strLog;
-	if (bClearAll){
+	if (bClearAll)
+	{
 		wStop = 0;
 		wStart = 0;
 
 		strLog.Format(L"clear all insp pin");
 	}
-	else{
+	else
+	{
 		strLog.Format(L"change Insp status:%d", bSuspend);
 
-		if (bSuspend){
+		if (bSuspend)
+		{
 			wStop = 1;
 			wStart = 0;
 		}
-		else{
+		else
+		{
 			wStop = 0;
 			wStart = 1;
 		}
@@ -114,15 +125,19 @@ void CSystPPProcess::SetInspStatus(BOOL bSuspend, BOOL bClearAll)
 void CSystPPProcess::Finalize()
 {
 	m_bExit = TRUE;
-	for (int i = 0; i < TIMER_MAX; i++){
+	for (int i = 0; i < TIMER_MAX; i++)
+	{
 		::KillTimer(NULL, m_tTimerEvent[i]);
 	}
 
 	DESTROY_PLC_DATA();
 	int nFieldSize = GetFieldSize();
-	if (m_pPLC_FIELD_INFO){
-		for (int i = 0; i < nFieldSize; i++){
-			if (m_pPLC_FIELD_INFO[i]){
+	if (m_pPLC_FIELD_INFO)
+	{
+		for (int i = 0; i < nFieldSize; i++)
+		{
+			if (m_pPLC_FIELD_INFO[i])
+			{
 				delete[] m_pPLC_FIELD_INFO[i];
 				m_pPLC_FIELD_INFO[i] = NULL;
 			}
@@ -132,14 +147,16 @@ void CSystPPProcess::Finalize()
 }
 void CALLBACK CSystPPProcess::QueryTimer(HWND hwnd, UINT uMsg, UINT_PTR nEventId, DWORD dwTimer)
 {
-	if (m_this){
+	if (m_this)
+	{
 		m_this->ProcessTimer(nEventId);
 	}
 }
 UINT THREAD_NEWBATCH(LPVOID lp)
 {
-	std::pair<CSystPPProcess*, int> *pPair = (std::pair<CSystPPProcess*, int>*)lp;
-	if (pPair){
+	std::pair<CSystPPProcess*, int>* pPair = (std::pair<CSystPPProcess*, int>*)lp;
+	if (pPair)
+	{
 		::Sleep(pPair->first->GetNewbatchDelay());
 		pPair->first->DoPLCNewbatch(pPair->second);
 		delete pPair;
@@ -148,25 +165,27 @@ UINT THREAD_NEWBATCH(LPVOID lp)
 }
 void CSystPPProcess::ProcessTimer(UINT_PTR nEventId)
 {
-	for (int i = 0; i < TIMER_MAX; i++){
-		if (m_tTimerEvent[i] == nEventId){
+	for (int i = 0; i < TIMER_MAX; i++)
+	{
+		if (m_tTimerEvent[i] == nEventId)
+		{
 			switch (i)
 			{
-			//case TIMER_WATCHDOG:
-			//{
-			//	//if AOI exist and slave checkalive ok, then reset PLC watchdog timer
-			//	HWND hWnd = ::FindWindow(NULL, AOI_MASTER_NAME);
-			//	if (hWnd){
-			//		TriggerWatchDog(FALSE, FALSE);
-			//	}
-			//	else{
-			//		SetInspStatus(NULL, TRUE);
-			//	}			
-			//}
-			//	break;
-			case TIMER_INPUT:
-				OnQueryTimer();
-				break;
+				//case TIMER_WATCHDOG:
+				//{
+				//	//if AOI exist and slave checkalive ok, then reset PLC watchdog timer
+				//	HWND hWnd = ::FindWindow(NULL, AOI_MASTER_NAME);
+				//	if (hWnd){
+				//		TriggerWatchDog(FALSE, FALSE);
+				//	}
+				//	else{
+				//		SetInspStatus(NULL, TRUE);
+				//	}			
+				//}
+				//	break;
+				case TIMER_INPUT:
+					OnQueryTimer();
+					break;
 			}
 		}
 	}
@@ -178,58 +197,68 @@ void CSystPPProcess::OnQueryTimer()
 
 	GET_PLC_FIELD_DATA(vField);
 
-	for (auto &i : vField){
+	for (auto& i : vField)
+	{
 		int nCur = _ttoi(GET_PLC_FIELD_VALUE(i));
-		switch (i){
-		case FIELD_A_AXIS:
-		case FIELD_B_AXIS:
-		case FIELD_SHEET_NEWBATCH:
-			if (nCur != 0){
-				if (m_xParam.nNewbatchDelay == 0){
-					DoPLCNewbatch(i);
-				}
-				else{
-					CString strLog;
-					strLog.Format(L"newbatch delay %d ms ", m_xParam.nNewbatchDelay);
-					theApp.InsertDebugLog(strLog, LOG_SYSTEM);
-					std::pair<CSystPPProcess*, int> *pPair = new std::pair<CSystPPProcess*, int>(this, i);
-					AfxBeginThread(THREAD_NEWBATCH, pPair);
-				}
+		switch (i)
+		{
+			case FIELD_A_AXIS:
+			case FIELD_B_AXIS:
+			case FIELD_SHEET_NEWBATCH:
+				if (nCur != 0)
+				{
+					if (m_xParam.nNewbatchDelay == 0)
+					{
+						DoPLCNewbatch(i);
+					}
+					else
+					{
+						CString strLog;
+						strLog.Format(L"newbatch delay %d ms ", m_xParam.nNewbatchDelay);
+						theApp.InsertDebugLog(strLog, LOG_SYSTEM);
+						std::pair<CSystPPProcess*, int>* pPair = new std::pair<CSystPPProcess*, int>(this, i);
+						AfxBeginThread(THREAD_NEWBATCH, pPair);
+					}
 
-				//if status change, reset status
-				WORD wValue = 0;
-				SET_PLC_FIELD_DATA(i, 2, (BYTE*)&wValue);
-			}
-			break;
-		case FIELD_SWITCH_SHEET_WEB:
-			if (nOldSwitch != nCur){
-				//notify AOI
-				NotifyAOI(WM_PLC_PP_CMD, (PM_SWITCH_WEB_SHEET << 24) | nCur);
-				TRACE(L"notify aoi switch %d to %d\n", nOldSwitch, nCur);
-			}
-			break;
+					//if status change, reset status
+					WORD wValue = 0;
+					SET_PLC_FIELD_DATA(i, 2, (BYTE*)&wValue);
+				}
+				break;
+			case FIELD_SWITCH_SHEET_WEB:
+				if (nOldSwitch != nCur)
+				{
+					//notify AOI
+					NotifyAOI(WM_PLC_PP_CMD, (PM_SWITCH_WEB_SHEET << 24) | nCur);
+					TRACE(L"notify aoi switch %d to %d\n", nOldSwitch, nCur);
+				}
+				break;
 		}
 	}
 }
 void CSystPPProcess::DoPLCNewbatch(int nField)
 {
 	//notify AOI
-	if (nField == FIELD_A_AXIS){
+	if (nField == FIELD_A_AXIS)
+	{
 		NotifyAOI(WM_PLC_PP_CMD, (PM_A_AXIS << 24));
 		theApp.InsertDebugLog(L"A Axis Notify!", LOG_SYSTEM);
 	}
-	else if (nField == FIELD_B_AXIS){
+	else if (nField == FIELD_B_AXIS)
+	{
 		NotifyAOI(WM_PLC_PP_CMD, (PM_B_AXIS << 24));
 		theApp.InsertDebugLog(L"B Axis Notify!", LOG_SYSTEM);
 	}
-	else if (nField == FIELD_SHEET_NEWBATCH){
+	else if (nField == FIELD_SHEET_NEWBATCH)
+	{
 		NotifyAOI(WM_PLC_PP_CMD, (PM_SHEET_NEWBATCH << 24));
 		theApp.InsertDebugLog(L"Sheet Newbatch!", LOG_SYSTEM);
 	}
 }
-void CSystPPProcess::SetMXParam(IActProgType *pParam, BATCH_SHARE_SYSTCCL_INITPARAM &xData)
+void CSystPPProcess::SetMXParam(IActProgType* pParam, BATCH_SHARE_SYSTCCL_INITPARAM& xData)
 {
-	if (m_xParam.bFX5U){
+	if (m_xParam.bFX5U)
+	{
 		//參考sh081085engr.pdf 4.2設定
 		//Ethernet communication when the connected station is FX5CPU(TCP)
 		pParam->put_ActBaudRate(0x00);
@@ -255,7 +284,8 @@ void CSystPPProcess::SetMXParam(IActProgType *pParam, BATCH_SHARE_SYSTCCL_INITPA
 
 		pParam->put_ActUnitType(UNIT_FXVETHER);
 	}
-	else{
+	else
+	{
 #ifdef _DEBUG
 		pParam->put_ActHostAddress(L"192.168.2.250");
 #endif
@@ -265,7 +295,8 @@ void CSystPPProcess::SetMXParam(IActProgType *pParam, BATCH_SHARE_SYSTCCL_INITPA
 }
 PLC_DATA_ITEM_* CSystPPProcess::GetPLCAddressInfo(int nFieldId, BOOL bSkip)
 {
-	if (nFieldId >= 0 && nFieldId <= FIELD_MAX){
+	if (nFieldId >= 0 && nFieldId <= FIELD_MAX)
+	{
 		return m_pPLC_FIELD_INFO[nFieldId];
 	}
 	return NULL;
@@ -277,13 +308,14 @@ CPU_SERIES CSystPPProcess::GetCPU()
 	else
 		return CPU_SERIES::FX3U_SERIES;
 }
-void CSystPPProcess::SET_INIT_PARAM(LPARAM lp, BYTE *pData)
+void CSystPPProcess::SET_INIT_PARAM(LPARAM lp, BYTE* pData)
 {
-	if (lp == WM_SYST_PP_PARAMINIT_CMD){
+	if (lp == WM_SYST_PP_PARAMINIT_CMD)
+	{
 		INIT_PLCDATA();
 
 		CString strMsg;
-		BATCH_SHARE_SYSTPP_INITPARAM_ *pParam = (BATCH_SHARE_SYSTPP_INITPARAM_*)pData;
+		BATCH_SHARE_SYSTPP_INITPARAM_* pParam = (BATCH_SHARE_SYSTPP_INITPARAM_*)pData;
 		m_xParam.nWatchDogTimeOut = pParam->nWatchDogTimeout;
 		m_xParam.nVersion = pParam->nVersion;
 		m_xParam.nWSMode = pParam->nWSMode;
@@ -313,28 +345,31 @@ void CSystPPProcess::SET_INIT_PARAM(LPARAM lp, BYTE *pData)
 }
 void CSystPPProcess::ON_GPIO_NOTIFY(WPARAM wp, LPARAM lp)
 {
-	switch (wp){
-	case WM_WS_POTENTIAL_CMD:
+	switch (wp)
 	{
-		CString strLog;
-		strLog.Format(L"change WS mode to %d", lp);
-		theApp.InsertDebugLog(strLog, LOG_SYSTEM);
-		SET_PLC_FIELD_DATA(FIELD_WS_POTENTIAL, 2, (BYTE*)&lp);
-	}
+		case WM_WS_POTENTIAL_CMD:
+		{
+			CString strLog;
+			strLog.Format(L"change WS mode to %d", lp);
+			theApp.InsertDebugLog(strLog, LOG_SYSTEM);
+			SET_PLC_FIELD_DATA(FIELD_WS_POTENTIAL, 2, (BYTE*)&lp);
+		}
 		break;
-	case WM_INSPSTATUS_CMD:
-		SetInspStatus(lp, FALSE);
-		break;
+		case WM_INSPSTATUS_CMD:
+			SetInspStatus(lp, FALSE);
+			break;
 	}
 }
 void CSystPPProcess::TriggerWatchDog(BOOL bOutput, BOOL bLog)// TRUE:直接觸發PLC發送watchdog邏輯, FALSE:reset PLC watchdog timer
 {
-	if (bOutput){
+	if (bOutput)
+	{
 		DWORD dw = 1;
 		SET_PLC_FIELD_DATA(FIELD_WATCHDOG, 4, (BYTE*)&dw);
 		if (bLog) theApp.InsertDebugLog(L"Output WatchDog signal", LOG_SYSTEM);
 	}
-	else{
+	else
+	{
 		DWORD dw = (ctWatchDogCountDown - m_xParam.nWatchDogTimeOut) << 16;
 		SET_PLC_FIELD_DATA(FIELD_WATCHDOG, 4, (BYTE*)&dw);
 		if (bLog) theApp.InsertDebugLog(L"reset WatchDog signal", LOG_SYSTEM);
@@ -344,7 +379,8 @@ long CSystPPProcess::ON_OPEN_PLC(LPARAM lp)
 {
 	long lRtn = CPLCProcessBase::ON_OPEN_PLC(lp);
 	//notify open result
-	if (lRtn == 0){
+	if (lRtn == 0)
+	{
 		TriggerWatchDog(FALSE, TRUE);//reset watch dog output at initial
 		DWORD dwValue = 0;
 		vector<int> vField = { FIELD_A_AXIS, FIELD_B_AXIS, FIELD_SHEET_NEWBATCH };
@@ -353,7 +389,8 @@ long CSystPPProcess::ON_OPEN_PLC(LPARAM lp)
 		//check version
 		GET_PLC_FIELD_DATA(FIELD_VERSION);
 		int nVersion = _ttoi(GET_PLC_FIELD_VALUE(FIELD_VERSION));
-		if (m_xParam.nVersion != nVersion){
+		if (m_xParam.nVersion != nVersion)
+		{
 			//alert aoi
 			NotifyAOI(WM_PLC_PP_CMD, (PM_VERSION_ERROR << 24 | nVersion));
 			CString strLog;

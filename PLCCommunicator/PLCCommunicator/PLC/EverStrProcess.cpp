@@ -87,8 +87,7 @@ CEverStrProcess::CEverStrProcess()
 
 		{ L"訂單號",						FIELD_ORDER_1,					PLC_TYPE_STRING,	ACTION_RESULT,		20,		L"D",		ctBASE_ADDRESS + 1000},
 		{ L"批號",						FIELD_SN_1,						PLC_TYPE_STRING,	ACTION_RESULT,		20,		L"D",		ctBASE_ADDRESS + 1010},
-		{ L"批號",						FIELD_MATERIAL_1,				PLC_TYPE_STRING,	ACTION_RESULT,		20,		L"D",		ctBASE_ADDRESS + 1037},
-
+		{ L"料號",						FIELD_MATERIAL_1,				PLC_TYPE_STRING,	ACTION_RESULT,		20,		L"D",		ctBASE_ADDRESS + 1037}
 	};
 	m_pPLC_FIELD_INFO = new PLC_DATA_ITEM_ * [FIELD_MAX];
 	for (int i = 0; i < FIELD_MAX; i++)
@@ -148,7 +147,7 @@ void CEverStrProcess::DoWriteResult(BATCH_SHARE_SYST_RESULTCCL& xData)
 	//WriteSizeField(FIELD_REAL_DIFF_TWO_X, xData.fReal_Two_Y); //板宽度实际公差2
 	//WriteSizeField(FIELD_REAL_DIFF_ONE_XY, xData.fReal_Two_Y);//板对角线实际公差1
 	//WriteSizeField(FIELD_REAL_DIFF_TWO_XY, xData.fReal_Two_Y);//板对角线实际公差2
-
+	
 	//SET_PLC_FIELD_DATA(FIELD_FRONT_LEVEL, 2, (BYTE*)&xData.wFrontLevel);
 	//SET_PLC_FIELD_DATA(FIELD_BACK_LEVEL, 2, (BYTE*)&xData.wBackLevel);
 
@@ -163,7 +162,8 @@ void CEverStrProcess::DoWriteResult(BATCH_SHARE_SYST_RESULTCCL& xData)
 
 	SET_PLC_FIELD_DATA(FIELD_ORDER_1, 2, (BYTE*)&xData.wNum_A);
 	SET_PLC_FIELD_DATA(FIELD_SN_1, 2, (BYTE*)&xData.wNum_P);
-	SET_PLC_FIELD_DATA(FIELD_SN_1, 2, (BYTE*)&xData.wNum_P);
+
+
 }
 
 void CEverStrProcess::DoSetInfoField(BATCH_SHARE_SYST_INFO& xInfo)
@@ -171,7 +171,7 @@ void CEverStrProcess::DoSetInfoField(BATCH_SHARE_SYST_INFO& xInfo)
 	//SET_PLC_FIELD_DATA_BIT(FIELD_SIZE_INFO_1, FIELD_CCD_INFO_2, 2, (BYTE*)&xInfo.xInfo1);
 	//SET_PLC_FIELD_DATA_BIT(FIELD_CCD_ERROR_1, FIELD_SIZE_ERROR_1, 2, (BYTE*)&xInfo.xInfo2);
 }
-
+///<summary>MX-Component設定</summary>
 void CEverStrProcess::SetMXParam(IActProgType* pParam, BATCH_SHARE_SYSTCCL_INITPARAM& xData)
 {
 #ifdef _DEBUG

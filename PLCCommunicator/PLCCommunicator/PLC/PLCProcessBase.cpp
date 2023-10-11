@@ -53,6 +53,12 @@ long CPLCProcessBase::ON_OPEN_PLC(LPARAM lp)
 			{
 				BATCH_SHARE_SYSTCCL_INITPARAM* pData = new BATCH_SHARE_SYSTCCL_INITPARAM;//CCL砰把计
 				memset(pData, 0, sizeof(BATCH_SHARE_SYSTCCL_INITPARAM));
+#ifdef OFF_LINE
+				CString str = L"192.168.2.29";
+				memcpy(pData->cPLCIP, str.GetBuffer(), str.GetLength() * 2);
+				pData->lTargetNetworkNo = 0;
+				pData->lTargetStationNo = 0xFF;
+#endif
 				m_pPLCInitData = (BYTE*)pData;//龄
 				nDataSize = sizeof(BATCH_SHARE_SYSTCCL_INITPARAM);//へ
 			}
@@ -61,6 +67,12 @@ long CPLCProcessBase::ON_OPEN_PLC(LPARAM lp)
 			{
 				BATCH_SHARE_SYSTPP_INITPARAM* pData = new BATCH_SHARE_SYSTPP_INITPARAM;//PP砰把计
 				memset(pData, 0, sizeof(BATCH_SHARE_SYSTPP_INITPARAM));
+#ifdef OFF_LINE
+				CString str = L"192.168.2.29";
+				memcpy(pData->cPLCIP, str.GetBuffer(), str.GetLength() * 2);
+				pData->lTargetNetworkNo = 0;
+				pData->lTargetStationNo = 0xFF;
+#endif
 				m_pPLCInitData = (BYTE*)pData;//龄
 				nDataSize = sizeof(BATCH_SHARE_SYSTPP_INITPARAM);//へ
 			}
@@ -70,9 +82,10 @@ long CPLCProcessBase::ON_OPEN_PLC(LPARAM lp)
 		if (m_pPLCInitData && nDataSize)//把计Θミ
 		{
 			theApp.InsertDebugLog(L"ON_OPEN_PLC", LOG_DEBUG);//log
-#ifdef OFF_LINE
+#ifdef OFF_LINEぃノ
 			CString str = L"192.168.2.29";
-			wcscpy_s(xData.cPLCIP, str.GetBuffer());
+			memcpy(xData->cPLCIP, str.GetBuffer(), str.GetLength() * 2);
+			//wcscpy_s(m_pPLCInitData.cPLCIP, str.GetBuffer());
 			xData.lTargetNetworkNo = 0;
 			xData.lTargetStationNo = 0xFF;
 #else

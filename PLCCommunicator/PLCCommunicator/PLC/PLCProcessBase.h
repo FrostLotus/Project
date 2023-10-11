@@ -21,7 +21,7 @@ enum PLC_ACTION_TYPE_
 	ACTION_BATCH,
 	ACTION_RESULT,
 };
-
+///<summary>PLC資料項目</summary>
 typedef struct PLC_DATA_ITEM_
 {
 public:
@@ -67,7 +67,6 @@ public:
 	BOOL bSigned;
 }PLC_DATA_ITEM;
 
-
 class CPLCProcessBase : public CMelSecIOController
 {
 public:
@@ -79,7 +78,7 @@ public:
 	virtual int GetFieldSize() = 0;
 	virtual PLC_DATA_ITEM_* GetPLCAddressInfo(int nFieldId, BOOL bSkip) = 0;
 
-	virtual void DO_CUSTOM_TEST() { } //change it in inherit class if needed
+	virtual void DO_CUSTOM_TEST() {} //change it in inherit class if needed
 	virtual BOOL HAS_CUSTOM_TEST() { return FALSE; }
 
 	BYTE* GET_PLC_FIELD_BYTE_VALUE(int nFieldId);
@@ -88,12 +87,12 @@ public:
 	CString GET_PLC_FIELD_ADDRESS(int nFieldId);
 	CString GET_PLC_FIELD_NAME(int nFieldId);
 	PLC_ACTION_TYPE_ GET_PLC_FIELD_ACTION(int nFieldId);
+
 	long GET_PLC_FIELD_DATA(int nFieldId);
 	long GET_PLC_FIELD_DATA(vector<int>& vField);
 	long SET_PLC_FIELD_DATA(int nFieldId, int nSizeInByte, BYTE* pData);
 	long SET_PLC_FIELD_DATA(vector<int>& vField, BYTE* pData);
 	long SET_PLC_FIELD_DATA_BIT(int nFieldStart, int nFieldEnd, int nSizeInByte, BYTE* pData);
-
 	long SET_PLC_FIELD_DATA_BIT(int nField, int nBitPosition, BOOL bValue);
 
 	void SET_FLUSH_ANYWAY(BOOL bFlushAnyway) { m_bFlushAnyway = bFlushAnyway; };
@@ -115,7 +114,7 @@ private:
 	long GET_PLC_FIELD_DATA(int nFieldId, void* pData);
 	void GET_PLC_RANDOM_DATA(vector<int>& vField, CString& strField, int& nSizeInWord);
 private:
-	
+
 	usm<unsigned char>* m_pAOIUsm;
 	usm<unsigned char>* m_pPLCUsm;
 	///<summary>PLC資料結構</summary>

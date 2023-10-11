@@ -14,9 +14,9 @@
 
 // CEMCCommunicatorDlg 對話方塊
 
-static UINT ShowMsgThread(LPVOID pParam) 
+static UINT ShowMsgThread(LPVOID pParam)
 {
-	CString *pMsg = (CString *)pParam;
+	CString* pMsg = (CString*)pParam;
 	AfxMessageBox(*pMsg);
 	delete pMsg;
 	TRACE(L"ShowMsgThread end \n");
@@ -107,37 +107,41 @@ HCURSOR CEMCCommunicatorDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
-void CEMCCommunicatorDlg::OnLvnGetdispinfoClient(NMHDR *pNMHDR, LRESULT *pResult)
+void CEMCCommunicatorDlg::OnLvnGetdispinfoClient(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	NMLVDISPINFO* pDispInfo = reinterpret_cast< NMLVDISPINFO* >(pNMHDR);
+	NMLVDISPINFO* pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
 
 	*pResult = NULL;
 
 	CString strIp, strText;
 	UINT nPort;
 	BOOL bShow = FALSE;
-	if (m_pServer){
+	if (m_pServer)
+	{
 		bShow = m_pServer->GetClientInfo(pDispInfo->item.iItem, strIp, nPort);
 	}
-	if (LVIF_TEXT & pDispInfo->item.mask){
+	if (LVIF_TEXT & pDispInfo->item.mask)
+	{
 		if (pDispInfo->item.iItem == EOF || pDispInfo->item.iItem >= MAX_CLIENT || !bShow) return;
 		switch (pDispInfo->item.iSubItem)
 		{
-		case LIST_COL_IP:
-			wcscpy_s(pDispInfo->item.pszText, strIp.GetLength() + 1, strIp);
-			break;
-		case LIST_COL_PORT:
-			strText.Format(L"%d", nPort);
-			wcscpy_s(pDispInfo->item.pszText, strText.GetLength() + 1, strText);
-			break;
+			case LIST_COL_IP:
+				wcscpy_s(pDispInfo->item.pszText, strIp.GetLength() + 1, strIp);
+				break;
+			case LIST_COL_PORT:
+				strText.Format(L"%d", nPort);
+				wcscpy_s(pDispInfo->item.pszText, strText.GetLength() + 1, strText);
+				break;
 		}
 	}
 }
-int CEMCCommunicatorDlg::GetIndex(UI_TYPE eType, int nUiIndex, int nMax, EMC_FIELD *pField)
+int CEMCCommunicatorDlg::GetIndex(UI_TYPE eType, int nUiIndex, int nMax, EMC_FIELD* pField)
 {
 	int nCount = -1;
-	for (int i = 0; i < nMax; i++){
-		if (eType & (pField + i)->wUiType){
+	for (int i = 0; i < nMax; i++)
+	{
+		if (eType & (pField + i)->wUiType)
+		{
 			nCount++;
 		}
 
@@ -148,84 +152,96 @@ int CEMCCommunicatorDlg::GetIndex(UI_TYPE eType, int nUiIndex, int nMax, EMC_FIE
 
 	return -1;
 }
-void CEMCCommunicatorDlg::OnLvnGetdispinfoParam(NMHDR *pNMHDR, LRESULT *pResult)
+void CEMCCommunicatorDlg::OnLvnGetdispinfoParam(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	NMLVDISPINFO* pDispInfo = reinterpret_cast< NMLVDISPINFO* >(pNMHDR);
+	NMLVDISPINFO* pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
 
 	*pResult = NULL;
 	CString strField, strValue, strTemp;
-	if (LVIF_TEXT & pDispInfo->item.mask){
+	if (LVIF_TEXT & pDispInfo->item.mask)
+	{
 		if (pDispInfo->item.iItem == EOF) return;
 
 		switch (pDispInfo->item.iSubItem)
 		{
-		case LIST_COL_FIELDNAME:
-			if (m_eType == PRODUCT_TYPE::CCL && pDispInfo->item.iItem < EMC_CCL_FIELD_TYPE::CCL_MAX){
-				int nIndex = GetIndex(UI_TYPE::UT_PARAM, pDispInfo->item.iItem, EMC_CCL_FIELD_TYPE::CCL_MAX, (EMC_FIELD*)&ctEMC_CCL_FIELD);
-				if (nIndex >= 0){
-					strField = ctEMC_CCL_FIELD[nIndex].strFieldName;
+			case LIST_COL_FIELDNAME:
+				if (m_eType == PRODUCT_TYPE::CCL && pDispInfo->item.iItem < EMC_CCL_FIELD_TYPE::CCL_MAX)
+				{
+					int nIndex = GetIndex(UI_TYPE::UT_PARAM, pDispInfo->item.iItem, EMC_CCL_FIELD_TYPE::CCL_MAX, (EMC_FIELD*)&ctEMC_CCL_FIELD);
+					if (nIndex >= 0)
+					{
+						strField = ctEMC_CCL_FIELD[nIndex].strFieldName;
+					}
 				}
-			}
-			else if (m_eType == PRODUCT_TYPE::PP && pDispInfo->item.iItem < EMC_PP_FIELD_TYPE::PP_MAX){
-				int nIndex = GetIndex(UI_TYPE::UT_PARAM, pDispInfo->item.iItem, EMC_PP_FIELD_TYPE::PP_MAX, (EMC_FIELD*)&ctEMC_PP_FIELD);
-				if (nIndex >= 0){
-					strField = ctEMC_PP_FIELD[nIndex].strFieldName;
+				else if (m_eType == PRODUCT_TYPE::PP && pDispInfo->item.iItem < EMC_PP_FIELD_TYPE::PP_MAX)
+				{
+					int nIndex = GetIndex(UI_TYPE::UT_PARAM, pDispInfo->item.iItem, EMC_PP_FIELD_TYPE::PP_MAX, (EMC_FIELD*)&ctEMC_PP_FIELD);
+					if (nIndex >= 0)
+					{
+						strField = ctEMC_PP_FIELD[nIndex].strFieldName;
+					}
 				}
-			}
-			wcscpy_s(pDispInfo->item.pszText, strField.GetLength() + 1, strField);
-			break;
-		case LIST_COL_VALUE1:
-		case LIST_COL_VALUE2:
-		case LIST_COL_VALUE3:
-			if (m_eType == PRODUCT_TYPE::CCL && pDispInfo->item.iSubItem <= m_vCCLParam.size()){
-				int nIndex = GetIndex(UI_TYPE::UT_PARAM, pDispInfo->item.iItem, EMC_CCL_FIELD_TYPE::CCL_MAX, (EMC_FIELD*)&ctEMC_CCL_FIELD);
-				if (nIndex >= 0)
-					strValue = GetCCLValue((EMC_CCL_FIELD_TYPE)nIndex, m_vCCLParam.at(pDispInfo->item.iSubItem - 1));
-			}
-			else if (m_eType == PRODUCT_TYPE::PP && pDispInfo->item.iItem < EMC_PP_FIELD_TYPE::PP_MAX){
-				if (pDispInfo->item.iSubItem == LIST_COL_VALUE2 || pDispInfo->item.iSubItem == LIST_COL_VALUE3)
-					return;
-				int nIndex = GetIndex(UI_TYPE::UT_PARAM, pDispInfo->item.iItem, EMC_PP_FIELD_TYPE::PP_MAX, (EMC_FIELD*)&ctEMC_PP_FIELD);
-				if (nIndex >= 0)
-					strValue = GetPPValue((EMC_PP_FIELD_TYPE)nIndex, m_xPPParam);
-			}
-			wcscpy_s(pDispInfo->item.pszText, strValue.GetLength() + 1, strValue);
-			break;
+				wcscpy_s(pDispInfo->item.pszText, strField.GetLength() + 1, strField);
+				break;
+			case LIST_COL_VALUE1:
+			case LIST_COL_VALUE2:
+			case LIST_COL_VALUE3:
+				if (m_eType == PRODUCT_TYPE::CCL && pDispInfo->item.iSubItem <= m_vCCLParam.size())
+				{
+					int nIndex = GetIndex(UI_TYPE::UT_PARAM, pDispInfo->item.iItem, EMC_CCL_FIELD_TYPE::CCL_MAX, (EMC_FIELD*)&ctEMC_CCL_FIELD);
+					if (nIndex >= 0)
+						strValue = GetCCLValue((EMC_CCL_FIELD_TYPE)nIndex, m_vCCLParam.at(pDispInfo->item.iSubItem - 1));
+				}
+				else if (m_eType == PRODUCT_TYPE::PP && pDispInfo->item.iItem < EMC_PP_FIELD_TYPE::PP_MAX)
+				{
+					if (pDispInfo->item.iSubItem == LIST_COL_VALUE2 || pDispInfo->item.iSubItem == LIST_COL_VALUE3)
+						return;
+					int nIndex = GetIndex(UI_TYPE::UT_PARAM, pDispInfo->item.iItem, EMC_PP_FIELD_TYPE::PP_MAX, (EMC_FIELD*)&ctEMC_PP_FIELD);
+					if (nIndex >= 0)
+						strValue = GetPPValue((EMC_PP_FIELD_TYPE)nIndex, m_xPPParam);
+				}
+				wcscpy_s(pDispInfo->item.pszText, strValue.GetLength() + 1, strValue);
+				break;
 		}
 	}
 }
-void CEMCCommunicatorDlg::OnLvnGetdispinfoResult(NMHDR *pNMHDR, LRESULT *pResult)
+void CEMCCommunicatorDlg::OnLvnGetdispinfoResult(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	NMLVDISPINFO* pDispInfo = reinterpret_cast< NMLVDISPINFO* >(pNMHDR);
+	NMLVDISPINFO* pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
 
 	*pResult = NULL;
 	CString strField, strValue, strTemp;
-	if (LVIF_TEXT & pDispInfo->item.mask){
+	if (LVIF_TEXT & pDispInfo->item.mask)
+	{
 		if (pDispInfo->item.iItem == EOF) return;
 
-		if (m_eType == PRODUCT_TYPE::CCL){
+		if (m_eType == PRODUCT_TYPE::CCL)
+		{
 			int nIndex = GetIndex(UI_TYPE::UT_RESULT, pDispInfo->item.iItem, EMC_CCL_FIELD_TYPE::CCL_MAX, (EMC_FIELD*)&ctEMC_CCL_FIELD);
-			if (nIndex >= 0 && nIndex < EMC_CCL_FIELD_TYPE::CCL_MAX){
+			if (nIndex >= 0 && nIndex < EMC_CCL_FIELD_TYPE::CCL_MAX)
+			{
 				strField = ctEMC_CCL_FIELD[nIndex].strFieldName;
 				strValue = GetCCLValue((EMC_CCL_FIELD_TYPE)nIndex, m_xCCLResult);
 			}
 		}
-		else if (m_eType == PRODUCT_TYPE::PP){
+		else if (m_eType == PRODUCT_TYPE::PP)
+		{
 			int nIndex = GetIndex(UI_TYPE::UT_RESULT, pDispInfo->item.iItem, EMC_PP_FIELD_TYPE::PP_MAX, (EMC_FIELD*)&ctEMC_PP_FIELD);
 
-			if (nIndex >= 0 && nIndex < EMC_PP_FIELD_TYPE::PP_MAX){
+			if (nIndex >= 0 && nIndex < EMC_PP_FIELD_TYPE::PP_MAX)
+			{
 				strValue = GetPPValue((EMC_PP_FIELD_TYPE)nIndex, m_xPPResult);
 				strField = ctEMC_PP_FIELD[nIndex].strFieldName;
 			}
 		}
 		switch (pDispInfo->item.iSubItem)
 		{
-		case LIST_COL_FIELDNAME:
-			wcscpy_s(pDispInfo->item.pszText, strField.GetLength() + 1, strField);
-			break;
-		case LIST_COL_VALUE1:
-			wcscpy_s(pDispInfo->item.pszText, strValue.GetLength() + 1, strValue);
-			break;
+			case LIST_COL_FIELDNAME:
+				wcscpy_s(pDispInfo->item.pszText, strField.GetLength() + 1, strField);
+				break;
+			case LIST_COL_VALUE1:
+				wcscpy_s(pDispInfo->item.pszText, strValue.GetLength() + 1, strValue);
+				break;
 		}
 	}
 }
@@ -234,16 +250,18 @@ LRESULT CEMCCommunicatorDlg::OnCmdGPIO(WPARAM wParam, LPARAM lParam)
 #ifdef EMC_SIMLULATE
 	((IEMCNotify*)this)->Attach(m_pEMCDataHandler);
 #endif
-	switch (wParam){
-	case WM_AOI_RESPONSE_CMD:
-		HandleAOIResponse(lParam);
-		break;
-	case WM_EMC_RESULTCCL_CMD:
+	switch (wParam)
+	{
+		case WM_AOI_RESPONSE_CMD:
+			HandleAOIResponse(lParam);
+			break;
+		case WM_EMC_RESULTCCL_CMD:
 		{
 			BATCH_SHARE_EMC_CCLRESULT xResult;
 			memset(&xResult, 0, sizeof(BATCH_SHARE_EMC_CCLRESULT));
 
-			if (OnEMCResult(&xResult)){
+			if (OnEMCResult(&xResult))
+			{
 				CEMCParser::InitCCLData(m_xCCLResult);
 				m_xCCLResult.strStation = xResult.cStation;
 				m_xCCLResult.strMissionID = xResult.cMissionID;
@@ -256,18 +274,20 @@ LRESULT CEMCCommunicatorDlg::OnCmdGPIO(WPARAM wParam, LPARAM lParam)
 				m_xCCLResult.strDefectType = xResult.cDefectType;
 				m_xCCLResult.eStatus = EMC_MISSION_STATUS::EMS_EXCEPT;
 				m_xCCLResult.xTime = CTime::GetTickCount();
-				if (m_pClientMgr){
+				if (m_pClientMgr)
+				{
 					m_pClientMgr->SendToEMC(m_xCCLResult);//send to emc
 					InvalidateRect(&m_xUi[UI_LC_RESULT].rcUi);
 				}
 			}
 		}
 		break;
-	case WM_EMC_ENDCCL_CMD:
+		case WM_EMC_ENDCCL_CMD:
 		{
 			BATCH_SHARE_EMC_CCLEND xResult;
 			memset(&xResult, 0, sizeof(BATCH_SHARE_EMC_CCLEND));
-			if (OnEMCBatchEnd(&xResult)){
+			if (OnEMCBatchEnd(&xResult))
+			{
 
 				CEMCParser::InitCCLData(m_xCCLResult);
 				m_xCCLResult.strStation = xResult.cStation;
@@ -279,19 +299,21 @@ LRESULT CEMCCommunicatorDlg::OnCmdGPIO(WPARAM wParam, LPARAM lParam)
 				m_xCCLResult.eStatus = EMC_MISSION_STATUS::EMS_CLOSED;
 				m_xCCLResult.xTime = CTime::GetTickCount();
 
-				if (m_pClientMgr){
+				if (m_pClientMgr)
+				{
 					m_pClientMgr->SendToEMC(m_xCCLResult);//send to emc
 					InvalidateRect(&m_xUi[UI_LC_RESULT].rcUi);
 				}
 			}
 		}
 		break;
-	case WM_EMC_RESULTPP_CMD:
+		case WM_EMC_RESULTPP_CMD:
 		{
 			BATCH_SHARE_EMC_PPRESULT xResult;
 			memset(&xResult, 0, sizeof(BATCH_SHARE_EMC_PPRESULT));
 
-			if (OnEMCResult(&xResult)){
+			if (OnEMCResult(&xResult))
+			{
 
 				CEMCParser::InitPPData(m_xPPResult);
 				m_xPPResult.strStation = xResult.cStation;
@@ -306,19 +328,21 @@ LRESULT CEMCCommunicatorDlg::OnCmdGPIO(WPARAM wParam, LPARAM lParam)
 				m_xPPResult.eStatus = EMC_MISSION_STATUS::EMS_EXCEPT;
 				m_xPPResult.xTime = CTime::GetTickCount();
 
-				if (m_pClientMgr){
+				if (m_pClientMgr)
+				{
 					m_pClientMgr->SendToEMC(m_xPPResult);//send to emc
 					InvalidateRect(&m_xUi[UI_LC_RESULT].rcUi);
 				}
 			}
 		}
 		break;
-	case WM_EMC_ENDPP_CMD:
+		case WM_EMC_ENDPP_CMD:
 		{
 			BATCH_SHARE_EMC_PPEND xResult;
 			memset(&xResult, 0, sizeof(BATCH_SHARE_EMC_PPEND));
 
-			if (OnEMCBatchEnd(&xResult)){
+			if (OnEMCBatchEnd(&xResult))
+			{
 
 				CEMCParser::InitPPData(m_xPPResult);
 				m_xPPResult.strStation = xResult.cStation;
@@ -330,7 +354,8 @@ LRESULT CEMCCommunicatorDlg::OnCmdGPIO(WPARAM wParam, LPARAM lParam)
 				m_xPPResult.xTime = CTime::GetTickCount();
 				m_xPPResult.fLength = xResult.fLength;
 
-				if (m_pClientMgr){
+				if (m_pClientMgr)
+				{
 					m_pClientMgr->SendToEMC(m_xPPResult);//send to emc
 					InvalidateRect(&m_xUi[UI_LC_RESULT].rcUi);
 				}
@@ -345,7 +370,8 @@ LRESULT CEMCCommunicatorDlg::OnCmdGPIO(WPARAM wParam, LPARAM lParam)
 void CEMCCommunicatorDlg::OnSimulate(UINT uid)
 {
 #ifdef EMC_SIMLULATE
-	if (m_pSimulateDataHandler){
+	if (m_pSimulateDataHandler)
+	{
 		delete m_pSimulateDataHandler; //同process讀寫第二次會有問題, 模擬時先這樣解
 		m_pSimulateDataHandler = new CEMCDataHandler(BATCH_AOI2EMC_MEM_ID);
 	}
@@ -353,24 +379,29 @@ void CEMCCommunicatorDlg::OnSimulate(UINT uid)
 #endif
 	theApp.InsertDebugLog(L"Send Simulate Data!", LOG_EMCSYSTEM);
 
-	auto GetText = [&](TCHAR *pDst, int nSize, int nID){
+	auto GetText = [&](TCHAR* pDst, int nSize, int nID)
+	{
 		CString strText;
 		m_xUi[nID].pEdit->GetWindowText(strText);
 		//wcscpy_s(pDst, nSize, strText);
 		memcpy(pDst, strText.GetBuffer(), nSize * sizeof(TCHAR));
 	};
-	auto GetInt = [&](int &nData, int nID){
+	auto GetInt = [&](int& nData, int nID)
+	{
 		CString strText;
 		m_xUi[nID].pEdit->GetWindowText(strText);
 		nData = _ttoi(strText);
 	};
-	auto GetFloat = [&](float &fData, int nID){
+	auto GetFloat = [&](float& fData, int nID)
+	{
 		CString strText;
 		m_xUi[nID].pEdit->GetWindowText(strText);
 		fData = _ttof(strText);
 	};
-	if (m_eType == CCL){
-		if (uid == UI_BTN_EXCEPT){
+	if (m_eType == CCL)
+	{
+		if (uid == UI_BTN_EXCEPT)
+		{
 			BATCH_SHARE_EMC_CCLRESULT xData;
 			memset(&xData, 0, sizeof(xData));
 			GetText(xData.cStation, sizeof(xData.cStation) / sizeof(TCHAR), UI_EDIT_STATION);
@@ -387,7 +418,8 @@ void CEMCCommunicatorDlg::OnSimulate(UINT uid)
 			//OnEMCResult(&xData);
 			OnSimulateData((BYTE*)&xData, sizeof(BATCH_SHARE_EMC_CCLRESULT), WM_EMC_RESULTCCL_CMD, 0);
 		}
-		else{
+		else
+		{
 			BATCH_SHARE_EMC_CCLEND xData;
 			memset(&xData, 0, sizeof(xData));
 			GetText(xData.cStation, sizeof(xData.cStation) / sizeof(TCHAR), UI_EDIT_STATION);
@@ -400,8 +432,10 @@ void CEMCCommunicatorDlg::OnSimulate(UINT uid)
 			OnSimulateData((BYTE*)&xData, sizeof(BATCH_SHARE_EMC_CCLEND), WM_EMC_ENDCCL_CMD, 0);
 		}
 	}
-	else if (m_eType == PP){
-		if (uid == UI_BTN_EXCEPT){
+	else if (m_eType == PP)
+	{
+		if (uid == UI_BTN_EXCEPT)
+		{
 			BATCH_SHARE_EMC_PPRESULT xData;
 			memset(&xData, 0, sizeof(xData));
 			GetText(xData.cStation, sizeof(xData.cStation) / sizeof(TCHAR), UI_EDIT_STATION);
@@ -417,7 +451,8 @@ void CEMCCommunicatorDlg::OnSimulate(UINT uid)
 			//OnEMCResult(&xData);
 			OnSimulateData((BYTE*)&xData, sizeof(BATCH_SHARE_EMC_PPRESULT), WM_EMC_RESULTPP_CMD, 0);
 		}
-		else{
+		else
+		{
 			BATCH_SHARE_EMC_PPEND xData;
 			memset(&xData, 0, sizeof(xData));
 			GetText(xData.cStation, sizeof(xData.cStation) / sizeof(TCHAR), UI_EDIT_STATION);
@@ -434,7 +469,8 @@ void CEMCCommunicatorDlg::OnSimulate(UINT uid)
 #endif
 void CEMCCommunicatorDlg::OnEMCParamSocketStatusChange(int nIndex)
 {
-	if (m_xUi[UI_LC_CLIENT].pList){
+	if (m_xUi[UI_LC_CLIENT].pList)
+	{
 		m_xUi[UI_LC_CLIENT].pList->RedrawItems(nIndex, nIndex);
 	}
 }
@@ -442,20 +478,24 @@ void CEMCCommunicatorDlg::OnEMCParamSocketStatusChange(int nIndex)
 UINT AckSuccessThread(LPVOID pParam)
 {
 	::Sleep(1000);
-	EMCParamSocket *pData = (EMCParamSocket*)pParam;
+	EMCParamSocket* pData = (EMCParamSocket*)pParam;
 	pData->SendAck(TRUE);
 	TRACE(L"ack thread end \n");
 	return 0;
 }
 #endif
-void CEMCCommunicatorDlg::OnReceiveEMCParam(EMCParamSocket *pSrc, CString strData)
+void CEMCCommunicatorDlg::OnReceiveEMCParam(EMCParamSocket* pSrc, CString strData)
 {
-	if (pSrc){
-		if (m_eType == PRODUCT_TYPE::CCL){
+	if (pSrc)
+	{
+		if (m_eType == PRODUCT_TYPE::CCL)
+		{
 			BOOL bComplete = CEMCParser::ParseCCL(strData, m_vCCLParam);
-			if (bComplete){
+			if (bComplete)
+			{
 				vector<BATCH_SHARE_EMC_CCLPARAM> vParam;
-				for (auto &i : m_vCCLParam){
+				for (auto& i : m_vCCLParam)
+				{
 					BATCH_SHARE_EMC_CCLPARAM xParam;
 					memset(&xParam, 0, sizeof(BATCH_SHARE_EMC_CCLPARAM));
 					wcscpy_s(xParam.cStation, i.strStation.GetBuffer());
@@ -470,7 +510,8 @@ void CEMCCommunicatorDlg::OnReceiveEMCParam(EMCParamSocket *pSrc, CString strDat
 					xParam.nSheetNum = i.nSheetNum;
 					xParam.nSplit = i.nSplit;
 					CString strMiss, strTemp;
-					for (auto &j : i.vMiss){
+					for (auto& j : i.vMiss)
+					{
 						strTemp.Format(L"%d-%d|", j.first, j.second);
 						if (strMiss.GetLength() + strTemp.GetLength() < _countof(xParam.cMiss) - 1)
 							strMiss += strTemp;
@@ -488,7 +529,8 @@ void CEMCCommunicatorDlg::OnReceiveEMCParam(EMCParamSocket *pSrc, CString strDat
 				pSrc->SendAck(TRUE);
 #endif
 			}
-			else{
+			else
+			{
 				BATCH_SHARE_EMC_ERRORINFO xInfo;
 				memset(&xInfo, 0, sizeof(xInfo));
 				CString strTemp;
@@ -503,15 +545,18 @@ void CEMCCommunicatorDlg::OnReceiveEMCParam(EMCParamSocket *pSrc, CString strDat
 				strLog.Format(L"not complete %s", strData);
 				theApp.InsertDebugLog(strLog, LOG_EMCSYSTEM);
 #ifdef EMC_SIMLULATE
-				CString *pMsg = new CString(strLog);
+				CString* pMsg = new CString(strLog);
 				AfxBeginThread(ShowMsgThread, (LPVOID)pMsg, THREAD_PRIORITY_NORMAL);
 #endif
 			}
 		}
-		else if (m_eType == PRODUCT_TYPE::PP){
+		else if (m_eType == PRODUCT_TYPE::PP)
+		{
 			BOOL bComplete = CEMCParser::ParsePP(strData, m_xPPParam);
-			if (m_pEMCDataHandler){
-				if (bComplete){
+			if (m_pEMCDataHandler)
+			{
+				if (bComplete)
+				{
 					BATCH_SHARE_EMC_PPPARAM xParam;
 					memset(&xParam, 0, sizeof(BATCH_SHARE_EMC_PPPARAM));
 					wcscpy_s(xParam.cStation, m_xPPParam.strStation.GetBuffer());
@@ -521,7 +566,8 @@ void CEMCCommunicatorDlg::OnReceiveEMCParam(EMCParamSocket *pSrc, CString strDat
 					xParam.nStatus = m_xPPParam.eStatus == EMS_START ? 0 : 1;
 					wcscpy_s(xParam.cEmpID, m_xPPParam.strEmpID.GetBuffer());
 					CString strSerial, strTemp;
-					for (auto &i : m_xPPParam.vSerial){
+					for (auto& i : m_xPPParam.vSerial)
+					{
 						strTemp.Format(L"%s", i);
 						if (strSerial.GetLength() == 0)
 							strSerial = strTemp;
@@ -534,7 +580,8 @@ void CEMCCommunicatorDlg::OnReceiveEMCParam(EMCParamSocket *pSrc, CString strDat
 					pSrc->SendAck(TRUE);
 #endif
 				}
-				else{
+				else
+				{
 					BATCH_SHARE_EMC_ERRORINFO xInfo;
 					memset(&xInfo, 0, sizeof(xInfo));
 					CString strTemp;
@@ -549,25 +596,26 @@ void CEMCCommunicatorDlg::OnReceiveEMCParam(EMCParamSocket *pSrc, CString strDat
 					strLog.Format(L"not complete %s", strData);
 					theApp.InsertDebugLog(strLog, LOG_EMCSYSTEM);
 #ifdef EMC_SIMLULATE
-					CString *pMsg = new CString(strLog);
+					CString* pMsg = new CString(strLog);
 					AfxBeginThread(ShowMsgThread, (LPVOID)pMsg, THREAD_PRIORITY_NORMAL);
 #endif
 				}
 			}
 		}
 		//update UI
-		if (m_xUi[UI_LC_PARAM].pList){
+		if (m_xUi[UI_LC_PARAM].pList)
+		{
 			m_xUi[UI_LC_PARAM].pList->Invalidate();
 		}
 
 #ifdef EMC_SIMLULATE //wait 1 second and send response
-	m_pAckSuccessThread = AfxBeginThread(AckSuccessThread, pSrc);
+		m_pAckSuccessThread = AfxBeginThread(AckSuccessThread, pSrc);
 #else
 		//AfxMessageBox(L"not implement ACK_SUCCESS yet!"); //not implement warning, delete after implement
 #endif
 	}
 }
-void CEMCCommunicatorDlg::OnEMCParamTimeout(EMCParamSocket *pSrc, CString strData)
+void CEMCCommunicatorDlg::OnEMCParamTimeout(EMCParamSocket* pSrc, CString strData)
 {
 	CString strLog;
 	strLog.Format(L"Time out %s", strData);
@@ -607,162 +655,163 @@ void CEMCCommunicatorDlg::Init()
 #endif
 	m_pServer = NULL;
 	m_pClientMgr = NULL;
-	m_eType = PRODUCT_TYPE::CCL; 
+	m_eType = PRODUCT_TYPE::CCL;
 	CenterWindow();
 }
 
 void CEMCCommunicatorDlg::InitUiRectPos()
 {
-	for (int i = UI_ITEM_BEGIN; i < UI_ITEM_END; i++){
+	for (int i = UI_ITEM_BEGIN; i < UI_ITEM_END; i++)
+	{
 		POINT ptBase = { 0, 0 };
 		POINT ptSize = { 0, 0 };
 		CString strCaption;
 		switch (i)
 		{
-		case UI_LABEL_INFO1:
-			ptBase = { 10, 10 };
-			ptSize = { 150, 40 };
-			break;
-		case UI_LABEL_INFO2:
-			ptBase = { 300, 10 };
-			ptSize = { 180, 40 };
-			break;
-		case UI_LC_CLIENT:
-			ptBase = { 10, 50 };
-			ptSize = { 250, 90 };
-			break;
-		case UI_LC_PARAM:
-			ptBase = { 10, 150 };
-			ptSize = { 500, 380 };
-			break;
-		case UI_LC_RESULT:
-			ptBase = { 10, 550 };
-			ptSize = { 240, 280 };
-			break;
+			case UI_LABEL_INFO1:
+				ptBase = { 10, 10 };
+				ptSize = { 150, 40 };
+				break;
+			case UI_LABEL_INFO2:
+				ptBase = { 300, 10 };
+				ptSize = { 180, 40 };
+				break;
+			case UI_LC_CLIENT:
+				ptBase = { 10, 50 };
+				ptSize = { 250, 90 };
+				break;
+			case UI_LC_PARAM:
+				ptBase = { 10, 150 };
+				ptSize = { 500, 380 };
+				break;
+			case UI_LC_RESULT:
+				ptBase = { 10, 550 };
+				ptSize = { 240, 280 };
+				break;
 #ifdef EMC_SIMLULATE
-		case UI_BTN_EXCEPT:
-			ptBase = { 435, 590 };
-			ptSize = { 90, 30 };
-			strCaption = L"SendExcept";
-			break;
-		case UI_BTN_CLOSE:
-			ptBase = { 435, 630 };
-			ptSize = { 90, 30 };
-			strCaption = L"SendClose";
-			break;
-		case UI_LABEL_STATION:
-			ptBase = { 260, 590 };
-			ptSize = { 80, 20 };
-			strCaption = L"設備號";
-			break;
-		case UI_LABEL_MISSION:
-			ptBase = { 260, 620 };
-			ptSize = { 80, 30 };
-			strCaption = L"任務號";
-			break;
-		case UI_LABEL_BATCHNAME:
-			ptBase = { 260, 650 };
-			ptSize = { 80, 30 };
-			strCaption = L"工單號";
-			break;
-		case UI_LABEL_MATERIAL:
-			ptBase = { 260, 680 };
-			ptSize = { 80, 30 };
-			strCaption = L"料號";
-			break;
-		case UI_LABEL_SERIAL:
-			ptBase = { 260, 710 };
-			ptSize = { 80, 30 };
-			strCaption = L"批號";
-			break;
-		case UI_LABEL_DEFECTTYPE:
-			ptBase = { 260, 740 };
-			ptSize = { 80, 30 };
-			strCaption = L"缺點代碼";
-			break;
-		case UI_LABEL_INDEX:
-			ptBase = { 260, 770 };
-			ptSize = { 80, 30 };
-			strCaption = L"檢測張數序號";
-			break;
-		case UI_LABEL_DEFECTBEGIN:
-			ptBase = { 260, 770 };
-			ptSize = { 80, 30 };
-			strCaption = L"缺點開始米數";
-			break;
-		case UI_LABEL_BOOKNUM:
-			ptBase = { 260, 800 };
-			ptSize = { 80, 30 };
-			strCaption = L"BOOK數";
-			break;
-		case UI_LABEL_DEFECTEND:
-			ptBase = { 260, 800 };
-			ptSize = { 80, 30 };
-			strCaption = L"缺點結束米數";
-			break;
-		case UI_LABEL_SHEETNUM:
-			ptBase = { 260, 830 };
-			ptSize = { 80, 30 };
-			strCaption = L"第幾Sheet";
-			break;
-		case UI_LABEL_LENGTH:
-			ptBase = { 260, 830 };
-			ptSize = { 80, 30 };
-			strCaption = L"每卷米數";
-			break;
-		case UI_EDIT_STATION:
-			ptBase = { 350, 590 };
-			ptSize = { 60, 25 };
-			break;
-		case UI_EDIT_MISSION:
-			ptBase = { 350, 620 };
-			ptSize = { 60, 25 };
-			break;
-		case UI_EDIT_BATCHNAME:
-			ptBase = { 350, 650 };
-			ptSize = { 60, 25 };
-			break;
-		case UI_EDIT_MATERIAL:
-			ptBase = { 350, 680 };
-			ptSize = { 60, 25 };
-			break;
-		case UI_EDIT_SERIAL:
-			ptBase = { 350, 710 };
-			ptSize = { 60, 25 };
-			break;
-		case UI_EDIT_DEFECTTYPE:
-			ptBase = { 350, 740 };
-			ptSize = { 60, 25 };
-			break;
-		case UI_EDIT_INDEX:
-			ptBase = { 350, 770 };
-			ptSize = { 60, 25 };
-			break;
-		case UI_EDIT_DEFECTBEGIN:
-			ptBase = { 350, 770 };
-			ptSize = { 60, 25 };
-			break;
-		case UI_EDIT_BOOKNUM:
-			ptBase = { 350, 800 };
-			ptSize = { 60, 25 };
-			break;
-		case UI_EDIT_DEFECTEND:
-			ptBase = { 350, 800 };
-			ptSize = { 60, 25 };
-			break;
-		case UI_EDIT_SHEETNUM:
-			ptBase = { 350, 830 };
-			ptSize = { 60, 25 };
-			break;
-		case UI_EDIT_LENGTH:
-			ptBase = { 350, 830 };
-			ptSize = { 60, 25 };
-			break;
-		case UI_GB_SIMULATE:
-			ptBase = { 250, 550 };
-			ptSize = { 280, 330 };
-			strCaption = L"SIMULATE";
-			break;
+			case UI_BTN_EXCEPT:
+				ptBase = { 435, 590 };
+				ptSize = { 90, 30 };
+				strCaption = L"SendExcept";
+				break;
+			case UI_BTN_CLOSE:
+				ptBase = { 435, 630 };
+				ptSize = { 90, 30 };
+				strCaption = L"SendClose";
+				break;
+			case UI_LABEL_STATION:
+				ptBase = { 260, 590 };
+				ptSize = { 80, 20 };
+				strCaption = L"設備號";
+				break;
+			case UI_LABEL_MISSION:
+				ptBase = { 260, 620 };
+				ptSize = { 80, 30 };
+				strCaption = L"任務號";
+				break;
+			case UI_LABEL_BATCHNAME:
+				ptBase = { 260, 650 };
+				ptSize = { 80, 30 };
+				strCaption = L"工單號";
+				break;
+			case UI_LABEL_MATERIAL:
+				ptBase = { 260, 680 };
+				ptSize = { 80, 30 };
+				strCaption = L"料號";
+				break;
+			case UI_LABEL_SERIAL:
+				ptBase = { 260, 710 };
+				ptSize = { 80, 30 };
+				strCaption = L"批號";
+				break;
+			case UI_LABEL_DEFECTTYPE:
+				ptBase = { 260, 740 };
+				ptSize = { 80, 30 };
+				strCaption = L"缺點代碼";
+				break;
+			case UI_LABEL_INDEX:
+				ptBase = { 260, 770 };
+				ptSize = { 80, 30 };
+				strCaption = L"檢測張數序號";
+				break;
+			case UI_LABEL_DEFECTBEGIN:
+				ptBase = { 260, 770 };
+				ptSize = { 80, 30 };
+				strCaption = L"缺點開始米數";
+				break;
+			case UI_LABEL_BOOKNUM:
+				ptBase = { 260, 800 };
+				ptSize = { 80, 30 };
+				strCaption = L"BOOK數";
+				break;
+			case UI_LABEL_DEFECTEND:
+				ptBase = { 260, 800 };
+				ptSize = { 80, 30 };
+				strCaption = L"缺點結束米數";
+				break;
+			case UI_LABEL_SHEETNUM:
+				ptBase = { 260, 830 };
+				ptSize = { 80, 30 };
+				strCaption = L"第幾Sheet";
+				break;
+			case UI_LABEL_LENGTH:
+				ptBase = { 260, 830 };
+				ptSize = { 80, 30 };
+				strCaption = L"每卷米數";
+				break;
+			case UI_EDIT_STATION:
+				ptBase = { 350, 590 };
+				ptSize = { 60, 25 };
+				break;
+			case UI_EDIT_MISSION:
+				ptBase = { 350, 620 };
+				ptSize = { 60, 25 };
+				break;
+			case UI_EDIT_BATCHNAME:
+				ptBase = { 350, 650 };
+				ptSize = { 60, 25 };
+				break;
+			case UI_EDIT_MATERIAL:
+				ptBase = { 350, 680 };
+				ptSize = { 60, 25 };
+				break;
+			case UI_EDIT_SERIAL:
+				ptBase = { 350, 710 };
+				ptSize = { 60, 25 };
+				break;
+			case UI_EDIT_DEFECTTYPE:
+				ptBase = { 350, 740 };
+				ptSize = { 60, 25 };
+				break;
+			case UI_EDIT_INDEX:
+				ptBase = { 350, 770 };
+				ptSize = { 60, 25 };
+				break;
+			case UI_EDIT_DEFECTBEGIN:
+				ptBase = { 350, 770 };
+				ptSize = { 60, 25 };
+				break;
+			case UI_EDIT_BOOKNUM:
+				ptBase = { 350, 800 };
+				ptSize = { 60, 25 };
+				break;
+			case UI_EDIT_DEFECTEND:
+				ptBase = { 350, 800 };
+				ptSize = { 60, 25 };
+				break;
+			case UI_EDIT_SHEETNUM:
+				ptBase = { 350, 830 };
+				ptSize = { 60, 25 };
+				break;
+			case UI_EDIT_LENGTH:
+				ptBase = { 350, 830 };
+				ptSize = { 60, 25 };
+				break;
+			case UI_GB_SIMULATE:
+				ptBase = { 250, 550 };
+				ptSize = { 280, 330 };
+				strCaption = L"SIMULATE";
+				break;
 #endif
 		}
 		m_xUi[i].rcUi = { ptBase.x, ptBase.y, ptBase.x + ptSize.x, ptBase.y + ptSize.y };
@@ -773,23 +822,27 @@ void CEMCCommunicatorDlg::InitUiRectPos()
 void CEMCCommunicatorDlg::InitUI()
 {
 #ifdef EMC_SIMLULATE
-	for (int i = UI_BTN_BEGIN; i < UI_BTN_END; i++){
+	for (int i = UI_BTN_BEGIN; i < UI_BTN_END; i++)
+	{
 		m_xUi[i].pBtn = new CButton;
 		m_xUi[i].pBtn->Create(m_xUi[i].strCaption, WS_VISIBLE | WS_CHILD, m_xUi[i].rcUi, this, m_xUi[i].nID);
 		g_AoiFont.SetWindowFont(m_xUi[i].pBtn, FontDef::typeT1);
 	}
-	for (int i = UI_GB_BEGIN; i < UI_GB_END; i++){
+	for (int i = UI_GB_BEGIN; i < UI_GB_END; i++)
+	{
 		m_xUi[i].pBtn = new CButton;
 		m_xUi[i].pBtn->Create(m_xUi[i].strCaption, WS_VISIBLE | WS_CHILD | BS_GROUPBOX, m_xUi[i].rcUi, this, m_xUi[i].nID);
 		g_AoiFont.SetWindowFont(m_xUi[i].pBtn, FontDef::typeT1);
 	}
-	for (int i = UI_EDIT_BEGIN; i < UI_EDIT_END; i++){
+	for (int i = UI_EDIT_BEGIN; i < UI_EDIT_END; i++)
+	{
 		m_xUi[i].pEdit = new CEdit;
 		m_xUi[i].pEdit->Create(WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, m_xUi[i].rcUi, this, m_xUi[i].nID);
 		g_AoiFont.SetWindowFont(m_xUi[i].pEdit, FontDef::typeT1);
 	}
 #endif
-	for (int i = UI_LC_BEGIN; i < UI_LC_END; i++){
+	for (int i = UI_LC_BEGIN; i < UI_LC_END; i++)
+	{
 		m_xUi[i].pList = new CListCtrl;
 		m_xUi[i].pList->Create(WS_VISIBLE | WS_CHILD | WS_BORDER | LVS_REPORT | LVS_OWNERDATA, m_xUi[i].rcUi, this, m_xUi[i].nID);
 		m_xUi[i].pList->SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
@@ -827,21 +880,25 @@ void CEMCCommunicatorDlg::InitSocket()
 void CEMCCommunicatorDlg::Finalize()
 {
 #ifdef EMC_SIMLULATE
-	if (m_pSimulateDataHandler){
+	if (m_pSimulateDataHandler)
+	{
 		delete m_pSimulateDataHandler;
 		m_pSimulateDataHandler = NULL;
 	}
 #endif
-	if (m_pEMCDataHandler){
+	if (m_pEMCDataHandler)
+	{
 		delete m_pEMCDataHandler;
 		m_pEMCDataHandler = NULL;
 	}
-	if (m_pServer){
+	if (m_pServer)
+	{
 		m_pServer->Stop();
 		delete m_pServer;
 		m_pServer = NULL;
 	}
-	if (m_pClientMgr){
+	if (m_pClientMgr)
+	{
 		m_pClientMgr->Disconnect();
 		delete m_pClientMgr;
 		m_pClientMgr = NULL;
@@ -850,30 +907,34 @@ void CEMCCommunicatorDlg::Finalize()
 }
 void CEMCCommunicatorDlg::DrawInfo()
 {
-	CDC *pDC = GetDC();
+	CDC* pDC = GetDC();
 	CString strInfo1, strInfo2;
 	pDC->SelectObject(g_AoiFont.GetFont(typeT1));
-	if (m_pServer){
-		switch (m_pServer->GetServerState()){
-		case EMCParamSocket::SERVER_STATE::MODE_SERVER_IDLE:
-			strInfo1.Format(L"IDLE ");
-			break;
-		case EMCParamSocket::SERVER_STATE::MODE_SERVER_LISTEN:
-			strInfo1.Format(L"Listening port:%d ", m_pServer->GetListenPort());
-			break;
+	if (m_pServer)
+	{
+		switch (m_pServer->GetServerState())
+		{
+			case EMCParamSocket::SERVER_STATE::MODE_SERVER_IDLE:
+				strInfo1.Format(L"IDLE ");
+				break;
+			case EMCParamSocket::SERVER_STATE::MODE_SERVER_LISTEN:
+				strInfo1.Format(L"Listening port:%d ", m_pServer->GetListenPort());
+				break;
 		}
 	}
-	switch (m_eType){
-	case CCL:
-		strInfo1 += L" \nMode: CCL";
-		break;
-	case PP:
-		strInfo1 += L" \nMode: PP";
-		break;
+	switch (m_eType)
+	{
+		case CCL:
+			strInfo1 += L" \nMode: CCL";
+			break;
+		case PP:
+			strInfo1 += L" \nMode: PP";
+			break;
 	}
 
 	strInfo2.Format(L"ServerIp: %s \nPort: %d ", m_strServerIp, m_nServerPort);
-	if (m_pClientMgr){
+	if (m_pClientMgr)
+	{
 		strInfo2 += m_pClientMgr->GetConnectState();
 	}
 
@@ -882,17 +943,22 @@ void CEMCCommunicatorDlg::DrawInfo()
 	pDC->DrawText(strInfo2, &m_xUi[UI_LABEL_INFO2].rcUi, DT_LEFT);
 
 #ifdef EMC_SIMLULATE
-	for (int i = UI_LABEL_STATION; i <= UI_LABEL_SERIAL; i++){
+	for (int i = UI_LABEL_STATION; i <= UI_LABEL_SERIAL; i++)
+	{
 		pDC->DrawText(m_xUi[i].strCaption, &m_xUi[i].rcUi, DT_LEFT);
 	}
-	if (m_eType == PRODUCT_TYPE::CCL){
-		for (int i = UI_LABEL_DEFECTTYPE; i <= UI_LABEL_SHEETNUM; i++){
+	if (m_eType == PRODUCT_TYPE::CCL)
+	{
+		for (int i = UI_LABEL_DEFECTTYPE; i <= UI_LABEL_SHEETNUM; i++)
+		{
 			pDC->DrawText(m_xUi[i].strCaption, &m_xUi[i].rcUi, DT_LEFT);
 		}
 	}
-	else if (m_eType == PRODUCT_TYPE::PP){
+	else if (m_eType == PRODUCT_TYPE::PP)
+	{
 		pDC->DrawText(m_xUi[UI_LABEL_DEFECTTYPE].strCaption, &m_xUi[UI_LABEL_DEFECTTYPE].rcUi, DT_LEFT);
-		for (int i = UI_LABEL_DEFECTBEGIN; i <= UI_LABEL_LENGTH; i++){
+		for (int i = UI_LABEL_DEFECTBEGIN; i <= UI_LABEL_LENGTH; i++)
+		{
 			pDC->DrawText(m_xUi[i].strCaption, &m_xUi[i].rcUi, DT_LEFT);
 		}
 	}
@@ -902,150 +968,158 @@ void CEMCCommunicatorDlg::DrawInfo()
 }
 void CEMCCommunicatorDlg::HandleAOIResponse(LPARAM lParam)
 {
-	switch (lParam){
-	case WM_EMC_PARAMINIT_CMD:
-		BATCH_SHARE_EMC_INITPARAM xData;
-		memset(&xData, 0, sizeof(BATCH_SHARE_EMC_INITPARAM));
-		if (OnInitEMCProcess(&xData)){
+	switch (lParam)
+	{
+		case WM_EMC_PARAMINIT_CMD:
+			BATCH_SHARE_EMC_INITPARAM xData;
+			memset(&xData, 0, sizeof(BATCH_SHARE_EMC_INITPARAM));
+			if (OnInitEMCProcess(&xData))
+			{
 
-			m_strServerIp = xData.cEMCIP;
-			m_nServerPort = xData.nEMCPort;
-			m_eType = (PRODUCT_TYPE)xData.nProductType;
-			m_nListenPort = xData.nListenPort;
+				m_strServerIp = xData.cEMCIP;
+				m_nServerPort = xData.nEMCPort;
+				m_eType = (PRODUCT_TYPE)xData.nProductType;
+				m_nListenPort = xData.nListenPort;
 
-			if (m_eType == PRODUCT_TYPE::CCL){
-				m_xUi[UI_LC_PARAM].pList->SetItemCount(_countof(ctEMC_CCL_FIELD));
-				m_xUi[UI_LC_RESULT].pList->SetItemCount(_countof(ctEMC_CCL_FIELD));
+				if (m_eType == PRODUCT_TYPE::CCL)
+				{
+					m_xUi[UI_LC_PARAM].pList->SetItemCount(_countof(ctEMC_CCL_FIELD));
+					m_xUi[UI_LC_RESULT].pList->SetItemCount(_countof(ctEMC_CCL_FIELD));
+				}
+				else if (m_eType == PRODUCT_TYPE::PP)
+				{
+					m_xUi[UI_LC_PARAM].pList->SetItemCount(_countof(ctEMC_PP_FIELD));
+					m_xUi[UI_LC_RESULT].pList->SetItemCount(_countof(ctEMC_PP_FIELD));
+				}
+
+				InitSocket();
 			}
-			else if (m_eType == PRODUCT_TYPE::PP){
-				m_xUi[UI_LC_PARAM].pList->SetItemCount(_countof(ctEMC_PP_FIELD));
-				m_xUi[UI_LC_RESULT].pList->SetItemCount(_countof(ctEMC_PP_FIELD));
-			}
-
-			InitSocket();
-		}
-		break;
-	case WM_EMC_PARAMCCL_CMD:
+			break;
+		case WM_EMC_PARAMCCL_CMD:
 			OnSendCCLDone();
-		break;
-	case WM_EMC_PARAMPP_CMD:
+			break;
+		case WM_EMC_PARAMPP_CMD:
 			OnSendPPDone();
-		break;
+			break;
 	}
 }
-CString CEMCCommunicatorDlg::GetCCLValue(EMC_CCL_FIELD_TYPE eType, EMC_CCL_DATA &xData)
+CString CEMCCommunicatorDlg::GetCCLValue(EMC_CCL_FIELD_TYPE eType, EMC_CCL_DATA& xData)
 {
 	CString strTemp, strValue;
-	switch (eType){
-	case EMC_CCL_FIELD_TYPE::CCL_SC:
-		strValue = xData.strStation;
-		break;
-	case EMC_CCL_FIELD_TYPE::CCL_NO:
-		strValue = xData.strMissionID;
-		break;
-	case EMC_CCL_FIELD_TYPE::CCL_SO:
-		strValue = xData.strBatchName;
-		break;
-	case EMC_CCL_FIELD_TYPE::CCL_PN:
-		strValue = xData.strMaterial;
-		break;
-	case EMC_CCL_FIELD_TYPE::CCL_LT:
-		strValue = xData.strSerial;
-		break;
-	case EMC_CCL_FIELD_TYPE::CCL_QT:
-		strValue.Format(L"%d", xData.nNum);
-		break;
-	case EMC_CCL_FIELD_TYPE::CCL_BK:
-		strValue.Format(L"%d", xData.nBookNum);
-		break;
-	case EMC_CCL_FIELD_TYPE::CCL_QS:
-		strValue.Format(L"%d", xData.nSheetNum);
-		break;
-	case EMC_CCL_FIELD_TYPE::CCL_UP:
-		strValue.Format(L"%d", xData.nSplit);
-		break;
-	case EMC_CCL_FIELD_TYPE::CCL_ST:
-		strValue = CEMCParser::GetStatus(xData.eStatus);
-		break;
-	case EMC_CCL_FIELD_TYPE::CCL_E1:
-		for (auto &i : xData.vMiss){
-			strTemp.Format(L"%d-%d|", i.first, i.second);
-			strValue += strTemp;
-		}
-		break;
-	case EMC_CCL_FIELD_TYPE::CCL_SQ:
-		strValue.Format(L"%d", xData.nIndex);
-		break;
-	case EMC_CCL_FIELD_TYPE::CCL_DT:
-		strValue.Format(L"%s", xData.strDefectType);
-		break;
-	case EMC_CCL_FIELD_TYPE::CCL_CN:
-		strValue = xData.strEmpID;
-		break;
-	case EMC_CCL_FIELD_TYPE::CCL_QR:
-		strValue = xData.strSheet;
-		break;
-	case EMC_CCL_FIELD_TYPE::CCL_TIME:
-		strValue = xData.xTime.Format(L"%Y/%m/%d %H:%M:%S");
-		break;
-	case EMC_CCL_FIELD_TYPE::CCL_BB:
-		strValue.Format(L"%d", xData.nBeginBook);
-		break;
-	case EMC_CCL_FIELD_TYPE::CCL_EB:
-		strValue.Format(L"%d", xData.nEndBook);
-		break;
-	case EMC_CCL_FIELD_TYPE::CCL_BS:
-		strValue.Format(L"%d", xData.nBeginSheet);
-		break;
-	case EMC_CCL_FIELD_TYPE::CCL_ES:
-		strValue.Format(L"%d", xData.nEndSheet);
-		break;
+	switch (eType)
+	{
+		case EMC_CCL_FIELD_TYPE::CCL_SC:
+			strValue = xData.strStation;
+			break;
+		case EMC_CCL_FIELD_TYPE::CCL_NO:
+			strValue = xData.strMissionID;
+			break;
+		case EMC_CCL_FIELD_TYPE::CCL_SO:
+			strValue = xData.strBatchName;
+			break;
+		case EMC_CCL_FIELD_TYPE::CCL_PN:
+			strValue = xData.strMaterial;
+			break;
+		case EMC_CCL_FIELD_TYPE::CCL_LT:
+			strValue = xData.strSerial;
+			break;
+		case EMC_CCL_FIELD_TYPE::CCL_QT:
+			strValue.Format(L"%d", xData.nNum);
+			break;
+		case EMC_CCL_FIELD_TYPE::CCL_BK:
+			strValue.Format(L"%d", xData.nBookNum);
+			break;
+		case EMC_CCL_FIELD_TYPE::CCL_QS:
+			strValue.Format(L"%d", xData.nSheetNum);
+			break;
+		case EMC_CCL_FIELD_TYPE::CCL_UP:
+			strValue.Format(L"%d", xData.nSplit);
+			break;
+		case EMC_CCL_FIELD_TYPE::CCL_ST:
+			strValue = CEMCParser::GetStatus(xData.eStatus);
+			break;
+		case EMC_CCL_FIELD_TYPE::CCL_E1:
+			for (auto& i : xData.vMiss)
+			{
+				strTemp.Format(L"%d-%d|", i.first, i.second);
+				strValue += strTemp;
+			}
+			break;
+		case EMC_CCL_FIELD_TYPE::CCL_SQ:
+			strValue.Format(L"%d", xData.nIndex);
+			break;
+		case EMC_CCL_FIELD_TYPE::CCL_DT:
+			strValue.Format(L"%s", xData.strDefectType);
+			break;
+		case EMC_CCL_FIELD_TYPE::CCL_CN:
+			strValue = xData.strEmpID;
+			break;
+		case EMC_CCL_FIELD_TYPE::CCL_QR:
+			strValue = xData.strSheet;
+			break;
+		case EMC_CCL_FIELD_TYPE::CCL_TIME:
+			strValue = xData.xTime.Format(L"%Y/%m/%d %H:%M:%S");
+			break;
+		case EMC_CCL_FIELD_TYPE::CCL_BB:
+			strValue.Format(L"%d", xData.nBeginBook);
+			break;
+		case EMC_CCL_FIELD_TYPE::CCL_EB:
+			strValue.Format(L"%d", xData.nEndBook);
+			break;
+		case EMC_CCL_FIELD_TYPE::CCL_BS:
+			strValue.Format(L"%d", xData.nBeginSheet);
+			break;
+		case EMC_CCL_FIELD_TYPE::CCL_ES:
+			strValue.Format(L"%d", xData.nEndSheet);
+			break;
 	}
 	return strValue;
 }
-CString CEMCCommunicatorDlg::GetPPValue(EMC_PP_FIELD_TYPE eType, EMC_PP_DATA &xData)
+CString CEMCCommunicatorDlg::GetPPValue(EMC_PP_FIELD_TYPE eType, EMC_PP_DATA& xData)
 {
 	CString strTemp, strValue;
-	switch (eType){
-	case EMC_PP_FIELD_TYPE::PP_SC:
-		strValue = xData.strStation;
-		break;
-	case EMC_PP_FIELD_TYPE::PP_NO:
-		strValue = xData.strMissionID;
-		break;
-	case EMC_PP_FIELD_TYPE::PP_SO:
-		strValue = xData.strBatchName;
-		break;
-	case EMC_PP_FIELD_TYPE::PP_PN:
-		strValue = xData.strMaterial;
-		break;
-	case EMC_PP_FIELD_TYPE::PP_LT:
-		for (auto &i : xData.vSerial){
-			strTemp.Format(L"%s|", i);
-			strValue += strTemp;
-		}
-		break;
-	case EMC_PP_FIELD_TYPE::PP_QT:
-		strValue.Format(L"%.1f", xData.fLength);
-		break;
-	case EMC_PP_FIELD_TYPE::PP_QB:
-		strValue.Format(L"%.1f", xData.fDefectBegin);
-		break;
-	case EMC_PP_FIELD_TYPE::PP_QE:
-		strValue.Format(L"%.1f", xData.fDefectEnd);
-		break;
-	case EMC_PP_FIELD_TYPE::PP_ST:
-		strValue = CEMCParser::GetStatus(xData.eStatus);
-		break;
-	case EMC_PP_FIELD_TYPE::PP_DT:
-		strValue.Format(L"%s", xData.strDefectType);
-		break;
-	case EMC_PP_FIELD_TYPE::PP_CN:
-		strValue = xData.strEmpID;
-		break;
-	case EMC_PP_FIELD_TYPE::PP_TIME: 
-		strValue = xData.xTime.Format(L"%Y/%m/%d %H:%M:%S");
-		break;
+	switch (eType)
+	{
+		case EMC_PP_FIELD_TYPE::PP_SC:
+			strValue = xData.strStation;
+			break;
+		case EMC_PP_FIELD_TYPE::PP_NO:
+			strValue = xData.strMissionID;
+			break;
+		case EMC_PP_FIELD_TYPE::PP_SO:
+			strValue = xData.strBatchName;
+			break;
+		case EMC_PP_FIELD_TYPE::PP_PN:
+			strValue = xData.strMaterial;
+			break;
+		case EMC_PP_FIELD_TYPE::PP_LT:
+			for (auto& i : xData.vSerial)
+			{
+				strTemp.Format(L"%s|", i);
+				strValue += strTemp;
+			}
+			break;
+		case EMC_PP_FIELD_TYPE::PP_QT:
+			strValue.Format(L"%.1f", xData.fLength);
+			break;
+		case EMC_PP_FIELD_TYPE::PP_QB:
+			strValue.Format(L"%.1f", xData.fDefectBegin);
+			break;
+		case EMC_PP_FIELD_TYPE::PP_QE:
+			strValue.Format(L"%.1f", xData.fDefectEnd);
+			break;
+		case EMC_PP_FIELD_TYPE::PP_ST:
+			strValue = CEMCParser::GetStatus(xData.eStatus);
+			break;
+		case EMC_PP_FIELD_TYPE::PP_DT:
+			strValue.Format(L"%s", xData.strDefectType);
+			break;
+		case EMC_PP_FIELD_TYPE::PP_CN:
+			strValue = xData.strEmpID;
+			break;
+		case EMC_PP_FIELD_TYPE::PP_TIME:
+			strValue = xData.xTime.Format(L"%Y/%m/%d %H:%M:%S");
+			break;
 	}
 	return strValue;
 }
@@ -1067,7 +1141,8 @@ void CEMCCommunicatorDlg::InitSimulate()
 
 	InitSocket();
 
-	if (m_eType == PRODUCT_TYPE::CCL){
+	if (m_eType == PRODUCT_TYPE::CCL)
+	{
 		m_xUi[UI_EDIT_DEFECTBEGIN].pEdit->ShowWindow(SW_HIDE);
 		m_xUi[UI_EDIT_DEFECTEND].pEdit->ShowWindow(SW_HIDE);
 		m_xUi[UI_EDIT_LENGTH].pEdit->ShowWindow(SW_HIDE);
@@ -1075,7 +1150,8 @@ void CEMCCommunicatorDlg::InitSimulate()
 		m_xUi[UI_LC_PARAM].pList->SetItemCount(_countof(ctEMC_CCL_FIELD));
 		m_xUi[UI_LC_RESULT].pList->SetItemCount(_countof(ctEMC_CCL_FIELD));
 	}
-	else if (m_eType == PRODUCT_TYPE::PP){
+	else if (m_eType == PRODUCT_TYPE::PP)
+	{
 		m_xUi[UI_EDIT_INDEX].pEdit->ShowWindow(SW_HIDE);
 		m_xUi[UI_EDIT_BOOKNUM].pEdit->ShowWindow(SW_HIDE);
 		m_xUi[UI_EDIT_SHEETNUM].pEdit->ShowWindow(SW_HIDE);

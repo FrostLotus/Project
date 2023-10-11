@@ -54,10 +54,12 @@
 #define LOG_COMMAND_TIME	//記錄command花費時間
 
 
+
 #ifdef _DEBUG
 #define SHOW_PERFORMANCE	//debug 顯示效能
+//#define OFFLINE_DEBUG       //離線DEBUG功能
 #endif
 
 //#define USE_MC_PROTOCOL //不使用MX Component, 改使用3E/4E Frame
 
-//#define OFF_LINE //離線測試使用
+#define OFF_LINE //離線測試使用

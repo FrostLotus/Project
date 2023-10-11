@@ -403,8 +403,8 @@ void CSystCCLProcessBase::ON_CCL_NEWBATCH()
 	xData.wDiff_Three_Y_Max		= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_THREE_Y_MAX));
 	xData.wDiff_Three_X_Min		= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_THREE_X_MIN));
 	xData.wDiff_Three_X_Max		= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_THREE_X_MAX));
-	xData.wDiff_Three_XY_Min		= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_THREE_XY_MIN));
-	xData.wDiff_Three_XY_Max		= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_THREE_XY_MAX));
+	xData.wDiff_Three_XY_Min	= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_THREE_XY_MIN));
+	xData.wDiff_Three_XY_Max	= _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_THREE_XY_MAX));
 
 	xData.wNum_AA				= _ttoi(GET_PLC_FIELD_VALUE(FIELD_AA_NUM));
 
@@ -424,6 +424,7 @@ void CSystCCLProcessBase::ON_C10_CHANGE(WORD wC10)
 	theApp.InsertDebugLog(strLog, LOG_PLCC10);
 	NotifyAOI(WM_SYST_C10CHANGE_CMD, wC10);
 }
+
 void CSystCCLProcessBase::PushResult(BATCH_SHARE_SYST_RESULTCCL &xResult)
 {
 	std::lock_guard< std::mutex > lock(m_oMutex);

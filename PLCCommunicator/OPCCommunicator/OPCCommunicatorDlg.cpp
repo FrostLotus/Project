@@ -1,6 +1,4 @@
-
 // OPCCommunicatorDlg.cpp : 實作檔
-//
 
 #include "stdafx.h"
 #include "OPCCommunicator.h"
@@ -14,9 +12,7 @@
 #define new DEBUG_NEW
 #endif
 
-
 // COPCCommunicatorDlg 對話方塊
-
 #define INFO_MAX		50
 #define CLR_BATCH	RGB(0,0,0)
 #define CLR_NOTIFY	RGB(0xFF, 0, 0)

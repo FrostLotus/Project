@@ -8,7 +8,7 @@
 #define WM_SYST_PARAMWEBCOOPER_CMD			(WM_APP+6) //PLC > AOI
 #define WM_SYST_RESULTCCL_CMD				(WM_APP+7) //AOI > PLC
 #define WM_SYST_C10CHANGE_CMD				(WM_APP+8) //PLC > AOI
-#define WM_SYST_INFO_CHANGE					(WM_APP+18) //AOI > PLC
+#define WM_SYST_INFO_CHANGE					(WM_APP+18)//AOI > PLC
 
 //EMC
 #define WM_EMC_RESPONSE_CMD					(WM_APP+9) 
@@ -16,11 +16,11 @@
 #define WM_EMC_PARAMCCL_CMD					(WM_APP+11)//EMC > AOI
 #define WM_EMC_RESULTCCL_CMD				(WM_APP+12)//AOI > EMC
 #define WM_EMC_ENDCCL_CMD					(WM_APP+13)//AOI > EMC
-
 #define WM_EMC_PARAMPP_CMD					(WM_APP+14)//EMC > AOI
 #define WM_EMC_RESULTPP_CMD					(WM_APP+15)//AOI > EMC
 #define WM_EMC_ENDPP_CMD					(WM_APP+16)//AOI > EMC
 #define WM_EMC_ERROR_CMD					(WM_APP+17)//EMC > AOI
+
 //MX
 #define WM_MX_PARAMINIT_CMD					(WM_APP+18) //MX > AOI
 #define WM_MX_PINSTATUS_CMD					(WM_APP+19) //AOI > MX
@@ -53,7 +53,7 @@
 #define WM_PLC_REVERSE_BEGIN				(WM_APP+42) //PLC > AOI
 #define WM_PLC_REVERSE_END					(WM_APP+43) //PLC > AOI
 
-enum PLC_MESSAGE 
+enum PLC_MESSAGE
 {
 	PM_VERSION_ERROR,
 	PM_A_AXIS,
@@ -80,13 +80,13 @@ enum PLC_MESSAGE
 //-----------------------------------------------------------------------									        
 #define EMC_COMMUNICATOR_NAME               _T("EMCCommunicator")
 #define MX_COMMUNICATOR_NAME                _T("MXComponentCommunicator")
-									        
+
 #define BATCH_COMMUNICATOR_MEM_ID	        _T("BATCH_COMMUNICATOR_MEM")	    //Communicator->AOI
 #define BATCH_AOI_MEM_ID			        _T("BATCH_AOI_MEM")				    //AOI->Communicator
-									        
+
 #define BATCH_AOI2EMC_MEM_ID		        _T("BATCH_AOI2EMC_MEM")				//AOI->EMC Communicator
 #define BATCH_EMC2AOI_MEM_ID	            _T("BATCH_EMC2AOI_MEM")	            //EMC Communicator->AOI
-									        
+
 #define BATCH_AOI2MX_MEM_ID			        _T("BATCH_AOI2MX_MEM")				//AOI->MX_Communicator
 #define BATCH_MX2AOI_MEM_ID			        _T("BATCH_MX2AOI_MEM")				//MX_Communicator->AOI
 #define BATCH_SQL2AOI_MEM_ID		        _T("SQL_AGENT_MEM")					
@@ -102,7 +102,7 @@ using namespace std;
 #define AOI_MASTER_NAME                     _T("AOI Master")
 //=======================================================================================================
 /// <summary>客戶</summary>    //eric chao 201
-enum AOI_CUSTOMERTYPE_            
+enum AOI_CUSTOMERTYPE_
 {
 	CUSTOMER_EMC_CCL = 0,		  //台光CCL
 	CUSTOMER_NANYA = 2,
@@ -144,9 +144,8 @@ enum AOI_SUBCUSTOMERTYPE_
 	SUB_CUSTOMER_NANYA_N4 = SUB_CUSTOMER_NANYA_START,       //江西南亞N4(N4和N5 ERP下發規格不同)
 	SUB_CUSTOMER_NANYA_N5							        //江西南亞N5
 };
-
 //--------		SYSTEM		--------------------------
-/// <summary>[BATCH=>OPC]初始化參數</summary>
+/// <summary>[OPC]初始化參數</summary>
 typedef struct BATCH_SHARE_OPC_INITPARAM_
 {
 	TCHAR cOPCIP[MAX_BATCH_FIELD_LEN];
@@ -154,7 +153,17 @@ typedef struct BATCH_SHARE_OPC_INITPARAM_
 	TCHAR cROOTID[MAX_BATCH_FIELD_LEN];
 
 }BATCH_SHARE_OPC_INITPARAM;
-/// <summary>[BATCH=>CCL]PLC站體參數初始化</summary>
+/// <summary>[MC-Protocol]初始化參數</summary>
+typedef struct BATCH_SHARE_SYST_INITPARAM_
+{
+	int nCustomerType;
+	int nSubCustomerType;
+	int nFormat;
+	TCHAR cPLCIP[MAX_BATCH_FIELD_LEN];
+	int nPLCPort;
+	int nFrameType;
+}BATCH_SHARE_SYST_INITPARAM;
+/// <summary>[PLC_CCL]初始化參數</summary>
 typedef struct BATCH_SHARE_SYSTCCL_INITPARAM_
 {
 	TCHAR cPLCIP[MAX_BATCH_FIELD_LEN];
@@ -164,7 +173,7 @@ typedef struct BATCH_SHARE_SYSTCCL_INITPARAM_
 	long lPCNetworkNo;				//計算機側網路No
 	long lPCStationNo;				//計算機側站號
 }BATCH_SHARE_SYSTCCL_INITPARAM;
-/// <summary>[BATCH=>SYSTPP]初始化參數</summary>
+/// <summary>[PLC_PP]擴充初始化參數</summary>
 typedef struct BATCH_SHARE_SYSTPP_INITPARAM_ : public BATCH_SHARE_SYSTCCL_INITPARAM_
 {
 	int nWatchDogTimeout;			//WatchDog timeout(second)
@@ -173,7 +182,6 @@ typedef struct BATCH_SHARE_SYSTPP_INITPARAM_ : public BATCH_SHARE_SYSTCCL_INITPA
 	BOOL bFX5U;
 	int nNewbatchDelay;				//
 }BATCH_SHARE_SYSTPP_INITPARAM;
-
 /// <summary>系統回應Flag參數</summary>
 enum SYST_RESULT_FLAG
 {
@@ -195,12 +203,14 @@ enum SYST_RESULT_FLAG
 	SRF_SIZE_G10 = 0x4000,			           //尺寸判斷級別(G10)
 	SRF_SIZE_G12 = 0x8000,			           //尺寸判斷級別(G12)
 	SRF_SIZE_G14 = 0x010000,		           //尺寸判斷級別(G14)
+
 	SRF_RESULT_LEVEL = 0x020000,		       //小板物料級別
 	SRF_NUM_AA = 0x040000,				       //小版AA級數量
 	SRF_NUM_A = 0x080000,				       //小版A級數量
 	SRF_NUM_P = 0x100000,				       //小版P級數量
 	SRF_QUALIFY_RATE = 0x200000,		       //訂單合格率
 	SRF_DIFF_XY = 0x400000,			           //級差實際檢測值
+
 	SRF_FRONT_SIZE = 0x800000,			       //九宮格中正面前五大缺陷大小1~5
 	SRF_FRONT_LOCATION = 0x1000000,		       //九宮格中正面前五大缺陷位置1~5
 	SRF_BACK_SIZE = 0x2000000,			       //九宮格中反面前五大缺陷大小1~5
@@ -215,19 +225,20 @@ struct BATCH_SYST_EXTRA
 	char cInsp[MAX_BATCH_FIELD_LEN];
 	char cLight[MAX_BATCH_FIELD_LEN];
 };
-/// <summary>系統工單分享基礎項目</summary>
+/// <summary>系統工單基礎項目</summary>
 typedef struct BATCH_SHARE_SYST_BASE_
 {
-	TCHAR cName[MAX_BATCH_FIELD_LEN];
-	TCHAR cMaterial[MAX_BATCH_FIELD_LEN];
+	TCHAR cName[MAX_BATCH_FIELD_LEN];       //工單號
+	TCHAR cMaterial[MAX_BATCH_FIELD_LEN];   //料號
 }BATCH_SHARE_SYST_BASE;
-/// <summary>系統工單分享項目_CCL</summary>
+/// <summary>系統工單項目_CCL</summary>
 typedef struct BATCH_SHARE_SYST_PARAMCCL_ : public BATCH_SHARE_SYST_BASE
 {
 	TCHAR cModel[MAX_BATCH_FIELD_LEN];		//模號
 	TCHAR cAssign[MAX_BATCH_FIELD_LEN];		//分發號
 	WORD wAssignNum;						//分發號數量
 	WORD wSplitNum;							//一開幾
+
 	WORD wSplit_One_X;						//第一張大小板寬
 	WORD wSplit_One_Y;						//第一張大小板長
 	WORD wSplit_Two_X;						//第二張大小板寬
@@ -275,10 +286,6 @@ typedef struct BATCH_SHARE_SYST_PARAMCCL_ : public BATCH_SHARE_SYST_BASE
 	WORD wNO_C12;							//C12小板剪切編號
 }BATCH_SHARE_SYST_PARAMCCL;
 
-//typedef struct
-
-
-
 /// <summary>系統工單分享項目_資訊1</summary>
 typedef struct BATCH_SHARE_SYST_INFO1_
 {
@@ -305,19 +312,21 @@ struct BATCH_SHARE_SYST_INFO
 };
 
 
-/// <summary>系統工單分享回應項目_CCL</summary>
+/// <summary>[CCL=>BATCH]系統工單回應項目</summary>
 typedef struct BATCH_SHARE_SYST_RESULTCCL_
 {
 	float fReal_One_Y;		        //小板實際長度1
 	float fReal_Two_Y;		        //小板實際長度2
 	float fReal_One_X;		        //小板實際寬度1
 	float fReal_Two_X;		        //小板實際寬度2
+
 	WORD wDiff_One_Y;		        //小板長度實際公差1
 	WORD wDiff_Two_Y;		        //小板長度實際公差2
 	WORD wDiff_One_X;		        //小板寬度實際公差1
 	WORD wDiff_Two_X;		        //小板寬度實際公差2
 	WORD wDiff_One_XY;		        //小板對角線實際公差1
 	WORD wDiff_Two_XY;		        //小板對角線實際公差2
+
 	WORD wFrontLevel;		        //正面判斷級別
 	char cFrontCode[30];	        //正面判斷代碼, 字串需要為2的倍數(回寫最小單位為WORD)
 	WORD wBackLevel;		        //反面判斷級別
@@ -338,26 +347,20 @@ typedef struct BATCH_SHARE_SYST_RESULTCCL_
 	WORD wBackDefectLocation[5];	//九宮格中反面前五大缺陷位置1~5
 	WORD wIndex;			        //小板編號, 僅東莞松八廠需回傳
 }BATCH_SHARE_SYST_RESULTCCL;
-/// <summary>[BATCH=>SYST]初始化參數</summary>
-typedef struct BATCH_SHARE_SYST_INITPARAM_
-{
-	int nCustomerType;
-	int nSubCustomerType;
-	int nFormat;
-	TCHAR cPLCIP[MAX_BATCH_FIELD_LEN];
-	int nPLCPort;
-	int nFrameType;
-}BATCH_SHARE_SYST_INITPARAM;
+
+
+
+
 
 //--------		MX		--------------------------
 /// <summary>[BATCH=>MX-Component]初始化參數</summary>
-typedef struct BATCH_SHARE_MX_INITPARAM_ 
+typedef struct BATCH_SHARE_MX_INITPARAM_
 {
 	long lCPU;
 	TCHAR cPLCIP[MAX_BATCH_FIELD_LEN];
 	UINT lStartAddress;
 }BATCH_SHARE_MX_INITPARAM;
-typedef struct BATCH_SHARE_MX_PINSTATUS_ 
+typedef struct BATCH_SHARE_MX_PINSTATUS_
 {
 	int nIndex0Base;
 	BOOL bHighLeve;
@@ -365,21 +368,25 @@ typedef struct BATCH_SHARE_MX_PINSTATUS_
 //--------		EMC		--------------------------
 #define MAX_PARAM 3 //最多1開3
 /// <summary>[BATCH=>EMC]初始化參數</summary>
-typedef struct BATCH_SHARE_EMC_INITPARAM_ {
+typedef struct BATCH_SHARE_EMC_INITPARAM_
+{
 	TCHAR cEMCIP[MAX_BATCH_FIELD_LEN];
 	int nEMCPort;
 	int nListenPort;
 	int nProductType; //0:CCL, 1:PP
 }BATCH_SHARE_EMC_INITPARAM;
-/// <summary>系統工單分享基礎項目</summary>
-typedef struct BATCH_SHARE_EMC_BASE_ {
+/// <summary>系統工單基礎項目</summary>
+typedef struct BATCH_SHARE_EMC_BASE_
+{
 	TCHAR cStation[MAX_BATCH_FIELD_LEN];		//設備號
 	TCHAR cMissionID[MAX_BATCH_FIELD_LEN];		//任務號
 	TCHAR cBatchName[MAX_BATCH_FIELD_LEN];		//工單號
 	TCHAR cMaterial[MAX_BATCH_FIELD_LEN];		//料號
 	TCHAR cSerial[MAX_BATCH_FIELD_LEN];			//批號
 }BATCH_SHARE_EMC_BASE;
-typedef struct BATCH_SHARE_EMC_CCLPARAM_ : public BATCH_SHARE_EMC_BASE_ {
+/// <summary>[BATCH=>EMC_CCL]初始化參數</summary>
+typedef struct BATCH_SHARE_EMC_CCLPARAM_ : public BATCH_SHARE_EMC_BASE_
+{
 	int nNum;										//數量
 	int nBookNum;									//BOOK數
 	int nSheetNum;									//張數
@@ -393,64 +400,70 @@ typedef struct BATCH_SHARE_EMC_CCLPARAM_ : public BATCH_SHARE_EMC_BASE_ {
 	int nBeginSheet;								//開始第幾張
 	int nEndSheet;									//結束第幾張
 }BATCH_SHARE_EMC_CCLPARAM;
-struct CCLParam 
+struct CCLParam
 {
 	int nSize;
 	BATCH_SHARE_EMC_CCLPARAM xParam[MAX_PARAM];
 };
-typedef struct BATCH_SHARE_EMC_CCLRESULT_ : public BATCH_SHARE_EMC_BASE_ {
+typedef struct BATCH_SHARE_EMC_CCLRESULT_ : public BATCH_SHARE_EMC_BASE_
+{
 	int nIndex;										//檢測張數序號
 	int nBookNum;									//BOOK數
 	TCHAR cSheet[MAX_BATCH_FIELD_LEN];				//Sheet.Index
 	TCHAR cDefectType[3];							//缺點代碼
 }BATCH_SHARE_EMC_CCLRESULT;
-typedef struct BATCH_SHARE_EMC_CCLEND_ : public BATCH_SHARE_EMC_BASE_ {
+typedef struct BATCH_SHARE_EMC_CCLEND_ : public BATCH_SHARE_EMC_BASE_
+{
 	int nIndex;										//檢測張數序號
 }BATCH_SHARE_EMC_CCLEND;
 
-typedef struct BATCH_SHARE_EMC_PPPARAM_ : public BATCH_SHARE_EMC_BASE_ {
+typedef struct BATCH_SHARE_EMC_PPPARAM_ : public BATCH_SHARE_EMC_BASE_
+{
 	int nStatus;									//任務狀態(CLEAR/START/CLOSED)
 	TCHAR cEmpID[MAX_BATCH_FIELD_LEN];				//員工編號
 }BATCH_SHARE_EMC_PPPARAM;
 
-typedef struct BATCH_SHARE_EMC_PPRESULT_ : public BATCH_SHARE_EMC_BASE_ {
+typedef struct BATCH_SHARE_EMC_PPRESULT_ : public BATCH_SHARE_EMC_BASE_
+{
 	float fDefectBegin;								//缺點開始米數
 	float fDefectEnd;								//缺點結束米數
 	TCHAR cDefectType[3];							//缺點代碼
 }BATCH_SHARE_EMC_PPRESULT;
-typedef struct BATCH_SHARE_EMC_PPEND_ : public BATCH_SHARE_EMC_BASE_ {
+typedef struct BATCH_SHARE_EMC_PPEND_ : public BATCH_SHARE_EMC_BASE_
+{
 	float fLength;									//每卷米數
 }BATCH_SHARE_EMC_PPEND;
 
-enum EMC_ERROR 
+enum EMC_ERROR
 {
 	EMC_FIELD_NOTCOMPLETE,	//欄位不齊全
 	EMC_TIMEOUT,			//TIMEOUT
 
 };
-enum LOG_TYPE 
+enum LOG_TYPE
 {
 	LOG_FLOAT,
 	LOG_WORD,
 	LOG_CSTRING,
 	LOG_NONE,
 };
-typedef struct BATCH_SHARE_EMC_ERRORINFO_ 
+typedef struct BATCH_SHARE_EMC_ERRORINFO_
 {
 	EMC_ERROR eErrorType;								//錯誤代碼
 	TCHAR cErrorMsg[MAX_BATCH_FIELD_LEN];				//錯誤訊息
 }BATCH_SHARE_EMC_ERRORINFO;
 
-enum SYST_INFO_FIELD {
+enum SYST_INFO_FIELD
+{
 	SIZE_READY = 0x01,	 //CCD尺寸檢測儀器準備好
-	SIZE_RUNNING = 0x02,	 //CCD尺寸檢測儀器運行
+	SIZE_RUNNING = 0x02, //CCD尺寸檢測儀器運行
 	SIZE_ERROR = 0x04,	 //CCD尺寸檢測儀器故障
 	CCD_READY = 0x08,	 //CCD表現檢測儀器準備好
 	CCD_RUNNING = 0x10,	 //CCD表現檢測儀器運行
 	CCD_ERROR = 0x20,	 //CCD表現檢測儀器故障
 };
 
-class CDataHandlerBase 
+class CDataHandlerBase
 {
 public:
 	CDataHandlerBase(CString strMemID = L"");
@@ -489,7 +502,8 @@ private:
 #ifndef USE_IN_SLAVE
 	usm<unsigned char>* m_pUsm;
 #endif
-	enum {
+	enum
+	{
 		OP_CREATE = 0,
 		OP_DESTROY,
 	};

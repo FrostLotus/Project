@@ -79,7 +79,7 @@ BOOL CPLCCommunicatorApp::InitInstance()
 
 	// 建立殼層管理員，以防對話方塊包含
 	// 任何殼層樹狀檢視或殼層清單檢視控制項。
-	CShellManager *pShellManager = new CShellManager;
+	CShellManager* pShellManager = new CShellManager;
 
 	// 啟動 [Windows 原生] 視覺化管理員可啟用 MFC 控制項中的主題
 	CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows));
@@ -96,23 +96,28 @@ BOOL CPLCCommunicatorApp::InitInstance()
 	CString strCmd = GetCommandLine();
 	BOOL bNoShow = FALSE;
 	HWND hWnd = ::FindWindow(NULL, PLC_COMMUNICATOR_NAME);
-	if (hWnd){
-		if (strCmd.Find(_T("/EXIT")) >= 0){
+	if (hWnd)
+	{
+		if (strCmd.Find(_T("/EXIT")) >= 0)
+		{
 			::PostMessage(hWnd, WM_LOCAL_MSG, WM_EXIT, 0);
 			return FALSE;
 		}
 	}
 #ifndef SHOW_WINDOW
-	if (strCmd.Find(_T("/NOSHOW")) >= 0){
+	if (strCmd.Find(_T("/NOSHOW")) >= 0)
+	{
 		bNoShow = TRUE;
 	}
 #endif
 	CString strExe;
 	strExe.Format(L"%s.exe", PLC_COMMUNICATOR_NAME);
-	if (AppProcess::FIND_PROCESS(strExe)){
+	if (AppProcess::FIND_PROCESS(strExe))
+	{
 		AppProcess::TERMINATE_PROCESS(strExe, GetCurrentProcessId()); //20200323
 	}
-	while (AppProcess::FIND_PROCESS(strExe)){
+	while (AppProcess::FIND_PROCESS(strExe))
+	{
 		InsertDebugLog(L"still exist");
 		TRACE(L"still exist");
 		Sleep(100); // wait for kill
@@ -142,7 +147,7 @@ BOOL CPLCCommunicatorApp::InitInstance()
 	if (pShellManager != NULL)
 	{
 		delete pShellManager;
-	}	
+	}
 	StopLogServer();
 	InsertDebugLog(_T("End"));
 
