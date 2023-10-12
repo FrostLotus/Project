@@ -54,8 +54,9 @@ long CPLCProcessBase::ON_OPEN_PLC(LPARAM lp)
 				BATCH_SHARE_SYSTCCL_INITPARAM* pData = new BATCH_SHARE_SYSTCCL_INITPARAM;//CCL砰把计
 				memset(pData, 0, sizeof(BATCH_SHARE_SYSTCCL_INITPARAM));
 #ifdef OFF_LINE
-				CString str = L"192.168.2.29";
-				memcpy(pData->cPLCIP, str.GetBuffer(), str.GetLength() * 2);
+				CString str = L"192.168.2.99";
+				_tcscpy_s(pData->cPLCIP, str.GetLength() + 1, str);
+				//memcpy(pData->cPLCIP, str.GetBuffer(), str.GetLength() * 2);
 				pData->lTargetNetworkNo = 0;
 				pData->lTargetStationNo = 0xFF;
 #endif
@@ -68,7 +69,7 @@ long CPLCProcessBase::ON_OPEN_PLC(LPARAM lp)
 				BATCH_SHARE_SYSTPP_INITPARAM* pData = new BATCH_SHARE_SYSTPP_INITPARAM;//PP砰把计
 				memset(pData, 0, sizeof(BATCH_SHARE_SYSTPP_INITPARAM));
 #ifdef OFF_LINE
-				CString str = L"192.168.2.29";
+				CString str = L"192.168.2.99";
 				memcpy(pData->cPLCIP, str.GetBuffer(), str.GetLength() * 2);
 				pData->lTargetNetworkNo = 0;
 				pData->lTargetStationNo = 0xFF;
@@ -82,19 +83,22 @@ long CPLCProcessBase::ON_OPEN_PLC(LPARAM lp)
 		if (m_pPLCInitData && nDataSize)//把计Θミ
 		{
 			theApp.InsertDebugLog(L"ON_OPEN_PLC", LOG_DEBUG);//log
-#ifdef OFF_LINEぃノ
-			CString str = L"192.168.2.29";
-			memcpy(xData->cPLCIP, str.GetBuffer(), str.GetLength() * 2);
-			//wcscpy_s(m_pPLCInitData.cPLCIP, str.GetBuffer());
+#ifdef OFF_LINE
+			/*CString str = L"192.168.2.29";
+			wcscpy_s(xData.cPLCIP, str.GetBuffer());
 			xData.lTargetNetworkNo = 0;
-			xData.lTargetStationNo = 0xFF;
+			xData.lTargetStationNo = 0xFF;*/
 #else
 			if (USM_ReadData(m_pPLCInitData, nDataSize))
+			
 #endif
 			{
 				SET_INIT_PARAM(lp, m_pPLCInitData);//?
 				ON_SET_PLCPARAM(*(BATCH_SHARE_SYSTCCL_INITPARAM*)m_pPLCInitData);//?
-			}
+			}	
+
+
+
 		}
 	}
 	if (m_pPLCInitData)

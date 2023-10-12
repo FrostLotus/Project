@@ -51,7 +51,6 @@ long CEverStrProcessBase::ON_OPEN_PLC(LPARAM lp)
 					QueryTimer);//指定觸發函式 若null=Time
 			}
 		}
-
 		for (int i = NULL; i < EV_COUNT; i++)
 		{
 			m_hEvent[i] = ::CreateEvent(NULL, TRUE, FALSE, NULL);
@@ -216,7 +215,7 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 			switch (i)
 			{
 #ifdef USE_TEST_TIMER
-				case TIMER_TEST:
+				case TIMER_TEST://寫入測試
 				{
 					BATCH_SHARE_SYST_RESULTCCL_ xResult;
 					memset(&xResult, 0, sizeof(BATCH_SHARE_SYST_RESULTCCL_));
@@ -237,12 +236,12 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 					xResult.wDiff_Two_XY = 6;
 
 					xResult.wFrontLevel = 7;
-					str.Format("12345678901234567890123456789a");//8
-					memcpy(xResult.cFrontCode, str.GetBuffer(), _countof(xResult.cFrontCode));
+					//str.Format("12345678901234567890123456789a");//8
+					//memcpy(xResult.cFrontCode, str.GetBuffer(), _countof(xResult.cFrontCode));
 					//xResult.wFrontLocation = 8;
 					xResult.wBackLevel = 9;
-					str.Format("abcdefghijklmnopqrstuvwxyzabca");//10
-					memcpy(xResult.cBackCode, str.GetBuffer(), _countof(xResult.cBackCode));
+					//str.Format("abcdefghijklmnopqrstuvwxyzabca");//10
+					//memcpy(xResult.cBackCode, str.GetBuffer(), _countof(xResult.cBackCode));
 					//xResult.wBackLocation = 10;
 					xResult.wSize_G10 = 11;
 					xResult.wSize_G12 = 12;

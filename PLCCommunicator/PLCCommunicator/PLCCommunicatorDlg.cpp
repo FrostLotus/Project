@@ -15,13 +15,11 @@
 #include "SystPPProcess.h"
 #include "TechainProcess.h"
 #include "TGProcess.h"
-
-#include "EverStrProcess.h"  //2023/10/5 甬強新增
+#include "EverStrProcess.h"
 #ifdef _DEBUG
 #include "TagProcess_FX5U.h"
 #endif
 #else
-#include "TagProcess_FX5U.h"                 //應該不用
 #include "PLC\SystWebCooperProcessSocket.h"
 #include "PLC\SystCCLProcessSocket.h"
 #endif
@@ -75,11 +73,9 @@ BEGIN_MESSAGE_MAP(CPLCCommunicatorDlg, CDialogEx)//類似增加Listener的方式
 	ON_NOTIFY(LVN_GETDISPINFO, UI_LC_PLCPARAM, OnLvnGetdispinfoPLCParam)
 	ON_NOTIFY(LVN_GETDISPINFO, UI_LC_INFO, OnLvnGetdispinfoInfo)
 	ON_NOTIFY(NM_CUSTOMDRAW, UI_LC_PLCADDRESS, OnCustomdrawList)
-
 END_MESSAGE_MAP()
-
 #ifdef SHOW_DEBUG_BTN
-
+///<summary>[Button]讀新狀態</summary>
 void CPLCCommunicatorDlg::OnQueryAll()
 {
 #ifdef USE_IN_COMMUNICATOR
@@ -92,7 +88,7 @@ void CPLCCommunicatorDlg::OnQueryAll()
 		for (int i = 0; i < nMax; i++)
 		{
 			PLC_DATA_ITEM_* pItem = m_pPLCProcessBase->GetPLCAddressInfo(i, FALSE);
-			if (pItem && pItem->xAction != ACTION_SKIP)
+			if (pItem && pItem->xAction != ACTION_SKIP)//不是SKIP
 			{
 				m_pPLCProcessBase->GET_PLC_FIELD_DATA(i);//全部讀新狀態一次
 			}
@@ -105,6 +101,7 @@ void CPLCCommunicatorDlg::OnQueryAll()
 	}
 #endif
 }
+///<summary>[Button]測試寫入狀態</summary>
 void CPLCCommunicatorDlg::OnTestWrite()
 {
 	theApp.InsertDebugLog(L"UI Test Write");
@@ -145,7 +142,7 @@ void CPLCCommunicatorDlg::OnTestWrite()
 						break;
 						case PLC_TYPE_FLOAT:
 						{
-							float f = i * 1.0f;
+							float f = i * 1.0f+0.5f;
 							m_pPLCProcessBase->SET_PLC_FIELD_DATA(i, sizeof(float), (BYTE*)&f);
 						}
 						break;
@@ -161,6 +158,7 @@ void CPLCCommunicatorDlg::OnTestWrite()
 	}
 #endif
 }
+///<summary>[Button]讀新狀態</summary>
 void CPLCCommunicatorDlg::OnFlushAll()
 {
 	CButton* pFlushAll = m_xUi[UI_BTN_FULSHALL].pBtn;
@@ -176,11 +174,10 @@ void CPLCCommunicatorDlg::OnFlushAll()
 		else
 			theApp.InsertDebugLog(L"UI unCheck flush");
 	}
-#endif
+#endif USE_MC_PROTOCOL
 }
-#endif
+#endif SHOW_DEBUG_BTN
 // CPLCCommunicatorDlg 訊息處理常式
-
 BOOL CPLCCommunicatorDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
@@ -282,7 +279,7 @@ LRESULT CPLCCommunicatorDlg::OnCmdGPIO(WPARAM wParam, LPARAM lParam)
 	switch (wParam)
 	{
 		case WM_CUSTOMERTYPE_INIT:
-			m_xParam.eCustomerType = (AOI_CUSTOMERTYPE_)(lParam >>14 & 0xFF);
+			m_xParam.eCustomerType = (AOI_CUSTOMERTYPE_)(lParam >> 14 & 0xFF);
 			m_xParam.eSubCustomerType = (AOI_SUBCUSTOMERTYPE_)(lParam & 0xFF);
 #ifdef _DEBUG
 			//m_xParam.eCustomerType = AOI_CUSTOMERTYPE_::CUSTOMER_SYST_CCL;
@@ -395,6 +392,7 @@ void CPLCCommunicatorDlg::OnLvnGetdispinfoPLCAddress(NMHDR* pNMHDR, LRESULT* pRe
 		wcscpy_s(pDispInfo->item.pszText, strText.GetLength() + 1, strText);
 	}
 }
+///<summary>[Setting]顯示資訊</summary>
 void CPLCCommunicatorDlg::OnLvnGetdispinfoPLCParam(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NMLVDISPINFO* pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
@@ -472,6 +470,7 @@ void CPLCCommunicatorDlg::OnLvnGetdispinfoPLCParam(NMHDR* pNMHDR, LRESULT* pResu
 		wcscpy_s(pDispInfo->item.pszText, strText.GetLength() + 1, strText);
 	}
 }
+///<summary>[Log]顯示資訊</summary>
 void CPLCCommunicatorDlg::OnLvnGetdispinfoInfo(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NMLVDISPINFO* pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
@@ -594,8 +593,10 @@ void CPLCCommunicatorDlg::Init()
 	InitUI();
 #ifndef USE_MC_PROTOCOL
 #ifdef OFF_LINE
-	m_xParam.eCustomerType = CUSROMER_EVERSTRONG;//(AOI_CUSTOMERTYPE_)(lParam >> 8 & 0xFF);
+	m_xParam.eCustomerType = CUSTOMER_EVERSTRONG;//(AOI_CUSTOMERTYPE_)(lParam >> 8 & 0xFF);
 	m_xParam.eSubCustomerType = SUB_CUSTOMER_NONE;//(AOI_SUBCUSTOMERTYPE_)(lParam & 0xFF);
+	//m_xParam.eCustomerType = CUSTOMER_SYST_CCL;
+	//m_xParam.eSubCustomerType = SUB_CUSTOMER_DONGGUAN_SONG8;
 	OnCmdGPIO(WM_CUSTOMERTYPE_INIT, m_xParam.eCustomerType << 14 | m_xParam.eSubCustomerType);//設置客製
 	OnCmdGPIO(WM_AOI_RESPONSE_CMD, WM_SYST_PARAMINIT_CMD);//設置AOI
 	//InitPLCProcess();
@@ -694,26 +695,31 @@ void CPLCCommunicatorDlg::InitUiRectPos()
 		m_xUi[i].xColor = xColor;
 	}
 }
+///<summary>初始化UI</summary>
 void CPLCCommunicatorDlg::InitUI()
 {
+	//Button
 	for (int i = UI_BTN_BEGIN; i < UI_BTN_END; i++)
 	{
 		m_xUi[i].pBtn = new CButton;
 		m_xUi[i].pBtn->Create(m_xUi[i].strCaption, WS_VISIBLE | WS_CHILD, m_xUi[i].rcUi, this, i);
 		g_AoiFont.SetWindowFont(m_xUi[i].pBtn, FontDef::typeT1);
 	}
+	//CKButton
 	for (int i = UI_CHKBTN_BEGIN; i < UI_CHKBTN_END; i++)
 	{
 		m_xUi[i].pBtn = new CButton;
 		m_xUi[i].pBtn->Create(m_xUi[i].strCaption, WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX, m_xUi[i].rcUi, this, i);
 		g_AoiFont.SetWindowFont(m_xUi[i].pBtn, FontDef::typeT1);
 	}
+	//ListCtrl
 	for (int i = UI_LC_BEGIN; i < UI_LC_END; i++)
 	{
 		m_xUi[i].pList = new CListCtrl;
 		m_xUi[i].pList->Create(WS_CHILD | WS_VISIBLE | WS_BORDER | LVS_REPORT | LVS_OWNERDATA, m_xUi[i].rcUi, this, i);
 		m_xUi[i].pList->SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
 		g_AoiFont.SetWindowFont(m_xUi[i].pList, FontDef::typeT1);
+		//各參數之列表
 		if (i == UI_LC_PLCADDRESS)
 		{
 			m_xUi[i].pList->InsertColumn(LIST_COL_FIELD, L"Field", LVCFMT_LEFT, 180);
@@ -721,11 +727,13 @@ void CPLCCommunicatorDlg::InitUI()
 			m_xUi[i].pList->InsertColumn(LIST_COL_VALUE, L"Value", LVCFMT_LEFT, 90);
 			m_xUi[i].pList->InsertColumn(LIST_COL_TIME, L"Time", LVCFMT_LEFT, 90);
 		}
+		//PLC參數
 		else if (i == UI_LC_PLCPARAM)
 		{
 			m_xUi[i].pList->InsertColumn(LIST_COL_TITLE, L"Info", LVCFMT_LEFT, 130);
 			m_xUi[i].pList->InsertColumn(LIST_COL_DATA, L"Data", LVCFMT_LEFT, 100);
 		}
+		//LOG
 		else if (i == UI_LC_INFO)
 		{
 			m_xUi[i].pList->InsertColumn(LIST_COL_TITLE, L"Time", LVCFMT_LEFT, 80);
@@ -779,7 +787,6 @@ void CPLCCommunicatorDlg::DrawInfo()
 		pDC->SetTextColor(m_xUi[i].xColor);
 		pDC->DrawText(m_xUi[i].strCaption, &m_xUi[i].rcUi, DT_LEFT);
 	}
-
 	ReleaseDC(pDC);
 }
 void CPLCCommunicatorDlg::AddInfoText(CString& strInfo)
@@ -851,7 +858,7 @@ void CPLCCommunicatorDlg::InitPLCProcess()
 		case CUSTOMER_TG:
 			m_pPLCProcessBase = new CTGProcess;
 			break;
-		case CUSROMER_EVERSTRONG: //甬強  新增
+		case CUSTOMER_EVERSTRONG: //甬強  新增
 			m_pPLCProcessBase = new CEverStrProcess;
 			break;
 	}

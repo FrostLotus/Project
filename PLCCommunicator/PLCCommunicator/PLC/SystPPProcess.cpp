@@ -287,10 +287,10 @@ void CSystPPProcess::SetMXParam(IActProgType* pParam, BATCH_SHARE_SYSTCCL_INITPA
 	else
 	{
 #ifdef _DEBUG
-		pParam->put_ActHostAddress(L"192.168.2.250");
+		pParam->put_ActHostAddress(L"192.168.2.99");
 #endif
-		pParam->put_ActCpuType(CPU_FX3UCCPU);
-		pParam->put_ActUnitType(UNIT_FXETHER);
+		//pParam->put_ActCpuType(CPU_FX5UCPU);
+		//pParam->put_ActUnitType(UNIT_FXETHER);
 	}
 }
 PLC_DATA_ITEM_* CSystPPProcess::GetPLCAddressInfo(int nFieldId, BOOL bSkip)

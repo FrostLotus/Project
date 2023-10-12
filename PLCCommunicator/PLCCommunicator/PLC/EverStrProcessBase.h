@@ -15,9 +15,8 @@ public:
 	enum PLC_FIELD_
 	{
 		//下發------------------------------------------------
-		FIELD_BEGIN = 0,
-
-		FIELD_ORDER = FIELD_BEGIN,			       //訂單號					             1      D1000~D1009		  string[20]    
+		FIELD_BEGIN,
+		FIELD_ORDER = FIELD_BEGIN,		   //訂單號					             1      D1000~D1009		  string[20]    
 		FIELD_SN,					       //批號					             2      D1010~D1019		  string[20]     =  FIELD_ASSIGN 分發號
 		FIELD_QUANTITY,				       //工單產品數量				             3      D1020			  word    =2     =  FIELD_ASSIGNNUM 分發號數量
 

@@ -47,7 +47,7 @@ long CMelSecIOController::OpenDevice(BATCH_SHARE_SYSTCCL_INITPARAM& xData)
 	BOOL bLog = m_strIp.GetLength() == 0; //only log information on first connect, igonre logging on reconnect event
 	m_strIp = xData.cPLCIP;
 #ifdef _DEBUG
-	m_strIp = L"192.168.2.12";
+	m_strIp = L"192.168.2.99";
 #endif
 	//log Param
 	CString strMsg;

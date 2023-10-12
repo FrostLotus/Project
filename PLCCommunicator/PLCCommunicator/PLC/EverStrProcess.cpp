@@ -75,8 +75,8 @@ CEverStrProcess::CEverStrProcess()
 		{ L"CCD發送檢測結果",				FIELD_CCD_RESULT,				PLC_TYPE_WORD,		ACTION_NOTIFY,		2,		L"D",		ctBASE_ADDRESS + 356},
 		{ L"CCD接收PLC接收檢測結果完成",	FIELD_CCD_RESULT_RECEIVED,		PLC_TYPE_WORD,		ACTION_NOTIFY,		2,		L"D",		ctBASE_ADDRESS + 357},
 
-		{ L"小版A級數量",					FIELD_RESULT_OKNum,				PLC_TYPE_WORD,		ACTION_RESULT,		2,		L"D",		ctBASE_ADDRESS + 359},
-		{ L"小版P級數量",					FIELD_RESULT_NGNum,				PLC_TYPE_WORD,		ACTION_RESULT,		2,		L"D",		ctBASE_ADDRESS + 360},
+		{ L"版OK數量",					FIELD_RESULT_OKNum,				PLC_TYPE_WORD,		ACTION_RESULT,		2,		L"D",		ctBASE_ADDRESS + 359},
+		{ L"版NG數量",					FIELD_RESULT_NGNum,				PLC_TYPE_WORD,		ACTION_RESULT,		2,		L"D",		ctBASE_ADDRESS + 360},
 		{ L"訂單合格率",					FIELD_RESULT_QUALIFYRATE,		PLC_TYPE_FLOAT,		ACTION_RESULT,		4,		L"D",		ctBASE_ADDRESS + 362},
 
 		{ L"通知MES工單資訊",				FIELD_BATCH_MES,				PLC_TYPE_WORD,		ACTION_NOTIFY,		2,		L"D",		ctBASE_ADDRESS + 366},
@@ -87,7 +87,7 @@ CEverStrProcess::CEverStrProcess()
 
 		{ L"訂單號",						FIELD_ORDER_1,					PLC_TYPE_STRING,	ACTION_RESULT,		20,		L"D",		ctBASE_ADDRESS + 1000},
 		{ L"批號",						FIELD_SN_1,						PLC_TYPE_STRING,	ACTION_RESULT,		20,		L"D",		ctBASE_ADDRESS + 1010},
-		{ L"料號",						FIELD_MATERIAL_1,				PLC_TYPE_STRING,	ACTION_RESULT,		20,		L"D",		ctBASE_ADDRESS + 1037}
+		{ L"料號",						FIELD_MATERIAL_1,				PLC_TYPE_STRING,	ACTION_RESULT,		20,		L"D",		ctBASE_ADDRESS + 1037},
 	};
 	m_pPLC_FIELD_INFO = new PLC_DATA_ITEM_ * [FIELD_MAX];
 	for (int i = 0; i < FIELD_MAX; i++)
@@ -135,21 +135,9 @@ void CEverStrProcess::DoWriteResult(BATCH_SHARE_SYST_RESULTCCL& xData)
 	};
 
 	SET_PLC_FIELD_DATA(FIELD_CCL_NO_C10, 2, (BYTE*)&xData.wIndex);
-
-	//WriteSizeField(FIELD_REAL_Y_ONE, xData.fReal_One_Y);//板实际长度1
-	//WriteSizeField(FIELD_REAL_Y_TWO, xData.fReal_Two_Y);//板实际长度2
-	//WriteSizeField(FIELD_REAL_X_ONE, xData.fReal_One_X);//板实际宽度1
-	//WriteSizeField(FIELD_REAL_X_TWO, xData.fReal_Two_X);//板实际宽度2
-
-	//WriteSizeField(FIELD_REAL_DIFF_ONE_Y, xData.wDiff_One_Y); //板长度实际公差1
-	//WriteSizeField(FIELD_REAL_DIFF_TWO_Y, xData.fReal_Two_Y); //板长度实际公差2
-	//WriteSizeField(FIELD_REAL_DIFF_ONE_X, xData.fReal_Two_Y); //板宽度实际公差1
-	//WriteSizeField(FIELD_REAL_DIFF_TWO_X, xData.fReal_Two_Y); //板宽度实际公差2
-	//WriteSizeField(FIELD_REAL_DIFF_ONE_XY, xData.fReal_Two_Y);//板对角线实际公差1
-	//WriteSizeField(FIELD_REAL_DIFF_TWO_XY, xData.fReal_Two_Y);//板对角线实际公差2
 	
-	//SET_PLC_FIELD_DATA(FIELD_FRONT_LEVEL, 2, (BYTE*)&xData.wFrontLevel);
-	//SET_PLC_FIELD_DATA(FIELD_BACK_LEVEL, 2, (BYTE*)&xData.wBackLevel);
+	SET_PLC_FIELD_DATA(FIELD_FRONT_LEVEL, 2, (BYTE*)&xData.wFrontLevel);
+	SET_PLC_FIELD_DATA(FIELD_BACK_LEVEL, 2, (BYTE*)&xData.wBackLevel);
 
 	SET_PLC_FIELD_DATA(FIELD_SIZE_G10, 2, (BYTE*)&xData.wSize_G10);
 	SET_PLC_FIELD_DATA(FIELD_SIZE_G12, 2, (BYTE*)&xData.wSize_G12);
@@ -160,9 +148,9 @@ void CEverStrProcess::DoWriteResult(BATCH_SHARE_SYST_RESULTCCL& xData)
 	SET_PLC_FIELD_DATA(FIELD_RESULT_QUALIFYRATE, 2, (BYTE*)&xData.wQualifyRate);//訂單合格率
 
 
-	SET_PLC_FIELD_DATA(FIELD_ORDER_1, 2, (BYTE*)&xData.wNum_A);
-	SET_PLC_FIELD_DATA(FIELD_SN_1, 2, (BYTE*)&xData.wNum_P);
-
+	SET_PLC_FIELD_DATA(FIELD_ORDER_1, 2, (BYTE*)&xData.wNum_AA);
+	SET_PLC_FIELD_DATA(FIELD_SN_1, 2, (BYTE*)&xData.wNum_A);
+	SET_PLC_FIELD_DATA(FIELD_MATERIAL_1, 2, (BYTE*)&xData.wNum_P);
 
 }
 

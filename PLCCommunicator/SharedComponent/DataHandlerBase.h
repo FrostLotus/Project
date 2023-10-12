@@ -117,7 +117,7 @@ enum AOI_CUSTOMERTYPE_
 	CUSTOMER_TUC_PP = 11,		  //台耀 PP
 	CUSTOMER_TG = 12,			  //台玻
 	CUSTOMER_YINGHUA = 13,		  //盈華
-	CUSROMER_EVERSTRONG = 14,     //甬強         //23/09/25新增
+	CUSTOMER_EVERSTRONG = 14,     //甬強         //23/09/25新增
 	CUSTOMER_TECHAIN = 255,		  //地謙        
 #ifdef _DEBUG
 	CUSTOMER_TAG = 254,           //標籤機

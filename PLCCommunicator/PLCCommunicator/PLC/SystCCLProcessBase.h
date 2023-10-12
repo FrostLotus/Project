@@ -3,7 +3,7 @@
 #include <mutex>
 
 #ifdef OFF_LINE
-//#define USE_TEST_TIMER //timer固定發送測試資料
+#define USE_TEST_TIMER //timer固定發送測試資料
 #endif
 //rename later, not yet
 class CSystCCLProcessBase :public CPLCProcessBase
