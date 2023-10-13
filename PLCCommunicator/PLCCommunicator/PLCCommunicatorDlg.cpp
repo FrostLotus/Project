@@ -42,6 +42,8 @@
 CPLCCommunicatorDlg::CPLCCommunicatorDlg(BOOL bNoShow, CWnd* pParent /*=NULL*/)
 	: CDialogEx(CPLCCommunicatorDlg::IDD, pParent)
 {
+	char* p = "12";
+	WORD* p2 = (WORD*)p;
 	m_tTimerReconnect = NULL;
 	m_bNoShow = bNoShow;
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);

@@ -274,7 +274,7 @@ long CPLCProcessBase::SET_PLC_FIELD_DATA(int nFieldId, int nSizeInByte, BYTE* pD
 	if (nFieldId >= 0 && nFieldId < nFieldSize)
 	{
 		const PLC_DATA_ITEM_* pItem = GetPLCAddressInfo(nFieldId, FALSE);
-
+		//
 		BYTE* pOldValue = new BYTE[nSizeInByte];
 		memcpy(pOldValue, m_pPLCData[nFieldId].pData, nSizeInByte);
 		memcpy(m_pPLCData[nFieldId].pData, pData, nSizeInByte);

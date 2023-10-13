@@ -129,10 +129,10 @@ void CSystCCLProcessBase::ProcessResult()
 	int nWordSize = sizeof(WORD);
 	int nFloatSize = sizeof(float);
 	CString strLog, strTemp;
-
+	
 	auto SetData = [&](DWORD dwAddFlag, void* pDst, int nSize, CString strAddLog, int nLogType)
 	{
-		if (dwFlag & dwAddFlag)
+		if (dwFlag & dwAddFlag)//­YµL«h¸õ¹L
 		{
 			if (USM_ReadData((BYTE*)pDst, nSize, nOffset))
 			{

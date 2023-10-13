@@ -65,10 +65,10 @@ void CEverStrProcessBase::ON_GPIO_NOTIFY(WPARAM wp, LPARAM lp)
 {
 	switch (wp)
 	{
-		case WM_AOI_RESPONSE_CMD://AOI
+		case WM_AOI_RESPONSE_CMD://下發:上位機PLC -> AOI回應
 			ProcessAOIResponse(lp);
 			break;
-		case WM_SYST_RESULTCCL_CMD://系統回傳
+		case WM_SYST_RESULTCCL_CMD://上傳: AOI->上位機PLC回應
 			ProcessResult();
 			break;
 		case WM_SYST_INFO_CHANGE://資訊部分(目前應不顯示)
@@ -102,11 +102,11 @@ void CEverStrProcessBase::ProcessAOIResponse(LPARAM lp)
 {
 	switch (lp)//控制碼
 	{
-		case WM_SYST_PARAMCCL_CMD: //AOI切換完成->復位
+		case WM_SYST_PARAMCCL_CMD: //PLC
 		{
-			WORD wReceive = _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCD_COMMAND_RECEIVED));
-			WORD wCommand = _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCL_COMMAND));
-			if (wCommand == CCL_NOTIFYVALUE_COMMAND)
+			WORD wReceive = _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCD_COMMAND_RECEIVED));//給上位機PLC回應狀態
+			WORD wCommand = _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCL_COMMAND));//目前回應狀態
+			if (wCommand == CCL_NOTIFYVALUE_COMMAND)//若目前回應狀態為101  狀況:上位機(PLC)下發資料完成
 			{
 				WORD wReceive = 100;
 				SET_PLC_FIELD_DATA(FIELD_CCD_COMMAND_RECEIVED, sizeof(WORD), (BYTE*)&wReceive);//發送 100 給PLC, PLC接收後自行清除 100
@@ -127,6 +127,7 @@ void CEverStrProcessBase::ProcessAOIResponse(LPARAM lp)
 ///<summary>處理工單Result回應</summary>
 void CEverStrProcessBase::ProcessResult()
 {
+	//參數初始化
 	BATCH_SHARE_SYST_RESULTCCL xResult;
 	memset(&xResult, 0, sizeof(xResult));
 	DWORD dwFlag = 0;
@@ -138,7 +139,7 @@ void CEverStrProcessBase::ProcessResult()
 	//設置DATA結構
 	auto SetData = [&](DWORD dwAddFlag, void* pDst, int nSize, CString strAddLog, int nLogType)
 	{
-		if (dwFlag & dwAddFlag)
+		if (dwFlag & dwAddFlag)//若無則跳過
 		{
 			if (USM_ReadData((BYTE*)pDst, nSize, nOffset))
 			{
@@ -160,7 +161,7 @@ void CEverStrProcessBase::ProcessResult()
 			}
 		}
 	};
-
+	//Log
 	theApp.InsertDebugLog(L"ProcessResult", LOG_DEBUG);
 
 	if (USM_ReadData((unsigned char*)&dwFlag, sizeof(dwFlag)))
@@ -188,7 +189,6 @@ void CEverStrProcessBase::ProcessResult()
 		SetData(SRF_SIZE_G12, &xResult.wSize_G12, nWordSize, L"wSize_G12", LOG_WORD);
 		SetData(SRF_SIZE_G14, &xResult.wSize_G14, nWordSize, L"wSize_G14", LOG_WORD);
 
-		//SetData(SRF_RESULT_LEVEL, &xResult.wResultLevel, nWordSize, L"wResultLevel", LOG_WORD);
 		SetData(SRF_NUM_A, &xResult.wNum_A, nWordSize, L"wNum_A", LOG_WORD);//OK數量
 		SetData(SRF_NUM_P, &xResult.wNum_P, nWordSize, L"wNum_P", LOG_WORD);//NG數量
 		SetData(SRF_QUALIFY_RATE, &xResult.wQualifyRate, nWordSize, L"wQualifyRate", LOG_WORD);//Float=>Word
@@ -215,7 +215,7 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 			switch (i)
 			{
 #ifdef USE_TEST_TIMER
-				case TIMER_TEST://寫入測試
+				case TIMER_TEST://[測試]寫入
 				{
 					BATCH_SHARE_SYST_RESULTCCL_ xResult;
 					memset(&xResult, 0, sizeof(BATCH_SHARE_SYST_RESULTCCL_));
