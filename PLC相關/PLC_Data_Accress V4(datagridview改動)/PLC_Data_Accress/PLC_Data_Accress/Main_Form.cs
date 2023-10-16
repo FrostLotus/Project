@@ -435,7 +435,6 @@ namespace PLC_Data_Access
         //===============================================
         public void DataUpdate()
         {
-            Timer_DeviceGet.Stop();//岔斷運行模式
 
             string sOutPutCell;
             //上傳寫入

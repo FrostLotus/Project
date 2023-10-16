@@ -487,7 +487,7 @@ namespace PLC_Data_Access
                 case "FX5UCPU":
                     #region FX5UCPU
 
-                    TParameter.Mx_Connect.Prog_Connect.ActHostAddress = ActHostAddress;
+                    TParameter.Mx_Connect.Prog_Connect.ActHostAddress = ActHostAddress = "192.168.2.99";
                     TParameter.Mx_Connect.Prog_Connect.ActConnectUnitNumber = ActConnectUnitNumber = 0;
                     TParameter.Mx_Connect.Prog_Connect.ActCpuType = ActCpuType = 528;
 
@@ -752,7 +752,7 @@ namespace PLC_Data_Access
 
             int iStart = Convert.ToInt32(sStart.Replace("D", ""));//軟元件開頭 改數字
             int iEnd = Convert.ToInt32(sEnd.Replace("D", ""));//軟元件結尾 改數字
-            int iSize = Math.Abs(iEnd - iStart);//換算總軟元件數量
+            int iSize = Math.Abs(iEnd - iStart)+1;//換算總軟元件數量
             int[] arrData = new int[iSize];//標籤總數量(矩陣)
 
             sOutCombimeValue = "";
@@ -773,8 +773,9 @@ namespace PLC_Data_Access
                 }
             }
         }
-        public void ProgSetBlockCombine(string sDevice, string sInCombimeValue)
+        public string ProgSetBlockCombine(string sDevice, string sInCombimeValue)
         {
+            string re = "";
             ArrayList arrCombine = new ArrayList();
             string sStart;//軟元件開頭
             string sEnd;//軟元件結尾
@@ -785,9 +786,13 @@ namespace PLC_Data_Access
 
             int iStart = Convert.ToInt32(sStart.Replace("D", ""));//軟元件開頭 改數字
             int iEnd = Convert.ToInt32(sEnd.Replace("D", ""));//軟元件結尾 改數字
-            int iSize = Math.Abs(iEnd - iStart);//換算總軟元件數量
+            int iSize = Math.Abs(iEnd - iStart)+1;//換算總軟元件數量
             int[] arrData = new int[iSize];//標籤總數量(矩陣)
-
+            //換算
+            while (sInCombimeValue.Length < iSize * 2)//若值不為 軟元件數*元件容量則需補值 超過不管
+            {
+                sInCombimeValue += "0";//沒有就補0
+            }
             //確認寫入資料有無問題  Substring
             for (int i = 0, j = 0; i < iSize; i++, j += 2)
             {
@@ -795,13 +800,18 @@ namespace PLC_Data_Access
             }
             try
             {
-                iReturnCode = Prog_Connect.WriteDeviceBlock(sStart, iSize, ref arrData[0]);//從軟元件開頭 讀出資料
+                iReturnCode = Prog_Connect.WriteDeviceBlock(sStart, iSize, ref arrData[0]);//從軟元件開頭 寫入出資料
+                arrData = new int[iSize];//洗掉
+                Prog_Connect.ReadDeviceBlock(sStart, iSize, out arrData[0]);//從軟元件開頭 寫入出資料
+                ProgGetBlockCombine(sDevice,out re);
+                Console.WriteLine($"實際寫入值: {re}");
                 //Console.WriteLine(String.Format("0x{0:x8} [HEX]", iReturnCode));
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message + "\n是否為string[]之軟元件名稱錯誤", "ProgSetBlockCombime", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            return re;
         }
 
         public void ProgGetDevice(string sDevice, out string sOutValue)
@@ -832,7 +842,6 @@ namespace PLC_Data_Access
             }
         }
     }
-
     public class CError_Info
     {
         public CError_Info()

@@ -29,6 +29,13 @@
         private void InitializeComponent()
         {
             this.dgv_ReadDataGrid = new System.Windows.Forms.DataGridView();
+            this.Read_SN = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Read_Label = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Read_Address = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Read_DataType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Read_Data = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Read_IsUse = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Read_DeviceValueGet = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.檔案ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mi_DataGridLoad = new System.Windows.Forms.ToolStripMenuItem();
@@ -37,6 +44,14 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.dgv_WriteDataGrid = new System.Windows.Forms.DataGridView();
+            this.Write_SN = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Write_Label = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Write_Address = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Write_DataType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Write_Data = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Write_IsUse = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Write_DeviceValueGet = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Write_DeviceValueSet = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btn_ModelChange = new System.Windows.Forms.Button();
             this.p_ModelChange = new System.Windows.Forms.Panel();
             this.btn_DataUpload = new System.Windows.Forms.Button();
@@ -46,21 +61,6 @@
             this.p_MxOpenStatus = new System.Windows.Forms.Panel();
             this.btn_MxOpen = new System.Windows.Forms.Button();
             this.Lb_Status = new System.Windows.Forms.Label();
-            this.Write_SN = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Write_Label = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Write_Address = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Write_DataType = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Write_Data = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Write_IsUse = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.Write_DeviceValueGet = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Write_DeviceValueSet = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Read_SN = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Read_Label = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Read_Address = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Read_DataType = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Read_Data = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Read_IsUse = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.Read_DeviceValueGet = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_ReadDataGrid)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -91,6 +91,53 @@
             this.dgv_ReadDataGrid.CellValueNeeded += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.Dgv_ReadDataGrid_CellValueNeeded);
             this.dgv_ReadDataGrid.CellValuePushed += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.Dgv_ReadDataGrid_CellValuePushed);
             // 
+            // Read_SN
+            // 
+            this.Read_SN.HeaderText = "序号";
+            this.Read_SN.Name = "Read_SN";
+            this.Read_SN.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Read_SN.Width = 60;
+            // 
+            // Read_Label
+            // 
+            this.Read_Label.HeaderText = "名称";
+            this.Read_Label.Name = "Read_Label";
+            this.Read_Label.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Read_Label.Width = 160;
+            // 
+            // Read_Address
+            // 
+            this.Read_Address.HeaderText = "地址";
+            this.Read_Address.Name = "Read_Address";
+            this.Read_Address.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Read_DataType
+            // 
+            this.Read_DataType.HeaderText = "数据类型";
+            this.Read_DataType.Name = "Read_DataType";
+            this.Read_DataType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Read_DataType.Width = 60;
+            // 
+            // Read_Data
+            // 
+            this.Read_Data.HeaderText = "变量";
+            this.Read_Data.Name = "Read_Data";
+            this.Read_Data.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Read_Data.Width = 80;
+            // 
+            // Read_IsUse
+            // 
+            this.Read_IsUse.HeaderText = "是否使用";
+            this.Read_IsUse.Name = "Read_IsUse";
+            this.Read_IsUse.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Read_IsUse.Width = 60;
+            // 
+            // Read_DeviceValueGet
+            // 
+            this.Read_DeviceValueGet.HeaderText = "軟元件當前值";
+            this.Read_DeviceValueGet.Name = "Read_DeviceValueGet";
+            this.Read_DeviceValueGet.Width = 150;
+            // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -98,7 +145,7 @@
             this.mi_PLCSet});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1748, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1512, 24);
             this.menuStrip1.TabIndex = 2;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -174,87 +221,6 @@
             this.dgv_WriteDataGrid.CellValueNeeded += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.Dgv_WriteDataGrid_CellValueNeeded);
             this.dgv_WriteDataGrid.CellValuePushed += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.Dgv_WriteDataGrid_CellValuePushed);
             // 
-            // btn_ModelChange
-            // 
-            this.btn_ModelChange.Location = new System.Drawing.Point(20, 6);
-            this.btn_ModelChange.Name = "btn_ModelChange";
-            this.btn_ModelChange.Size = new System.Drawing.Size(131, 52);
-            this.btn_ModelChange.TabIndex = 4;
-            this.btn_ModelChange.Text = "格式修改模式中";
-            this.btn_ModelChange.UseVisualStyleBackColor = true;
-            this.btn_ModelChange.Click += new System.EventHandler(this.Btn_ModelChange_Click);
-            // 
-            // p_ModelChange
-            // 
-            this.p_ModelChange.BackColor = System.Drawing.Color.LightBlue;
-            this.p_ModelChange.Controls.Add(this.btn_ModelChange);
-            this.p_ModelChange.Location = new System.Drawing.Point(12, 512);
-            this.p_ModelChange.Name = "p_ModelChange";
-            this.p_ModelChange.Size = new System.Drawing.Size(170, 62);
-            this.p_ModelChange.TabIndex = 5;
-            // 
-            // btn_DataUpload
-            // 
-            this.btn_DataUpload.Location = new System.Drawing.Point(1326, 493);
-            this.btn_DataUpload.Name = "btn_DataUpload";
-            this.btn_DataUpload.Size = new System.Drawing.Size(163, 45);
-            this.btn_DataUpload.TabIndex = 74;
-            this.btn_DataUpload.Text = "上傳資料上傳";
-            this.btn_DataUpload.UseVisualStyleBackColor = true;
-            this.btn_DataUpload.Click += new System.EventHandler(this.Btn_DataUpdate_Click);
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(20, 493);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(143, 16);
-            this.label1.TabIndex = 50;
-            this.label1.Text = "模式切換(修改模式/運行)";
-            // 
-            // txt_ReadTime
-            // 
-            this.txt_ReadTime.Location = new System.Drawing.Point(32, 605);
-            this.txt_ReadTime.Name = "txt_ReadTime";
-            this.txt_ReadTime.Size = new System.Drawing.Size(123, 22);
-            this.txt_ReadTime.TabIndex = 1;
-            this.txt_ReadTime.Text = "2000";
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(30, 586);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(125, 16);
-            this.label2.TabIndex = 50;
-            this.label2.Text = "讀取回傳時間設定(ms)";
-            // 
-            // p_MxOpenStatus
-            // 
-            this.p_MxOpenStatus.BackColor = System.Drawing.Color.Lime;
-            this.p_MxOpenStatus.Controls.Add(this.btn_MxOpen);
-            this.p_MxOpenStatus.Location = new System.Drawing.Point(1342, 596);
-            this.p_MxOpenStatus.Name = "p_MxOpenStatus";
-            this.p_MxOpenStatus.Size = new System.Drawing.Size(147, 38);
-            this.p_MxOpenStatus.TabIndex = 5;
-            // 
-            // btn_MxOpen
-            // 
-            this.btn_MxOpen.Location = new System.Drawing.Point(8, 3);
-            this.btn_MxOpen.Name = "btn_MxOpen";
-            this.btn_MxOpen.Size = new System.Drawing.Size(128, 32);
-            this.btn_MxOpen.TabIndex = 4;
-            this.btn_MxOpen.Text = "PLC連結中";
-            this.btn_MxOpen.UseVisualStyleBackColor = true;
-            // 
-            // Lb_Status
-            // 
-            this.Lb_Status.AutoSize = true;
-            this.Lb_Status.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.Lb_Status.Location = new System.Drawing.Point(682, 506);
-            this.Lb_Status.Name = "Lb_Status";
-            this.Lb_Status.Size = new System.Drawing.Size(51, 16);
-            this.Lb_Status.TabIndex = 75;
-            this.Lb_Status.Text = "Status";
-            // 
             // Write_SN
             // 
             this.Write_SN.HeaderText = "序号";
@@ -308,58 +274,92 @@
             this.Write_DeviceValueSet.Name = "Write_DeviceValueSet";
             this.Write_DeviceValueSet.Width = 145;
             // 
-            // Read_SN
+            // btn_ModelChange
             // 
-            this.Read_SN.HeaderText = "序号";
-            this.Read_SN.Name = "Read_SN";
-            this.Read_SN.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Read_SN.Width = 60;
+            this.btn_ModelChange.Location = new System.Drawing.Point(20, 6);
+            this.btn_ModelChange.Name = "btn_ModelChange";
+            this.btn_ModelChange.Size = new System.Drawing.Size(131, 38);
+            this.btn_ModelChange.TabIndex = 4;
+            this.btn_ModelChange.Text = "格式修改模式中";
+            this.btn_ModelChange.UseVisualStyleBackColor = true;
+            this.btn_ModelChange.Click += new System.EventHandler(this.Btn_ModelChange_Click);
             // 
-            // Read_Label
+            // p_ModelChange
             // 
-            this.Read_Label.HeaderText = "名称";
-            this.Read_Label.Name = "Read_Label";
-            this.Read_Label.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Read_Label.Width = 160;
+            this.p_ModelChange.BackColor = System.Drawing.Color.LightBlue;
+            this.p_ModelChange.Controls.Add(this.btn_ModelChange);
+            this.p_ModelChange.Location = new System.Drawing.Point(12, 512);
+            this.p_ModelChange.Name = "p_ModelChange";
+            this.p_ModelChange.Size = new System.Drawing.Size(170, 50);
+            this.p_ModelChange.TabIndex = 5;
             // 
-            // Read_Address
+            // btn_DataUpload
             // 
-            this.Read_Address.HeaderText = "地址";
-            this.Read_Address.Name = "Read_Address";
-            this.Read_Address.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.btn_DataUpload.Location = new System.Drawing.Point(1326, 493);
+            this.btn_DataUpload.Name = "btn_DataUpload";
+            this.btn_DataUpload.Size = new System.Drawing.Size(163, 45);
+            this.btn_DataUpload.TabIndex = 74;
+            this.btn_DataUpload.Text = "上傳資料上傳";
+            this.btn_DataUpload.UseVisualStyleBackColor = true;
+            this.btn_DataUpload.Click += new System.EventHandler(this.Btn_DataUpdate_Click);
             // 
-            // Read_DataType
+            // label1
             // 
-            this.Read_DataType.HeaderText = "数据类型";
-            this.Read_DataType.Name = "Read_DataType";
-            this.Read_DataType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Read_DataType.Width = 60;
+            this.label1.Location = new System.Drawing.Point(20, 493);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(143, 16);
+            this.label1.TabIndex = 50;
+            this.label1.Text = "模式切換(修改模式/運行)";
             // 
-            // Read_Data
+            // txt_ReadTime
             // 
-            this.Read_Data.HeaderText = "变量";
-            this.Read_Data.Name = "Read_Data";
-            this.Read_Data.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Read_Data.Width = 80;
+            this.txt_ReadTime.Location = new System.Drawing.Point(32, 586);
+            this.txt_ReadTime.Name = "txt_ReadTime";
+            this.txt_ReadTime.Size = new System.Drawing.Size(123, 22);
+            this.txt_ReadTime.TabIndex = 1;
+            this.txt_ReadTime.Text = "2000";
             // 
-            // Read_IsUse
+            // label2
             // 
-            this.Read_IsUse.HeaderText = "是否使用";
-            this.Read_IsUse.Name = "Read_IsUse";
-            this.Read_IsUse.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.Read_IsUse.Width = 60;
+            this.label2.Location = new System.Drawing.Point(30, 567);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(125, 16);
+            this.label2.TabIndex = 50;
+            this.label2.Text = "讀取回傳時間設定(ms)";
             // 
-            // Read_DeviceValueGet
+            // p_MxOpenStatus
             // 
-            this.Read_DeviceValueGet.HeaderText = "軟元件當前值";
-            this.Read_DeviceValueGet.Name = "Read_DeviceValueGet";
-            this.Read_DeviceValueGet.Width = 150;
+            this.p_MxOpenStatus.BackColor = System.Drawing.Color.Lime;
+            this.p_MxOpenStatus.Controls.Add(this.btn_MxOpen);
+            this.p_MxOpenStatus.Location = new System.Drawing.Point(1342, 570);
+            this.p_MxOpenStatus.Name = "p_MxOpenStatus";
+            this.p_MxOpenStatus.Size = new System.Drawing.Size(147, 38);
+            this.p_MxOpenStatus.TabIndex = 5;
+            // 
+            // btn_MxOpen
+            // 
+            this.btn_MxOpen.Location = new System.Drawing.Point(8, 3);
+            this.btn_MxOpen.Name = "btn_MxOpen";
+            this.btn_MxOpen.Size = new System.Drawing.Size(128, 32);
+            this.btn_MxOpen.TabIndex = 4;
+            this.btn_MxOpen.Text = "PLC連結中";
+            this.btn_MxOpen.UseVisualStyleBackColor = true;
+            // 
+            // Lb_Status
+            // 
+            this.Lb_Status.AutoSize = true;
+            this.Lb_Status.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.Lb_Status.Location = new System.Drawing.Point(682, 506);
+            this.Lb_Status.Name = "Lb_Status";
+            this.Lb_Status.Size = new System.Drawing.Size(51, 16);
+            this.Lb_Status.TabIndex = 75;
+            this.Lb_Status.Text = "Status";
             // 
             // Main_Form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1748, 826);
+            this.ClientSize = new System.Drawing.Size(1512, 620);
             this.Controls.Add(this.Lb_Status);
             this.Controls.Add(this.txt_ReadTime);
             this.Controls.Add(this.btn_DataUpload);
