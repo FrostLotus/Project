@@ -816,10 +816,13 @@ namespace PLC_Data_Access
                 {
                     sInCombimeValue = "0" + sInCombimeValue;//沒有就補0在前面
                 }
-                //確認寫入資料有無問題  Substring
+                //鍵入寫入資料
+                
                 for (int i = 0, j = 0; i < iSize; i++, j += 2)
                 {
-                    arrData[i] = Convert.ToInt16(sInCombimeValue.Substring(j, 2));//word每個兩字元0123456789=>[01][23][45][67][89]
+                    //arrData[i] = Convert.ToInt16(sInCombimeValue.Substring(j, 2));//word每個兩字元0123456789=>[01][23][45][67][89]
+                    //每兩個一組轉換成ASCII的byte再轉為輸出用的short
+                    arrData[i] = BitConverter.ToInt16(Encoding.ASCII.GetBytes(sInCombimeValue.Substring(j, 2)), 0);
                 }
                 try
                 {
