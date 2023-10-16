@@ -28,7 +28,7 @@ public:
 		FIELD_SPLIT_TWO_X,			       //第二張大小板寬			             9      D1030~D1031		  real    =4          
 		FIELD_SPLIT_THREE_X,		       //第三張大小板寬			            10      D1032~D1033		  real    =4          
 
-		FIELD_MATERIAL,		       //訂單物料代碼				            14      D1037~D1046		  string[20]    
+		FIELD_MATERIAL,		               //訂單物料代碼				            14      D1037~D1046		  string[20]    
 
 		FIELD_DIFF_ONE_Y_MIN,		       //第一個大小版經向公差下限				15		D1047			  word          
 		FIELD_DIFF_ONE_Y_MAX,		       //第一個大小版經向公差上限				16		D1048			  word          
@@ -51,7 +51,7 @@ public:
 		FIELD_DIFF_THREE_XY_MIN,	       //第三個大小版對角線公差下限				31		D1063			  word          
 		FIELD_DIFF_THREE_XY_MAX,	       //第三個大小版對角線公差上限				32		D1064			  word          
 		//上傳---------------------------------------------------													           
-		FIELD_CCL_COMMAND,		       //指令下發(1/0)						34		 D1066			  word          
+		FIELD_CCL_COMMAND,		           //指令下發(1/0)						34		 D1066			  word          
 		FIELD_CCL_NO_C10,			       //板剪切編(開板後序號)					35		 D1067			  word          
 
 		FIELD_REAL_Y_ONE,			       //板實際長度1							36		 D1300~D1301	  real          
@@ -66,9 +66,9 @@ public:
 		FIELD_REAL_DIFF_ONE_XY,		       //板對角線實際公差1						44		 D1316~D1317	  real          
 		FIELD_REAL_DIFF_TWO_XY,		       //板對角線實際公差2						45		 D1318~D1319	  real          
 
-		FIELD_FRONT_LEVEL,		       //表現正面判斷級別(1 = OK,2 = NG)       46    	 D1320			  word          
-		FIELD_BACK_LEVEL,		       //表現反面判斷級別(1 = OK,2 = NG)		48	     D1336			  word          
-		FIELD_SIZE_G10,		       //版尺寸判斷OK = 1,NG = 2 一開一 一個版	50       D1352			  word          
+		FIELD_FRONT_LEVEL,		           //表現正面判斷級別(1 = OK,2 = NG)       46    	 D1320			  word          
+		FIELD_BACK_LEVEL,		           //表現反面判斷級別(1 = OK,2 = NG)		48	     D1336			  word          
+		FIELD_SIZE_G10,		               //版尺寸判斷OK = 1,NG = 2 一開一 一個版	50       D1352			  word          
 		FIELD_SIZE_G12,				       //版尺寸判斷OK = 1,NG = 2 一開二 兩個版	51       D1353			  word          
 		FIELD_SIZE_G14,				       //版尺寸判斷OK = 1,NG = 2 一開三 三個板	52       D1354			  word          
 
@@ -76,11 +76,11 @@ public:
 		FIELD_CCD_RESULT,			       //CCD發送檢測結果						54		 D1356			  word          
 		FIELD_CCD_RESULT_RECEIVED,		   //CCD接收PLC接收檢測結果完成				55		 D1357			  word          
 
-		FIELD_RESULT_OKNum,		   //版OK数量							57		 D1359			  word           =FIELD_RESULT_A
+		FIELD_RESULT_OKNum,				   //版OK数量							57		 D1359			  word           =FIELD_RESULT_A
 		FIELD_RESULT_NGNum,			       //版NG数量							58		 D1360			  word           =FIELD_RESULT_P
-		FIELD_RESULT_QUALIFYRATE,	   //訂單合格率							60		 D1362~D1363	  real          
+		FIELD_RESULT_QUALIFYRATE,	       //訂單合格率							60		 D1362~D1363	  real          
 
-		FIELD_BATCH_MES,		       //通知MES工單資訊						62		 D1366			  word          
+		FIELD_BATCH_MES,		           //通知MES工單資訊						62		 D1366			  word          
 		FIELD_INSP_SETTING,				   //檢測設定								63		 D1367~D1371	  string[10]    
 		FIELD_LIGHT_SETTING,			   //光源設定								64		 D1372~D1376	  string[10]    
 		FIELD_START_TIME,				   //檢測開始時間							65		 D1377~D1385	  string[18]    

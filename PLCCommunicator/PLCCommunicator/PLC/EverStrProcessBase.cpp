@@ -102,7 +102,7 @@ void CEverStrProcessBase::ProcessAOIResponse(LPARAM lp)
 {
 	switch (lp)//控制碼
 	{
-		case WM_SYST_PARAMCCL_CMD: //PLC
+		case WM_SYST_PARAMCCL_CMD: //PLC 101
 		{
 			WORD wReceive = _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCD_COMMAND_RECEIVED));//給上位機PLC回應狀態
 			WORD wCommand = _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCL_COMMAND));//目前回應狀態
@@ -139,7 +139,7 @@ void CEverStrProcessBase::ProcessResult()
 	//設置DATA結構
 	auto SetData = [&](DWORD dwAddFlag, void* pDst, int nSize, CString strAddLog, int nLogType)
 	{
-		if (dwFlag & dwAddFlag)//若無則跳過
+		if (dwFlag & dwAddFlag)//取出對應值標籤 若無則跳過
 		{
 			if (USM_ReadData((BYTE*)pDst, nSize, nOffset))
 			{
@@ -215,7 +215,7 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 			switch (i)
 			{
 #ifdef USE_TEST_TIMER
-				case TIMER_TEST://[測試]寫入
+				case TIMER_TEST://[測試]上傳寫入
 				{
 					BATCH_SHARE_SYST_RESULTCCL_ xResult;
 					memset(&xResult, 0, sizeof(BATCH_SHARE_SYST_RESULTCCL_));
