@@ -40,7 +40,7 @@ namespace PLC_Data_Access
             txt_ActStationNumber.Text = TParameter.Mx_Connect.ActStationNumber.ToString();
             txt_ActStopBits.Text = TParameter.Mx_Connect.ActStopBits.ToString();
             txt_ActSumCheck.Text = TParameter.Mx_Connect.ActSumCheck.ToString();
-            txt_ActThoughNetworkType.Text = TParameter.Mx_Connect.ActThoughNetworkType.ToString();
+            txt_ActThroughNetworkType.Text = TParameter.Mx_Connect.ActThroughNetworkType.ToString();
             txt_ActTimeOut.Text = TParameter.Mx_Connect.ActTimeOut.ToString();
             txt_ActUnitNumber.Text = TParameter.Mx_Connect.ActUnitNumber.ToString();
             txt_ActUnitType.Text = TParameter.Mx_Connect.ActUnitType.ToString();
@@ -86,7 +86,7 @@ namespace PLC_Data_Access
         private void Cb_CPUType_SelectedIndexChanged(object sender, EventArgs e)
         {
             //當選取CPU-Type列表變動
-            TParameter.Mx_Connect.Prog_Connect.ActHostAddress = txt_Address.Text;
+            TParameter.Mx_Connect.ActHostAddress = txt_Address.Text;
             //設定屬性
             TParameter.Mx_Connect.SetPLCProperty(cb_CPUType.SelectedItem.ToString());//設定全屬性
 
@@ -112,7 +112,7 @@ namespace PLC_Data_Access
             txt_ActStationNumber.Text = TParameter.Mx_Connect.ActStationNumber.ToString();
             txt_ActStopBits.Text = TParameter.Mx_Connect.ActStopBits.ToString();
             txt_ActSumCheck.Text = TParameter.Mx_Connect.ActSumCheck.ToString();
-            txt_ActThoughNetworkType.Text = TParameter.Mx_Connect.ActThoughNetworkType.ToString();
+            txt_ActThroughNetworkType.Text = TParameter.Mx_Connect.ActThroughNetworkType.ToString();
             txt_ActTimeOut.Text = TParameter.Mx_Connect.ActTimeOut.ToString();
             txt_ActUnitNumber.Text = TParameter.Mx_Connect.ActUnitNumber.ToString();
             txt_ActUnitType.Text = TParameter.Mx_Connect.ActUnitType.ToString();

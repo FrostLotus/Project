@@ -39,7 +39,7 @@
             this.txt_ActUnitNumber = new System.Windows.Forms.TextBox();
             this.txt_ActTimeOut = new System.Windows.Forms.TextBox();
             this.txt_ActIntelligentPreferenceBit = new System.Windows.Forms.TextBox();
-            this.txt_ActThoughNetworkType = new System.Windows.Forms.TextBox();
+            this.txt_ActThroughNetworkType = new System.Windows.Forms.TextBox();
             this.txt_ActSumCheck = new System.Windows.Forms.TextBox();
             this.txt_ActDsidPropertyBit = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -109,7 +109,7 @@
             this.groupBox1.Controls.Add(this.txt_ActUnitNumber);
             this.groupBox1.Controls.Add(this.txt_ActTimeOut);
             this.groupBox1.Controls.Add(this.txt_ActIntelligentPreferenceBit);
-            this.groupBox1.Controls.Add(this.txt_ActThoughNetworkType);
+            this.groupBox1.Controls.Add(this.txt_ActThroughNetworkType);
             this.groupBox1.Controls.Add(this.txt_ActSumCheck);
             this.groupBox1.Controls.Add(this.txt_ActDsidPropertyBit);
             this.groupBox1.Controls.Add(this.label6);
@@ -270,12 +270,12 @@
             // 
             // txt_ActThoughNetworkType
             // 
-            this.txt_ActThoughNetworkType.Enabled = false;
-            this.txt_ActThoughNetworkType.Location = new System.Drawing.Point(655, 363);
-            this.txt_ActThoughNetworkType.Name = "txt_ActThoughNetworkType";
-            this.txt_ActThoughNetworkType.Size = new System.Drawing.Size(100, 22);
-            this.txt_ActThoughNetworkType.TabIndex = 40;
-            this.txt_ActThoughNetworkType.Text = "0";
+            this.txt_ActThroughNetworkType.Enabled = false;
+            this.txt_ActThroughNetworkType.Location = new System.Drawing.Point(655, 363);
+            this.txt_ActThroughNetworkType.Name = "txt_ActThoughNetworkType";
+            this.txt_ActThroughNetworkType.Size = new System.Drawing.Size(100, 22);
+            this.txt_ActThroughNetworkType.TabIndex = 40;
+            this.txt_ActThroughNetworkType.Text = "0";
             // 
             // txt_ActSumCheck
             // 
@@ -827,7 +827,7 @@
         private System.Windows.Forms.TextBox txt_ActUnitNumber;
         private System.Windows.Forms.TextBox txt_ActTimeOut;
         private System.Windows.Forms.TextBox txt_ActIntelligentPreferenceBit;
-        private System.Windows.Forms.TextBox txt_ActThoughNetworkType;
+        private System.Windows.Forms.TextBox txt_ActThroughNetworkType;
         private System.Windows.Forms.TextBox txt_ActSumCheck;
         private System.Windows.Forms.TextBox txt_ActDsidPropertyBit;
         private System.Windows.Forms.Label label54;

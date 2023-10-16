@@ -45,12 +45,12 @@ namespace PLC_Data_Access
         ///軟元件列表
         //讀列表
         //List<ABC> ls = new List<ABC>();
-        public List<string> Read_SN             = new List<string>();//序號
-        public List<string> Read_Label          = new List<string>();//名稱
-        public List<string> Read_Address        = new List<string>();//軟元件地址
-        public List<string> Read_DataType       = new List<string>();//資料類型
-        public List<string> Read_Data           = new List<string>();//資料包格式
-        public List<string> Read_IsUse          = new List<string>();//是否使用
+        public List<string> Read_SN = new List<string>();//序號
+        public List<string> Read_Label = new List<string>();//名稱
+        public List<string> Read_Address = new List<string>();//軟元件地址
+        public List<string> Read_DataType = new List<string>();//資料類型
+        public List<string> Read_Data = new List<string>();//資料包格式
+        public List<string> Read_IsUse = new List<string>();//是否使用
         public List<string> Read_DeviceValueGet = new List<string>();//讀取值
 
         public DataGridViewRow[] ReadGridRow;//下載DataGridview
@@ -428,55 +428,31 @@ namespace PLC_Data_Access
             }
         }
     }
-    public class CMX_Component
+    public class CMX_Component : ActProgTypeClass
     {
-        public ActProgTypeClass Prog_Connect = new ActProgTypeClass();//Program
+        //public ActProgTypeClass Prog_Connect = new ActProgTypeClass();//Program
         public ActSupportMsgClass SpMsg_Connect = new ActSupportMsgClass();//Message
 
         #region Property 連線參數
-
-        public int iReturnCode = 0;//回傳代碼
-        public int iReciveTime = 2000;//回傳時間
-
-        public string CpuName = "FX5UCPU";//CPU名稱
-        public int CPUType = 528;//CPU名稱:代碼
-
-        public string ActHostAddress = "192.168.2.12";//IP
-        // 預設值走FX5U-32M
-        public int ActConnectUnitNumber = 0;
-        public int ActBaudRate = 0;
-        public int ActControl = 0;
-        public int ActCpuType = 528;
-        public int ActDataBits = 0;
-        public int ActDestinationIONumber = 0;
-        public int ActDestinationPortNumber = 5562;
-        public int ActDidPropertyBit = 1;
-        public int ActDsidPropertyBit = 1;
-        public int ActIntelligentPreferenceBit = 0;
-        public int ActIONumber = 1023;
-        public int ActNetworkNumber = 0;
-        public int ActMultiDropChannelNumber = 0;
-        public int ActSourceNetworkNumber = 0;
-
-        public int ActPacketType = 1;
-        public string ActPassword = "";
-        public int ActPortNumber = 0;
-        public int ActProtocolType = 5;
-        public int ActSourceStationNumber = 5;
-        public int ActStationNumber = 255;
-        public int ActStopBits = 0;
-        public int ActSumCheck = 0;
-        public int ActThoughNetworkType = 1;
-        public int ActTimeOut = 100;
-        public int ActUnitNumber = 0;
-        public int ActUnitType = 8193;
-        public int ActParity = 0;
-        public int ActCpuTimeOut = 0;
+        /// <summary>回傳代碼</summary>
+        public int iReturnCode = 0;
+        /// <summary>程式回傳時間</summary>
+        public int iReciveTime = 2000;
+        /// <summary>CPU名稱</summary>
+        public string CpuName = "FX5UCPU";
+        /// <summary>CPU代碼</summary>
+        public int CPUType = 528;
+        /// <summary>HostIP </summary>
+        public string _ActHostAddress = "192.168.2.12";
         #endregion
         //-------------------------
         public CMX_Component()
         {
-
+            iReturnCode = 0;
+            iReciveTime = 2000;
+            CpuName = "FX5UCPU";
+            CPUType = 528;
+            _ActHostAddress = "192.168.2.99";
         }
         //-------------------------
         public void SetPLCProperty(string sType)
@@ -487,242 +463,242 @@ namespace PLC_Data_Access
                 case "FX5UCPU":
                     #region FX5UCPU
 
-                    TParameter.Mx_Connect.Prog_Connect.ActHostAddress = ActHostAddress = "192.168.2.99";
-                    TParameter.Mx_Connect.Prog_Connect.ActConnectUnitNumber = ActConnectUnitNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActCpuType = ActCpuType = 528;
+                    TParameter.Mx_Connect.ActHostAddress = ActHostAddress = "192.168.2.99";
+                    TParameter.Mx_Connect.ActConnectUnitNumber = ActConnectUnitNumber = 0;
+                    TParameter.Mx_Connect.ActCpuType = ActCpuType = 528;
 
-                    TParameter.Mx_Connect.Prog_Connect.ActBaudRate = ActBaudRate = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActControl = ActControl = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActDataBits = ActDataBits = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActDataBits = ActDataBits = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActDestinationIONumber = ActDestinationIONumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActDestinationPortNumber = ActDestinationPortNumber = 5562;
-                    TParameter.Mx_Connect.Prog_Connect.ActDidPropertyBit = ActDidPropertyBit = 1;
-                    TParameter.Mx_Connect.Prog_Connect.ActDsidPropertyBit = ActDsidPropertyBit = 1;
-                    TParameter.Mx_Connect.Prog_Connect.ActIntelligentPreferenceBit = ActIntelligentPreferenceBit = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActIONumber = ActIONumber = 1023;
-                    TParameter.Mx_Connect.Prog_Connect.ActNetworkNumber = ActNetworkNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActMultiDropChannelNumber = ActMultiDropChannelNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActSourceNetworkNumber = ActSourceNetworkNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActPacketType = ActPacketType = 1;
-                    TParameter.Mx_Connect.Prog_Connect.ActPassword = ActPassword = "";
-                    TParameter.Mx_Connect.Prog_Connect.ActPortNumber = ActPortNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActProtocolType = ActProtocolType = 5;
-                    TParameter.Mx_Connect.Prog_Connect.ActSourceStationNumber = ActSourceStationNumber = 5;
-                    TParameter.Mx_Connect.Prog_Connect.ActStationNumber = ActStationNumber = 255;
-                    TParameter.Mx_Connect.Prog_Connect.ActStopBits = ActStopBits = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActSumCheck = ActSumCheck = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActThroughNetworkType = ActThoughNetworkType = 1;
-                    TParameter.Mx_Connect.Prog_Connect.ActTimeOut = ActTimeOut = 10000;
-                    TParameter.Mx_Connect.Prog_Connect.ActCpuTimeOut = ActCpuTimeOut = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActUnitNumber = ActUnitNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActUnitType = ActUnitType = 8193;
+                    TParameter.Mx_Connect.ActBaudRate = ActBaudRate = 0;
+                    TParameter.Mx_Connect.ActControl = ActControl = 0;
+                    TParameter.Mx_Connect.ActDataBits = ActDataBits = 0;
+                    TParameter.Mx_Connect.ActDataBits = ActDataBits = 0;
+                    TParameter.Mx_Connect.ActDestinationIONumber = ActDestinationIONumber = 0;
+                    TParameter.Mx_Connect.ActDestinationPortNumber = ActDestinationPortNumber = 5562;
+                    TParameter.Mx_Connect.ActDidPropertyBit = ActDidPropertyBit = 1;
+                    TParameter.Mx_Connect.ActDsidPropertyBit = ActDsidPropertyBit = 1;
+                    TParameter.Mx_Connect.ActIntelligentPreferenceBit = ActIntelligentPreferenceBit = 0;
+                    TParameter.Mx_Connect.ActIONumber = ActIONumber = 1023;
+                    TParameter.Mx_Connect.ActNetworkNumber = ActNetworkNumber = 0;
+                    TParameter.Mx_Connect.ActMultiDropChannelNumber = ActMultiDropChannelNumber = 0;
+                    TParameter.Mx_Connect.ActSourceNetworkNumber = ActSourceNetworkNumber = 0;
+                    TParameter.Mx_Connect.ActPacketType = ActPacketType = 1;
+                    TParameter.Mx_Connect.ActPassword = ActPassword = "";
+                    TParameter.Mx_Connect.ActPortNumber = ActPortNumber = 0;
+                    TParameter.Mx_Connect.ActProtocolType = ActProtocolType = 5;
+                    TParameter.Mx_Connect.ActSourceStationNumber = ActSourceStationNumber = 5;
+                    TParameter.Mx_Connect.ActStationNumber = ActStationNumber = 255;
+                    TParameter.Mx_Connect.ActStopBits = ActStopBits = 0;
+                    TParameter.Mx_Connect.ActSumCheck = ActSumCheck = 0;
+                    TParameter.Mx_Connect.ActThroughNetworkType = ActThroughNetworkType = 1;
+                    TParameter.Mx_Connect.ActTimeOut = ActTimeOut = 10000;
+                    TParameter.Mx_Connect.ActCpuTimeOut = ActCpuTimeOut = 0;
+                    TParameter.Mx_Connect.ActUnitNumber = ActUnitNumber = 0;
+                    TParameter.Mx_Connect.ActUnitType = ActUnitType = 8193;
 
                     #endregion
                     break;
                 case "Q13UDEHCPU":
                     #region Q13UDEHCPU
-                    TParameter.Mx_Connect.Prog_Connect.ActHostAddress = ActHostAddress;
+                    TParameter.Mx_Connect.ActHostAddress = ActHostAddress;
 
-                    TParameter.Mx_Connect.Prog_Connect.ActConnectUnitNumber = ActConnectUnitNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActCpuType = ActCpuType = 147;//Q13UDEHCPU
+                    TParameter.Mx_Connect.ActConnectUnitNumber = ActConnectUnitNumber = 0;
+                    TParameter.Mx_Connect.ActCpuType = ActCpuType = 147;//Q13UDEHCPU
 
-                    TParameter.Mx_Connect.Prog_Connect.ActBaudRate = ActBaudRate = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActControl = ActControl = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActDataBits = ActDataBits = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActDataBits = ActParity = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActDestinationIONumber = ActDestinationIONumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActDestinationPortNumber = ActDestinationPortNumber = 5002;
-                    TParameter.Mx_Connect.Prog_Connect.ActDidPropertyBit = ActDidPropertyBit = 1;
-                    TParameter.Mx_Connect.Prog_Connect.ActDsidPropertyBit = ActDsidPropertyBit = 1;
-                    TParameter.Mx_Connect.Prog_Connect.ActIntelligentPreferenceBit = ActIntelligentPreferenceBit = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActIONumber = ActIONumber = 1023;
-                    TParameter.Mx_Connect.Prog_Connect.ActNetworkNumber = ActNetworkNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActMultiDropChannelNumber = ActMultiDropChannelNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActSourceNetworkNumber = ActSourceNetworkNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActPacketType = ActPacketType = 1;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActPassword = ActPassword = "";
-                    TParameter.Mx_Connect.Prog_Connect.ActPortNumber = ActPortNumber = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActProtocolType = ActProtocolType = 5;
-                    TParameter.Mx_Connect.Prog_Connect.ActSourceStationNumber = ActSourceStationNumber = 0;//可能有誤
-                    TParameter.Mx_Connect.Prog_Connect.ActStationNumber = ActStationNumber = 255;
-                    TParameter.Mx_Connect.Prog_Connect.ActStopBits = ActStopBits = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActSumCheck = ActSumCheck = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActThroughNetworkType = ActThoughNetworkType = 1;//MELSECNET/10 is included.: 1 (0x01)
-                    TParameter.Mx_Connect.Prog_Connect.ActTimeOut = ActTimeOut = 10000;
-                    TParameter.Mx_Connect.Prog_Connect.ActCpuTimeOut = ActCpuTimeOut = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActUnitNumber = ActUnitNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActUnitType = ActUnitType = 26;//UNIT_QJ71E71(0x1A)
+                    TParameter.Mx_Connect.ActBaudRate = ActBaudRate = 0;//N
+                    TParameter.Mx_Connect.ActControl = ActControl = 0;//N
+                    TParameter.Mx_Connect.ActDataBits = ActDataBits = 0;//N
+                    TParameter.Mx_Connect.ActDataBits = ActParity = 0;//N
+                    TParameter.Mx_Connect.ActDestinationIONumber = ActDestinationIONumber = 0;
+                    TParameter.Mx_Connect.ActDestinationPortNumber = ActDestinationPortNumber = 5002;
+                    TParameter.Mx_Connect.ActDidPropertyBit = ActDidPropertyBit = 1;
+                    TParameter.Mx_Connect.ActDsidPropertyBit = ActDsidPropertyBit = 1;
+                    TParameter.Mx_Connect.ActIntelligentPreferenceBit = ActIntelligentPreferenceBit = 0;//N
+                    TParameter.Mx_Connect.ActIONumber = ActIONumber = 1023;
+                    TParameter.Mx_Connect.ActNetworkNumber = ActNetworkNumber = 0;
+                    TParameter.Mx_Connect.ActMultiDropChannelNumber = ActMultiDropChannelNumber = 0;
+                    TParameter.Mx_Connect.ActSourceNetworkNumber = ActSourceNetworkNumber = 0;
+                    TParameter.Mx_Connect.ActPacketType = ActPacketType = 1;//N
+                    TParameter.Mx_Connect.ActPassword = ActPassword = "";
+                    TParameter.Mx_Connect.ActPortNumber = ActPortNumber = 0;//N
+                    TParameter.Mx_Connect.ActProtocolType = ActProtocolType = 5;
+                    TParameter.Mx_Connect.ActSourceStationNumber = ActSourceStationNumber = 0;//可能有誤
+                    TParameter.Mx_Connect.ActStationNumber = ActStationNumber = 255;
+                    TParameter.Mx_Connect.ActStopBits = ActStopBits = 0;//N
+                    TParameter.Mx_Connect.ActSumCheck = ActSumCheck = 0;//N
+                    TParameter.Mx_Connect.ActThroughNetworkType = ActThroughNetworkType = 1;//MELSECNET/10 is included.: 1 (0x01)
+                    TParameter.Mx_Connect.ActTimeOut = ActTimeOut = 10000;
+                    TParameter.Mx_Connect.ActCpuTimeOut = ActCpuTimeOut = 0;//N
+                    TParameter.Mx_Connect.ActUnitNumber = ActUnitNumber = 0;
+                    TParameter.Mx_Connect.ActUnitType = ActUnitType = 26;//UNIT_QJ71E71(0x1A)
                     #endregion
                     break;
                 case "Q06UDVCPU":
                     #region Q06UDVCPU
-                    TParameter.Mx_Connect.Prog_Connect.ActHostAddress = ActHostAddress;
-                    TParameter.Mx_Connect.Prog_Connect.ActConnectUnitNumber = ActConnectUnitNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActCpuType = ActCpuType = 211;
+                    TParameter.Mx_Connect.ActHostAddress = ActHostAddress;
+                    TParameter.Mx_Connect.ActConnectUnitNumber = ActConnectUnitNumber = 0;
+                    TParameter.Mx_Connect.ActCpuType = ActCpuType = 211;
 
-                    TParameter.Mx_Connect.Prog_Connect.ActBaudRate = ActBaudRate = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActControl = ActControl = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActDataBits = ActDataBits = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActDataBits = ActParity = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActDestinationIONumber = ActDestinationIONumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActDestinationPortNumber = ActDestinationPortNumber = 5002;
-                    TParameter.Mx_Connect.Prog_Connect.ActDidPropertyBit = ActDidPropertyBit = 1;
-                    TParameter.Mx_Connect.Prog_Connect.ActDsidPropertyBit = ActDsidPropertyBit = 1;
-                    TParameter.Mx_Connect.Prog_Connect.ActIntelligentPreferenceBit = ActIntelligentPreferenceBit = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActIONumber = ActIONumber = 1023;
-                    TParameter.Mx_Connect.Prog_Connect.ActNetworkNumber = ActNetworkNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActMultiDropChannelNumber = ActMultiDropChannelNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActSourceNetworkNumber = ActSourceNetworkNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActPacketType = ActPacketType = 1;
-                    TParameter.Mx_Connect.Prog_Connect.ActPassword = ActPassword = "";
-                    TParameter.Mx_Connect.Prog_Connect.ActPortNumber = ActPortNumber = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActProtocolType = ActProtocolType = 5;
-                    TParameter.Mx_Connect.Prog_Connect.ActSourceStationNumber = ActSourceStationNumber = 0;//可能有誤
-                    TParameter.Mx_Connect.Prog_Connect.ActStationNumber = ActStationNumber = 255;
-                    TParameter.Mx_Connect.Prog_Connect.ActStopBits = ActStopBits = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActSumCheck = ActSumCheck = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActThroughNetworkType = ActThoughNetworkType = 1;//MELSECNET/10 is included.: 1 (0x01)
-                    TParameter.Mx_Connect.Prog_Connect.ActTimeOut = ActTimeOut = 10000;
-                    TParameter.Mx_Connect.Prog_Connect.ActCpuTimeOut = ActCpuTimeOut = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActUnitNumber = ActUnitNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActUnitType = ActUnitType = 26;//UNIT_QJ71E71(0x1A)
+                    TParameter.Mx_Connect.ActBaudRate = ActBaudRate = 0;//N
+                    TParameter.Mx_Connect.ActControl = ActControl = 0;//N
+                    TParameter.Mx_Connect.ActDataBits = ActDataBits = 0;//N
+                    TParameter.Mx_Connect.ActDataBits = ActParity = 0;//N
+                    TParameter.Mx_Connect.ActDestinationIONumber = ActDestinationIONumber = 0;
+                    TParameter.Mx_Connect.ActDestinationPortNumber = ActDestinationPortNumber = 5002;
+                    TParameter.Mx_Connect.ActDidPropertyBit = ActDidPropertyBit = 1;
+                    TParameter.Mx_Connect.ActDsidPropertyBit = ActDsidPropertyBit = 1;
+                    TParameter.Mx_Connect.ActIntelligentPreferenceBit = ActIntelligentPreferenceBit = 0;//N
+                    TParameter.Mx_Connect.ActIONumber = ActIONumber = 1023;
+                    TParameter.Mx_Connect.ActNetworkNumber = ActNetworkNumber = 0;
+                    TParameter.Mx_Connect.ActMultiDropChannelNumber = ActMultiDropChannelNumber = 0;
+                    TParameter.Mx_Connect.ActSourceNetworkNumber = ActSourceNetworkNumber = 0;
+                    TParameter.Mx_Connect.ActPacketType = ActPacketType = 1;
+                    TParameter.Mx_Connect.ActPassword = ActPassword = "";
+                    TParameter.Mx_Connect.ActPortNumber = ActPortNumber = 0;//N
+                    TParameter.Mx_Connect.ActProtocolType = ActProtocolType = 5;
+                    TParameter.Mx_Connect.ActSourceStationNumber = ActSourceStationNumber = 0;//可能有誤
+                    TParameter.Mx_Connect.ActStationNumber = ActStationNumber = 255;
+                    TParameter.Mx_Connect.ActStopBits = ActStopBits = 0;//N
+                    TParameter.Mx_Connect.ActSumCheck = ActSumCheck = 0;//N
+                    TParameter.Mx_Connect.ActThroughNetworkType = ActThroughNetworkType = 1;//MELSECNET/10 is included.: 1 (0x01)
+                    TParameter.Mx_Connect.ActTimeOut = ActTimeOut = 10000;
+                    TParameter.Mx_Connect.ActCpuTimeOut = ActCpuTimeOut = 0;//N
+                    TParameter.Mx_Connect.ActUnitNumber = ActUnitNumber = 0;
+                    TParameter.Mx_Connect.ActUnitType = ActUnitType = 26;//UNIT_QJ71E71(0x1A)
                     #endregion
                     break;
                 case "Q06HCPU":
                     #region Q06HCPU
-                    TParameter.Mx_Connect.Prog_Connect.ActHostAddress = ActHostAddress;
-                    TParameter.Mx_Connect.Prog_Connect.ActConnectUnitNumber = ActConnectUnitNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActCpuType = ActCpuType = 70;//Q06PHCPU
+                    TParameter.Mx_Connect.ActHostAddress = ActHostAddress;
+                    TParameter.Mx_Connect.ActConnectUnitNumber = ActConnectUnitNumber = 0;
+                    TParameter.Mx_Connect.ActCpuType = ActCpuType = 70;//Q06PHCPU
 
-                    TParameter.Mx_Connect.Prog_Connect.ActBaudRate = ActBaudRate = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActControl = ActControl = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActDataBits = ActDataBits = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActDataBits = ActParity = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActDestinationIONumber = ActDestinationIONumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActDestinationPortNumber = ActDestinationPortNumber = 5002;
-                    TParameter.Mx_Connect.Prog_Connect.ActDidPropertyBit = ActDidPropertyBit = 1;
-                    TParameter.Mx_Connect.Prog_Connect.ActDsidPropertyBit = ActDsidPropertyBit = 1;
-                    TParameter.Mx_Connect.Prog_Connect.ActIntelligentPreferenceBit = ActIntelligentPreferenceBit = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActIONumber = ActIONumber = 1023;
-                    TParameter.Mx_Connect.Prog_Connect.ActNetworkNumber = ActNetworkNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActMultiDropChannelNumber = ActMultiDropChannelNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActSourceNetworkNumber = ActSourceNetworkNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActPacketType = ActPacketType = 1;
-                    TParameter.Mx_Connect.Prog_Connect.ActPassword = ActPassword = "";
-                    TParameter.Mx_Connect.Prog_Connect.ActPortNumber = ActPortNumber = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActProtocolType = ActProtocolType = 5;
-                    TParameter.Mx_Connect.Prog_Connect.ActSourceStationNumber = ActSourceStationNumber = 0;//可能有誤
-                    TParameter.Mx_Connect.Prog_Connect.ActStationNumber = ActStationNumber = 255;
-                    TParameter.Mx_Connect.Prog_Connect.ActStopBits = ActStopBits = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActSumCheck = ActSumCheck = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActThroughNetworkType = ActThoughNetworkType = 1;//MELSECNET/10 is included.: 1 (0x01)
-                    TParameter.Mx_Connect.Prog_Connect.ActTimeOut = ActTimeOut = 10000;
-                    TParameter.Mx_Connect.Prog_Connect.ActCpuTimeOut = ActCpuTimeOut = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActUnitNumber = ActUnitNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActUnitType = ActUnitType = 26;//UNIT_QJ71E71(0x1A)
+                    TParameter.Mx_Connect.ActBaudRate = ActBaudRate = 0;//N
+                    TParameter.Mx_Connect.ActControl = ActControl = 0;//N
+                    TParameter.Mx_Connect.ActDataBits = ActDataBits = 0;//N
+                    TParameter.Mx_Connect.ActDataBits = ActParity = 0;//N
+                    TParameter.Mx_Connect.ActDestinationIONumber = ActDestinationIONumber = 0;
+                    TParameter.Mx_Connect.ActDestinationPortNumber = ActDestinationPortNumber = 5002;
+                    TParameter.Mx_Connect.ActDidPropertyBit = ActDidPropertyBit = 1;
+                    TParameter.Mx_Connect.ActDsidPropertyBit = ActDsidPropertyBit = 1;
+                    TParameter.Mx_Connect.ActIntelligentPreferenceBit = ActIntelligentPreferenceBit = 0;//N
+                    TParameter.Mx_Connect.ActIONumber = ActIONumber = 1023;
+                    TParameter.Mx_Connect.ActNetworkNumber = ActNetworkNumber = 0;
+                    TParameter.Mx_Connect.ActMultiDropChannelNumber = ActMultiDropChannelNumber = 0;
+                    TParameter.Mx_Connect.ActSourceNetworkNumber = ActSourceNetworkNumber = 0;
+                    TParameter.Mx_Connect.ActPacketType = ActPacketType = 1;
+                    TParameter.Mx_Connect.ActPassword = ActPassword = "";
+                    TParameter.Mx_Connect.ActPortNumber = ActPortNumber = 0;//N
+                    TParameter.Mx_Connect.ActProtocolType = ActProtocolType = 5;
+                    TParameter.Mx_Connect.ActSourceStationNumber = ActSourceStationNumber = 0;//可能有誤
+                    TParameter.Mx_Connect.ActStationNumber = ActStationNumber = 255;
+                    TParameter.Mx_Connect.ActStopBits = ActStopBits = 0;//N
+                    TParameter.Mx_Connect.ActSumCheck = ActSumCheck = 0;//N
+                    TParameter.Mx_Connect.ActThroughNetworkType = ActThroughNetworkType = 1;//MELSECNET/10 is included.: 1 (0x01)
+                    TParameter.Mx_Connect.ActTimeOut = ActTimeOut = 10000;
+                    TParameter.Mx_Connect.ActCpuTimeOut = ActCpuTimeOut = 0;//N
+                    TParameter.Mx_Connect.ActUnitNumber = ActUnitNumber = 0;
+                    TParameter.Mx_Connect.ActUnitType = ActUnitType = 26;//UNIT_QJ71E71(0x1A)
                     #endregion
                     break;
                 case "Q06UDEHCPU":
                     #region Q06UDEHCPU
-                    TParameter.Mx_Connect.Prog_Connect.ActHostAddress = ActHostAddress;
-                    TParameter.Mx_Connect.Prog_Connect.ActConnectUnitNumber = ActConnectUnitNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActCpuType = ActCpuType = 146;
+                    TParameter.Mx_Connect.ActHostAddress = ActHostAddress;
+                    TParameter.Mx_Connect.ActConnectUnitNumber = ActConnectUnitNumber = 0;
+                    TParameter.Mx_Connect.ActCpuType = ActCpuType = 146;
 
-                    TParameter.Mx_Connect.Prog_Connect.ActBaudRate = ActBaudRate = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActControl = ActControl = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActDataBits = ActDataBits = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActDataBits = ActParity = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActDestinationIONumber = ActDestinationIONumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActDestinationPortNumber = ActDestinationPortNumber = 5002;
-                    TParameter.Mx_Connect.Prog_Connect.ActDidPropertyBit = ActDidPropertyBit = 1;
-                    TParameter.Mx_Connect.Prog_Connect.ActDsidPropertyBit = ActDsidPropertyBit = 1;
-                    TParameter.Mx_Connect.Prog_Connect.ActIntelligentPreferenceBit = ActIntelligentPreferenceBit = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActIONumber = ActIONumber = 1023;
-                    TParameter.Mx_Connect.Prog_Connect.ActNetworkNumber = ActNetworkNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActMultiDropChannelNumber = ActMultiDropChannelNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActSourceNetworkNumber = ActSourceNetworkNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActPacketType = ActPacketType = 1;
-                    TParameter.Mx_Connect.Prog_Connect.ActPassword = ActPassword = "";
-                    TParameter.Mx_Connect.Prog_Connect.ActPortNumber = ActPortNumber = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActProtocolType = ActProtocolType = 5;
-                    TParameter.Mx_Connect.Prog_Connect.ActSourceStationNumber = ActSourceStationNumber = 0;//可能有誤
-                    TParameter.Mx_Connect.Prog_Connect.ActStationNumber = ActStationNumber = 255;
-                    TParameter.Mx_Connect.Prog_Connect.ActStopBits = ActStopBits = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActSumCheck = ActSumCheck = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActThroughNetworkType = ActThoughNetworkType = 1;//MELSECNET/10 is included.: 1 (0x01)
-                    TParameter.Mx_Connect.Prog_Connect.ActTimeOut = ActTimeOut = 10000;
-                    TParameter.Mx_Connect.Prog_Connect.ActCpuTimeOut = ActCpuTimeOut = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActUnitNumber = ActUnitNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActUnitType = ActUnitType = 26;//UNIT_QJ71E71(0x1A)
+                    TParameter.Mx_Connect.ActBaudRate = ActBaudRate = 0;//N
+                    TParameter.Mx_Connect.ActControl = ActControl = 0;//N
+                    TParameter.Mx_Connect.ActDataBits = ActDataBits = 0;//N
+                    TParameter.Mx_Connect.ActDataBits = ActParity = 0;
+                    TParameter.Mx_Connect.ActDestinationIONumber = ActDestinationIONumber = 0;
+                    TParameter.Mx_Connect.ActDestinationPortNumber = ActDestinationPortNumber = 5002;
+                    TParameter.Mx_Connect.ActDidPropertyBit = ActDidPropertyBit = 1;
+                    TParameter.Mx_Connect.ActDsidPropertyBit = ActDsidPropertyBit = 1;
+                    TParameter.Mx_Connect.ActIntelligentPreferenceBit = ActIntelligentPreferenceBit = 0;//N
+                    TParameter.Mx_Connect.ActIONumber = ActIONumber = 1023;
+                    TParameter.Mx_Connect.ActNetworkNumber = ActNetworkNumber = 0;
+                    TParameter.Mx_Connect.ActMultiDropChannelNumber = ActMultiDropChannelNumber = 0;
+                    TParameter.Mx_Connect.ActSourceNetworkNumber = ActSourceNetworkNumber = 0;
+                    TParameter.Mx_Connect.ActPacketType = ActPacketType = 1;
+                    TParameter.Mx_Connect.ActPassword = ActPassword = "";
+                    TParameter.Mx_Connect.ActPortNumber = ActPortNumber = 0;//N
+                    TParameter.Mx_Connect.ActProtocolType = ActProtocolType = 5;
+                    TParameter.Mx_Connect.ActSourceStationNumber = ActSourceStationNumber = 0;//可能有誤
+                    TParameter.Mx_Connect.ActStationNumber = ActStationNumber = 255;
+                    TParameter.Mx_Connect.ActStopBits = ActStopBits = 0;//N
+                    TParameter.Mx_Connect.ActSumCheck = ActSumCheck = 0;//N
+                    TParameter.Mx_Connect.ActThroughNetworkType = ActThroughNetworkType = 1;//MELSECNET/10 is included.: 1 (0x01)
+                    TParameter.Mx_Connect.ActTimeOut = ActTimeOut = 10000;
+                    TParameter.Mx_Connect.ActCpuTimeOut = ActCpuTimeOut = 0;//N
+                    TParameter.Mx_Connect.ActUnitNumber = ActUnitNumber = 0;
+                    TParameter.Mx_Connect.ActUnitType = ActUnitType = 26;//UNIT_QJ71E71(0x1A)
                     #endregion
                     break;
                 case "R16CPU":
                     #region R16CPU
-                    TParameter.Mx_Connect.Prog_Connect.ActHostAddress = ActHostAddress;
-                    TParameter.Mx_Connect.Prog_Connect.ActConnectUnitNumber = ActConnectUnitNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActCpuType = ActCpuType = 4099;
+                    TParameter.Mx_Connect.ActHostAddress = ActHostAddress;
+                    TParameter.Mx_Connect.ActConnectUnitNumber = ActConnectUnitNumber = 0;
+                    TParameter.Mx_Connect.ActCpuType = ActCpuType = 4099;
 
-                    TParameter.Mx_Connect.Prog_Connect.ActBaudRate = ActBaudRate = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActControl = ActControl = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActDataBits = ActDataBits = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActDataBits = ActParity = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActDestinationIONumber = ActDestinationIONumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActDestinationPortNumber = ActDestinationPortNumber = 5002;
-                    TParameter.Mx_Connect.Prog_Connect.ActDidPropertyBit = ActDidPropertyBit = 1;
-                    TParameter.Mx_Connect.Prog_Connect.ActDsidPropertyBit = ActDsidPropertyBit = 1;
-                    TParameter.Mx_Connect.Prog_Connect.ActIntelligentPreferenceBit = ActIntelligentPreferenceBit = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActIONumber = ActIONumber = 1023;
-                    TParameter.Mx_Connect.Prog_Connect.ActNetworkNumber = ActNetworkNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActMultiDropChannelNumber = ActMultiDropChannelNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActSourceNetworkNumber = ActSourceNetworkNumber = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActPacketType = ActPacketType = 1;
-                    TParameter.Mx_Connect.Prog_Connect.ActPassword = ActPassword = "";
-                    TParameter.Mx_Connect.Prog_Connect.ActPortNumber = ActPortNumber = 1;
-                    TParameter.Mx_Connect.Prog_Connect.ActProtocolType = ActProtocolType = 5;
-                    TParameter.Mx_Connect.Prog_Connect.ActSourceStationNumber = ActSourceStationNumber = 0;//可能有誤
-                    TParameter.Mx_Connect.Prog_Connect.ActStationNumber = ActStationNumber = 255;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActStopBits = ActStopBits = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActSumCheck = ActSumCheck = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActThroughNetworkType = ActThoughNetworkType = 1;//MELSECNET/10 is included.: 1 (0x01)
-                    TParameter.Mx_Connect.Prog_Connect.ActTimeOut = ActTimeOut = 10000;
-                    TParameter.Mx_Connect.Prog_Connect.ActCpuTimeOut = ActCpuTimeOut = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActUnitNumber = ActUnitNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActUnitType = ActUnitType = 4098;//RCPU Ethernet port connection (IP specification) 0x1002
+                    TParameter.Mx_Connect.ActBaudRate = ActBaudRate = 0;
+                    TParameter.Mx_Connect.ActControl = ActControl = 0;
+                    TParameter.Mx_Connect.ActDataBits = ActDataBits = 0;
+                    TParameter.Mx_Connect.ActDataBits = ActParity = 0;
+                    TParameter.Mx_Connect.ActDestinationIONumber = ActDestinationIONumber = 0;
+                    TParameter.Mx_Connect.ActDestinationPortNumber = ActDestinationPortNumber = 5002;
+                    TParameter.Mx_Connect.ActDidPropertyBit = ActDidPropertyBit = 1;
+                    TParameter.Mx_Connect.ActDsidPropertyBit = ActDsidPropertyBit = 1;
+                    TParameter.Mx_Connect.ActIntelligentPreferenceBit = ActIntelligentPreferenceBit = 0;
+                    TParameter.Mx_Connect.ActIONumber = ActIONumber = 1023;
+                    TParameter.Mx_Connect.ActNetworkNumber = ActNetworkNumber = 0;
+                    TParameter.Mx_Connect.ActMultiDropChannelNumber = ActMultiDropChannelNumber = 0;
+                    TParameter.Mx_Connect.ActSourceNetworkNumber = ActSourceNetworkNumber = 0;//N
+                    TParameter.Mx_Connect.ActPacketType = ActPacketType = 1;
+                    TParameter.Mx_Connect.ActPassword = ActPassword = "";
+                    TParameter.Mx_Connect.ActPortNumber = ActPortNumber = 1;
+                    TParameter.Mx_Connect.ActProtocolType = ActProtocolType = 5;
+                    TParameter.Mx_Connect.ActSourceStationNumber = ActSourceStationNumber = 0;//可能有誤
+                    TParameter.Mx_Connect.ActStationNumber = ActStationNumber = 255;//N
+                    TParameter.Mx_Connect.ActStopBits = ActStopBits = 0;
+                    TParameter.Mx_Connect.ActSumCheck = ActSumCheck = 0;
+                    TParameter.Mx_Connect.ActThroughNetworkType = ActThroughNetworkType = 1;//MELSECNET/10 is included.: 1 (0x01)
+                    TParameter.Mx_Connect.ActTimeOut = ActTimeOut = 10000;
+                    TParameter.Mx_Connect.ActCpuTimeOut = ActCpuTimeOut = 0;
+                    TParameter.Mx_Connect.ActUnitNumber = ActUnitNumber = 0;
+                    TParameter.Mx_Connect.ActUnitType = ActUnitType = 4098;//RCPU Ethernet port connection (IP specification) 0x1002
                     #endregion
                     break;
                 case "R32CPU":
                     #region R32CPU
-                    TParameter.Mx_Connect.Prog_Connect.ActHostAddress = ActHostAddress;
-                    TParameter.Mx_Connect.Prog_Connect.ActConnectUnitNumber = ActConnectUnitNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActCpuType = ActCpuType = 4100;
+                    TParameter.Mx_Connect.ActHostAddress = ActHostAddress;
+                    TParameter.Mx_Connect.ActConnectUnitNumber = ActConnectUnitNumber = 0;
+                    TParameter.Mx_Connect.ActCpuType = ActCpuType = 4100;
 
-                    TParameter.Mx_Connect.Prog_Connect.ActBaudRate = ActBaudRate = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActControl = ActControl = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActDataBits = ActDataBits = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActDataBits = ActParity = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActDestinationIONumber = ActDestinationIONumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActDestinationPortNumber = ActDestinationPortNumber = 5002;
-                    TParameter.Mx_Connect.Prog_Connect.ActDidPropertyBit = ActDidPropertyBit = 1;
-                    TParameter.Mx_Connect.Prog_Connect.ActDsidPropertyBit = ActDsidPropertyBit = 1;
-                    TParameter.Mx_Connect.Prog_Connect.ActIntelligentPreferenceBit = ActIntelligentPreferenceBit = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActIONumber = ActIONumber = 1023;
-                    TParameter.Mx_Connect.Prog_Connect.ActNetworkNumber = ActNetworkNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActMultiDropChannelNumber = ActMultiDropChannelNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActSourceNetworkNumber = ActSourceNetworkNumber = 0;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActPacketType = ActPacketType = 1;
-                    TParameter.Mx_Connect.Prog_Connect.ActPassword = ActPassword = "";
-                    TParameter.Mx_Connect.Prog_Connect.ActPortNumber = ActPortNumber = 1;
-                    TParameter.Mx_Connect.Prog_Connect.ActProtocolType = ActProtocolType = 5;
-                    TParameter.Mx_Connect.Prog_Connect.ActSourceStationNumber = ActSourceStationNumber = 0;//可能有誤
-                    TParameter.Mx_Connect.Prog_Connect.ActStationNumber = ActStationNumber = 255;//N
-                    TParameter.Mx_Connect.Prog_Connect.ActStopBits = ActStopBits = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActSumCheck = ActSumCheck = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActThroughNetworkType = ActThoughNetworkType = 1;//MELSECNET/10 is included.: 1 (0x01)
-                    TParameter.Mx_Connect.Prog_Connect.ActTimeOut = ActTimeOut = 10000;
-                    TParameter.Mx_Connect.Prog_Connect.ActCpuTimeOut = ActCpuTimeOut = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActUnitNumber = ActUnitNumber = 0;
-                    TParameter.Mx_Connect.Prog_Connect.ActUnitType = ActUnitType = 4098;//RCPU Ethernet port connection (IP specification) 0x1002
+                    TParameter.Mx_Connect.ActBaudRate = ActBaudRate = 0;
+                    TParameter.Mx_Connect.ActControl = ActControl = 0;
+                    TParameter.Mx_Connect.ActDataBits = ActDataBits = 0;
+                    TParameter.Mx_Connect.ActDataBits = ActParity = 0;
+                    TParameter.Mx_Connect.ActDestinationIONumber = ActDestinationIONumber = 0;
+                    TParameter.Mx_Connect.ActDestinationPortNumber = ActDestinationPortNumber = 5002;
+                    TParameter.Mx_Connect.ActDidPropertyBit = ActDidPropertyBit = 1;
+                    TParameter.Mx_Connect.ActDsidPropertyBit = ActDsidPropertyBit = 1;
+                    TParameter.Mx_Connect.ActIntelligentPreferenceBit = ActIntelligentPreferenceBit = 0;
+                    TParameter.Mx_Connect.ActIONumber = ActIONumber = 1023;
+                    TParameter.Mx_Connect.ActNetworkNumber = ActNetworkNumber = 0;
+                    TParameter.Mx_Connect.ActMultiDropChannelNumber = ActMultiDropChannelNumber = 0;
+                    TParameter.Mx_Connect.ActSourceNetworkNumber = ActSourceNetworkNumber = 0;//N
+                    TParameter.Mx_Connect.ActPacketType = ActPacketType = 1;
+                    TParameter.Mx_Connect.ActPassword = ActPassword = "";
+                    TParameter.Mx_Connect.ActPortNumber = ActPortNumber = 1;
+                    TParameter.Mx_Connect.ActProtocolType = ActProtocolType = 5;
+                    TParameter.Mx_Connect.ActSourceStationNumber = ActSourceStationNumber = 0;//可能有誤
+                    TParameter.Mx_Connect.ActStationNumber = ActStationNumber = 255;//N
+                    TParameter.Mx_Connect.ActStopBits = ActStopBits = 0;
+                    TParameter.Mx_Connect.ActSumCheck = ActSumCheck = 0;
+                    TParameter.Mx_Connect.ActThroughNetworkType = ActThroughNetworkType = 1;//MELSECNET/10 is included.: 1 (0x01)
+                    TParameter.Mx_Connect.ActTimeOut = ActTimeOut = 10000;
+                    TParameter.Mx_Connect.ActCpuTimeOut = ActCpuTimeOut = 0;
+                    TParameter.Mx_Connect.ActUnitNumber = ActUnitNumber = 0;
+                    TParameter.Mx_Connect.ActUnitType = ActUnitType = 4098;//RCPU Ethernet port connection (IP specification) 0x1002
                     #endregion
                     break;
             }
@@ -730,16 +706,15 @@ namespace PLC_Data_Access
         public int ProgOpen()
         {
             //開啟Mx component功能
-            iReturnCode = Prog_Connect.Open();
+            iReturnCode = Open();
             return iReturnCode;
         }
         public int ProgClose()
         {
             //關閉Mx component功能
-            iReturnCode = Prog_Connect.Close();
+            iReturnCode = Close();
             return iReturnCode;
         }
-
         public void ProgGetBlockCombine(string sDevice, out string sOutCombimeValue)
         {
             ArrayList arrCombine = new ArrayList();
@@ -752,30 +727,57 @@ namespace PLC_Data_Access
 
             int iStart = Convert.ToInt32(sStart.Replace("D", ""));//軟元件開頭 改數字
             int iEnd = Convert.ToInt32(sEnd.Replace("D", ""));//軟元件結尾 改數字
-            int iSize = Math.Abs(iEnd - iStart)+1;//換算總軟元件數量
-            int[] arrData = new int[iSize];//標籤總數量(矩陣)
+            int iSize = Math.Abs(iEnd - iStart) + 1;//換算總軟元件數量
+            short[] arrData = new short[iSize];//標籤總數量(矩陣)
 
-            sOutCombimeValue = "";
+            sOutCombimeValue = null;
+            //先取出內部值
             try
             {
-                iReturnCode = Prog_Connect.ReadDeviceBlock(sStart, iSize, out arrData[0]);//從軟元件開頭 讀出資料
-                //Console.WriteLine(String.Format("0x{0:x8} [HEX]", iReturnCode));
+                iReturnCode = ReadDeviceBlock2(sStart, iSize, out arrData[0]);//從軟元件開頭 讀出資料
+                Console.WriteLine(String.Format("0x{0:x8} [HEX]", iReturnCode));
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message + "\n是否為string[]之軟元件名稱錯誤", "ProgGetBlockCombime", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            if (iReturnCode == 0)
+            //以下分為字串(string)讀取與雙精度浮點(Float)讀取  以iSize做判斷標準
+            if (iSize == 2)//FLOAT
             {
-                for (int i = 0; i < arrData.Length; i++)
+                if (iReturnCode == 0)
                 {
-                    sOutCombimeValue += arrData[i].ToString();//把它全部合起來[A][B][C][D][E]=>ABCDE
+                    var Low = System.BitConverter.GetBytes(arrData[0]);
+                    var High = System.BitConverter.GetBytes(arrData[1]);
+                    byte[] Full = new byte[High.Length + Low.Length];
+                    Buffer.BlockCopy(Low, 0, Full, 0, Low.Length);
+                    Buffer.BlockCopy(High, 0, Full, Low.Length, High.Length);
+                    var FF = BitConverter.ToSingle(Full, 0);//轉float(single)
+                    
+                    sOutCombimeValue = FF.ToString();
+                }
+            }
+            else //string[?]
+            {
+
+                if (iReturnCode == 0)
+                {
+                    var total = System.BitConverter.GetBytes(arrData[0]);
+                    for (int i = 1; i < arrData.Length; i++)
+                    {
+                        var addvalue = System.BitConverter.GetBytes(arrData[i]);
+                        var Full = new byte[total.Length + addvalue.Length];
+                        Buffer.BlockCopy(total, 0, Full, 0, total.Length);
+                        Buffer.BlockCopy(addvalue, 0, Full, total.Length, addvalue.Length);
+
+                        total = Full;//一直累積完全部byte
+                        //sOutCombimeValue += arrData[i].ToString();//把它全部合起來[A][B][C][D][E]=>ABCDE
+                    }
+                    sOutCombimeValue = System.Text.Encoding.ASCII.GetString(total);
                 }
             }
         }
-        public string ProgSetBlockCombine(string sDevice, string sInCombimeValue)
+        public void ProgSetBlockCombine(string sDevice, string sInCombimeValue)
         {
-            string re = "";
             ArrayList arrCombine = new ArrayList();
             string sStart;//軟元件開頭
             string sEnd;//軟元件結尾
@@ -786,40 +788,58 @@ namespace PLC_Data_Access
 
             int iStart = Convert.ToInt32(sStart.Replace("D", ""));//軟元件開頭 改數字
             int iEnd = Convert.ToInt32(sEnd.Replace("D", ""));//軟元件結尾 改數字
-            int iSize = Math.Abs(iEnd - iStart)+1;//換算總軟元件數量
-            int[] arrData = new int[iSize];//標籤總數量(矩陣)
-            //換算
-            while (sInCombimeValue.Length < iSize * 2)//若值不為 軟元件數*元件容量則需補值 超過不管
-            {
-                sInCombimeValue += "0";//沒有就補0
-            }
-            //確認寫入資料有無問題  Substring
-            for (int i = 0, j = 0; i < iSize; i++, j += 2)
-            {
-                arrData[i] = Convert.ToInt32(sInCombimeValue.Substring(j, 2));//word每個兩字元0123456789=>[01][23][45][67][89]
-            }
-            try
-            {
-                iReturnCode = Prog_Connect.WriteDeviceBlock(sStart, iSize, ref arrData[0]);//從軟元件開頭 寫入出資料
-                arrData = new int[iSize];//洗掉
-                Prog_Connect.ReadDeviceBlock(sStart, iSize, out arrData[0]);//從軟元件開頭 寫入出資料
-                ProgGetBlockCombine(sDevice,out re);
-                Console.WriteLine($"實際寫入值: {re}");
-                //Console.WriteLine(String.Format("0x{0:x8} [HEX]", iReturnCode));
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message + "\n是否為string[]之軟元件名稱錯誤", "ProgSetBlockCombime", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            return re;
-        }
+            int iSize = Math.Abs(iEnd - iStart) + 1;//換算總軟元件數量
+            short[] arrData = new short[iSize];//標籤總數量(矩陣)
 
+            //先判斷寫入格式
+            if (iSize == 2)//Float
+            {
+                byte[] sp = BitConverter.GetBytes(Convert.ToSingle(sInCombimeValue));//byte共4位
+
+                arrData[0] = BitConverter.ToInt16(sp, 0);
+                arrData[1] = BitConverter.ToInt16(sp, 2);
+
+                try
+                {
+                    iReturnCode = WriteDeviceBlock2(sStart, iSize, ref arrData[0]);//從軟元件開頭 寫入出資料
+                    Console.WriteLine(String.Format("0x{0:x8} [HEX]", iReturnCode));
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message + "\n是否為string[]之軟元件名稱錯誤", "ProgSetBlockCombime", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+
+            }
+            else //string[?]
+            {
+                while (sInCombimeValue.Length < iSize * 2)//若值不為 軟元件數*元件容量則需補值 超過不管
+                {
+                    sInCombimeValue = "0" + sInCombimeValue;//沒有就補0在前面
+                }
+                //確認寫入資料有無問題  Substring
+                for (int i = 0, j = 0; i < iSize; i++, j += 2)
+                {
+                    arrData[i] = Convert.ToInt16(sInCombimeValue.Substring(j, 2));//word每個兩字元0123456789=>[01][23][45][67][89]
+                }
+                try
+                {
+                    iReturnCode = WriteDeviceBlock2(sStart, iSize, ref arrData[0]);//從軟元件開頭 寫入出資料
+                    Console.WriteLine(String.Format("0x{0:x8} [HEX]", iReturnCode));
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message + "\n是否為string[]之軟元件名稱錯誤", "ProgSetBlockCombime", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+
+            
+        }
         public void ProgGetDevice(string sDevice, out string sOutValue)
         {
-            int iData=0;
+            int iData = 0;
             try
             {
-                iReturnCode = Prog_Connect.GetDevice(sDevice,out iData) ;//從軟元件開頭 讀出資料
+                iReturnCode = GetDevice(sDevice, out iData);//從軟元件開頭 讀出資料
             }
             catch (Exception ex)
             {
@@ -834,7 +854,7 @@ namespace PLC_Data_Access
             Data = Convert.ToInt32(sInValue);
             try
             {
-                iReturnCode = Prog_Connect.SetDevice(sDevice, Data);//從軟元件開頭 讀出資料
+                iReturnCode = SetDevice(sDevice, Data);//從軟元件開頭 讀出資料
             }
             catch (Exception ex)
             {

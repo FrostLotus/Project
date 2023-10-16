@@ -24,7 +24,6 @@ namespace PLC_Data_Access
         private object _objLock = new object();
         public Stopwatch swStopwatch = new Stopwatch();
 
-
         public Main_Form()
         {
             InitializeComponent();
@@ -47,10 +46,7 @@ namespace PLC_Data_Access
             Timer_DeviceGet.Stop();
             Timer_DeviceGet.Interval = TParameter.Mx_Connect.iReciveTime;
 
-
-            //DataGridLabelFlash();//DataGridview 第一次刷新
             DataGridValueFlash();//DataGridview 第一次刷新
-
         }
 
         private void Mi_DataGridLoad_Click(object sender, EventArgs e)
