@@ -173,7 +173,7 @@ PLC_DATA_ITEM_* CSystCCLProcessDONGGUAN_SONG8::GetPLCAddressInfo(int nFieldId, B
 	}
 	return NULL;
 }
-///<summary></summary>
+
 void CSystCCLProcessDONGGUAN_SONG8::DoWriteResult(BATCH_SHARE_SYST_RESULTCCL& xData)
 {
 	//©w¸qµ²ºc

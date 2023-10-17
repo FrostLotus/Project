@@ -117,6 +117,7 @@ CEverStrProcess::~CEverStrProcess()
 	}
 }
 //================================================================
+///<summary>搜尋對應位址資訊</summary>
 PLC_DATA_ITEM_* CEverStrProcess::GetPLCAddressInfo(int nFieldId, BOOL bSkip)
 {
 	if (nFieldId >= 0 && nFieldId <= FIELD_MAX)
@@ -126,7 +127,7 @@ PLC_DATA_ITEM_* CEverStrProcess::GetPLCAddressInfo(int nFieldId, BOOL bSkip)
 	return NULL;
 }
 
-void CEverStrProcess::DoWriteResult(BATCH_SHARE_SYST_RESULTCCL& xData)
+void CEverStrProcess::DoWriteResult(BATCH_SHARE_SYST_RESULT_EVERSTR& xData)
 {
 	auto WriteSizeField = [&](int nField, float fSize)
 	{
@@ -147,10 +148,9 @@ void CEverStrProcess::DoWriteResult(BATCH_SHARE_SYST_RESULTCCL& xData)
 	SET_PLC_FIELD_DATA(FIELD_RESULT_NGNum, 2, (BYTE*)&xData.wNum_P);//NG數量
 	SET_PLC_FIELD_DATA(FIELD_RESULT_QUALIFYRATE, 2, (BYTE*)&xData.wQualifyRate);//訂單合格率
 
-
-	SET_PLC_FIELD_DATA(FIELD_ORDER_1, 2, (BYTE*)&xData.wNum_AA);
-	SET_PLC_FIELD_DATA(FIELD_SN_1, 2, (BYTE*)&xData.wNum_A);
-	SET_PLC_FIELD_DATA(FIELD_MATERIAL_1, 2, (BYTE*)&xData.wNum_P);
+	SET_PLC_FIELD_DATA(FIELD_ORDER_1, sizeof((BYTE*)&xData.cName), (BYTE*)&xData.cName);
+	SET_PLC_FIELD_DATA(FIELD_SN_1, sizeof((BYTE*)&xData.cAssign), (BYTE*)&xData.cAssign);
+	SET_PLC_FIELD_DATA(FIELD_MATERIAL_1, sizeof((BYTE*)&xData.cMaterial), (BYTE*)&xData.cMaterial);
 
 }
 
