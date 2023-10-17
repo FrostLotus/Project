@@ -100,12 +100,6 @@
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MX_Component\MXComponent.csproj">
-      <Project>{ceb880a4-b895-4c5f-843e-67ae0a636a4c}</Project>
-      <Name>MXComponent</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

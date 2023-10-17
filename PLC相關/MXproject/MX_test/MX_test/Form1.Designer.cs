@@ -98,6 +98,22 @@
             this.txt_LabelDataBlock2 = new System.Windows.Forms.TextBox();
             this.lbl_DeviceSizeBlock = new System.Windows.Forms.Label();
             this.lbl_DeviceDataBlock = new System.Windows.Forms.Label();
+            this.groupBox17 = new System.Windows.Forms.GroupBox();
+            this.label59 = new System.Windows.Forms.Label();
+            this.btn_ReadDeviceFloat = new System.Windows.Forms.Button();
+            this.btn_WriteDeviceFloat = new System.Windows.Forms.Button();
+            this.txt_LabelNameFloat = new System.Windows.Forms.TextBox();
+            this.txt_LabelDataFloat = new System.Windows.Forms.TextBox();
+            this.label61 = new System.Windows.Forms.Label();
+            this.groupBox16 = new System.Windows.Forms.GroupBox();
+            this.label56 = new System.Windows.Forms.Label();
+            this.btn_ReadDeviceString = new System.Windows.Forms.Button();
+            this.btn_WriteDeviceString = new System.Windows.Forms.Button();
+            this.txt_DataSizeString = new System.Windows.Forms.TextBox();
+            this.txt_LabelNameString = new System.Windows.Forms.TextBox();
+            this.txt_LabelDataString = new System.Windows.Forms.TextBox();
+            this.label57 = new System.Windows.Forms.Label();
+            this.label58 = new System.Windows.Forms.Label();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.label4 = new System.Windows.Forms.Label();
             this.btn_ReadDeviceBlock = new System.Windows.Forms.Button();
@@ -224,6 +240,8 @@
             this.groupBox6.SuspendLayout();
             this.grp_Random.SuspendLayout();
             this.grp_Block.SuspendLayout();
+            this.groupBox17.SuspendLayout();
+            this.groupBox16.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.groupBox14.SuspendLayout();
@@ -256,7 +274,7 @@
             this.grp_Output.Controls.Add(this.lbl_RetrunCode);
             this.grp_Output.Controls.Add(this.lbl_Data);
             this.grp_Output.Controls.Add(this.txt_Data);
-            this.grp_Output.Location = new System.Drawing.Point(906, 136);
+            this.grp_Output.Location = new System.Drawing.Point(1054, 138);
             this.grp_Output.Name = "grp_Output";
             this.grp_Output.Size = new System.Drawing.Size(273, 389);
             this.grp_Output.TabIndex = 72;
@@ -363,7 +381,7 @@
             // 
             this.groupBox1.Controls.Add(this.Btn_ProgClose);
             this.groupBox1.Controls.Add(this.Btn_ProgOpen);
-            this.groupBox1.Location = new System.Drawing.Point(993, 16);
+            this.groupBox1.Location = new System.Drawing.Point(1058, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(92, 78);
             this.groupBox1.TabIndex = 75;
@@ -395,7 +413,7 @@
             this.groupBox2.Controls.Add(this.tabControl1);
             this.groupBox2.Location = new System.Drawing.Point(12, 12);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(888, 620);
+            this.groupBox2.Size = new System.Drawing.Size(1022, 724);
             this.groupBox2.TabIndex = 76;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "ActProgType";
@@ -409,7 +427,7 @@
             this.tabControl1.Location = new System.Drawing.Point(6, 18);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(876, 596);
+            this.tabControl1.Size = new System.Drawing.Size(1010, 690);
             this.tabControl1.TabIndex = 78;
             // 
             // tabPage1
@@ -420,11 +438,13 @@
             this.tabPage1.Controls.Add(this.groupBox6);
             this.tabPage1.Controls.Add(this.grp_Random);
             this.tabPage1.Controls.Add(this.grp_Block);
+            this.tabPage1.Controls.Add(this.groupBox17);
+            this.tabPage1.Controls.Add(this.groupBox16);
             this.tabPage1.Controls.Add(this.groupBox5);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(868, 570);
+            this.tabPage1.Size = new System.Drawing.Size(1002, 664);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "軟元件參數變更";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -524,7 +544,7 @@
             this.groupBox7.Controls.Add(this.btn_SetDevice2);
             this.groupBox7.Controls.Add(this.txt_LabelDataPoint2);
             this.groupBox7.Controls.Add(this.label10);
-            this.groupBox7.Location = new System.Drawing.Point(483, 117);
+            this.groupBox7.Location = new System.Drawing.Point(616, 553);
             this.groupBox7.Name = "groupBox7";
             this.groupBox7.Size = new System.Drawing.Size(380, 105);
             this.groupBox7.TabIndex = 76;
@@ -598,7 +618,7 @@
             this.groupBox8.Controls.Add(this.label12);
             this.groupBox8.Controls.Add(this.label14);
             this.groupBox8.Controls.Add(this.label13);
-            this.groupBox8.Location = new System.Drawing.Point(6, 459);
+            this.groupBox8.Location = new System.Drawing.Point(6, 546);
             this.groupBox8.Name = "groupBox8";
             this.groupBox8.Size = new System.Drawing.Size(471, 107);
             this.groupBox8.TabIndex = 77;
@@ -698,7 +718,7 @@
             this.groupBox6.Controls.Add(this.btn_SetDevice);
             this.groupBox6.Controls.Add(this.txt_LabelDataPoint);
             this.groupBox6.Controls.Add(this.label9);
-            this.groupBox6.Location = new System.Drawing.Point(483, 11);
+            this.groupBox6.Location = new System.Drawing.Point(616, 444);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Size = new System.Drawing.Size(380, 105);
             this.groupBox6.TabIndex = 76;
@@ -770,7 +790,7 @@
             this.grp_Random.Controls.Add(this.txt_LabelDataRandom2);
             this.grp_Random.Controls.Add(this.lbl_DeviceSizeRandom);
             this.grp_Random.Controls.Add(this.lbl_DataRandom);
-            this.grp_Random.Location = new System.Drawing.Point(6, 117);
+            this.grp_Random.Location = new System.Drawing.Point(483, 6);
             this.grp_Random.Name = "grp_Random";
             this.grp_Random.Size = new System.Drawing.Size(471, 105);
             this.grp_Random.TabIndex = 76;
@@ -857,7 +877,7 @@
             this.grp_Block.Controls.Add(this.txt_LabelDataBlock2);
             this.grp_Block.Controls.Add(this.lbl_DeviceSizeBlock);
             this.grp_Block.Controls.Add(this.lbl_DeviceDataBlock);
-            this.grp_Block.Location = new System.Drawing.Point(6, 346);
+            this.grp_Block.Location = new System.Drawing.Point(483, 118);
             this.grp_Block.Name = "grp_Block";
             this.grp_Block.Size = new System.Drawing.Size(471, 107);
             this.grp_Block.TabIndex = 77;
@@ -933,6 +953,161 @@
             this.lbl_DeviceDataBlock.TabIndex = 30;
             this.lbl_DeviceDataBlock.Text = "LabelData:";
             // 
+            // groupBox17
+            // 
+            this.groupBox17.Controls.Add(this.label59);
+            this.groupBox17.Controls.Add(this.btn_ReadDeviceFloat);
+            this.groupBox17.Controls.Add(this.btn_WriteDeviceFloat);
+            this.groupBox17.Controls.Add(this.txt_LabelNameFloat);
+            this.groupBox17.Controls.Add(this.txt_LabelDataFloat);
+            this.groupBox17.Controls.Add(this.label61);
+            this.groupBox17.Location = new System.Drawing.Point(483, 231);
+            this.groupBox17.Name = "groupBox17";
+            this.groupBox17.Size = new System.Drawing.Size(383, 107);
+            this.groupBox17.TabIndex = 77;
+            this.groupBox17.TabStop = false;
+            this.groupBox17.Text = "Block Read/Write [Float2位]";
+            // 
+            // label59
+            // 
+            this.label59.Location = new System.Drawing.Point(8, 18);
+            this.label59.Name = "label59";
+            this.label59.Size = new System.Drawing.Size(88, 16);
+            this.label59.TabIndex = 30;
+            this.label59.Text = "LabellName:";
+            // 
+            // btn_ReadDeviceFloat
+            // 
+            this.btn_ReadDeviceFloat.Location = new System.Drawing.Point(237, 18);
+            this.btn_ReadDeviceFloat.Name = "btn_ReadDeviceFloat";
+            this.btn_ReadDeviceFloat.Size = new System.Drawing.Size(128, 32);
+            this.btn_ReadDeviceFloat.TabIndex = 34;
+            this.btn_ReadDeviceFloat.Text = "ReadDevice[Float]";
+            this.btn_ReadDeviceFloat.Click += new System.EventHandler(this.btn_ReadDeviceFloat_Click);
+            // 
+            // btn_WriteDeviceFloat
+            // 
+            this.btn_WriteDeviceFloat.Location = new System.Drawing.Point(237, 62);
+            this.btn_WriteDeviceFloat.Name = "btn_WriteDeviceFloat";
+            this.btn_WriteDeviceFloat.Size = new System.Drawing.Size(128, 32);
+            this.btn_WriteDeviceFloat.TabIndex = 35;
+            this.btn_WriteDeviceFloat.Text = "WriteDevice[Float]";
+            this.btn_WriteDeviceFloat.Click += new System.EventHandler(this.btn_WriteDeviceFloat_Click);
+            // 
+            // txt_LabelNameFloat
+            // 
+            this.txt_LabelNameFloat.AcceptsReturn = true;
+            this.txt_LabelNameFloat.Location = new System.Drawing.Point(6, 34);
+            this.txt_LabelNameFloat.Multiline = true;
+            this.txt_LabelNameFloat.Name = "txt_LabelNameFloat";
+            this.txt_LabelNameFloat.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txt_LabelNameFloat.Size = new System.Drawing.Size(109, 63);
+            this.txt_LabelNameFloat.TabIndex = 33;
+            // 
+            // txt_LabelDataFloat
+            // 
+            this.txt_LabelDataFloat.AcceptsReturn = true;
+            this.txt_LabelDataFloat.Location = new System.Drawing.Point(121, 34);
+            this.txt_LabelDataFloat.Multiline = true;
+            this.txt_LabelDataFloat.Name = "txt_LabelDataFloat";
+            this.txt_LabelDataFloat.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txt_LabelDataFloat.Size = new System.Drawing.Size(109, 63);
+            this.txt_LabelDataFloat.TabIndex = 33;
+            // 
+            // label61
+            // 
+            this.label61.Location = new System.Drawing.Point(119, 18);
+            this.label61.Name = "label61";
+            this.label61.Size = new System.Drawing.Size(88, 16);
+            this.label61.TabIndex = 30;
+            this.label61.Text = "LabelData:";
+            // 
+            // groupBox16
+            // 
+            this.groupBox16.Controls.Add(this.label56);
+            this.groupBox16.Controls.Add(this.btn_ReadDeviceString);
+            this.groupBox16.Controls.Add(this.btn_WriteDeviceString);
+            this.groupBox16.Controls.Add(this.txt_DataSizeString);
+            this.groupBox16.Controls.Add(this.txt_LabelNameString);
+            this.groupBox16.Controls.Add(this.txt_LabelDataString);
+            this.groupBox16.Controls.Add(this.label57);
+            this.groupBox16.Controls.Add(this.label58);
+            this.groupBox16.Location = new System.Drawing.Point(6, 231);
+            this.groupBox16.Name = "groupBox16";
+            this.groupBox16.Size = new System.Drawing.Size(471, 107);
+            this.groupBox16.TabIndex = 77;
+            this.groupBox16.TabStop = false;
+            this.groupBox16.Text = "Block Read/Write [String]";
+            // 
+            // label56
+            // 
+            this.label56.Location = new System.Drawing.Point(8, 18);
+            this.label56.Name = "label56";
+            this.label56.Size = new System.Drawing.Size(88, 16);
+            this.label56.TabIndex = 30;
+            this.label56.Text = "LabellName:";
+            // 
+            // btn_ReadDeviceString
+            // 
+            this.btn_ReadDeviceString.Location = new System.Drawing.Point(332, 18);
+            this.btn_ReadDeviceString.Name = "btn_ReadDeviceString";
+            this.btn_ReadDeviceString.Size = new System.Drawing.Size(128, 32);
+            this.btn_ReadDeviceString.TabIndex = 34;
+            this.btn_ReadDeviceString.Text = "ReadDevice[String]";
+            this.btn_ReadDeviceString.Click += new System.EventHandler(this.btn_ReadDeviceString_Click);
+            // 
+            // btn_WriteDeviceString
+            // 
+            this.btn_WriteDeviceString.Location = new System.Drawing.Point(332, 63);
+            this.btn_WriteDeviceString.Name = "btn_WriteDeviceString";
+            this.btn_WriteDeviceString.Size = new System.Drawing.Size(128, 32);
+            this.btn_WriteDeviceString.TabIndex = 35;
+            this.btn_WriteDeviceString.Text = "WriteDevice[String]";
+            this.btn_WriteDeviceString.Click += new System.EventHandler(this.btn_WriteDeviceString_Click);
+            // 
+            // txt_DataSizeString
+            // 
+            this.txt_DataSizeString.Location = new System.Drawing.Point(121, 34);
+            this.txt_DataSizeString.Name = "txt_DataSizeString";
+            this.txt_DataSizeString.Size = new System.Drawing.Size(81, 22);
+            this.txt_DataSizeString.TabIndex = 32;
+            // 
+            // txt_LabelNameString
+            // 
+            this.txt_LabelNameString.AcceptsReturn = true;
+            this.txt_LabelNameString.Location = new System.Drawing.Point(6, 34);
+            this.txt_LabelNameString.Multiline = true;
+            this.txt_LabelNameString.Name = "txt_LabelNameString";
+            this.txt_LabelNameString.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txt_LabelNameString.Size = new System.Drawing.Size(109, 63);
+            this.txt_LabelNameString.TabIndex = 33;
+            // 
+            // txt_LabelDataString
+            // 
+            this.txt_LabelDataString.AcceptsReturn = true;
+            this.txt_LabelDataString.Location = new System.Drawing.Point(208, 32);
+            this.txt_LabelDataString.Multiline = true;
+            this.txt_LabelDataString.Name = "txt_LabelDataString";
+            this.txt_LabelDataString.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txt_LabelDataString.Size = new System.Drawing.Size(109, 63);
+            this.txt_LabelDataString.TabIndex = 33;
+            // 
+            // label57
+            // 
+            this.label57.Location = new System.Drawing.Point(121, 18);
+            this.label57.Name = "label57";
+            this.label57.Size = new System.Drawing.Size(88, 16);
+            this.label57.TabIndex = 30;
+            this.label57.Text = "DataSize:";
+            // 
+            // label58
+            // 
+            this.label58.Location = new System.Drawing.Point(208, 18);
+            this.label58.Name = "label58";
+            this.label58.Size = new System.Drawing.Size(88, 16);
+            this.label58.TabIndex = 30;
+            this.label58.Text = "LabelData:";
+            // 
             // groupBox5
             // 
             this.groupBox5.Controls.Add(this.label4);
@@ -943,7 +1118,7 @@
             this.groupBox5.Controls.Add(this.txt_LabelDataBlock);
             this.groupBox5.Controls.Add(this.label5);
             this.groupBox5.Controls.Add(this.label6);
-            this.groupBox5.Location = new System.Drawing.Point(6, 228);
+            this.groupBox5.Location = new System.Drawing.Point(6, 118);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(471, 107);
             this.groupBox5.TabIndex = 77;
@@ -1028,7 +1203,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(868, 570);
+            this.tabPage2.Size = new System.Drawing.Size(1002, 664);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "狀態變更";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -1466,7 +1641,7 @@
             this.tabPage3.Controls.Add(this.groupBox13);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(868, 570);
+            this.tabPage3.Size = new System.Drawing.Size(1002, 664);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "出錯資訊的獲取";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -1536,7 +1711,7 @@
             this.tabPage4.Controls.Add(this.groupBox15);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Size = new System.Drawing.Size(868, 570);
+            this.tabPage4.Size = new System.Drawing.Size(1002, 664);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "PLC CPU屬性列表";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -2058,7 +2233,7 @@
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.grp_Control);
-            this.groupBox3.Location = new System.Drawing.Point(1029, 533);
+            this.groupBox3.Location = new System.Drawing.Point(1040, 545);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(287, 99);
             this.groupBox3.TabIndex = 76;
@@ -2107,7 +2282,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1339, 644);
+            this.ClientSize = new System.Drawing.Size(1339, 748);
             this.Controls.Add(this.groupBox12);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
@@ -2135,6 +2310,10 @@
             this.grp_Random.PerformLayout();
             this.grp_Block.ResumeLayout(false);
             this.grp_Block.PerformLayout();
+            this.groupBox17.ResumeLayout(false);
+            this.groupBox17.PerformLayout();
+            this.groupBox16.ResumeLayout(false);
+            this.groupBox16.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             this.tabPage2.ResumeLayout(false);
@@ -2343,7 +2522,22 @@
         private System.Windows.Forms.ComboBox CB_CPUType;
         private System.Windows.Forms.Label label55;
         private System.Windows.Forms.ListBox list_Data;
-
+        internal System.Windows.Forms.GroupBox groupBox17;
+        internal System.Windows.Forms.Label label59;
+        internal System.Windows.Forms.Button btn_ReadDeviceFloat;
+        internal System.Windows.Forms.Button btn_WriteDeviceFloat;
+        internal System.Windows.Forms.TextBox txt_LabelNameFloat;
+        internal System.Windows.Forms.TextBox txt_LabelDataFloat;
+        internal System.Windows.Forms.Label label61;
+        internal System.Windows.Forms.GroupBox groupBox16;
+        internal System.Windows.Forms.Label label56;
+        internal System.Windows.Forms.Button btn_ReadDeviceString;
+        internal System.Windows.Forms.Button btn_WriteDeviceString;
+        internal System.Windows.Forms.TextBox txt_DataSizeString;
+        internal System.Windows.Forms.TextBox txt_LabelNameString;
+        internal System.Windows.Forms.TextBox txt_LabelDataString;
+        internal System.Windows.Forms.Label label57;
+        internal System.Windows.Forms.Label label58;
     }
 }
 

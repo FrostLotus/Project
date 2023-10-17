@@ -95,7 +95,7 @@ namespace MX_test
                 else
                 { LB_State.Text = "Prog連線失敗"; }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -235,7 +235,7 @@ namespace MX_test
             try
             {
                 iReturnCode = Mx_Connect.Prog_Connect.ReadDeviceBlock(sLabelName, iDataSize, out arrLabelData[0]);
-               
+
             }
             catch (Exception ex)
             {
@@ -503,12 +503,13 @@ namespace MX_test
             {
                 try
                 {
-                    arrLabelData[i]= Convert.ToInt16(txt_LabelDataBlock2.Lines[i]);
+                    string tmp = txt_LabelDataBlock2.Lines[i];
+                    arrLabelData[i] = short.Parse(txt_LabelDataBlock2.Lines[i]);
                 }
                 //Exception processing
                 catch (Exception exExcepion)
                 {
-                    MessageBox.Show(exExcepion.Message,Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(exExcepion.Message, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
             }
@@ -583,6 +584,195 @@ namespace MX_test
             //顯示回傳值
             txt_ReturnCode.Text = String.Format("0x{0:x8} [HEX]", iReturnCode);
 
+        }
+        #endregion
+        #region (String) Read/Write Block2(lot of set)
+        private void btn_ReadDeviceString_Click(object sender, EventArgs e)
+        {
+            int iReturnCode;              //回傳代碼
+
+            string sLabelName = "";       //標籤名稱
+            int iDataSize = 0;		      //資料大小
+            short[] arrLabelData;         //資料(矩陣)
+            string[] arrData;	          //標籤(矩陣)
+            byte[] arrLabelDataString;
+
+            //取得標籤名稱(以分行"\n"作鏈結)
+            sLabelName = string.Join("\n", txt_LabelNameString.Lines);
+            //取得資料大小
+            if (!Mx_Connect.GetIntValue(txt_DataSizeString, out iDataSize))
+            {
+                return;//失敗則break
+            }
+            //設定LabelData矩陣大小
+            arrLabelData = new short[iDataSize];
+            arrLabelDataString = new byte[iDataSize * 2];
+            //ReadDeviceBlock
+            try
+            {
+                iReturnCode = Mx_Connect.Prog_Connect.ReadDeviceBlock2(sLabelName, iDataSize, out arrLabelData[0]);
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            //顯示回傳值
+            txt_ReturnCode.Text = String.Format("0x{0:x8} [HEX]", iReturnCode);
+            if (iReturnCode == 0)
+            {
+                var total = System.BitConverter.GetBytes(arrLabelData[0]);
+                for (int i = 1; i < arrLabelData.Length; i++)
+                {
+                    var addvalue = System.BitConverter.GetBytes(arrLabelData[i]);
+                    var Full = new byte[total.Length + addvalue.Length];
+                    Buffer.BlockCopy(total, 0, Full, 0, total.Length);
+                    Buffer.BlockCopy(addvalue, 0, Full, total.Length, addvalue.Length);
+
+                    total = Full;//一直累積完全部byte
+                               
+                }
+                arrData = new string[1];
+
+                arrData[0] = Encoding.ASCII.GetString(total);
+
+                txt_Data.Lines = arrData;
+            }
+        }
+        private void btn_WriteDeviceString_Click(object sender, EventArgs e)
+        {
+            int iReturnCode;              //回傳代碼
+
+            string sLabelName = "";       //標籤名稱
+            int iDataSize = 0;		      //資料大小
+            short[] arrLabelData;		  //資料(矩陣)
+
+            int iSizeOfIntArray;
+
+            //取得標籤名稱
+            sLabelName = string.Join("\n", txt_LabelNameString.Lines);
+            //確認資料位寬有無問題
+            if (!Mx_Connect.GetIntValue(txt_DataSizeString, out iDataSize))
+            {
+                return;//失敗則break
+            }
+            //取得總輸出資料大小  STRING 1行
+            iSizeOfIntArray = 1;
+
+
+            //設定參數大小(以DataSize為準)
+            arrLabelData = new short[iDataSize];
+            string sInCombimeValue = txt_LabelDataString.Lines[0];
+
+            while (sInCombimeValue.Length < iDataSize * 2)//若值不為 軟元件數*元件容量則需補值 超過不管
+            {
+                sInCombimeValue = "0" + sInCombimeValue;//沒有就補0在前面
+            }
+
+            for (int i = 0, j = 0; i < iDataSize; i++, j += 2)
+            {
+                //arrData[i] = Convert.ToInt16(sInCombimeValue.Substring(j, 2));//word每個兩字元0123456789=>[01][23][45][67][89]
+                //每兩個一組轉換成ASCII的byte再轉為輸出用的short
+                arrLabelData[i] = BitConverter.ToInt16(Encoding.ASCII.GetBytes(sInCombimeValue.Substring(j, 2)), 0);
+            }
+
+            //WriteDeviceBlock2
+            try
+            {
+                iReturnCode = Mx_Connect.Prog_Connect.WriteDeviceBlock2(sLabelName, iDataSize, ref arrLabelData[0]);
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message, Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            txt_ReturnCode.Text = String.Format("0x{0:x8} [HEX]", iReturnCode);
+            //後面不顯示write結果
+        }
+        #endregion
+        #region (Float) Read/Write Block2(2 of set)
+        private void btn_ReadDeviceFloat_Click(object sender, EventArgs e)
+        {
+            int iReturnCode;              //回傳代碼
+
+            string sLabelName = "";       //標籤名稱
+            int iDataSize = 0;		      //資料大小
+            short[] arrLabelData;         //資料(矩陣)
+            string[] arrData;	          //標籤(矩陣)
+            float FF;
+
+            //取得標籤名稱(以分行"\n"作鏈結)
+            sLabelName = string.Join("\n", txt_LabelNameFloat.Lines);
+            //取得資料大小
+            iDataSize = 2;
+            //設定LabelData矩陣大小
+            arrLabelData = new short[iDataSize];
+            //ReadDeviceBlock
+            try
+            {
+                iReturnCode = Mx_Connect.Prog_Connect.ReadDeviceBlock2(sLabelName, iDataSize, out arrLabelData[0]);
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            //顯示回傳值
+            txt_ReturnCode.Text = String.Format("0x{0:x8} [HEX]", iReturnCode);
+            if (iReturnCode == 0)
+            {
+                byte[] Low = System.BitConverter.GetBytes(arrLabelData[0]);
+                byte[] High = System.BitConverter.GetBytes(arrLabelData[1]);
+                byte[] Full = new byte[High.Length + Low.Length];
+                Buffer.BlockCopy(Low, 0, Full, 0, Low.Length);
+                Buffer.BlockCopy(High, 0, Full, Low.Length, High.Length);
+                FF = BitConverter.ToSingle(Full, 0);
+
+                //高低合一
+                arrData = new string[1];
+
+                arrData[0] = FF.ToString();
+
+                txt_Data.Lines = arrData;
+            }
+        }
+        private void btn_WriteDeviceFloat_Click(object sender, EventArgs e)
+        {
+            int iReturnCode;              //回傳代碼
+            string sLabelName = "";       //標籤名稱
+            int iDataSize = 0;		      //資料大小
+            short[] arrLabelData;		  //資料(矩陣)
+
+            int iSizeOfIntArray;
+
+            //取得標籤名稱
+            sLabelName = string.Join("\n", txt_LabelNameFloat.Lines);
+            //確認資料位寬有無問題
+            iDataSize = 2;
+            //取得總輸出資料大小 float限制1行
+            iSizeOfIntArray = 1;
+
+            //設定參數大小(以DataSize為準)
+            arrLabelData = new short[iDataSize];
+
+            byte[] sp = BitConverter.GetBytes(Convert.ToSingle(txt_LabelDataFloat.Lines[0]));//byte共4位
+
+            arrLabelData[0] = BitConverter.ToInt16(sp, 0);
+            arrLabelData[1] = BitConverter.ToInt16(sp, 2);
+            //WriteDeviceBlock2
+            try
+            {
+                iReturnCode = Mx_Connect.Prog_Connect.WriteDeviceBlock2(sLabelName, iDataSize, ref arrLabelData[0]);
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message, Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            txt_ReturnCode.Text = String.Format("0x{0:x8} [HEX]", iReturnCode);
+            //後面不顯示write結果
         }
         #endregion
         //----------------------------------------------------------
@@ -694,7 +884,7 @@ namespace MX_test
 
             try
             {
-                iReturnCode = Mx_Connect.Prog_Connect.GetClockData(out shYear, out shMonth, out shDay, out shWeek, 
+                iReturnCode = Mx_Connect.Prog_Connect.GetClockData(out shYear, out shMonth, out shDay, out shWeek,
                                                       out shHour, out shMinute, out shSecond);
             }
             catch (Exception ex)
@@ -767,7 +957,7 @@ namespace MX_test
                 //dayofweek
                 switch (sWeek.ToString())
                 {
-                    
+
                     case "Monday": shWeek = (short)1; break;
                     case "Tuesday": shWeek = (short)2; break;
                     case "Wednesday": shWeek = (short)3; break;
@@ -875,7 +1065,7 @@ namespace MX_test
             try
             {
                 iReturnCode = Mx_Connect.Prog_Connect.EntryDeviceStatus(sDeviceList, iDataSize, iMonitorCycle, ref arrData[0]);
-                
+
             }
             catch (Exception ex)
             {
@@ -919,11 +1109,11 @@ namespace MX_test
             for (int i = 0; i < Convert.ToInt32(txt_DataSize.Text); i++)
             {
                 //由前面陣列大小作持續編排(-1=順序)
-                arrData[txt_Data.Lines.Length + i] = string.Format("OnDeviceStatus event by ActProgType [{0}={1}]", szDevice, lData); 
+                arrData[txt_Data.Lines.Length + i] = string.Format("OnDeviceStatus event by ActProgType [{0}={1}]", szDevice, lData);
             }
             arrData[arrData.Length - 1] = DateTime.Now.ToString();
-                //arrData[Convert.ToInt32(txt_DataSize.Text)]
-                //= string.Format("OnDeviceStatus event by ActProgType [{0}={1}]", szDevice, lData);
+            //arrData[Convert.ToInt32(txt_DataSize.Text)]
+            //= string.Format("OnDeviceStatus event by ActProgType [{0}={1}]", szDevice, lData);
 
             //The new 'Data' is displayed.
             txt_Data.Lines = arrData;
@@ -1103,7 +1293,7 @@ namespace MX_test
                 {
                     this.BeginInvoke(new UpdateControl(_mUpdateControl), new object[] { this.list_Data, str });
                 }
-                
+
                 //Console測試顯示
                 //foreach (string OutPut in arrData)
                 //{
@@ -1120,6 +1310,12 @@ namespace MX_test
                     ((ListBox)Ctrl).Items.Add(Msg);
             }
         }
+
+
+
+
+
+
         //==========================================================
     }
     public class MX_Component
@@ -1148,7 +1344,7 @@ namespace MX_test
             Prog_Connect.ActDestinationPortNumber = 5562;
             Prog_Connect.ActDidPropertyBit = 1;
             Prog_Connect.ActDsidPropertyBit = 1;
-            Prog_Connect.ActHostAddress = "192.168.2.12";
+            Prog_Connect.ActHostAddress = "192.168.2.99";
             Prog_Connect.ActIntelligentPreferenceBit = 0;
             Prog_Connect.ActIONumber = 1023;
             Prog_Connect.ActNetworkNumber = 0;
