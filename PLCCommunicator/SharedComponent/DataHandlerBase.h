@@ -348,7 +348,12 @@ typedef struct BATCH_SHARE_SYST_RESULTCCL_
 	WORD wIndex;			        //小板編號, 僅東莞松八廠需回傳
 }BATCH_SHARE_SYST_RESULTCCL;
 
-
+typedef struct BATCH_SHARE_SYST_RESULT_EVERSTR_ : public BATCH_SHARE_SYST_RESULTCCL
+{
+	TCHAR cName[MAX_BATCH_FIELD_LEN];       //工單號
+	TCHAR cAssign[MAX_BATCH_FIELD_LEN];		//分發號
+	TCHAR cMaterial[MAX_BATCH_FIELD_LEN];   //料號
+}BATCH_SHARE_SYST_RESULT_EVERSTR;
 
 
 

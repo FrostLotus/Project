@@ -129,7 +129,7 @@ void CEverStrProcessBase::ProcessAOIResponse(LPARAM lp)
 void CEverStrProcessBase::ProcessResult()
 {
 	//參數初始化
-	BATCH_SHARE_SYST_RESULTCCL xResult;
+	BATCH_SHARE_SYST_RESULT_EVERSTR xResult;
 	memset(&xResult, 0, sizeof(xResult));
 	DWORD dwFlag = 0;
 	int nOffset = 0;
@@ -218,8 +218,8 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 #ifdef USE_TEST_TIMER
 				case TIMER_TEST://[測試]上傳寫入
 				{
-					BATCH_SHARE_SYST_RESULTCCL xResult;
-					memset(&xResult, 0, sizeof(BATCH_SHARE_SYST_RESULTCCL));
+					BATCH_SHARE_SYST_RESULT_EVERSTR xResult;
+					memset(&xResult, 0, sizeof(BATCH_SHARE_SYST_RESULT_EVERSTR));
 					static int nCount = 0;
 					CStringA str;
 
@@ -265,6 +265,15 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 					//xInfo.xInfo2.cCCDError1 = 1;
 					//xInfo.xInfo2.cSizeError1 = 1;
 
+					wcscpy_s(xResult.cName, L"ABCDE");
+					wcscpy_s(xResult.cAssign, L"BCDEF");
+					wcscpy_s(xResult.cMaterial, L"CDEFG");
+					
+
+					SET_PLC_FIELD_DATA(FIELD_ORDER_1, sizeof((BYTE*)xResult.cName), (BYTE*)xResult.cName);
+					SET_PLC_FIELD_DATA(FIELD_MATERIAL_1, sizeof((BYTE*)xResult.cMaterial), (BYTE*)xResult.cMaterial);
+					SET_PLC_FIELD_DATA(FIELD_SN_1, sizeof((BYTE*)xResult.cAssign), (BYTE*)xResult.cAssign);
+					
 					PushResult(xResult);
 					//SetInfoField(xInfo);
 				}
@@ -452,7 +461,7 @@ void CEverStrProcessBase::ON_C10_CHANGE(WORD wC10)
 	NotifyAOI(WM_SYST_C10CHANGE_CMD, wC10);
 }
 
-void CEverStrProcessBase::PushResult(BATCH_SHARE_SYST_RESULTCCL& xResult)
+void CEverStrProcessBase::PushResult(BATCH_SHARE_SYST_RESULT_EVERSTR& xResult)
 {
 	std::lock_guard< std::mutex > lock(m_oMutex);
 	m_vResult.push_back(xResult);
@@ -468,8 +477,8 @@ DWORD CEverStrProcessBase::Thread_Result(void* pvoid)
 			case CASE_WRITE:
 			{
 				::ResetEvent(pThis->m_hEvent[EV_WRITE]);
-				BATCH_SHARE_SYST_RESULTCCL* pData = NULL;
-				static BATCH_SHARE_SYST_RESULTCCL xData;
+				BATCH_SHARE_SYST_RESULT_EVERSTR* pData = NULL;
+				static BATCH_SHARE_SYST_RESULT_EVERSTR xData;
 				{
 					std::lock_guard< std::mutex > lock(pThis->m_oMutex);
 					if (pThis->m_vResult.size())
@@ -504,7 +513,7 @@ DWORD CEverStrProcessBase::Thread_Result(void* pvoid)
 	}
 	return NULL;
 }
-void CEverStrProcessBase::WriteResult(BATCH_SHARE_SYST_RESULTCCL& xData)
+void CEverStrProcessBase::WriteResult(BATCH_SHARE_SYST_RESULT_EVERSTR& xData)
 {
 #ifdef USE_IN_COMMUNICATOR
 	theApp.InsertDebugLog(L"Write Insp start!", LOG_DEBUG);

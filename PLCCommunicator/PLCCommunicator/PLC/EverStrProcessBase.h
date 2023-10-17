@@ -97,7 +97,7 @@ protected:
 	virtual long ON_OPEN_PLC(LPARAM lp);
 	virtual void ON_GPIO_NOTIFY(WPARAM wp, LPARAM lp);
 
-	virtual void DoWriteResult(BATCH_SHARE_SYST_RESULTCCL& xData) = 0;
+	virtual void DoWriteResult(BATCH_SHARE_SYST_RESULT_EVERSTR& xData) = 0;
 	virtual void DoSetInfoField(BATCH_SHARE_SYST_INFO& xInfo) = 0;
 	virtual void DoCustomAction() {}; //客製化行為
 
@@ -116,7 +116,7 @@ private:
 	void ON_CCL_NEWBATCH();
 	void ON_C10_CHANGE(WORD wC10);
 
-	void PushResult(BATCH_SHARE_SYST_RESULTCCL& xResult);
+	void PushResult(BATCH_SHARE_SYST_RESULT_EVERSTR& xResult);
 	void SetInfoField(BATCH_SHARE_SYST_INFO& xInfo);
 
 private:
@@ -149,13 +149,13 @@ private:
 		CASE_WRITE,
 	};
 
-	vector<BATCH_SHARE_SYST_RESULTCCL> m_vResult;   //[內部]結果
-	std::mutex m_oMutex;                            //[內部]視窗對傳互斥鎖
-	HANDLE     m_hThread;                           //[內部]執行緒鎖
-	HANDLE     m_hEvent[EV_COUNT];                  //[內部]堆疊事件
+	vector<BATCH_SHARE_SYST_RESULT_EVERSTR> m_vResult;   //[內部]結果
+	std::mutex m_oMutex;                                 //[內部]視窗對傳互斥鎖
+	HANDLE     m_hThread;                                //[內部]執行緒鎖
+	HANDLE     m_hEvent[EV_COUNT];                       //[內部]堆疊事件
 
 	PLC_DATA_ITEM_** m_pPLC_FIELD_INFO;
 
 	static DWORD __stdcall Thread_Result(void* pvoid);
-	void WriteResult(BATCH_SHARE_SYST_RESULTCCL& xData);
+	void WriteResult(BATCH_SHARE_SYST_RESULT_EVERSTR& xData);
 };
