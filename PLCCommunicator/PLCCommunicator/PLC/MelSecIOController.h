@@ -73,6 +73,7 @@ protected:
 	long ReadAddress(CString strDevType, int nStartDeviceNumber, int nSize, WORD* pValue);
 	long ReadAddress(CString strDevType, int nStartDeviceNumber, int nSize, float* pValue);
 	long ReadAddress(CString strDevType, int nStartDeviceNumber, int nLength, char* pValue);
+
 	long ReadRandom(CString& strList, int nSize, short* pData);
 	long ReadOneAddress(CString strDevType, int nStartDeviceNumber, short* pValue);
 

@@ -17,11 +17,12 @@ CEverStrProcessBase::~CEverStrProcessBase()
 	Finalize();
 }
 //===============================================================================
-///<summary>PLC開啟觸發</summary>
+///<summary>[觸發]PLC開啟觸發</summary>
 long CEverStrProcessBase::ON_OPEN_PLC(LPARAM lp)
 {
+
 	long lRtn = CPLCProcessBase::ON_OPEN_PLC(lp);//先做CPLCProcessBase的原式
-	//-------------------------------------------
+	///-------------------------------------------
 	if (lRtn == 0)//原式建置成功
 	{
 		for (int i = 0; i < TIMER_MAX; i++)
@@ -217,8 +218,8 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 #ifdef USE_TEST_TIMER
 				case TIMER_TEST://[測試]上傳寫入
 				{
-					BATCH_SHARE_SYST_RESULTCCL_ xResult;
-					memset(&xResult, 0, sizeof(BATCH_SHARE_SYST_RESULTCCL_));
+					BATCH_SHARE_SYST_RESULTCCL xResult;
+					memset(&xResult, 0, sizeof(BATCH_SHARE_SYST_RESULTCCL));
 					static int nCount = 0;
 					CStringA str;
 
@@ -248,7 +249,7 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 					xResult.wSize_G14 = 13;
 
 					xResult.wResultLevel = 1;
-					xResult.wNum_AA = 2;
+					//xResult.wNum_AA = 2;
 					xResult.wNum_A = 3;
 					xResult.wNum_P = 4;
 					xResult.wQualifyRate = 5;
@@ -269,7 +270,7 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 				}
 				break;
 #endif
-				case TIMER_COMMAND://0 指令下發
+				case TIMER_COMMAND://0 [指令下發] FIELD_CCL_COMMAND: 0 =>101 
 				{
 					WORD wOldCommand = _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCL_COMMAND));//前一筆 指令下發
 					GET_PLC_FIELD_DATA(FIELD_CCL_COMMAND);//鍵入更新 指令下發
@@ -287,7 +288,7 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 							PLC_DATA_ITEM_* pItem = GetPLCAddressInfo(i, FALSE);//取前一筆的參數
 							if (pItem && pItem->xAction == ACTION_BATCH)//工單下發
 							{
-								GET_PLC_FIELD_DATA(i);//更新  一筆一筆更新?
+								GET_PLC_FIELD_DATA(i);//更新  一筆一筆更新
 							}
 						}
 #ifdef SHOW_PERFORMANCE
@@ -296,6 +297,11 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 						TRACE(L"Read time : %.2f \n", d);
 #endif
 						ON_CCL_NEWBATCH();  //[更新]下發工單
+#ifdef _DEBUG
+						//[指令下發回覆]發送 100 給PLC, PLC接收後自行清除 100   23/10/17 試作
+						WORD wReceive = 100;
+						SET_PLC_FIELD_DATA(FIELD_CCD_COMMAND_RECEIVED, sizeof(WORD), (BYTE*)&wReceive);
+#endif
 					}
 					else if (wOldCommand != 0 && wCommand == CCL_NOTIFYVALUE_COMMAND)//舊命令!=0 且 新命令 ==101
 					{
@@ -313,9 +319,9 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 					}
 				}
 				break;
-				case TIMER_COMMAND_RECEIVED://1 指令收到
+				case TIMER_COMMAND_RECEIVED://1 [下發指令收到且回覆]  
 				{
-					GET_PLC_FIELD_DATA(FIELD_CCD_COMMAND_RECEIVED);//鍵入更新 CCD接收 MES  資料完成
+					GET_PLC_FIELD_DATA(FIELD_CCD_COMMAND_RECEIVED);//更新 CCD接收 MES  資料完成
 				}
 				break;
 				case TIMER_RESULT://2 檢驗結果
@@ -328,10 +334,10 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 					else
 					{
 						if (GET_PLC_FIELD_VALUE(FIELD_CCD_RESULT) == L"0")//讀值為0
-						{ //ready to write
+						{	//ready to write
 							::SetEvent(m_hEvent[EV_WRITE]);
 						}
-						else//== L"200"
+						else
 						{
 							CString str;
 							str.Format(L"PLC not ready to receive insp result, Field value: %s \n", GET_PLC_FIELD_VALUE(FIELD_CCD_RESULT));
@@ -431,7 +437,7 @@ void CEverStrProcessBase::ON_CCL_NEWBATCH()
 
 	xData.wNO_C10 = _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCL_NO_C10));  //上傳有需要這邊下發更新嗎
 
-	if (USM_WriteData((BYTE*)&xData, sizeof(xData)))
+	if (USM_WriteData((BYTE*)&xData, sizeof(xData),0))
 	{
 		//log data, not yet
 		NotifyAOI(WM_SYST_PARAMCCL_CMD, NULL);//更新至AOI(CCD)

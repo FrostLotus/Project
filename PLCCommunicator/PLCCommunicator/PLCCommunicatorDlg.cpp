@@ -59,18 +59,21 @@ void CPLCCommunicatorDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 }
 
-BEGIN_MESSAGE_MAP(CPLCCommunicatorDlg, CDialogEx)//類似增加Listener的方式
+BEGIN_MESSAGE_MAP(CPLCCommunicatorDlg, CDialogEx)//增加Listener
 #ifdef SHOW_DEBUG_BTN
+	//按鈕事件
 	ON_BN_CLICKED(UI_BTN_QUERYALL, OnQueryAll)
 	ON_BN_CLICKED(UI_BTN_TESTWRITE, OnTestWrite)
 	ON_BN_CLICKED(UI_BTN_FULSHALL, OnFlushAll)
 #endif
+	
 	ON_WM_TIMER()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_MESSAGE(WM_LOCAL_MSG, OnCmdProcess)
 	ON_MESSAGE(WM_GPIO_MSG, OnCmdGPIO)
 	ON_WM_WINDOWPOSCHANGING()
+	//設定控制項
 	ON_NOTIFY(LVN_GETDISPINFO, UI_LC_PLCADDRESS, OnLvnGetdispinfoPLCAddress)
 	ON_NOTIFY(LVN_GETDISPINFO, UI_LC_PLCPARAM, OnLvnGetdispinfoPLCParam)
 	ON_NOTIFY(LVN_GETDISPINFO, UI_LC_INFO, OnLvnGetdispinfoInfo)
@@ -89,10 +92,10 @@ void CPLCCommunicatorDlg::OnQueryAll()
 		int nMax = m_pPLCProcessBase->GetFieldSize();
 		for (int i = 0; i < nMax; i++)
 		{
-			PLC_DATA_ITEM_* pItem = m_pPLCProcessBase->GetPLCAddressInfo(i, FALSE);
+			PLC_DATA_ITEM_* pItem = m_pPLCProcessBase->GetPLCAddressInfo(i, FALSE);//取定義軟元件暫存資料
 			if (pItem && pItem->xAction != ACTION_SKIP)//不是SKIP
 			{
-				m_pPLCProcessBase->GET_PLC_FIELD_DATA(i);//全部讀新狀態一次
+				m_pPLCProcessBase->GET_PLC_FIELD_DATA(i);//全部讀新資料狀態一次
 			}
 		}
 	}
@@ -110,8 +113,8 @@ void CPLCCommunicatorDlg::OnTestWrite()
 #ifndef USE_MC_PROTOCOL
 	if (m_pPLCProcessBase)
 	{
-		if (m_pPLCProcessBase->HAS_CUSTOM_TEST())
-		{ //for custom test
+		if (m_pPLCProcessBase->HAS_CUSTOM_TEST())//for custom test客製化測試
+		{ 
 			m_pPLCProcessBase->DO_CUSTOM_TEST();
 		}
 		else
@@ -124,17 +127,18 @@ void CPLCCommunicatorDlg::OnTestWrite()
 #endif
 			for (int i = 0; i < nMax; i++)
 			{
-				PLC_DATA_ITEM_* pItem = m_pPLCProcessBase->GetPLCAddressInfo(i, FALSE);
-				if (pItem && pItem->xAction == ACTION_RESULT)
+				PLC_DATA_ITEM_* pItem = m_pPLCProcessBase->GetPLCAddressInfo(i, FALSE);//取定義軟元件暫存資料
+				if (pItem && pItem->xAction == ACTION_RESULT)//若軟元件模式為RESULT
 				{
 					switch (pItem->xValType)
 					{
 						case PLC_TYPE_STRING:
-							if (i <= 0xFF)
+							if (i <= 0xFF)//255
 							{
-								char c[2]; memset(&c, 0, 2);
-								c[0] = 0x30 + i;
-								m_pPLCProcessBase->SET_PLC_FIELD_DATA(i, 2, (BYTE*)&c);
+								char c[2]; 
+								memset(&c, 0, 2);
+								c[0] = 0x30 + i; //0 + i
+								m_pPLCProcessBase->SET_PLC_FIELD_DATA(i, 2, (BYTE*)&c);//僅寫入2byte字
 							}
 							break;
 						case PLC_TYPE_WORD:
@@ -144,7 +148,7 @@ void CPLCCommunicatorDlg::OnTestWrite()
 						break;
 						case PLC_TYPE_FLOAT:
 						{
-							float f = i * 1.0f+0.5f;
+							float f = i * 1.0f + 0.5f;//+ 0.5f為測試是否為浮點
 							m_pPLCProcessBase->SET_PLC_FIELD_DATA(i, sizeof(float), (BYTE*)&f);
 						}
 						break;
@@ -167,7 +171,7 @@ void CPLCCommunicatorDlg::OnFlushAll()
 #ifndef USE_MC_PROTOCOL
 	if (m_pPLCProcessBase && pFlushAll)
 	{
-		m_pPLCProcessBase->SET_FLUSH_ANYWAY(pFlushAll->GetCheck());
+		m_pPLCProcessBase->SET_FLUSH_ANYWAY(pFlushAll->GetCheck());//
 	}
 	if (pFlushAll)
 	{
@@ -258,6 +262,7 @@ void CPLCCommunicatorDlg::ON_SET_PLCPARAM(BATCH_SHARE_SYSTCCL_INITPARAM& xParam)
 		m_xUi[UI_LC_PLCADDRESS].pList->SetItemCount(m_pPLCProcessBase->GetFieldSize());
 	}
 }
+///<summary>刷新PLC顯示控制項狀況</summary>
 void CPLCCommunicatorDlg::ON_PLCDATA_CHANGE(int nFieldId, void* pData, int nSizeInByte)
 {
 	if (m_xUi[UI_LC_PLCADDRESS].pList)
@@ -276,7 +281,7 @@ void CPLCCommunicatorDlg::ON_BATCH_PLCDATA_CHANGE(int nFieldFirst, int nFieldLas
 LRESULT CPLCCommunicatorDlg::OnCmdGPIO(WPARAM wParam, LPARAM lParam)
 {
 #ifndef USE_MC_PROTOCOL
-	ON_GPIO_NOTIFY(wParam, lParam);
+	ON_GPIO_NOTIFY(wParam, lParam);//第一次為WM_CUSTOMERTYPE_INIT略過  第二次為WM_AOI_RESPONSE_CMD進入
 #endif
 	switch (wParam)
 	{
@@ -581,24 +586,22 @@ void CPLCCommunicatorDlg::Init()
 {
 	theApp.InsertDebugLog(L"Start");
 	SetWindowText(PLC_COMMUNICATOR_NAME);
+	//實體化鎖
 	for (int i = LOCK_BEGIN; i < LOCK_MAX; i++)
 	{
 		InitializeCriticalSection(&m_xLock[i]);
 	}
-
 #ifndef USE_MC_PROTOCOL
 	m_pPLCProcessBase = NULL;
 #else
 	m_pPLCDataHandler = new CPLCDataHandler;
 #endif
-	InitUiRectPos();
-	InitUI();
+	InitUiRectPos();//UI POSITION初始化
+	InitUI(); //初始化UI
 #ifndef USE_MC_PROTOCOL
 #ifdef OFF_LINE
 	m_xParam.eCustomerType = CUSTOMER_EVERSTRONG;//(AOI_CUSTOMERTYPE_)(lParam >> 8 & 0xFF);
 	m_xParam.eSubCustomerType = SUB_CUSTOMER_NONE;//(AOI_SUBCUSTOMERTYPE_)(lParam & 0xFF);
-	//m_xParam.eCustomerType = CUSTOMER_SYST_CCL;
-	//m_xParam.eSubCustomerType = SUB_CUSTOMER_DONGGUAN_SONG8;
 	OnCmdGPIO(WM_CUSTOMERTYPE_INIT, m_xParam.eCustomerType << 14 | m_xParam.eSubCustomerType);//設置客製
 	OnCmdGPIO(WM_AOI_RESPONSE_CMD, WM_SYST_PARAMINIT_CMD);//設置AOI
 	//InitPLCProcess();
@@ -621,6 +624,7 @@ void CPLCCommunicatorDlg::Init()
 	CenterWindow();
 	m_tTimer = SetTimer(INFO_TIMER, 1000, NULL);
 }
+///<summary>初始化UI位置</summary>
 void CPLCCommunicatorDlg::InitUiRectPos()
 {
 	for (int i = UI_ITEM_BEGIN; i < UI_ITEM_END; i++)
@@ -744,6 +748,7 @@ void CPLCCommunicatorDlg::InitUI()
 	}
 	m_xUi[UI_LC_INFO].pList->SetItemCount(INFO_MAX);
 }
+///<summary>程式結束處置</summary>
 void CPLCCommunicatorDlg::Finalize()
 {
 	if (m_tTimerReconnect)

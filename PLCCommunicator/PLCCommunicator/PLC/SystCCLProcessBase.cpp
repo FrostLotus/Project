@@ -17,7 +17,7 @@ CSystCCLProcessBase::~CSystCCLProcessBase()
 {
 	Finalize();
 }
-
+//=================================================================
 long CSystCCLProcessBase::ON_OPEN_PLC(LPARAM lp)
 {
 	long lRtn = CPLCProcessBase::ON_OPEN_PLC(lp);

@@ -208,3 +208,8 @@ void CEverStrProcess::SetMXParam(IActProgType* pParam, BATCH_SHARE_SYSTCCL_INITP
 	pParam->put_ActUnitType(UNIT_FXVETHER);
 #endif
 }
+///<summary>客製化行為</summary>
+void CEverStrProcess::DoCustomAction()
+{
+
+}

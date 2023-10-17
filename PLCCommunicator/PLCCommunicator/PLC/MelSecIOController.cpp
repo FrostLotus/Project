@@ -132,9 +132,11 @@ long CMelSecIOController::ReadAddress(CString strDevType, int nStartDeviceNumber
 		return 0;
 
 	short* pRead = NULL;//輸出
-	long lRtn = ReadAddress(strDevType, nStartDeviceNumber, nReadSize, &pRead); //ReadDeviceBlock2
+	long lRtn = ReadAddress(strDevType, nStartDeviceNumber, nReadSize, &pRead); //ReadDeviceBlock2 => pRead
 
-	BYTE* pSrc = (BYTE*)pRead, * pDst = (BYTE*)pValue;//各種建立size?
+	BYTE* pSrc = (BYTE*)pRead,
+		* pDst = (BYTE*)pValue;//各種建立size?
+	//讀取成功 & 輸出有值
 	if (lRtn == 0 && pRead)
 	{
 		for (int i = 0; i < nSize; i++)
@@ -200,13 +202,14 @@ long CMelSecIOController::ReadOneAddress(CString strDevType, int nStartDeviceNum
 	}
 	return lRtn;
 }
+///<summary>[short]軟元件區塊讀取</summary>
 long CMelSecIOController::ReadAddress(CString strDevType, int nStartDeviceNumber, int nSizeInWord, short** ppValue)
 {
 	long lRtn = ERR_DLL_NOT_LOAD;
 #ifndef SUPPORT_AOI
 	if (nSizeInWord)
 	{
-		if (m_pIProgType)
+		if (m_pIProgType)//連線
 		{
 			EnterCriticalSection(&m_xLock);//Lock ON
 			*ppValue = new short[nSizeInWord];
@@ -214,7 +217,7 @@ long CMelSecIOController::ReadAddress(CString strDevType, int nStartDeviceNumber
 			CString strDevice;
 			strDevice.Format(L"%s%d", strDevType, nStartDeviceNumber);//D1000
 			BSTR bStr = strDevice.AllocSysString();
-			m_pIProgType->ReadDeviceBlock2(bStr, nSizeInWord, *ppValue, &lRtn);
+			m_pIProgType->ReadDeviceBlock2(bStr, nSizeInWord, *ppValue, &lRtn);//MXCOMPONENT讀取 ->ppValue
 			::SysFreeString(bStr);
 			LeaveCriticalSection(&m_xLock);//Lock OFF
 		}
