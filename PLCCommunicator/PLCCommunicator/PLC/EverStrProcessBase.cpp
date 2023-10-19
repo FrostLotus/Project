@@ -81,6 +81,7 @@ void CEverStrProcessBase::ON_GPIO_NOTIFY(WPARAM wp, LPARAM lp)
 				SetInfoField(xInfo);
 			}
 			break;
+
 	}
 }
 ///<summary>初始項目</summary>
@@ -176,10 +177,10 @@ void CEverStrProcessBase::ProcessResult()
 		SetData(SRF_REAL_X_ONE, &xResult.fReal_One_X, nFloatSize, L"fReal_One_X", LOG_FLOAT);
 		SetData(SRF_REAL_X_TWO, &xResult.fReal_Two_X, nFloatSize, L"fReal_Two_X", LOG_FLOAT);
 
-		SetData(SRF_REAL_DIFF_Y_ONE, &xResult.wDiff_One_Y, nWordSize, L"wDiff_One_Y", LOG_WORD);
-		SetData(SRF_REAL_DIFF_Y_TWO, &xResult.wDiff_Two_Y, nWordSize, L"wDiff_Two_Y", LOG_WORD);
-		SetData(SRF_REAL_DIFF_X_ONE, &xResult.wDiff_One_X, nWordSize, L"wDiff_One_X", LOG_WORD);
-		SetData(SRF_REAL_DIFF_X_TWO, &xResult.wDiff_Two_X, nWordSize, L"wDiff_Two_X", LOG_WORD);
+		SetData(SRF_REAL_DIFF_Y_ONE,  &xResult.wDiff_One_Y,  nWordSize, L"wDiff_One_Y",  LOG_WORD);
+		SetData(SRF_REAL_DIFF_Y_TWO,  &xResult.wDiff_Two_Y,  nWordSize, L"wDiff_Two_Y",  LOG_WORD);
+		SetData(SRF_REAL_DIFF_X_ONE,  &xResult.wDiff_One_X,  nWordSize, L"wDiff_One_X",  LOG_WORD);
+		SetData(SRF_REAL_DIFF_X_TWO,  &xResult.wDiff_Two_X,  nWordSize, L"wDiff_Two_X",  LOG_WORD);
 		SetData(SRF_REAL_DIFF_XY_ONE, &xResult.wDiff_One_XY, nWordSize, L"wDiff_One_XY", LOG_WORD);
 		SetData(SRF_REAL_DIFF_XY_TWO, &xResult.wDiff_Two_XY, nWordSize, L"wDiff_Two_XY", LOG_WORD);
 
@@ -221,7 +222,6 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 					BATCH_SHARE_SYST_RESULT_EVERSTR xResult;
 					memset(&xResult, 0, sizeof(BATCH_SHARE_SYST_RESULT_EVERSTR));
 					static int nCount = 0;
-					CStringA str;
 
 					xResult.fReal_One_Y = 1.1;
 					xResult.fReal_Two_Y = 2.2;
@@ -237,13 +237,8 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 					xResult.wDiff_Two_XY = 6;
 
 					xResult.wFrontLevel = 7;
-					//str.Format("12345678901234567890123456789a");//8
-					//memcpy(xResult.cFrontCode, str.GetBuffer(), _countof(xResult.cFrontCode));
-					//xResult.wFrontLocation = 8;
 					xResult.wBackLevel = 9;
-					//str.Format("abcdefghijklmnopqrstuvwxyzabca");//10
-					//memcpy(xResult.cBackCode, str.GetBuffer(), _countof(xResult.cBackCode));
-					//xResult.wBackLocation = 10;
+
 					xResult.wSize_G10 = 11;
 					xResult.wSize_G12 = 12;
 					xResult.wSize_G14 = 13;
@@ -265,16 +260,20 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 					//xInfo.xInfo2.cCCDError1 = 1;
 					//xInfo.xInfo2.cSizeError1 = 1;
 
-					wcscpy_s(xResult.cName, L"ABCDE");
-					wcscpy_s(xResult.cAssign, L"BCDEF");
-					wcscpy_s(xResult.cMaterial, L"CDEFG");
-					
+					WideCharToMultiByte(CP_ACP, 0, GET_PLC_FIELD_VALUE(FIELD_ORDER), -1, xResult.cName, GET_PLC_FIELD_VALUE(FIELD_ORDER).GetLength(), NULL, NULL);
+					WideCharToMultiByte(CP_ACP, 0, GET_PLC_FIELD_VALUE(FIELD_SN), -1, xResult.cAssign, GET_PLC_FIELD_VALUE(FIELD_SN).GetLength(), NULL, NULL);
+					WideCharToMultiByte(CP_ACP, 0, GET_PLC_FIELD_VALUE(FIELD_MATERIAL), -1, xResult.cMaterial, GET_PLC_FIELD_VALUE(FIELD_MATERIAL).GetLength(), NULL, NULL);
 
-					SET_PLC_FIELD_DATA(FIELD_ORDER_1, sizeof((BYTE*)xResult.cName), (BYTE*)xResult.cName);
-					SET_PLC_FIELD_DATA(FIELD_MATERIAL_1, sizeof((BYTE*)xResult.cMaterial), (BYTE*)xResult.cMaterial);
-					SET_PLC_FIELD_DATA(FIELD_SN_1, sizeof((BYTE*)xResult.cAssign), (BYTE*)xResult.cAssign);
+
+					//SET_PLC_FIELD_DATA(FIELD_ORDER_1, sizeof((BYTE*)xResult.cName), (BYTE*)xResult.cName);
+					//SET_PLC_FIELD_DATA(FIELD_MATERIAL_1, sizeof((BYTE*)xResult.cMaterial), (BYTE*)xResult.cMaterial);
+					//SET_PLC_FIELD_DATA(FIELD_SN_1, sizeof((BYTE*)xResult.cAssign), (BYTE*)xResult.cAssign); 
 					
+					ON_GPIO_NOTIFY(WM_SYST_EXTRA_CMD, NULL);
+
+
 					PushResult(xResult);
+
 					//SetInfoField(xInfo);
 				}
 				break;
@@ -300,6 +299,16 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 								GET_PLC_FIELD_DATA(i);//更新  一筆一筆更新
 							}
 						}
+
+						//Set
+						//wcscpy_s(xResult.cName, GET_PLC_FIELD_VALUE(FIELD_ORDER));
+						//wcscpy_s(xResult.cAssign, GET_PLC_FIELD_VALUE(FIELD_MATERIAL));
+						//wcscpy_s(xResult.cMaterial, GET_PLC_FIELD_VALUE(FIELD_SN));
+						
+						//int length = _tcslen(cName);
+						//BYTE* byteArray = new BYTE[length];
+						//memcpy(byteArray, (LPCTSTR)cName, length);
+
 #ifdef SHOW_PERFORMANCE
 						QueryPerformanceCounter(&xEnd);
 						double d = (xEnd.QuadPart - xStart.QuadPart) * 1000.0 / xFreq.QuadPart;
@@ -524,25 +533,23 @@ void CEverStrProcessBase::WriteResult(BATCH_SHARE_SYST_RESULT_EVERSTR& xData)
 
 	if (IS_SUPPORT_FLOAT_REALSIZE())
 	{
-		SET_PLC_FIELD_DATA(FIELD_REAL_Y_ONE, 4, (BYTE*)&xData.fReal_One_Y);
-		SET_PLC_FIELD_DATA(FIELD_REAL_Y_TWO, 4, (BYTE*)&xData.fReal_Two_Y);
-		SET_PLC_FIELD_DATA(FIELD_REAL_X_ONE, 4, (BYTE*)&xData.fReal_One_X);
-		SET_PLC_FIELD_DATA(FIELD_REAL_X_TWO, 4, (BYTE*)&xData.fReal_Two_X);
+		SET_PLC_FIELD_DATA(FIELD_REAL_Y_ONE,   4, (BYTE*)&xData.fReal_One_Y);
+		SET_PLC_FIELD_DATA(FIELD_REAL_Y_TWO,   4, (BYTE*)&xData.fReal_Two_Y);
+		SET_PLC_FIELD_DATA(FIELD_REAL_X_ONE,   4, (BYTE*)&xData.fReal_One_X);
+		SET_PLC_FIELD_DATA(FIELD_REAL_X_TWO,   4, (BYTE*)&xData.fReal_Two_X);
 	}
-	SET_PLC_FIELD_DATA(FIELD_REAL_DIFF_ONE_Y, 2, (BYTE*)&xData.wDiff_One_Y);
-	SET_PLC_FIELD_DATA(FIELD_REAL_DIFF_TWO_Y, 2, (BYTE*)&xData.wDiff_Two_Y);
-	SET_PLC_FIELD_DATA(FIELD_REAL_DIFF_ONE_X, 2, (BYTE*)&xData.wDiff_One_X);
-	SET_PLC_FIELD_DATA(FIELD_REAL_DIFF_TWO_X, 2, (BYTE*)&xData.wDiff_Two_X);
+	SET_PLC_FIELD_DATA(FIELD_REAL_DIFF_ONE_Y,  2, (BYTE*)&xData.wDiff_One_Y);
+	SET_PLC_FIELD_DATA(FIELD_REAL_DIFF_TWO_Y,  2, (BYTE*)&xData.wDiff_Two_Y);
+	SET_PLC_FIELD_DATA(FIELD_REAL_DIFF_ONE_X,  2, (BYTE*)&xData.wDiff_One_X);
+	SET_PLC_FIELD_DATA(FIELD_REAL_DIFF_TWO_X,  2, (BYTE*)&xData.wDiff_Two_X);
 	SET_PLC_FIELD_DATA(FIELD_REAL_DIFF_ONE_XY, 2, (BYTE*)&xData.wDiff_One_XY);
 	SET_PLC_FIELD_DATA(FIELD_REAL_DIFF_TWO_XY, 2, (BYTE*)&xData.wDiff_Two_XY);
-
-
 
 	DoWriteResult(xData);
 
 	//write flag
 	WORD wResult = 200;
-	SET_PLC_FIELD_DATA(FIELD_CCD_RESULT, 2, (BYTE*)&wResult);//
+	SET_PLC_FIELD_DATA(FIELD_CCD_RESULT, 2, (BYTE*)&wResult);
 
 #ifdef USE_IN_COMMUNICATOR
 	theApp.InsertDebugLog(L"Write Insp done!", LOG_DEBUG);

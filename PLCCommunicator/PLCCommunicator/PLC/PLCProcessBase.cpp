@@ -280,8 +280,8 @@ long CPLCProcessBase::SET_PLC_FIELD_DATA(int nFieldId, int nSizeInByte, BYTE* pD
 		const PLC_DATA_ITEM_* pItem = GetPLCAddressInfo(nFieldId, FALSE);
 		//
 		BYTE* pOldValue = new BYTE[nSizeInByte];
-		memcpy(pOldValue, m_pPLCData[nFieldId].pData, nSizeInByte);
-		memcpy(m_pPLCData[nFieldId].pData, pData, nSizeInByte);
+		memcpy(pOldValue, m_pPLCData[nFieldId].pData, nSizeInByte);//先複製空位置
+		memcpy(m_pPLCData[nFieldId].pData, pData, nSizeInByte);//填空
 
 #ifdef SHOW_PERFORMANCE
 		LARGE_INTEGER xStart, xEnd, xFreq;

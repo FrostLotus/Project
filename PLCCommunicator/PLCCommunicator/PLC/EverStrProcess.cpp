@@ -134,11 +134,15 @@ void CEverStrProcess::DoWriteResult(BATCH_SHARE_SYST_RESULT_EVERSTR& xData)
 		WORD nSize = (int)fSize;
 		SET_PLC_FIELD_DATA(nField, 2, (BYTE*)&nSize);
 	};
+	WriteSizeField(FIELD_REAL_Y_ONE, xData.fReal_One_Y);
+	WriteSizeField(FIELD_REAL_Y_TWO, xData.fReal_Two_Y);
+	WriteSizeField(FIELD_REAL_X_ONE, xData.fReal_One_X);
+	WriteSizeField(FIELD_REAL_X_TWO, xData.fReal_Two_X); 
 
 	SET_PLC_FIELD_DATA(FIELD_CCL_NO_C10, 2, (BYTE*)&xData.wIndex);
 	
 	SET_PLC_FIELD_DATA(FIELD_FRONT_LEVEL, 2, (BYTE*)&xData.wFrontLevel);
-	SET_PLC_FIELD_DATA(FIELD_BACK_LEVEL, 2, (BYTE*)&xData.wBackLevel);
+	SET_PLC_FIELD_DATA(FIELD_BACK_LEVEL,  2, (BYTE*)&xData.wBackLevel);
 
 	SET_PLC_FIELD_DATA(FIELD_SIZE_G10, 2, (BYTE*)&xData.wSize_G10);
 	SET_PLC_FIELD_DATA(FIELD_SIZE_G12, 2, (BYTE*)&xData.wSize_G12);
@@ -148,10 +152,12 @@ void CEverStrProcess::DoWriteResult(BATCH_SHARE_SYST_RESULT_EVERSTR& xData)
 	SET_PLC_FIELD_DATA(FIELD_RESULT_NGNum, 2, (BYTE*)&xData.wNum_P);//NG數量
 	SET_PLC_FIELD_DATA(FIELD_RESULT_QUALIFYRATE, 2, (BYTE*)&xData.wQualifyRate);//訂單合格率
 
-	SET_PLC_FIELD_DATA(FIELD_ORDER_1, sizeof((BYTE*)&xData.cName), (BYTE*)&xData.cName);
-	SET_PLC_FIELD_DATA(FIELD_SN_1, sizeof((BYTE*)&xData.cAssign), (BYTE*)&xData.cAssign);
-	SET_PLC_FIELD_DATA(FIELD_MATERIAL_1, sizeof((BYTE*)&xData.cMaterial), (BYTE*)&xData.cMaterial);
+	//WORD wMES = 400;
+	//SET_PLC_FIELD_DATA(FIELD_BATCH_MES, 2, (BYTE*)&wMES);
 
+	SET_PLC_FIELD_DATA(FIELD_ORDER_1, (int)sizeof(xData.cName), (BYTE*)&xData.cName);
+	SET_PLC_FIELD_DATA(FIELD_SN_1, (int)sizeof(xData.cAssign), (BYTE*)&xData.cAssign);
+	SET_PLC_FIELD_DATA(FIELD_MATERIAL_1, (int)sizeof(xData.cMaterial), (BYTE*)&xData.cMaterial);
 }
 
 void CEverStrProcess::DoSetInfoField(BATCH_SHARE_SYST_INFO& xInfo)
@@ -208,6 +214,49 @@ void CEverStrProcess::SetMXParam(IActProgType* pParam, BATCH_SHARE_SYSTCCL_INITP
 	pParam->put_ActUnitType(UNIT_FXVETHER);
 #endif
 }
+
+void CEverStrProcess::ON_GPIO_NOTIFY(WPARAM wp, LPARAM lp)
+{
+	switch (wp)
+	{
+		case  WM_SYST_EXTRA_CMD:
+		{
+			BATCH_SYST_EXTRA xExtra;
+			memset(&xExtra, 0, sizeof(xExtra));
+			if (USM_ReadData((unsigned char*)&xExtra, sizeof(xExtra)))
+			{
+				CStringA str;
+				str.Format("1234567890");
+				memcpy(xExtra.cInsp, str.GetBuffer(), _countof(xExtra.cInsp));
+				SET_PLC_FIELD_DATA(FIELD_INSP_SETTING, 10, (BYTE*)&xExtra.cInsp);
+				memcpy(xExtra.cLight, str.GetBuffer(), _countof(xExtra.cLight));
+				SET_PLC_FIELD_DATA(FIELD_LIGHT_SETTING, 10, (BYTE*)&xExtra.cLight);
+				
+				char cTime[18];
+				memset(&cTime, 0, sizeof(cTime));
+#ifndef _DEBUG
+				sprintf_s(cTime, "%S", CTime(xExtra.xStart).Format(L"%y-%m-%d %H-%M-%S"));
+#else
+				sprintf_s(cTime, "%S", CTime::GetCurrentTime().Format(L"%y-%m-%d %H-%M-%S"));
+#endif
+				SET_PLC_FIELD_DATA(FIELD_START_TIME, sizeof(cTime), (BYTE*)&cTime);
+
+#ifndef _DEBUG
+				sprintf_s(cTime, "%S", CTime(xExtra.xEnd).Format(L"%y-%m-%d %H-%M-%S"));
+#else
+				sprintf_s(cTime, "%S", CTime::GetCurrentTime().Format(L"%y-%m-%d %H-%M-%S"));
+#endif
+				SET_PLC_FIELD_DATA(FIELD_END_TIME, sizeof(cTime), (BYTE*)&cTime);
+				//發送 400 給PLC, PLC接收後自行清除 400
+				WORD wMES = 400;
+				SET_PLC_FIELD_DATA(FIELD_BATCH_MES, 2, (BYTE*)&wMES);
+			}
+		}
+		break;
+	}
+	CEverStrProcessBase::ON_GPIO_NOTIFY(wp, lp);
+}
+
 ///<summary>客製化行為</summary>
 void CEverStrProcess::DoCustomAction()
 {

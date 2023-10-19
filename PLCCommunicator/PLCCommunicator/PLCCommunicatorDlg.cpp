@@ -53,20 +53,19 @@ CPLCCommunicatorDlg::~CPLCCommunicatorDlg()
 {
 	Finalize();
 }
-
+//========================================================================================
 void CPLCCommunicatorDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 }
-
-BEGIN_MESSAGE_MAP(CPLCCommunicatorDlg, CDialogEx)//增加Listener
+///<summary>增加事件Listener</summary>
+BEGIN_MESSAGE_MAP(CPLCCommunicatorDlg, CDialogEx)
 #ifdef SHOW_DEBUG_BTN
 	//按鈕事件
 	ON_BN_CLICKED(UI_BTN_QUERYALL, OnQueryAll)
 	ON_BN_CLICKED(UI_BTN_TESTWRITE, OnTestWrite)
 	ON_BN_CLICKED(UI_BTN_FULSHALL, OnFlushAll)
 #endif
-	
 	ON_WM_TIMER()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
@@ -201,7 +200,6 @@ BOOL CPLCCommunicatorDlg::OnInitDialog()
 // 如果將最小化按鈕加入您的對話方塊，您需要下列的程式碼，
 // 以便繪製圖示。對於使用文件/檢視模式的 MFC 應用程式，
 // 框架會自動完成此作業。
-
 void CPLCCommunicatorDlg::OnPaint()
 {
 	if (IsIconic())
@@ -234,7 +232,7 @@ HCURSOR CPLCCommunicatorDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
-
+///<summary>視窗關閉</summary>
 LRESULT CPLCCommunicatorDlg::OnCmdProcess(WPARAM wParam, LPARAM lParam)
 {
 	switch (wParam)
@@ -246,10 +244,12 @@ LRESULT CPLCCommunicatorDlg::OnCmdProcess(WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 #ifndef USE_MC_PROTOCOL
+///<summary>PLC運作訊息</summary>
 void CPLCCommunicatorDlg::ON_PLC_NOTIFY(CString strMsg)
 {
 	AddInfoText(strMsg);
 }
+///<summary>PLC設置</summary>
 void CPLCCommunicatorDlg::ON_SET_PLCPARAM(BATCH_SHARE_SYSTCCL_INITPARAM& xParam)
 {
 	m_xParam.strPLCIp = xParam.cPLCIP;
@@ -270,6 +270,7 @@ void CPLCCommunicatorDlg::ON_PLCDATA_CHANGE(int nFieldId, void* pData, int nSize
 		m_xUi[UI_LC_PLCADDRESS].pList->RedrawItems(nFieldId, nFieldId);
 	}
 }
+///<summary>刷新PLC顯示控制項狀況(範圍)</summary>
 void CPLCCommunicatorDlg::ON_BATCH_PLCDATA_CHANGE(int nFieldFirst, int nFieldLast)
 {
 	if (m_xUi[UI_LC_PLCADDRESS].pList)
@@ -277,7 +278,8 @@ void CPLCCommunicatorDlg::ON_BATCH_PLCDATA_CHANGE(int nFieldFirst, int nFieldLas
 		m_xUi[UI_LC_PLCADDRESS].pList->RedrawItems(nFieldFirst, nFieldLast);
 	}
 }
-#endif
+#endif USE_MC_PROTOCOL
+///<summary>AOI控制觸發</summary>
 LRESULT CPLCCommunicatorDlg::OnCmdGPIO(WPARAM wParam, LPARAM lParam)
 {
 #ifndef USE_MC_PROTOCOL
@@ -286,7 +288,7 @@ LRESULT CPLCCommunicatorDlg::OnCmdGPIO(WPARAM wParam, LPARAM lParam)
 	switch (wParam)
 	{
 		case WM_CUSTOMERTYPE_INIT:
-			m_xParam.eCustomerType = (AOI_CUSTOMERTYPE_)(lParam >> 14 & 0xFF);
+			m_xParam.eCustomerType = (AOI_CUSTOMERTYPE_)(lParam >> 15 & 0xFF);
 			m_xParam.eSubCustomerType = (AOI_SUBCUSTOMERTYPE_)(lParam & 0xFF);
 #ifdef _DEBUG
 			//m_xParam.eCustomerType = AOI_CUSTOMERTYPE_::CUSTOMER_SYST_CCL;
@@ -329,6 +331,7 @@ LRESULT CPLCCommunicatorDlg::OnCmdGPIO(WPARAM wParam, LPARAM lParam)
 	}
 	return 0;
 }
+///<summary>視窗移動改變</summary>
 void CPLCCommunicatorDlg::OnWindowPosChanging(WINDOWPOS FAR* lpwndpos)
 {
 	if (m_bNoShow)
@@ -336,6 +339,7 @@ void CPLCCommunicatorDlg::OnWindowPosChanging(WINDOWPOS FAR* lpwndpos)
 
 	CDialog::OnWindowPosChanging(lpwndpos);
 }
+
 void CPLCCommunicatorDlg::OnLvnGetdispinfoPLCAddress(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NMLVDISPINFO* pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
@@ -582,6 +586,7 @@ void CPLCCommunicatorDlg::OnTimer(UINT_PTR nEventId)
 		InvalidateRect(&m_xUi[UI_LABEL_TIME].rcUi);
 	}
 }
+///<summary>初始化項目</summary>
 void CPLCCommunicatorDlg::Init()
 {
 	theApp.InsertDebugLog(L"Start");
@@ -602,7 +607,7 @@ void CPLCCommunicatorDlg::Init()
 #ifdef OFF_LINE
 	m_xParam.eCustomerType = CUSTOMER_EVERSTRONG;//(AOI_CUSTOMERTYPE_)(lParam >> 8 & 0xFF);
 	m_xParam.eSubCustomerType = SUB_CUSTOMER_NONE;//(AOI_SUBCUSTOMERTYPE_)(lParam & 0xFF);
-	OnCmdGPIO(WM_CUSTOMERTYPE_INIT, m_xParam.eCustomerType << 14 | m_xParam.eSubCustomerType);//設置客製
+	OnCmdGPIO(WM_CUSTOMERTYPE_INIT, m_xParam.eCustomerType << 15 | m_xParam.eSubCustomerType);//設置客製
 	OnCmdGPIO(WM_AOI_RESPONSE_CMD, WM_SYST_PARAMINIT_CMD);//設置AOI
 	//InitPLCProcess();
 	//theApp.InsertDebugLog(L"init customer type done");
@@ -815,6 +820,7 @@ void CPLCCommunicatorDlg::AddInfoText(CString& strInfo)
 		m_xUi[UI_LC_INFO].pList->EnsureVisible(nSize - 1, TRUE);
 	}
 }
+///<summary>程式項目選擇初始化</summary>
 void CPLCCommunicatorDlg::InitPLCProcess()
 {
 #ifndef USE_MC_PROTOCOL

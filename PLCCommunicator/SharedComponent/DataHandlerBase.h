@@ -117,7 +117,9 @@ enum AOI_CUSTOMERTYPE_
 	CUSTOMER_TUC_PP = 11,		  //台耀 PP
 	CUSTOMER_TG = 12,			  //台玻
 	CUSTOMER_YINGHUA = 13,		  //盈華
-	CUSTOMER_EVERSTRONG = 14,     //甬強         //23/09/25新增
+
+	CUSTOMER_EVERSTRONG = 15,     //甬強         //23/10/19 修訂
+
 	CUSTOMER_TECHAIN = 255,		  //地謙        
 #ifdef _DEBUG
 	CUSTOMER_TAG = 254,           //標籤機
@@ -350,9 +352,13 @@ typedef struct BATCH_SHARE_SYST_RESULTCCL_
 
 typedef struct BATCH_SHARE_SYST_RESULT_EVERSTR_ : public BATCH_SHARE_SYST_RESULTCCL
 {
-	TCHAR cName[MAX_BATCH_FIELD_LEN];       //工單號
-	TCHAR cAssign[MAX_BATCH_FIELD_LEN];		//分發號
-	TCHAR cMaterial[MAX_BATCH_FIELD_LEN];   //料號
+	//CString cName[MAX_BATCH_FIELD_LEN];       //工單號
+	//CString cAssign[MAX_BATCH_FIELD_LEN];		//分發號
+	//CString cMaterial[MAX_BATCH_FIELD_LEN];   //料號
+
+	char cName[MAX_BATCH_FIELD_LEN];
+	char cAssign[MAX_BATCH_FIELD_LEN];
+	char cMaterial[MAX_BATCH_FIELD_LEN];
 }BATCH_SHARE_SYST_RESULT_EVERSTR;
 
 
