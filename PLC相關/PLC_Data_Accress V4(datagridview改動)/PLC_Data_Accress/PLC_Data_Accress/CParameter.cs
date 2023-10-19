@@ -440,6 +440,26 @@ namespace PLC_Data_Access
             int iEnd = Convert.ToInt32(sEnd.Replace("D", ""));//軟元件結尾 改數字
             iSize = Math.Abs(iEnd - iStart) + 1;//換算總軟元件數量
         }
+        public int GetCombineByte(string sDevice,short[] arrDeviceData,int iOrderCount,out byte[] total, out int iDeviceSize)
+        {
+            GetCombineSize_int(sDevice, out int _iDeviceSize);
+            iDeviceSize = _iDeviceSize;//
+            total = System.BitConverter.GetBytes(arrDeviceData[iOrderCount]);
+            iOrderCount++;
+            //區間byte聯合
+            for (int i = 1; i < iDeviceSize; i++)
+            {
+                var addvalue = System.BitConverter.GetBytes(arrDeviceData[iOrderCount]);
+                var FullValue = new byte[total.Length + addvalue.Length];
+                //union
+                Buffer.BlockCopy(total, 0, FullValue, 0, total.Length);
+                Buffer.BlockCopy(addvalue, 0, FullValue, total.Length, addvalue.Length);
+
+                total = FullValue;//一直累積完全部byte
+                iOrderCount++;
+            }
+            return iOrderCount;
+        }
         //工具
         public void DeviceDataArrClear()
         {

@@ -503,7 +503,6 @@ namespace PLC_Data_Access
                     if (m_Param.lWriteData[i].Address.Contains("~"))//若為軟元件區間
                     {
                         m_Param.GetCombineArray_str(m_Param.lWriteData[i].Address, out int iItemCount, out string sItemStr);
-
                         iTotalItem += iItemCount;//增加軟元件總數
                         //串Random用字串
                         arrGetData += (arrGetData == "") ? sItemStr : "\n" + sItemStr;
@@ -529,39 +528,21 @@ namespace PLC_Data_Access
                 {
                     if (m_Param.lReadData[i].Address.Contains("~"))//若為軟元件區間
                     {
-                        m_Param.GetCombineSize_int(m_Param.lReadData[i].Address, out int iDeviceSize);
-                        string sTmp = "";
-
-                        var total = System.BitConverter.GetBytes(arrDeviceData[iOrderCount]);
-                        iOrderCount++;
-                        //區間byte聯合
-                        for (int j = 1; j < iDeviceSize; j++)
-                        {
-                            var addvalue = System.BitConverter.GetBytes(arrDeviceData[iOrderCount]);
-                            var FullValue = new byte[total.Length + addvalue.Length];
-                            //union
-                            Buffer.BlockCopy(total, 0, FullValue, 0, total.Length);
-                            Buffer.BlockCopy(addvalue, 0, FullValue, total.Length, addvalue.Length);
-
-                            total = FullValue;//一直累積完全部byte
-                            iOrderCount++;
-                        }
+                        //string sTmp = "";
+                        iOrderCount = m_Param.GetCombineByte(m_Param.lReadData[i].Address, arrDeviceData, iOrderCount, out byte[] total, out int iDeviceSize);
                         //判斷寫入格式
                         if (iDeviceSize == 2|| m_Param.lReadData[i].DataType=="real")//Float 先用|| 後改&& 
                         {
-                            var FF = BitConverter.ToSingle(total, 0);//轉float(single)
-                            sTmp = FF.ToString();
-                            m_Param.lReadData[i].DeviceValueGet = sTmp;
+                            m_Param.lReadData[i].DeviceValueGet = BitConverter.ToSingle(total, 0).ToString();
                         }
                         else//string[?]
                         {
-                            sTmp = System.Text.Encoding.ASCII.GetString(total);//轉float(single)
-                            m_Param.lReadData[i].DeviceValueGet = sTmp;
+                            m_Param.lReadData[i].DeviceValueGet = System.Text.Encoding.ASCII.GetString(total);
                         }
                     }
-                    else//其餘單一元件
+                    else//單一元件
                     {
-                        m_Param.lReadData[i].DeviceValueGet = string.Format("{0:00}", arrDeviceData[iOrderCount]);
+                        m_Param.lReadData[i].DeviceValueGet = arrDeviceData[iOrderCount].ToString();
                         iOrderCount++;
                     }
                     dgv_ReadDataGrid.InvalidateCell((int)CData.DeviceValueGet, i);
@@ -575,39 +556,20 @@ namespace PLC_Data_Access
                 {
                     if (m_Param.lWriteData[i].Address.Contains("~"))//若為軟元件區間
                     {
-                        m_Param.GetCombineSize_int(m_Param.lWriteData[i].Address, out int iDeviceSize);
-                        string sTmp = "";
-
-                        var total = System.BitConverter.GetBytes(arrDeviceData[iOrderCount]);
-                        iOrderCount++;
-                        //區間byte聯合
-                        for (int j = 1; j < iDeviceSize; j++)
-                        {
-                            var addvalue = System.BitConverter.GetBytes(arrDeviceData[iOrderCount]);
-                            var FullValue = new byte[total.Length + addvalue.Length];
-                            //union
-                            Buffer.BlockCopy(total, 0, FullValue, 0, total.Length);
-                            Buffer.BlockCopy(addvalue, 0, FullValue, total.Length, addvalue.Length);
-
-                            total = FullValue;//一直累積完全部byte
-                            iOrderCount++;
-                        }
+                        iOrderCount = m_Param.GetCombineByte(m_Param.lWriteData[i].Address, arrDeviceData, iOrderCount, out byte[] total, out int iDeviceSize);
                         //判斷寫入格式
                         if (iDeviceSize == 2 || m_Param.lWriteData[i].DataType == "real")//Float 先用|| 後改&& 
                         {
-                            var FF = BitConverter.ToSingle(total, 0);//轉float(single)
-                            sTmp = FF.ToString();
-                            m_Param.lWriteData[i].DeviceValueGet = sTmp;
+                            m_Param.lWriteData[i].DeviceValueGet = BitConverter.ToSingle(total, 0).ToString();
                         }
                         else//string[?]
                         {
-                            sTmp = System.Text.Encoding.ASCII.GetString(total);//轉float(single)
-                            m_Param.lWriteData[i].DeviceValueGet = sTmp;
+                            m_Param.lWriteData[i].DeviceValueGet = System.Text.Encoding.ASCII.GetString(total);
                         }
                     }
-                    else//其餘單一元件
+                    else//單一元件
                     {
-                        m_Param.lWriteData[i].DeviceValueGet = string.Format("{0:00}", arrDeviceData[iOrderCount]);
+                        m_Param.lWriteData[i].DeviceValueGet = arrDeviceData[iOrderCount].ToString();
                         iOrderCount++;
                     }
                     dgv_WriteDataGrid.InvalidateCell((int)CData.DeviceValueGet, i);//列更新
