@@ -17,6 +17,7 @@ namespace PLC_Data_Access
 {
     public partial class Main_Form : Form
     {
+        private TParameter m_Param = new TParameter();
         private System.Timers.Timer Timer_DeviceGet = new System.Timers.Timer();
 
         delegate void UpdateLabel(Label lab, string Msg);
@@ -28,11 +29,11 @@ namespace PLC_Data_Access
         {
             InitializeComponent();
 
-            TParameter.init();//初始化 然後連線
+            m_Param.init();//初始化 然後連線
 
-            txt_ReadTime.Text = TParameter.Mx_Connect.iReciveTime.ToString();
+            txt_ReadTime.Text = m_Param.iReciveTime.ToString();
             //直接路徑連結
-            if (TParameter.Mx_Connect.iReturnCode == 0)
+            if (m_Param.iReturnCode == 0)
             {
                 p_MxOpenStatus.BackColor = Color.Lime;
                 btn_MxOpen.Text = "PLC連結中";
@@ -44,14 +45,14 @@ namespace PLC_Data_Access
             }
             //DeviceGet事件
             Timer_DeviceGet.Stop();
-            Timer_DeviceGet.Interval = TParameter.Mx_Connect.iReciveTime;
+            Timer_DeviceGet.Interval = m_Param.iReciveTime;
 
             DataGridValueFlash();//DataGridview 第一次刷新
         }
 
         private void Mi_DataGridLoad_Click(object sender, EventArgs e)
         {
-            if (TParameter.DeviceData.iModelChange != 1)
+            if (m_Param.iModelChange != 1)
             {
                 OpenFileDialog DataFileForm = new OpenFileDialog();
                 if (DataFileForm.ShowDialog() == DialogResult.OK)
@@ -62,17 +63,17 @@ namespace PLC_Data_Access
                     {
                         path = DataFileForm.FileName.ToString() + ".txt";
                     }
-                    TParameter.DeviceData.DeviceDataGrid_Path = path;
+                    m_Param.DeviceFileData_Path = path;
                     //取代預設路徑檔案中的指定資料表路徑
-                    using (StreamWriter writer = new StreamWriter(TParameter.DeviceData.DataFile_Path))
+                    using (StreamWriter writer = new StreamWriter(m_Param.DataFile_Path))
                     {
                         writer.Write("");//清除
-                        writer.WriteLine(TParameter.DeviceData.DeviceDataGrid_Path);
-                        writer.WriteLine(TParameter.DeviceData.DeviceModelList_Path);
+                        writer.WriteLine(m_Param.DeviceFileData_Path);
+                        writer.WriteLine(m_Param.DeviceFilePLC_Path);
                         writer.Close();
                     }
 
-                    TParameter.DeviceData.LoadData_ReadWrite();
+                    m_Param.LoadData_ReadWrite();
                     dgv_ReadDataGrid.Rows.Clear();
                     dgv_WriteDataGrid.Rows.Clear();
                     //DataGridLabelFlash();
@@ -101,35 +102,35 @@ namespace PLC_Data_Access
                 {
                     path = DataFileForm.FileName.ToString() + ".txt";
                 }
-                TParameter.DeviceData.DeviceDataGrid_Path = path;
+                m_Param.DeviceFileData_Path = path;
                 //取代預設路徑檔案中的指定資料表路徑
-                using (StreamWriter writer = new StreamWriter(TParameter.DeviceData.DataFile_Path))
+                using (StreamWriter writer = new StreamWriter(m_Param.DataFile_Path))
                 {
                     writer.Write("");//清除
-                    writer.WriteLine(TParameter.DeviceData.DeviceDataGrid_Path);
-                    writer.WriteLine(TParameter.DeviceData.DeviceModelList_Path);
+                    writer.WriteLine(m_Param.DeviceFileData_Path);
+                    writer.WriteLine(m_Param.DeviceFilePLC_Path);
                     writer.Close();
                 }
 
-                TParameter.DeviceData.SaveData_ReadWrite();
+                m_Param.SaveData_ReadWrite();
 
                 MessageBox.Show("儲存成功", "格式儲存", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
         private void Mi_PLCSet_Click(object sender, EventArgs e)
         {
-            TParameter.Mx_Connect.ProgClose();//先關閉
+            m_Param.ProgClose();//先關閉
             Form_PLC_Set form = new Form_PLC_Set();
             if (form.ShowDialog() == DialogResult.OK)
             {
                 Console.WriteLine("完成PLC設定");
-                TParameter.DeviceData.SaveData_Model();//儲存PLC連線資料
-                if (TParameter.Mx_Connect.iReturnCode == 0)
+                m_Param.SaveData_Model();//儲存PLC連線資料
+                if (m_Param.iReturnCode == 0)
                 {
                     p_MxOpenStatus.BackColor = Color.Lime;
                     btn_MxOpen.Text = "PLC連結中";
                 }
-                if (TParameter.Mx_Connect.iReturnCode != 0)
+                if (m_Param.iReturnCode != 0)
                 {
                     p_MxOpenStatus.BackColor = Color.Red;
                     btn_MxOpen.Text = "PLC連結失敗";
@@ -154,32 +155,32 @@ namespace PLC_Data_Access
                 switch (dgv_ReadDataGrid.Columns[e.ColumnIndex].Name)
                 {
                     case "Read_SN":
-                        if (e.RowIndex < TParameter.DeviceData.Read_SN.Count)
-                            e.Value = TParameter.DeviceData.Read_SN[e.RowIndex];
+                        if (e.RowIndex < m_Param.Read_SN.Count)
+                            e.Value = m_Param.Read_SN[e.RowIndex];
                         break;
                     case "Read_Label":
-                        if (e.RowIndex < TParameter.DeviceData.Read_Label.Count)
-                            e.Value = TParameter.DeviceData.Read_Label[e.RowIndex];
+                        if (e.RowIndex < m_Param.Read_Label.Count)
+                            e.Value = m_Param.Read_Label[e.RowIndex];
                         break;
                     case "Read_Address":
-                        if (e.RowIndex < TParameter.DeviceData.Read_Address.Count)
-                            e.Value = TParameter.DeviceData.Read_Address[e.RowIndex];
+                        if (e.RowIndex < m_Param.Read_Address.Count)
+                            e.Value = m_Param.Read_Address[e.RowIndex];
                         break;
                     case "Read_DataType":
-                        if (e.RowIndex < TParameter.DeviceData.Read_DataType.Count)
-                            e.Value = TParameter.DeviceData.Read_DataType[e.RowIndex];
+                        if (e.RowIndex < m_Param.Read_DataType.Count)
+                            e.Value = m_Param.Read_DataType[e.RowIndex];
                         break;
                     case "Read_Data":
-                        if (e.RowIndex < TParameter.DeviceData.Read_Data.Count)
-                            e.Value = TParameter.DeviceData.Read_Data[e.RowIndex].ToString();
+                        if (e.RowIndex < m_Param.Read_Data.Count)
+                            e.Value = m_Param.Read_Data[e.RowIndex].ToString();
                         break;
                     case "Read_IsUse":
-                        if (e.RowIndex < TParameter.DeviceData.Read_IsUse.Count)
-                            e.Value = TParameter.DeviceData.ZeroToBool(TParameter.DeviceData.Read_IsUse[e.RowIndex]);
+                        if (e.RowIndex < m_Param.Read_IsUse.Count)
+                            e.Value = m_Param.ZeroToBool(m_Param.Read_IsUse[e.RowIndex]);
                         break;
                     case "Read_DeviceValueGet":
-                        if (e.RowIndex < TParameter.DeviceData.Read_DeviceValueGet.Count)
-                            e.Value = TParameter.DeviceData.Read_DeviceValueGet[e.RowIndex];
+                        if (e.RowIndex < m_Param.Read_DeviceValueGet.Count)
+                            e.Value = m_Param.Read_DeviceValueGet[e.RowIndex];
                         break;
                 }
             }
@@ -190,16 +191,16 @@ namespace PLC_Data_Access
             switch (dgv_ReadDataGrid.Columns[e.ColumnIndex].Name)
             {
                 case "Read_SN":
-                    if (e.RowIndex >= TParameter.DeviceData.Read_SN.Count)
+                    if (e.RowIndex >= m_Param.Read_SN.Count)
                     {
-                        TParameter.DeviceData.Read_SN.Add(e.Value.ToString());
+                        m_Param.Read_SN.Add(e.Value.ToString());
                         //若SN增加則下面先新增預設值
-                        TParameter.DeviceData.Read_Label.Add("");
-                        TParameter.DeviceData.Read_Address.Add("");
-                        TParameter.DeviceData.Read_DataType.Add("");
-                        TParameter.DeviceData.Read_Data.Add("");
-                        TParameter.DeviceData.Read_IsUse.Add("0");
-                        TParameter.DeviceData.Read_DeviceValueGet.Add("N/A");
+                        m_Param.Read_Label.Add("");
+                        m_Param.Read_Address.Add("");
+                        m_Param.Read_DataType.Add("");
+                        m_Param.Read_Data.Add("");
+                        m_Param.Read_IsUse.Add("0");
+                        m_Param.Read_DeviceValueGet.Add("N/A");
                         //刷新
                         dgv_ReadDataGrid.InvalidateCell(0, e.RowIndex);
                         dgv_ReadDataGrid.InvalidateCell(1, e.RowIndex);
@@ -211,67 +212,67 @@ namespace PLC_Data_Access
                     }
                     else
                     {
-                        TParameter.DeviceData.Read_SN[e.RowIndex] = e.Value.ToString();
+                        m_Param.Read_SN[e.RowIndex] = e.Value.ToString();
                     }
                     break;
                 case "Read_Label":
-                    if (e.RowIndex >= TParameter.DeviceData.Read_Label.Count)
+                    if (e.RowIndex >= m_Param.Read_Label.Count)
                     {
-                        TParameter.DeviceData.Read_Label.Add(e.Value.ToString());
+                        m_Param.Read_Label.Add(e.Value.ToString());
                     }
                     else
                     {
-                        TParameter.DeviceData.Read_Label[e.RowIndex] = e.Value.ToString();
+                        m_Param.Read_Label[e.RowIndex] = e.Value.ToString();
                     }
                     break;
                 case "Read_Address":
-                    if (e.RowIndex >= TParameter.DeviceData.Read_Address.Count)
+                    if (e.RowIndex >= m_Param.Read_Address.Count)
                     {
-                        TParameter.DeviceData.Read_Address.Add(e.Value.ToString());
+                        m_Param.Read_Address.Add(e.Value.ToString());
                     }
                     else
                     {
-                        TParameter.DeviceData.Read_Address[e.RowIndex] = e.Value.ToString();
+                        m_Param.Read_Address[e.RowIndex] = e.Value.ToString();
                     }
                     break;
                 case "Read_DataType":
-                    if (e.RowIndex >= TParameter.DeviceData.Read_DataType.Count)
+                    if (e.RowIndex >= m_Param.Read_DataType.Count)
                     {
-                        TParameter.DeviceData.Read_DataType.Add(e.Value.ToString());
+                        m_Param.Read_DataType.Add(e.Value.ToString());
                     }
                     else
                     {
-                        TParameter.DeviceData.Read_DataType[e.RowIndex] = e.Value.ToString();
+                        m_Param.Read_DataType[e.RowIndex] = e.Value.ToString();
                     }
                     break;
                 case "Read_Data":
-                    if (e.RowIndex >= TParameter.DeviceData.Read_Data.Count)
+                    if (e.RowIndex >= m_Param.Read_Data.Count)
                     {
-                        TParameter.DeviceData.Read_Data.Add(e.Value.ToString());
+                        m_Param.Read_Data.Add(e.Value.ToString());
                     }
                     else
                     {
-                        TParameter.DeviceData.Read_Data[e.RowIndex] = e.Value.ToString();
+                        m_Param.Read_Data[e.RowIndex] = e.Value.ToString();
                     }
                     break;
                 case "Read_IsUse":
-                    if (e.RowIndex >= TParameter.DeviceData.Read_IsUse.Count)
+                    if (e.RowIndex >= m_Param.Read_IsUse.Count)
                     {
-                        TParameter.DeviceData.Read_IsUse.Add(e.Value.ToString());
+                        m_Param.Read_IsUse.Add(e.Value.ToString());
                     }
                     else
                     {
-                        TParameter.DeviceData.Read_IsUse[e.RowIndex] = TParameter.DeviceData.BoolToZero(e.Value);
+                        m_Param.Read_IsUse[e.RowIndex] = m_Param.BoolToZero(e.Value);
                     }
                     break;
                 case "Read_DeviceValueGet":
-                    if (e.RowIndex >= TParameter.DeviceData.Read_DeviceValueGet.Count)
+                    if (e.RowIndex >= m_Param.Read_DeviceValueGet.Count)
                     {
-                        TParameter.DeviceData.Read_DeviceValueGet.Add(e.Value.ToString());
+                        m_Param.Read_DeviceValueGet.Add(e.Value.ToString());
                     }
                     else
                     {
-                        TParameter.DeviceData.Read_DeviceValueGet[e.RowIndex] = e.Value.ToString();
+                        m_Param.Read_DeviceValueGet[e.RowIndex] = e.Value.ToString();
                     }
                     break;
             }
@@ -284,149 +285,150 @@ namespace PLC_Data_Access
                 switch (dgv_WriteDataGrid.Columns[e.ColumnIndex].Name)
                 {
                     case "Write_SN":
-                        if (e.RowIndex < TParameter.DeviceData.Write_SN.Count)
-                            e.Value = TParameter.DeviceData.Write_SN[e.RowIndex];
+                        if (e.RowIndex < m_Param.Write_SN.Count)
+                            e.Value = m_Param.Write_SN[e.RowIndex];
                         break;
                     case "Write_Label":
-                        if (e.RowIndex < TParameter.DeviceData.Write_Label.Count)
-                            e.Value = TParameter.DeviceData.Write_Label[e.RowIndex];
+                        if (e.RowIndex < m_Param.Write_Label.Count)
+                            e.Value = m_Param.Write_Label[e.RowIndex];
                         break;
                     case "Write_Address":
-                        if (e.RowIndex < TParameter.DeviceData.Write_Address.Count)
-                            e.Value = TParameter.DeviceData.Write_Address[e.RowIndex];
+                        if (e.RowIndex < m_Param.Write_Address.Count)
+                            e.Value = m_Param.Write_Address[e.RowIndex];
                         break;
                     case "Write_DataType":
-                        if (e.RowIndex < TParameter.DeviceData.Write_DataType.Count)
-                            e.Value = TParameter.DeviceData.Write_DataType[e.RowIndex];
+                        if (e.RowIndex < m_Param.Write_DataType.Count)
+                            e.Value = m_Param.Write_DataType[e.RowIndex];
                         break;
                     case "Write_Data":
-                        if (e.RowIndex < TParameter.DeviceData.Write_Data.Count)
-                            e.Value = TParameter.DeviceData.Write_Data[e.RowIndex].ToString();
+                        if (e.RowIndex < m_Param.Write_Data.Count)
+                            e.Value = m_Param.Write_Data[e.RowIndex].ToString();
                         break;
                     case "Write_IsUse":
-                        if (e.RowIndex < TParameter.DeviceData.Write_IsUse.Count)
-                            e.Value = TParameter.DeviceData.ZeroToBool(TParameter.DeviceData.Write_IsUse[e.RowIndex]);
+                        if (e.RowIndex < m_Param.Write_IsUse.Count)
+                            e.Value = m_Param.ZeroToBool(m_Param.Write_IsUse[e.RowIndex]);
                         break;
                     case "Write_DeviceValueGet":
-                        if (e.RowIndex < TParameter.DeviceData.Write_DeviceValueGet.Count)
-                            e.Value = TParameter.DeviceData.Write_DeviceValueGet[e.RowIndex];
+                        if (e.RowIndex < m_Param.Write_DeviceValueGet.Count)
+                            e.Value = m_Param.Write_DeviceValueGet[e.RowIndex];
                         break;
                     case "Write_DeviceValueSet":
-                        if (e.RowIndex < TParameter.DeviceData.Write_DeviceValueSet.Count)
-                            e.Value = TParameter.DeviceData.Write_DeviceValueSet[e.RowIndex];
+                        if (e.RowIndex < m_Param.Write_DeviceValueSet.Count)
+                            e.Value = m_Param.Write_DeviceValueSet[e.RowIndex];
                         break;
                 }
             }
         }
         private void Dgv_WriteDataGrid_CellValuePushed(object sender, DataGridViewCellValueEventArgs e)
         {
-            //Write - 若對應儲存格中發生改變則跳入
-            switch (dgv_WriteDataGrid.Columns[e.ColumnIndex].Name)
+            if (e.Value != null)
             {
-                case "Write_SN":
-                    if (e.RowIndex >= TParameter.DeviceData.Write_SN.Count)
-                    {
-                        TParameter.DeviceData.Write_SN.Add(e.Value.ToString());
-                        //若SN增加則下面先新增預設值
-                        TParameter.DeviceData.Write_Label.Add("");
-                        TParameter.DeviceData.Write_Address.Add("");
-                        TParameter.DeviceData.Write_DataType.Add("");
-                        TParameter.DeviceData.Write_Data.Add("");
-                        TParameter.DeviceData.Write_IsUse.Add("0");
-                        TParameter.DeviceData.Write_DeviceValueGet.Add("N/A");
-                        TParameter.DeviceData.Write_DeviceValueSet.Add("");
-                        //刷新
-                        dgv_WriteDataGrid.InvalidateCell(0, e.RowIndex);
-                        dgv_WriteDataGrid.InvalidateCell(1, e.RowIndex);
-                        dgv_WriteDataGrid.InvalidateCell(2, e.RowIndex);
-                        dgv_WriteDataGrid.InvalidateCell(3, e.RowIndex);
-                        dgv_WriteDataGrid.InvalidateCell(4, e.RowIndex);
-                        dgv_WriteDataGrid.InvalidateCell(5, e.RowIndex);
-                        dgv_WriteDataGrid.InvalidateCell(6, e.RowIndex);
-                        dgv_WriteDataGrid.InvalidateCell(7, e.RowIndex);
-                    }
-                    else
-                    {
-                        TParameter.DeviceData.Write_SN[e.RowIndex] = e.Value.ToString();
-                    }
-                    break;
-                case "Write_Label":
-                    if (e.RowIndex >= TParameter.DeviceData.Write_Label.Count)
-                    {
-                        TParameter.DeviceData.Write_Label.Add(e.Value.ToString());
-                    }
-                    else
-                    {
-                        TParameter.DeviceData.Write_Label[e.RowIndex] = e.Value.ToString();
-                    }
-                    break;
-                case "Write_Address":
-                    if (e.RowIndex >= TParameter.DeviceData.Write_Address.Count)
-                    {
-                        TParameter.DeviceData.Write_Address.Add(e.Value.ToString());
-                    }
-                    else
-                    {
-                        TParameter.DeviceData.Write_Address[e.RowIndex] = e.Value.ToString();
-                    }
-                    break;
-                case "Write_DataType":
-                    if (e.RowIndex >= TParameter.DeviceData.Write_DataType.Count)
-                    {
-                        TParameter.DeviceData.Write_DataType.Add(e.Value.ToString());
-                    }
-                    else
-                    {
-                        TParameter.DeviceData.Write_DataType[e.RowIndex] = e.Value.ToString();
-                    }
-                    break;
-                case "Write_Data":
-                    if (e.RowIndex >= TParameter.DeviceData.Write_Data.Count)
-                    {
-                        TParameter.DeviceData.Write_Data.Add(e.Value.ToString());
-                    }
-                    else
-                    {
-                        TParameter.DeviceData.Write_Data[e.RowIndex] = e.Value.ToString();
-                    }
-                    break;
-                case "Write_IsUse":
-                    if (e.RowIndex >= TParameter.DeviceData.Write_IsUse.Count)
-                    {
-                        TParameter.DeviceData.Write_IsUse.Add(e.Value.ToString());
-                    }
-                    else
-                    {
-                        TParameter.DeviceData.Write_IsUse[e.RowIndex] = TParameter.DeviceData.BoolToZero(e.Value);
-                    }
-                    break;
-                case "Write_DeviceValueGet":
-                    if (e.RowIndex >= TParameter.DeviceData.Write_DeviceValueGet.Count)
-                    {
-                        TParameter.DeviceData.Write_DeviceValueGet.Add(e.Value.ToString());
-                    }
-                    else
-                    {
-                        TParameter.DeviceData.Write_DeviceValueGet[e.RowIndex] = e.Value.ToString();
-                    }
-                    break;
-                case "Write_DeviceValueSet":
-                    if (e.RowIndex >= TParameter.DeviceData.Write_DeviceValueSet.Count)
-                    {
-                        TParameter.DeviceData.Write_DeviceValueSet.Add(e.Value.ToString());
-                    }
-                    else
-                    {
-                        TParameter.DeviceData.Write_DeviceValueSet[e.RowIndex] = e.Value.ToString();
-                    }
-                    break;
+                //Write - 若對應儲存格中發生改變則跳入
+                switch (dgv_WriteDataGrid.Columns[e.ColumnIndex].Name)
+                {
+                    case "Write_SN":
+                        if (e.RowIndex >= m_Param.Write_SN.Count)
+                        {
+                            m_Param.Write_SN.Add(e.Value.ToString());
+                            //若SN增加則下面先新增預設值
+                            m_Param.Write_Label.Add("");
+                            m_Param.Write_Address.Add("");
+                            m_Param.Write_DataType.Add("");
+                            m_Param.Write_Data.Add("");
+                            m_Param.Write_IsUse.Add("0");
+                            m_Param.Write_DeviceValueGet.Add("N/A");
+                            m_Param.Write_DeviceValueSet.Add("");
+                            //刷新
+                            dgv_WriteDataGrid.InvalidateCell(0, e.RowIndex);
+                            dgv_WriteDataGrid.InvalidateCell(1, e.RowIndex);
+                            dgv_WriteDataGrid.InvalidateCell(2, e.RowIndex);
+                            dgv_WriteDataGrid.InvalidateCell(3, e.RowIndex);
+                            dgv_WriteDataGrid.InvalidateCell(4, e.RowIndex);
+                            dgv_WriteDataGrid.InvalidateCell(5, e.RowIndex);
+                            dgv_WriteDataGrid.InvalidateCell(6, e.RowIndex);
+                            dgv_WriteDataGrid.InvalidateCell(7, e.RowIndex);
+                        }
+                        else
+                        {
+                            m_Param.Write_SN[e.RowIndex] = e.Value.ToString();
+                        }
+                        break;
+                    case "Write_Label":
+                        if (e.RowIndex >= m_Param.Write_Label.Count)
+                        {
+                            m_Param.Write_Label.Add(e.Value.ToString());
+                        }
+                        else
+                        {
+                            m_Param.Write_Label[e.RowIndex] = e.Value.ToString();
+                        }
+                        break;
+                    case "Write_Address":
+                        if (e.RowIndex >= m_Param.Write_Address.Count)
+                        {
+                            m_Param.Write_Address.Add(e.Value.ToString());
+                        }
+                        else
+                        {
+                            m_Param.Write_Address[e.RowIndex] = e.Value.ToString();
+                        }
+                        break;
+                    case "Write_DataType":
+                        if (e.RowIndex >= m_Param.Write_DataType.Count)
+                        {
+                            m_Param.Write_DataType.Add(e.Value.ToString());
+                        }
+                        else
+                        {
+                            m_Param.Write_DataType[e.RowIndex] = e.Value.ToString();
+                        }
+                        break;
+                    case "Write_Data":
+                        if (e.RowIndex >= m_Param.Write_Data.Count)
+                        {
+                            m_Param.Write_Data.Add(e.Value.ToString());
+                        }
+                        else
+                        {
+                            m_Param.Write_Data[e.RowIndex] = e.Value.ToString();
+                        }
+                        break;
+                    case "Write_IsUse":
+                        if (e.RowIndex >= m_Param.Write_IsUse.Count)
+                        {
+                            m_Param.Write_IsUse.Add(e.Value.ToString());
+                        }
+                        else
+                        {
+                            m_Param.Write_IsUse[e.RowIndex] = m_Param.BoolToZero(e.Value);
+                        }
+                        break;
+                    case "Write_DeviceValueGet":
+                        if (e.RowIndex >= m_Param.Write_DeviceValueGet.Count)
+                        {
+                            m_Param.Write_DeviceValueGet.Add(e.Value.ToString());
+                        }
+                        else
+                        {
+                            m_Param.Write_DeviceValueGet[e.RowIndex] = e.Value.ToString();
+                        }
+                        break;
+                    case "Write_DeviceValueSet":
+                        if (e.RowIndex >= m_Param.Write_DeviceValueSet.Count)
+                        {
+                            m_Param.Write_DeviceValueSet.Add(e.Value.ToString());
+                        }
+                        else
+                        {
+                            m_Param.Write_DeviceValueSet[e.RowIndex] = e.Value.ToString();
+                        }
+                        break;
+                }
             }
-            //Console.WriteLine("修改");
         }
-
         private void Main_Form_FormClosing(object sender, FormClosingEventArgs e)
         {
-            TParameter.Mx_Connect.ProgClose();
+            m_Param.ProgClose();
         }
         //===============================================
         public void DataUpdate()
@@ -434,23 +436,23 @@ namespace PLC_Data_Access
 
             string sOutPutCell;
             //上傳寫入
-            for (int i = 0; i < TParameter.DeviceData.Write_SN.Count; i++)
+            for (int i = 0; i < m_Param.Write_SN.Count; i++)
             {
-                if (TParameter.DeviceData.Write_IsUse[i].ToString() == "1")//有使用的檢索
+                if (m_Param.Write_IsUse[i].ToString() == "1")//有使用的檢索
                 {
-                    if (TParameter.DeviceData.Write_DeviceValueSet[i] != null)//上傳寫入值不為null
+                    if (m_Param.Write_DeviceValueSet[i] != null)//上傳寫入值不為null
                     {
-                        if (TParameter.DeviceData.Write_DeviceValueSet[i] != "")//上傳寫入值不為""
+                        if (m_Param.Write_DeviceValueSet[i] != "")//上傳寫入值不為""
                         {
                             //若為軟元件區間
-                            if (TParameter.DeviceData.Write_Address[i].Contains("~"))//帶區間"~"
+                            if (m_Param.Write_Address[i].Contains("~"))//帶區間"~"
                             {
                                 try
                                 {
-                                    TParameter.Mx_Connect.ProgSetBlockCombine(TParameter.DeviceData.Write_Address[i], TParameter.DeviceData.Write_DeviceValueSet[i]);
-                                    if (TParameter.Mx_Connect.iReturnCode == 0)
+                                    m_Param.ProgSetBlockCombine(m_Param.Write_Address[i], m_Param.Write_DeviceValueSet[i]);
+                                    if (m_Param.iReturnCode == 0)
                                     {
-                                        Console.WriteLine(TParameter.DeviceData.Write_Address[i] + " SetOK");
+                                        Console.WriteLine(m_Param.Write_Address[i] + " SetOK");
                                     }
                                 }
                                 catch (Exception ex)
@@ -463,11 +465,11 @@ namespace PLC_Data_Access
                             {
                                 try
                                 {
-                                    TParameter.Mx_Connect.ProgSetDevice(TParameter.DeviceData.Write_Address[i], TParameter.DeviceData.Write_DeviceValueSet[i]);
-                                    if (TParameter.Mx_Connect.iReturnCode == 0)
+                                    m_Param.ProgSetDevice(m_Param.Write_Address[i], m_Param.Write_DeviceValueSet[i]);
+                                    if (m_Param.iReturnCode == 0)
                                     {
-                                        TParameter.Mx_Connect.ProgGetDevice(TParameter.DeviceData.Write_Address[i].ToString(), out sOutPutCell);
-                                        Console.WriteLine(TParameter.DeviceData.Write_Address[i] + ": " + sOutPutCell);
+                                        m_Param.ProgGetDevice(m_Param.Write_Address[i].ToString(), out sOutPutCell);
+                                        Console.WriteLine(m_Param.Write_Address[i] + ": " + sOutPutCell);
                                     }
                                 }
                                 catch (Exception ex)
@@ -483,19 +485,19 @@ namespace PLC_Data_Access
 
             }
             //上傳讀取
-            for (int i = 0; i < TParameter.DeviceData.Write_SN.Count; i++)
+            for (int i = 0; i < m_Param.Write_SN.Count; i++)
             {
-                if (TParameter.DeviceData.Write_IsUse[i].ToString() == "1")//表示有使用
+                if (m_Param.Write_IsUse[i].ToString() == "1")//表示有使用
                 {
                     //若為軟元件區間
-                    if (TParameter.DeviceData.Write_Address[i].ToString().Contains("~"))
+                    if (m_Param.Write_Address[i].ToString().Contains("~"))
                     {
                         try
                         {
-                            TParameter.Mx_Connect.ProgGetBlockCombine(TParameter.DeviceData.Write_Address[i].ToString(), out sOutPutCell);
-                            if (TParameter.Mx_Connect.iReturnCode == 0)
+                            m_Param.ProgGetBlockCombine(m_Param.Write_Address[i].ToString(), out sOutPutCell);
+                            if (m_Param.iReturnCode == 0)
                             {
-                                TParameter.DeviceData.Write_DeviceValueGet[i] = sOutPutCell;
+                                m_Param.Write_DeviceValueGet[i] = sOutPutCell;
                             }
                         }
                         catch (Exception ex)
@@ -510,10 +512,10 @@ namespace PLC_Data_Access
 
                         try
                         {
-                            TParameter.Mx_Connect.ProgGetDevice(TParameter.DeviceData.Write_Address[i].ToString(), out sOutPutCell);
-                            if (TParameter.Mx_Connect.iReturnCode == 0)
+                            m_Param.ProgGetDevice(m_Param.Write_Address[i].ToString(), out sOutPutCell);
+                            if (m_Param.iReturnCode == 0)
                             {
-                                TParameter.DeviceData.Write_DeviceValueGet[i] = sOutPutCell;
+                                m_Param.Write_DeviceValueGet[i] = sOutPutCell;
                             }
 
 
@@ -535,19 +537,19 @@ namespace PLC_Data_Access
             //餵入資料畫面DataGridView刷新
             #region 下載
             //dgv_ReadDataGrid.Rows.Clear();//清除原本的
-            dgv_ReadDataGrid.RowCount = TParameter.DeviceData.Read_SN.Count + 1;
+            dgv_ReadDataGrid.RowCount = m_Param.Read_SN.Count + 1;
             #endregion
 
             #region 上傳
             //dgv_WriteDataGrid.Rows.Clear();//清除原本的
-            dgv_WriteDataGrid.RowCount = TParameter.DeviceData.Write_SN.Count + 1;
+            dgv_WriteDataGrid.RowCount = m_Param.Write_SN.Count + 1;
             #endregion
         }
         public void ModelChange()
         {
-            TParameter.DeviceData.SaveData_ModChange(dgv_ReadDataGrid, dgv_WriteDataGrid);
+            m_Param.SaveData_ModChange(dgv_ReadDataGrid, dgv_WriteDataGrid);
 
-            switch (TParameter.DeviceData.iModelChange)
+            switch (m_Param.iModelChange)
             {
                 case 0: //修改
                     p_ModelChange.BackColor = Color.LightBlue;
@@ -557,8 +559,8 @@ namespace PLC_Data_Access
                     txt_ReadTime.Enabled = true;
                     Timer_DeviceGet.Elapsed -= On_DeviceGet;
                     Timer_DeviceGet.Stop();
-                    
-                    
+
+
                     break;
                 case 1: //執行
                     p_ModelChange.BackColor = Color.OrangeRed;
@@ -566,13 +568,13 @@ namespace PLC_Data_Access
 
                     if (txt_ReadTime.Text != "" && Convert.ToInt32(txt_ReadTime.Text) > 0)
                     {
-                        Timer_DeviceGet.Interval = TParameter.Mx_Connect.iReciveTime = Convert.ToInt32(txt_ReadTime.Text);
+                        Timer_DeviceGet.Interval = m_Param.iReciveTime = Convert.ToInt32(txt_ReadTime.Text);
                     }
                     else
                     {
                         //超出範圍預設值
-                        TParameter.Error_Info.ErrorMessageBox_Time();
-                        TParameter.Mx_Connect.iReciveTime = 2000;//兩秒
+                        m_Param.ErrorMessageBox_Time();
+                        m_Param.iReciveTime = 2000;//兩秒
                         Timer_DeviceGet.Interval = 2000;
                         txt_ReadTime.Text = "2000";
                     }
@@ -594,21 +596,21 @@ namespace PLC_Data_Access
             swStopwatch.Restart();
             //下載讀取
             #region 下載讀取
-            for (int i = 0; i < TParameter.DeviceData.Read_SN.Count; i++)//SN_count
+            for (int i = 0; i < m_Param.Read_SN.Count; i++)//SN_count
             {
-                if (TParameter.DeviceData.Read_IsUse[i] == "1")//表示有使用err
+                if (m_Param.Read_IsUse[i] == "1")//表示有使用err
                 {
                     //若為軟元件區間
-                    if (TParameter.DeviceData.Read_Address[i].Contains("~"))
+                    if (m_Param.Read_Address[i].Contains("~"))
                     {
                         try
                         {
-                            TParameter.Mx_Connect.ProgGetBlockCombine(TParameter.DeviceData.Read_Address[i], out string sOutPutCell);
-                            TParameter.DeviceData.Read_DeviceValueGet[i] = (TParameter.Mx_Connect.iReturnCode == 0) ? sOutPutCell : TParameter.Error_Info.ErrorStrSend();
+                            m_Param.ProgGetBlockCombine(m_Param.Read_Address[i], out string sOutPutCell);
+                            m_Param.Read_DeviceValueGet[i] = (m_Param.iReturnCode == 0) ? sOutPutCell : m_Param.ErrorStrSend();
                         }
                         catch (Exception ex)
                         {
-                            TParameter.Error_Info.ErrorMessageBox_DeviceBlock(ex);
+                            m_Param.ErrorMessageBox_DeviceBlock(ex);
                             ModelChange();//強制切換
                             return;
                         }
@@ -617,12 +619,12 @@ namespace PLC_Data_Access
                     {
                         try
                         {
-                            TParameter.Mx_Connect.ProgGetDevice(TParameter.DeviceData.Read_Address[i], out string sOutPut);
-                            TParameter.DeviceData.Read_DeviceValueGet[i] = (TParameter.Mx_Connect.iReturnCode == 0) ? sOutPut : TParameter.Error_Info.ErrorStrSend();
+                            m_Param.ProgGetDevice(m_Param.Read_Address[i], out string sOutPut);
+                            m_Param.Read_DeviceValueGet[i] = (m_Param.iReturnCode == 0) ? sOutPut : m_Param.ErrorStrSend();
                         }
                         catch (Exception ex)
                         {
-                            TParameter.Error_Info.ErrorMessageBox_DeviceValue(ex);
+                            m_Param.ErrorMessageBox_DeviceValue(ex);
                             ModelChange();//強制切換
                             return;
                         }
@@ -633,21 +635,21 @@ namespace PLC_Data_Access
             #endregion
             //上傳讀取
             #region 上傳讀取
-            for (int i = 0; i < TParameter.DeviceData.Write_SN.Count; i++)
+            for (int i = 0; i < m_Param.Write_SN.Count; i++)
             {
-                if (TParameter.DeviceData.Write_IsUse[i] == "1")//表示有使用
+                if (m_Param.Write_IsUse[i] == "1")//表示有使用
                 {
                     //若為軟元件區間
-                    if (TParameter.DeviceData.Write_Address[i].ToString().Contains("~"))
+                    if (m_Param.Write_Address[i].ToString().Contains("~"))
                     {
                         try
                         {
-                            TParameter.Mx_Connect.ProgGetBlockCombine(TParameter.DeviceData.Write_Address[i].ToString(), out string sOutPutCell);
-                            TParameter.DeviceData.Write_DeviceValueGet[i] = (TParameter.Mx_Connect.iReturnCode == 0) ? sOutPutCell : TParameter.Error_Info.ErrorStrSend();
+                            m_Param.ProgGetBlockCombine(m_Param.Write_Address[i].ToString(), out string sOutPutCell);
+                            m_Param.Write_DeviceValueGet[i] = (m_Param.iReturnCode == 0) ? sOutPutCell : m_Param.ErrorStrSend();
                         }
                         catch (Exception ex)
                         {
-                            TParameter.Error_Info.ErrorMessageBox_DeviceBlock(ex);
+                            m_Param.ErrorMessageBox_DeviceBlock(ex);
                             ModelChange();//強制切換
                             return;
                         }
@@ -656,12 +658,12 @@ namespace PLC_Data_Access
                     {
                         try
                         {
-                            TParameter.Mx_Connect.ProgGetDevice(TParameter.DeviceData.Write_Address[i], out string sOutPutCell);
-                            TParameter.DeviceData.Write_DeviceValueGet[i] = (TParameter.Mx_Connect.iReturnCode == 0) ? sOutPutCell : TParameter.Error_Info.ErrorStrSend();
+                            m_Param.ProgGetDevice(m_Param.Write_Address[i], out string sOutPutCell);
+                            m_Param.Write_DeviceValueGet[i] = (m_Param.iReturnCode == 0) ? sOutPutCell : m_Param.ErrorStrSend();
                         }
                         catch (Exception ex)
                         {
-                            TParameter.Error_Info.ErrorMessageBox_DeviceValue(ex);
+                            m_Param.ErrorMessageBox_DeviceValue(ex);
                             ModelChange();//強制切換
                             return;
                         }
