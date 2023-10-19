@@ -14,7 +14,7 @@ namespace PLC_Data_Access
     //視窗
     public partial class Form_PLC_Set : Form
     {
-        TParameter m_Param;
+        CParameter m_Param;
         public Form_PLC_Set()
         {
             InitializeComponent();

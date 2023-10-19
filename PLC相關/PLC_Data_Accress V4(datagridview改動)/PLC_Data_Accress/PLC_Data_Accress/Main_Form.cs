@@ -17,7 +17,7 @@ namespace PLC_Data_Access
 {
     public partial class Main_Form : Form
     {
-        private TParameter m_Param = new TParameter();
+        private CParameter m_Param = new CParameter();
         private System.Timers.Timer Timer_DeviceGet = new System.Timers.Timer();
 
         delegate void UpdateLabel(Label lab, string Msg);
@@ -137,7 +137,7 @@ namespace PLC_Data_Access
                 }
             }
         }
-
+        //-----------
         private void Btn_ModelChange_Click(object sender, EventArgs e)
         {
             ModelChange();
@@ -146,41 +146,34 @@ namespace PLC_Data_Access
         {
             DataUpdate();
         }
-
+        //-----------
         private void Dgv_ReadDataGrid_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
         {
             //Read - 去撈Arraylist裡面所有的資料=>DataGridView
-            ///if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
+            if (e.RowIndex < m_Param.lReadData.Count)
             {
                 switch (dgv_ReadDataGrid.Columns[e.ColumnIndex].Name)
                 {
                     case "Read_SN":
-                        if (e.RowIndex < m_Param.Read_SN.Count)
-                            e.Value = m_Param.Read_SN[e.RowIndex];
+                        e.Value = m_Param.lReadData[e.RowIndex].SN.ToString();
                         break;
                     case "Read_Label":
-                        if (e.RowIndex < m_Param.Read_Label.Count)
-                            e.Value = m_Param.Read_Label[e.RowIndex];
+                        e.Value = m_Param.lReadData[e.RowIndex].Label.ToString();
                         break;
                     case "Read_Address":
-                        if (e.RowIndex < m_Param.Read_Address.Count)
-                            e.Value = m_Param.Read_Address[e.RowIndex];
+                        e.Value = m_Param.lReadData[e.RowIndex].Address.ToString();
                         break;
                     case "Read_DataType":
-                        if (e.RowIndex < m_Param.Read_DataType.Count)
-                            e.Value = m_Param.Read_DataType[e.RowIndex];
+                        e.Value = m_Param.lReadData[e.RowIndex].DataType.ToString();
                         break;
                     case "Read_Data":
-                        if (e.RowIndex < m_Param.Read_Data.Count)
-                            e.Value = m_Param.Read_Data[e.RowIndex].ToString();
+                        e.Value = m_Param.lReadData[e.RowIndex].Data.ToString();
                         break;
                     case "Read_IsUse":
-                        if (e.RowIndex < m_Param.Read_IsUse.Count)
-                            e.Value = m_Param.ZeroToBool(m_Param.Read_IsUse[e.RowIndex]);
+                        e.Value = m_Param.ZeroToBool(m_Param.lReadData[e.RowIndex].IsUse.ToString());
                         break;
                     case "Read_DeviceValueGet":
-                        if (e.RowIndex < m_Param.Read_DeviceValueGet.Count)
-                            e.Value = m_Param.Read_DeviceValueGet[e.RowIndex];
+                        e.Value = m_Param.lReadData[e.RowIndex].DeviceValueGet.ToString();
                         break;
                 }
             }
@@ -188,362 +181,249 @@ namespace PLC_Data_Access
         private void Dgv_ReadDataGrid_CellValuePushed(object sender, DataGridViewCellValueEventArgs e)
         {
             //Read - 若對應儲存格中發生改變則跳入
-            switch (dgv_ReadDataGrid.Columns[e.ColumnIndex].Name)
+            //分為超出範圍(新增) 與 範圍內(修改)
+            if (e.RowIndex < m_Param.lReadData.Count)
             {
-                case "Read_SN":
-                    if (e.RowIndex >= m_Param.Read_SN.Count)
-                    {
-                        m_Param.Read_SN.Add(e.Value.ToString());
-                        //若SN增加則下面先新增預設值
-                        m_Param.Read_Label.Add("");
-                        m_Param.Read_Address.Add("");
-                        m_Param.Read_DataType.Add("");
-                        m_Param.Read_Data.Add("");
-                        m_Param.Read_IsUse.Add("0");
-                        m_Param.Read_DeviceValueGet.Add("N/A");
-                        //刷新
-                        dgv_ReadDataGrid.InvalidateCell(0, e.RowIndex);
-                        dgv_ReadDataGrid.InvalidateCell(1, e.RowIndex);
-                        dgv_ReadDataGrid.InvalidateCell(2, e.RowIndex);
-                        dgv_ReadDataGrid.InvalidateCell(3, e.RowIndex);
-                        dgv_ReadDataGrid.InvalidateCell(4, e.RowIndex);
-                        dgv_ReadDataGrid.InvalidateCell(5, e.RowIndex);
-                        dgv_ReadDataGrid.InvalidateCell(6, e.RowIndex);
-                    }
-                    else
-                    {
-                        m_Param.Read_SN[e.RowIndex] = e.Value.ToString();
-                    }
-                    break;
-                case "Read_Label":
-                    if (e.RowIndex >= m_Param.Read_Label.Count)
-                    {
-                        m_Param.Read_Label.Add(e.Value.ToString());
-                    }
-                    else
-                    {
-                        m_Param.Read_Label[e.RowIndex] = e.Value.ToString();
-                    }
-                    break;
-                case "Read_Address":
-                    if (e.RowIndex >= m_Param.Read_Address.Count)
-                    {
-                        m_Param.Read_Address.Add(e.Value.ToString());
-                    }
-                    else
-                    {
-                        m_Param.Read_Address[e.RowIndex] = e.Value.ToString();
-                    }
-                    break;
-                case "Read_DataType":
-                    if (e.RowIndex >= m_Param.Read_DataType.Count)
-                    {
-                        m_Param.Read_DataType.Add(e.Value.ToString());
-                    }
-                    else
-                    {
-                        m_Param.Read_DataType[e.RowIndex] = e.Value.ToString();
-                    }
-                    break;
-                case "Read_Data":
-                    if (e.RowIndex >= m_Param.Read_Data.Count)
-                    {
-                        m_Param.Read_Data.Add(e.Value.ToString());
-                    }
-                    else
-                    {
-                        m_Param.Read_Data[e.RowIndex] = e.Value.ToString();
-                    }
-                    break;
-                case "Read_IsUse":
-                    if (e.RowIndex >= m_Param.Read_IsUse.Count)
-                    {
-                        m_Param.Read_IsUse.Add(e.Value.ToString());
-                    }
-                    else
-                    {
-                        m_Param.Read_IsUse[e.RowIndex] = m_Param.BoolToZero(e.Value);
-                    }
-                    break;
-                case "Read_DeviceValueGet":
-                    if (e.RowIndex >= m_Param.Read_DeviceValueGet.Count)
-                    {
-                        m_Param.Read_DeviceValueGet.Add(e.Value.ToString());
-                    }
-                    else
-                    {
-                        m_Param.Read_DeviceValueGet[e.RowIndex] = e.Value.ToString();
-                    }
-                    break;
+                switch (dgv_ReadDataGrid.Columns[e.ColumnIndex].Name)
+                {
+                    case "Read_SN":
+                        m_Param.lReadData[e.RowIndex].SN = (e.Value != null) ? e.Value.ToString() : "";
+                        break;
+                    case "Read_Label":
+                        m_Param.lReadData[e.RowIndex].Label = (e.Value != null) ? e.Value.ToString() : "";
+                        break;
+                    case "Read_Address":
+                        m_Param.lReadData[e.RowIndex].Address = (e.Value != null) ? e.Value.ToString() : "";
+                        break;
+                    case "Read_DataType":
+                        m_Param.lReadData[e.RowIndex].DataType = (e.Value != null) ? e.Value.ToString() : "";
+                        break;
+                    case "Read_Data":
+                        m_Param.lReadData[e.RowIndex].Data = (e.Value != null) ? e.Value.ToString() : "";
+                        break;
+                    case "Read_IsUse":
+                        m_Param.lReadData[e.RowIndex].IsUse = m_Param.BoolToZero(e.Value);
+                        break;
+                    case "Read_DeviceValueGet":
+                        m_Param.lReadData[e.RowIndex].DeviceValueGet = (e.Value != null) ? e.Value.ToString() : "";
+                        break;
+                }
             }
+            else if (e.Value != null)
+            {
+                CDataStruct cData = new CDataStruct();
+                //若增加則下面先新增預設值
+                switch (dgv_ReadDataGrid.Columns[e.ColumnIndex].Name)
+                {
+                    case "Read_SN":
+                        cData.SN = e.Value.ToString();
+                        break;
+                    case "Read_Label":
+                        cData.Label = e.Value.ToString();
+                        break;
+                    case "Read_Address":
+                        cData.Address = e.Value.ToString();
+                        break;
+                    case "Read_DataType":
+                        cData.DataType = e.Value.ToString();
+                        break;
+                    case "Read_Data":
+                        cData.Data = e.Value.ToString();
+                        break;
+                    case "Read_IsUse":
+                        cData.IsUse = m_Param.BoolToZero(e.Value);
+                        break;
+                    case "Read_DeviceValueGet":
+                        cData.DeviceValueGet = ("N/A");
+                        break;
+                }
+                m_Param.lReadData.Add(cData);
+            }
+            dgv_ReadDataGrid.InvalidateRow(e.RowIndex);
         }
         private void Dgv_WriteDataGrid_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
         {
             //Write - 去撈Arraylist裡面所有的資料=>DataGridView
             if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
             {
-                switch (dgv_WriteDataGrid.Columns[e.ColumnIndex].Name)
+                //Write - 去撈list<>裡面所有的資料=>DataGridView
+                if (e.RowIndex < m_Param.lWriteData.Count)
                 {
-                    case "Write_SN":
-                        if (e.RowIndex < m_Param.Write_SN.Count)
-                            e.Value = m_Param.Write_SN[e.RowIndex];
-                        break;
-                    case "Write_Label":
-                        if (e.RowIndex < m_Param.Write_Label.Count)
-                            e.Value = m_Param.Write_Label[e.RowIndex];
-                        break;
-                    case "Write_Address":
-                        if (e.RowIndex < m_Param.Write_Address.Count)
-                            e.Value = m_Param.Write_Address[e.RowIndex];
-                        break;
-                    case "Write_DataType":
-                        if (e.RowIndex < m_Param.Write_DataType.Count)
-                            e.Value = m_Param.Write_DataType[e.RowIndex];
-                        break;
-                    case "Write_Data":
-                        if (e.RowIndex < m_Param.Write_Data.Count)
-                            e.Value = m_Param.Write_Data[e.RowIndex].ToString();
-                        break;
-                    case "Write_IsUse":
-                        if (e.RowIndex < m_Param.Write_IsUse.Count)
-                            e.Value = m_Param.ZeroToBool(m_Param.Write_IsUse[e.RowIndex]);
-                        break;
-                    case "Write_DeviceValueGet":
-                        if (e.RowIndex < m_Param.Write_DeviceValueGet.Count)
-                            e.Value = m_Param.Write_DeviceValueGet[e.RowIndex];
-                        break;
-                    case "Write_DeviceValueSet":
-                        if (e.RowIndex < m_Param.Write_DeviceValueSet.Count)
-                            e.Value = m_Param.Write_DeviceValueSet[e.RowIndex];
-                        break;
+                    switch (dgv_WriteDataGrid.Columns[e.ColumnIndex].Name)
+                    {
+                        case "Write_SN":
+                            e.Value = m_Param.lWriteData[e.RowIndex].SN.ToString();
+                            break;
+                        case "Write_Label":
+                            e.Value = m_Param.lWriteData[e.RowIndex].Label.ToString();
+                            break;
+                        case "Write_Address":
+                            e.Value = m_Param.lWriteData[e.RowIndex].Address.ToString();
+                            break;
+                        case "Write_DataType":
+                            e.Value = m_Param.lWriteData[e.RowIndex].DataType.ToString();
+                            break;
+                        case "Write_Data":
+                            e.Value = m_Param.lWriteData[e.RowIndex].Data.ToString();
+                            break;
+                        case "Write_IsUse":
+                            e.Value = m_Param.ZeroToBool(m_Param.lWriteData[e.RowIndex].IsUse.ToString());
+                            break;
+                        case "Write_DeviceValueGet":
+                            e.Value = m_Param.lWriteData[e.RowIndex].DeviceValueGet.ToString();
+                            break;
+                        case "Write_DeviceValueSet":
+                            e.Value = m_Param.lWriteData[e.RowIndex].DeviceValueSet.ToString();
+                            break;
+                    }
                 }
             }
         }
         private void Dgv_WriteDataGrid_CellValuePushed(object sender, DataGridViewCellValueEventArgs e)
         {
-            if (e.Value != null)
+            //Write - 若對應儲存格中發生改變則跳入
+            //分為超出範圍(新增) 與 範圍內(修改)
+            if (e.RowIndex < m_Param.lWriteData.Count)
             {
-                //Write - 若對應儲存格中發生改變則跳入
                 switch (dgv_WriteDataGrid.Columns[e.ColumnIndex].Name)
                 {
                     case "Write_SN":
-                        if (e.RowIndex >= m_Param.Write_SN.Count)
-                        {
-                            m_Param.Write_SN.Add(e.Value.ToString());
-                            //若SN增加則下面先新增預設值
-                            m_Param.Write_Label.Add("");
-                            m_Param.Write_Address.Add("");
-                            m_Param.Write_DataType.Add("");
-                            m_Param.Write_Data.Add("");
-                            m_Param.Write_IsUse.Add("0");
-                            m_Param.Write_DeviceValueGet.Add("N/A");
-                            m_Param.Write_DeviceValueSet.Add("");
-                            //刷新
-                            dgv_WriteDataGrid.InvalidateCell(0, e.RowIndex);
-                            dgv_WriteDataGrid.InvalidateCell(1, e.RowIndex);
-                            dgv_WriteDataGrid.InvalidateCell(2, e.RowIndex);
-                            dgv_WriteDataGrid.InvalidateCell(3, e.RowIndex);
-                            dgv_WriteDataGrid.InvalidateCell(4, e.RowIndex);
-                            dgv_WriteDataGrid.InvalidateCell(5, e.RowIndex);
-                            dgv_WriteDataGrid.InvalidateCell(6, e.RowIndex);
-                            dgv_WriteDataGrid.InvalidateCell(7, e.RowIndex);
-                        }
-                        else
-                        {
-                            m_Param.Write_SN[e.RowIndex] = e.Value.ToString();
-                        }
+                        m_Param.lWriteData[e.RowIndex].SN = (e.Value != null) ? e.Value.ToString() : "";
                         break;
                     case "Write_Label":
-                        if (e.RowIndex >= m_Param.Write_Label.Count)
-                        {
-                            m_Param.Write_Label.Add(e.Value.ToString());
-                        }
-                        else
-                        {
-                            m_Param.Write_Label[e.RowIndex] = e.Value.ToString();
-                        }
+                        m_Param.lWriteData[e.RowIndex].Label = (e.Value != null) ? e.Value.ToString() : "";
                         break;
                     case "Write_Address":
-                        if (e.RowIndex >= m_Param.Write_Address.Count)
-                        {
-                            m_Param.Write_Address.Add(e.Value.ToString());
-                        }
-                        else
-                        {
-                            m_Param.Write_Address[e.RowIndex] = e.Value.ToString();
-                        }
+                        m_Param.lWriteData[e.RowIndex].Address = (e.Value != null) ? e.Value.ToString() : "";
                         break;
                     case "Write_DataType":
-                        if (e.RowIndex >= m_Param.Write_DataType.Count)
-                        {
-                            m_Param.Write_DataType.Add(e.Value.ToString());
-                        }
-                        else
-                        {
-                            m_Param.Write_DataType[e.RowIndex] = e.Value.ToString();
-                        }
+                        m_Param.lWriteData[e.RowIndex].DataType = (e.Value != null) ? e.Value.ToString() : "";
                         break;
                     case "Write_Data":
-                        if (e.RowIndex >= m_Param.Write_Data.Count)
-                        {
-                            m_Param.Write_Data.Add(e.Value.ToString());
-                        }
-                        else
-                        {
-                            m_Param.Write_Data[e.RowIndex] = e.Value.ToString();
-                        }
+                        m_Param.lWriteData[e.RowIndex].Data = (e.Value != null) ? e.Value.ToString() : "";
                         break;
                     case "Write_IsUse":
-                        if (e.RowIndex >= m_Param.Write_IsUse.Count)
-                        {
-                            m_Param.Write_IsUse.Add(e.Value.ToString());
-                        }
-                        else
-                        {
-                            m_Param.Write_IsUse[e.RowIndex] = m_Param.BoolToZero(e.Value);
-                        }
+                        m_Param.lWriteData[e.RowIndex].IsUse = m_Param.BoolToZero(e.Value);
                         break;
                     case "Write_DeviceValueGet":
-                        if (e.RowIndex >= m_Param.Write_DeviceValueGet.Count)
-                        {
-                            m_Param.Write_DeviceValueGet.Add(e.Value.ToString());
-                        }
-                        else
-                        {
-                            m_Param.Write_DeviceValueGet[e.RowIndex] = e.Value.ToString();
-                        }
+                        m_Param.lWriteData[e.RowIndex].DeviceValueGet = (e.Value != null) ? e.Value.ToString() : "";
                         break;
                     case "Write_DeviceValueSet":
-                        if (e.RowIndex >= m_Param.Write_DeviceValueSet.Count)
-                        {
-                            m_Param.Write_DeviceValueSet.Add(e.Value.ToString());
-                        }
-                        else
-                        {
-                            m_Param.Write_DeviceValueSet[e.RowIndex] = e.Value.ToString();
-                        }
+                        m_Param.lWriteData[e.RowIndex].DeviceValueSet = (e.Value != null) ? e.Value.ToString() : "";
                         break;
                 }
             }
+            else if (e.Value != null)//新增
+            {
+                CDataStruct cData = new CDataStruct();
+                //若增加則下面先新增預設值
+                switch (dgv_WriteDataGrid.Columns[e.ColumnIndex].Name)
+                {
+                    case "Write_SN":
+                        cData.SN = e.Value.ToString();
+                        break;
+                    case "Write_Label":
+                        cData.Label = e.Value.ToString();
+                        break;
+                    case "Write_Address":
+                        cData.Address = e.Value.ToString();
+                        break;
+                    case "Write_DataType":
+                        cData.DataType = e.Value.ToString();
+                        break;
+                    case "Write_Data":
+                        cData.Data = e.Value.ToString();
+                        break;
+                    case "Write_IsUse":
+                        cData.IsUse = m_Param.BoolToZero(e.Value);
+                        break;
+                    case "Write_DeviceValueGet":
+                        cData.DeviceValueGet = "N/A";
+                        break;
+                    case "Write_DeviceValueSet":
+                        cData.DeviceValueSet = "";
+                        break;
+                }
+                m_Param.lWriteData.Add(cData);
+            }
+            dgv_WriteDataGrid.InvalidateRow(e.RowIndex);
         }
+        //-----------
         private void Main_Form_FormClosing(object sender, FormClosingEventArgs e)
         {
             m_Param.ProgClose();
         }
-        //===============================================
+        //======================================================================================================
         public void DataUpdate()
         {
-
             string sOutPutCell;
-            //上傳寫入
-            for (int i = 0; i < m_Param.Write_SN.Count; i++)
-            {
-                if (m_Param.Write_IsUse[i].ToString() == "1")//有使用的檢索
-                {
-                    if (m_Param.Write_DeviceValueSet[i] != null)//上傳寫入值不為null
-                    {
-                        if (m_Param.Write_DeviceValueSet[i] != "")//上傳寫入值不為""
-                        {
-                            //若為軟元件區間
-                            if (m_Param.Write_Address[i].Contains("~"))//帶區間"~"
-                            {
-                                try
-                                {
-                                    m_Param.ProgSetBlockCombine(m_Param.Write_Address[i], m_Param.Write_DeviceValueSet[i]);
-                                    if (m_Param.iReturnCode == 0)
-                                    {
-                                        Console.WriteLine(m_Param.Write_Address[i] + " SetOK");
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    MessageBox.Show(ex.Message + "\n是否為修改值string[]之軟元件名稱錯誤", "DataUpload", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                    Timer_DeviceGet.Start();
-                                }
-                            }
-                            else//其他軟元件
-                            {
-                                try
-                                {
-                                    m_Param.ProgSetDevice(m_Param.Write_Address[i], m_Param.Write_DeviceValueSet[i]);
-                                    if (m_Param.iReturnCode == 0)
-                                    {
-                                        m_Param.ProgGetDevice(m_Param.Write_Address[i].ToString(), out sOutPutCell);
-                                        Console.WriteLine(m_Param.Write_Address[i] + ": " + sOutPutCell);
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    MessageBox.Show(ex.Message + "\n上傳寫入資料填充有誤.\n請確認是否未輸入資料\n", "DataUpload", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                    Timer_DeviceGet.Start();
-                                }
-                            }
 
-                        }
-                    }
-                }
-
-            }
-            //上傳讀取
-            for (int i = 0; i < m_Param.Write_SN.Count; i++)
+            for (int i = 0; i < m_Param.lWriteData.Count; i++)
             {
-                if (m_Param.Write_IsUse[i].ToString() == "1")//表示有使用
+                //上傳寫入
+                switch (m_Param.SetDataStatus(i, ReadWriteStatus.IsWrite, GetSetStatus.IsSet))
                 {
-                    //若為軟元件區間
-                    if (m_Param.Write_Address[i].ToString().Contains("~"))
-                    {
+                    case ValueStatus.IsEmpty:
+                        break;
+                    case ValueStatus.IsArrayDevice:
                         try
                         {
-                            m_Param.ProgGetBlockCombine(m_Param.Write_Address[i].ToString(), out sOutPutCell);
-                            if (m_Param.iReturnCode == 0)
-                            {
-                                m_Param.Write_DeviceValueGet[i] = sOutPutCell;
-                            }
+                            m_Param.ProgSetBlockCombine(m_Param.lWriteData[i].Address, m_Param.lWriteData[i].DeviceValueSet);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message + "\n是否為修改值string[]之軟元件名稱錯誤", "DataUpload", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            ModelChange();//強制切換
+                        }
+                        break;
+                    case ValueStatus.IsSingleDevice:
+                        try
+                        {
+                            m_Param.ProgSetDevice(m_Param.lWriteData[i].Address, m_Param.lWriteData[i].DeviceValueSet);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message + "\n上傳寫入資料填充有誤.\n請確認是否未輸入資料\n", "DataUpload", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            ModelChange();//強制切換
+                        }
+                        break;
+                }
+                //上傳讀取
+                switch (m_Param.SetDataStatus(i, ReadWriteStatus.IsWrite, GetSetStatus.IsGet))
+                {
+                    case ValueStatus.IsEmpty:
+                        break;
+                    case ValueStatus.IsArrayDevice:
+                        try
+                        {
+                            m_Param.ProgGetBlockCombine(m_Param.lWriteData[i].Address.ToString(), out sOutPutCell);
                         }
                         catch (Exception ex)
                         {
                             MessageBox.Show(ex.Message + "\n是否為string[]之軟元件名稱錯誤(~)", "DataUpload讀取", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             ModelChange();//強制切換
-                            Timer_DeviceGet.Start();
                         }
-                    }
-                    else//其他軟元件
-                    {
-
+                        break;
+                    case ValueStatus.IsSingleDevice:
                         try
                         {
-                            m_Param.ProgGetDevice(m_Param.Write_Address[i].ToString(), out sOutPutCell);
-                            if (m_Param.iReturnCode == 0)
-                            {
-                                m_Param.Write_DeviceValueGet[i] = sOutPutCell;
-                            }
-
-
+                            m_Param.ProgGetDevice(m_Param.lWriteData[i].Address.ToString(), out sOutPutCell);
                         }
                         catch (Exception ex)
                         {
                             MessageBox.Show(ex.Message + "\n是否為word之軟元件名稱錯誤(Device)", "DataUpload讀取", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             ModelChange();//強制切換
-                            Timer_DeviceGet.Start();
                         }
-                    }
+                        break;
                 }
             }
             Console.WriteLine("上傳成功");
-            Timer_DeviceGet.Start();
         }
         public void DataGridValueFlash()
         {
             //餵入資料畫面DataGridView刷新
-            #region 下載
-            //dgv_ReadDataGrid.Rows.Clear();//清除原本的
-            dgv_ReadDataGrid.RowCount = m_Param.Read_SN.Count + 1;
-            #endregion
-
-            #region 上傳
-            //dgv_WriteDataGrid.Rows.Clear();//清除原本的
-            dgv_WriteDataGrid.RowCount = m_Param.Write_SN.Count + 1;
-            #endregion
+            dgv_ReadDataGrid.RowCount = m_Param.lReadData.Count + 1;
+            dgv_WriteDataGrid.RowCount = m_Param.lWriteData.Count + 1;
         }
         public void ModelChange()
         {
@@ -559,8 +439,6 @@ namespace PLC_Data_Access
                     txt_ReadTime.Enabled = true;
                     Timer_DeviceGet.Elapsed -= On_DeviceGet;
                     Timer_DeviceGet.Stop();
-
-
                     break;
                 case 1: //執行
                     p_ModelChange.BackColor = Color.OrangeRed;
@@ -587,94 +465,162 @@ namespace PLC_Data_Access
         }
         private void On_DeviceGet(object sender, EventArgs e)
         {
-            Timer_DeviceGet.Stop();
             Cycle_DeviceGet();
-            Timer_DeviceGet.Start();
         }
         private void Cycle_DeviceGet()
         {
             swStopwatch.Restart();
-            //下載讀取
-            #region 下載讀取
-            for (int i = 0; i < m_Param.Read_SN.Count; i++)//SN_count
+            string arrGetData = "";//全字串("\n"為分號)
+            int iTotalItem = 0;//全總數
+            ///全部字串讀取
+            #region 下發讀取
+            for (int i = 0; i < m_Param.lReadData.Count; i++)//SN_count
             {
-                if (m_Param.Read_IsUse[i] == "1")//表示有使用err
+                if (m_Param.lReadData[i].IsUse == "1")//表示有觸發
                 {
-                    //若為軟元件區間
-                    if (m_Param.Read_Address[i].Contains("~"))
+                    if (m_Param.lReadData[i].Address.Contains("~"))//若為軟元件區間
                     {
-                        try
-                        {
-                            m_Param.ProgGetBlockCombine(m_Param.Read_Address[i], out string sOutPutCell);
-                            m_Param.Read_DeviceValueGet[i] = (m_Param.iReturnCode == 0) ? sOutPutCell : m_Param.ErrorStrSend();
-                        }
-                        catch (Exception ex)
-                        {
-                            m_Param.ErrorMessageBox_DeviceBlock(ex);
-                            ModelChange();//強制切換
-                            return;
-                        }
+                        m_Param.GetCombineArray_str(m_Param.lReadData[i].Address, out int iItemCount, out string sItemStr);
+                        //增加軟元件總數
+                        iTotalItem += iItemCount;
+                        //串Random用字串
+                        arrGetData += (arrGetData == "") ? sItemStr : "\n" + sItemStr;
                     }
                     else//其他軟元件
                     {
-                        try
-                        {
-                            m_Param.ProgGetDevice(m_Param.Read_Address[i], out string sOutPut);
-                            m_Param.Read_DeviceValueGet[i] = (m_Param.iReturnCode == 0) ? sOutPut : m_Param.ErrorStrSend();
-                        }
-                        catch (Exception ex)
-                        {
-                            m_Param.ErrorMessageBox_DeviceValue(ex);
-                            ModelChange();//強制切換
-                            return;
-                        }
+                        iTotalItem += 1;// 增加軟元件總數(單一device)
+                        //串Random用字串
+                        arrGetData += (arrGetData == "") ? m_Param.lReadData[i].Address: "\n" + m_Param.lReadData[i].Address;
                     }
-                    dgv_ReadDataGrid.InvalidateCell(6, i);
                 }
             }
             #endregion
-            //上傳讀取
             #region 上傳讀取
-            for (int i = 0; i < m_Param.Write_SN.Count; i++)
+            for (int i = 0; i < m_Param.lWriteData.Count; i++)
             {
-                if (m_Param.Write_IsUse[i] == "1")//表示有使用
+                if (m_Param.lWriteData[i].IsUse == "1")//表示有觸發
                 {
-                    //若為軟元件區間
-                    if (m_Param.Write_Address[i].ToString().Contains("~"))
+                    if (m_Param.lWriteData[i].Address.Contains("~"))//若為軟元件區間
                     {
-                        try
-                        {
-                            m_Param.ProgGetBlockCombine(m_Param.Write_Address[i].ToString(), out string sOutPutCell);
-                            m_Param.Write_DeviceValueGet[i] = (m_Param.iReturnCode == 0) ? sOutPutCell : m_Param.ErrorStrSend();
-                        }
-                        catch (Exception ex)
-                        {
-                            m_Param.ErrorMessageBox_DeviceBlock(ex);
-                            ModelChange();//強制切換
-                            return;
-                        }
+                        m_Param.GetCombineArray_str(m_Param.lWriteData[i].Address, out int iItemCount, out string sItemStr);
+
+                        iTotalItem += iItemCount;//增加軟元件總數
+                        //串Random用字串
+                        arrGetData += (arrGetData == "") ? sItemStr : "\n" + sItemStr;
+
                     }
-                    else//其他軟元件
+                    else//其餘單一元件
                     {
-                        try
-                        {
-                            m_Param.ProgGetDevice(m_Param.Write_Address[i], out string sOutPutCell);
-                            m_Param.Write_DeviceValueGet[i] = (m_Param.iReturnCode == 0) ? sOutPutCell : m_Param.ErrorStrSend();
-                        }
-                        catch (Exception ex)
-                        {
-                            m_Param.ErrorMessageBox_DeviceValue(ex);
-                            ModelChange();//強制切換
-                            return;
-                        }
+                        iTotalItem += 1;// 增加軟元件總數(單一device)
+                        //串Random用字串
+                        arrGetData += (arrGetData == "") ? m_Param.lWriteData[i].Address: "\n" + m_Param.lWriteData[i].Address;
                     }
-                    dgv_WriteDataGrid.InvalidateCell(6, i);
                 }
             }
             #endregion
+            //取全部元件的值(ReadRandom)
+            m_Param.ProgGetDeviceRandom(arrGetData, iTotalItem, out short[] arrDeviceData);
+            int iOrderCount = 0;
+            ///全部字串更新
+            #region 下發更新
+            for (int i = 0; i < m_Param.lReadData.Count; i++)//SN_count
+            {
+                if (m_Param.lReadData[i].IsUse == "1")//表示有觸發
+                {
+                    if (m_Param.lReadData[i].Address.Contains("~"))//若為軟元件區間
+                    {
+                        m_Param.GetCombineSize_int(m_Param.lReadData[i].Address, out int iDeviceSize);
+                        string sTmp = "";
+
+                        var total = System.BitConverter.GetBytes(arrDeviceData[iOrderCount]);
+                        iOrderCount++;
+                        //區間byte聯合
+                        for (int j = 1; j < iDeviceSize; j++)
+                        {
+                            var addvalue = System.BitConverter.GetBytes(arrDeviceData[iOrderCount]);
+                            var FullValue = new byte[total.Length + addvalue.Length];
+                            //union
+                            Buffer.BlockCopy(total, 0, FullValue, 0, total.Length);
+                            Buffer.BlockCopy(addvalue, 0, FullValue, total.Length, addvalue.Length);
+
+                            total = FullValue;//一直累積完全部byte
+                            iOrderCount++;
+                        }
+                        //判斷寫入格式
+                        if (iDeviceSize == 2|| m_Param.lReadData[i].DataType=="real")//Float 先用|| 後改&& 
+                        {
+                            var FF = BitConverter.ToSingle(total, 0);//轉float(single)
+                            sTmp = FF.ToString();
+                            m_Param.lReadData[i].DeviceValueGet = sTmp;
+                        }
+                        else//string[?]
+                        {
+                            sTmp = System.Text.Encoding.ASCII.GetString(total);//轉float(single)
+                            m_Param.lReadData[i].DeviceValueGet = sTmp;
+                        }
+                    }
+                    else//其餘單一元件
+                    {
+                        m_Param.lReadData[i].DeviceValueGet = string.Format("{0:00}", arrDeviceData[iOrderCount]);
+                        iOrderCount++;
+                    }
+                    dgv_ReadDataGrid.InvalidateCell((int)CData.DeviceValueGet, i);
+                }
+            }
+            #endregion
+            #region 上傳更新
+            for (int i = 0; i < m_Param.lWriteData.Count; i++)//SN_count
+            {
+                if (m_Param.lWriteData[i].IsUse == "1")//表示有觸發
+                {
+                    if (m_Param.lWriteData[i].Address.Contains("~"))//若為軟元件區間
+                    {
+                        m_Param.GetCombineSize_int(m_Param.lWriteData[i].Address, out int iDeviceSize);
+                        string sTmp = "";
+
+                        var total = System.BitConverter.GetBytes(arrDeviceData[iOrderCount]);
+                        iOrderCount++;
+                        //區間byte聯合
+                        for (int j = 1; j < iDeviceSize; j++)
+                        {
+                            var addvalue = System.BitConverter.GetBytes(arrDeviceData[iOrderCount]);
+                            var FullValue = new byte[total.Length + addvalue.Length];
+                            //union
+                            Buffer.BlockCopy(total, 0, FullValue, 0, total.Length);
+                            Buffer.BlockCopy(addvalue, 0, FullValue, total.Length, addvalue.Length);
+
+                            total = FullValue;//一直累積完全部byte
+                            iOrderCount++;
+                        }
+                        //判斷寫入格式
+                        if (iDeviceSize == 2 || m_Param.lWriteData[i].DataType == "real")//Float 先用|| 後改&& 
+                        {
+                            var FF = BitConverter.ToSingle(total, 0);//轉float(single)
+                            sTmp = FF.ToString();
+                            m_Param.lWriteData[i].DeviceValueGet = sTmp;
+                        }
+                        else//string[?]
+                        {
+                            sTmp = System.Text.Encoding.ASCII.GetString(total);//轉float(single)
+                            m_Param.lWriteData[i].DeviceValueGet = sTmp;
+                        }
+                    }
+                    else//其餘單一元件
+                    {
+                        m_Param.lWriteData[i].DeviceValueGet = string.Format("{0:00}", arrDeviceData[iOrderCount]);
+                        iOrderCount++;
+                    }
+                    dgv_WriteDataGrid.InvalidateCell((int)CData.DeviceValueGet, i);//列更新
+                }
+            }
+            #endregion
+            if (iOrderCount != iTotalItem)
+            {
+                Console.WriteLine("填值有問題");
+                MessageBox.Show("更新值有問題", "Cycle_DeviceGet", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             swStopwatch.Stop();
             TimeSpan trim = swStopwatch.Elapsed;
-
             Console.WriteLine("迴圈1次時間: " + trim + "\n目前時間: " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
         }
     }
