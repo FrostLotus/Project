@@ -581,7 +581,7 @@ namespace PLC_Data_Access
                 case "FX5UCPU":
                     #region FX5UCPU
 
-                    TParameter.Mx_Connect.Prog_Connect.ActHostAddress = ActHostAddress;
+                    TParameter.Mx_Connect.Prog_Connect.ActHostAddress = ActHostAddress = "192.168.2.99";
                     TParameter.Mx_Connect.Prog_Connect.ActConnectUnitNumber = ActConnectUnitNumber = 0;
                     TParameter.Mx_Connect.Prog_Connect.ActCpuType = ActCpuType = 528;
 
