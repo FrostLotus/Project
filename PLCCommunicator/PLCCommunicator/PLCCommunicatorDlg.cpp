@@ -196,7 +196,6 @@ BOOL CPLCCommunicatorDlg::OnInitDialog()
 	Init();
 	return TRUE;  // 傳回 TRUE，除非您對控制項設定焦點
 }
-
 // 如果將最小化按鈕加入您的對話方塊，您需要下列的程式碼，
 // 以便繪製圖示。對於使用文件/檢視模式的 MFC 應用程式，
 // 框架會自動完成此作業。
@@ -225,7 +224,6 @@ void CPLCCommunicatorDlg::OnPaint()
 		DrawInfo();
 	}
 }
-
 // 當使用者拖曳最小化視窗時，
 // 系統呼叫這個功能取得游標顯示。
 HCURSOR CPLCCommunicatorDlg::OnQueryDragIcon()
@@ -608,7 +606,7 @@ void CPLCCommunicatorDlg::Init()
 	m_xParam.eCustomerType = CUSTOMER_EVERSTRONG;//(AOI_CUSTOMERTYPE_)(lParam >> 8 & 0xFF);
 	m_xParam.eSubCustomerType = SUB_CUSTOMER_NONE;//(AOI_SUBCUSTOMERTYPE_)(lParam & 0xFF);
 	OnCmdGPIO(WM_CUSTOMERTYPE_INIT, m_xParam.eCustomerType << 15 | m_xParam.eSubCustomerType);//設置客製
-	OnCmdGPIO(WM_AOI_RESPONSE_CMD, WM_SYST_PARAMINIT_CMD);//設置AOI
+	OnCmdGPIO(WM_AOI_RESPONSE_CMD, WM_SYST_PARAMINIT_CMD);///刷新第一次PLC回傳下發訊號資料
 	//InitPLCProcess();
 	//theApp.InsertDebugLog(L"init customer type done");
 	//ON_OPEN_PLC();

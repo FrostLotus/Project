@@ -151,7 +151,7 @@ private:
 
 	vector<BATCH_SHARE_SYST_RESULT_EVERSTR> m_vResult;   //[內部]結果
 	std::mutex m_oMutex;                                 //[內部]視窗對傳互斥鎖
-	HANDLE     m_hThread;                                //[內部]執行緒鎖
+	HANDLE     m_hThread;                                //[內部]執行緒
 	HANDLE     m_hEvent[EV_COUNT];                       //[內部]堆疊事件
 
 	PLC_DATA_ITEM_** m_pPLC_FIELD_INFO;

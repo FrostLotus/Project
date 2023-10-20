@@ -20,7 +20,6 @@ CEverStrProcessBase::~CEverStrProcessBase()
 ///<summary>[觸發]PLC開啟觸發</summary>
 long CEverStrProcessBase::ON_OPEN_PLC(LPARAM lp)
 {
-
 	long lRtn = CPLCProcessBase::ON_OPEN_PLC(lp);//先做CPLCProcessBase的原式
 	///-------------------------------------------
 	if (lRtn == 0)//原式建置成功
@@ -106,8 +105,8 @@ void CEverStrProcessBase::ProcessAOIResponse(LPARAM lp)
 	{
 		case WM_SYST_PARAMCCL_CMD: //PLC 101
 		{
-			WORD wReceive = _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCD_COMMAND_RECEIVED));//給上位機PLC回應狀態
-			WORD wCommand = _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCL_COMMAND));//目前回應狀態
+			//WORD wReceive = _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCD_COMMAND_RECEIVED));//給上位機PLC回應狀態
+			WORD wCommand = _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCL_COMMAND));//PLC回應狀態
 			if (wCommand == CCL_NOTIFYVALUE_COMMAND)//若目前回應狀態為101  狀況:上位機(PLC)下發資料完成
 			{
 				WORD wReceive = 100;
@@ -166,7 +165,7 @@ void CEverStrProcessBase::ProcessResult()
 	//Log
 	theApp.InsertDebugLog(L"ProcessResult", LOG_DEBUG);
 
-	if (USM_ReadData((unsigned char*)&dwFlag, sizeof(dwFlag)))
+	if (USM_ReadData((unsigned char*)&dwFlag, sizeof(dwFlag),0))
 	{
 		nOffset += sizeof(DWORD);
 		strTemp.Format(L"ProcessResult Flag:%d ", dwFlag);
