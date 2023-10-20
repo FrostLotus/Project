@@ -343,6 +343,7 @@
             this.btn_MxOpen.TabIndex = 4;
             this.btn_MxOpen.Text = "PLC連結中";
             this.btn_MxOpen.UseVisualStyleBackColor = true;
+            this.btn_MxOpen.Click += new System.EventHandler(this.btn_MxOpen_Click);
             // 
             // Main_Form
             // 
@@ -372,6 +373,7 @@
             this.p_MxOpenStatus.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion

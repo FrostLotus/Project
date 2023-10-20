@@ -681,7 +681,8 @@ namespace PLC_Data_Access
                         TParameter.DeviceData.lWriteData[i].DeviceValueGet = string.Format("{0:00}", arrDeviceData[iOrderCount]);
                         iOrderCount++;
                     }
-                    dgv_WriteDataGrid.InvalidateRow(i);//列更新
+                    //dgv_WriteDataGrid.InvalidateRow(i);//列更新
+                    dgv_WriteDataGrid.InvalidateCell(6, i);//列更新
                 }
             }
 
@@ -696,6 +697,9 @@ namespace PLC_Data_Access
             Console.WriteLine("迴圈1次時間: " + trim + "\n目前時間: " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
         }
 
+        private void btn_MxOpen_Click(object sender, EventArgs e)
+        {
 
+        }
     }
 }

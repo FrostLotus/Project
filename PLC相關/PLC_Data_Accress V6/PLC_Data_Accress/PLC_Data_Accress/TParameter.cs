@@ -40,6 +40,7 @@ namespace PLC_Data_Access
         {
             DeviceData.LoadData_Full();//先進行參數餵入
             SetPLCProperty(MxConnect.CpuName);//再進行PLC連線(不論有無連線成功)
+            SetPLCProperty(MxConnect.ActHostAddress);//再進行PLC連線(不論有無連線成功)
             MxConnect.ProgOpen();//連線測試
         }
         public static void SetPLCProperty(string sType)
@@ -49,7 +50,7 @@ namespace PLC_Data_Access
             {
                 case "FX5UCPU":
                     #region FX5UCPU
-                    MxConnect.ActHostAddress = TParameter.MxConnect._ActHostAddress;
+                    MxConnect.ActHostAddress = TParameter.MxConnect._ActHostAddress = "192.168.2.99";
                     MxConnect.ActConnectUnitNumber = 0;
                     MxConnect.ActCpuType = 528;
 
@@ -783,8 +784,7 @@ namespace PLC_Data_Access
                         {
                             re = (TParameter.DeviceData.lWriteData[count].Address.Contains("~")) ? ValueStatus.IsArray : ValueStatus.IsSingle;
                         }
-                    }
-                        
+                    } 
                     break;
                 case "Read":
                     if (TParameter.DeviceData.lReadData[count].IsUse == "1")
