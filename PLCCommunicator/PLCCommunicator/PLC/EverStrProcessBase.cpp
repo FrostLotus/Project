@@ -80,7 +80,6 @@ void CEverStrProcessBase::ON_GPIO_NOTIFY(WPARAM wp, LPARAM lp)
 				SetInfoField(xInfo);
 			}
 			break;
-
 	}
 }
 ///<summary>初始項目</summary>
