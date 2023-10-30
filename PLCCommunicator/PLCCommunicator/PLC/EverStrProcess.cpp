@@ -132,8 +132,9 @@ void CEverStrProcess::DoWriteResult(BATCH_SHARE_SYST_RESULT_EVERSTR& xData)
 	auto WriteSizeField = [&](int nField, float fSize)
 	{
 		WORD nSize = (int)fSize;
-		SET_PLC_FIELD_DATA(nField, 2, (BYTE*)&nSize);
+		SET_PLC_FIELD_DATA(nField, 4, (BYTE*)&nSize);
 	};
+
 	WriteSizeField(FIELD_REAL_Y_ONE, xData.fReal_One_Y);
 	WriteSizeField(FIELD_REAL_Y_TWO, xData.fReal_Two_Y);
 	WriteSizeField(FIELD_REAL_X_ONE, xData.fReal_One_X);

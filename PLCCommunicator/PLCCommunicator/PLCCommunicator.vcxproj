@@ -193,7 +193,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>uafxcwd.lib;Libcmtd.lib</AdditionalDependencies>
+      <AdditionalDependencies>uafxcwd.lib;Libcmtd.lib;Iphlpapi.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcwd.lib;Libcmtd.lib</IgnoreSpecificDefaultLibraries>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>

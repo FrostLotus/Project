@@ -278,11 +278,10 @@ long CPLCProcessBase::SET_PLC_FIELD_DATA(int nFieldId, int nSizeInByte, BYTE* pD
 	if (nFieldId >= 0 && nFieldId < nFieldSize)
 	{
 		const PLC_DATA_ITEM_* pItem = GetPLCAddressInfo(nFieldId, FALSE);
-		//
+		//初始化
 		BYTE* pOldValue = new BYTE[nSizeInByte];
 		memcpy(pOldValue, m_pPLCData[nFieldId].pData, nSizeInByte);//先複製空位置
 		memcpy(m_pPLCData[nFieldId].pData, pData, nSizeInByte);//填空
-
 #ifdef SHOW_PERFORMANCE
 		LARGE_INTEGER xStart, xEnd, xFreq;
 		QueryPerformanceFrequency(&xFreq);
@@ -307,11 +306,9 @@ long CPLCProcessBase::SET_PLC_FIELD_DATA(int nFieldId, int nSizeInByte, BYTE* pD
 			}
 			break;
 		}
-
 		if (lRtn == 0)
 		{
 			m_pPLCData[nFieldId].xTime = CTime::GetCurrentTime().GetTime();
-
 			ON_PLCDATA_CHANGE(nFieldId, pData, pItem->cLen);
 		}
 		else

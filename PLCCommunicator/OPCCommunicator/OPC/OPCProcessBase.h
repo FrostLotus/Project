@@ -63,7 +63,7 @@ struct OPCNewBatchDongguan
 	TCHAR QP[3];						//气泡
 };
 ///<summary>OPC瑕疵資料</summary>
-struct OPCInspData 
+struct OPCInspData
 {
 	float QXMS;				//缺陷米數
 	char QXDM[20];			//缺陷代碼
@@ -76,7 +76,7 @@ struct OPCInspData
 	float CS;				//車速
 };
 ///<summary>OPC工單資料</summary>
-struct OPCBatchData 
+struct OPCBatchData
 {
 	char ZAUFNR[10];			//訂單號
 	char ZMATNR[18];			//物料
@@ -125,57 +125,65 @@ struct NodeItem
 	int nFieldId;
 	TCHAR strName[100];//名稱(可中文)
 	TCHAR strNodeId[100];//名稱(英數)
-	void *pValue;//值
+	void* pValue;//值
 	int nLen; //inBytes
 	int nType;//類型
 	time_t xTime;
 };
 
-class IOPCProcess{
+class IOPCProcess
+{
 public:
-	IOPCProcess(){ m_pOut = NULL; m_pIn = NULL; };
-	virtual ~IOPCProcess(){ m_pOut = NULL; m_pIn = NULL; };
-	void AttachOut(IOPCProcess *pLink) { m_pOut = pLink; };
-	void AttachIn(IOPCProcess *pLink) { m_pIn = pLink; };
+	IOPCProcess() { m_pOut = NULL; m_pIn = NULL; };
+	virtual ~IOPCProcess() { m_pOut = NULL; m_pIn = NULL; };
+	void AttachOut(IOPCProcess* pLink) { m_pOut = pLink; };
+	void AttachIn(IOPCProcess* pLink) { m_pIn = pLink; };
 protected:
 	///<summary>OPC資料型態</summary>
-	enum OPCDataType 
+	enum OPCDataType
 	{
 		INSP,//瑕疵資料
 		BATCH//工單資料
 	};
 	//in
-	virtual void ON_OPEN_OPC(LPARAM lp){
+	virtual void ON_OPEN_OPC(LPARAM lp)
+	{
 		if (m_pIn)
 			m_pIn->ON_OPEN_OPC(lp);
 	}
-	virtual void ON_CLOSE_OPC(){
+	virtual void ON_CLOSE_OPC()
+	{
 		if (m_pIn)
 			m_pIn->ON_CLOSE_OPC();
 	}
-	virtual void ON_RECEIVE_AOIDATA(OPCDataType eType){
+	virtual void ON_RECEIVE_AOIDATA(OPCDataType eType)
+	{
 		if (m_pIn)
 			m_pIn->ON_RECEIVE_AOIDATA(eType);
 	}
 	//out
-	virtual void ON_OPC_NOTIFY(CString strMsg){
+	virtual void ON_OPC_NOTIFY(CString strMsg)
+	{
 		if (m_pOut)
 			m_pOut->ON_OPC_NOTIFY(strMsg);
 	}
-	virtual void ON_OPC_PARAM(CString strName, CString strValue){
+	virtual void ON_OPC_PARAM(CString strName, CString strValue)
+	{
 		if (m_pOut)
 			m_pOut->ON_OPC_PARAM(strName, strValue);
 	}
-	virtual void ON_OPC_FIELD_CHANGE(int nFieldId){
+	virtual void ON_OPC_FIELD_CHANGE(int nFieldId)
+	{
 		if (m_pOut)
 			m_pOut->ON_OPC_FIELD_CHANGE(nFieldId);
 	}
 private:
-	IOPCProcess *m_pOut;
-	IOPCProcess *m_pIn;
+	IOPCProcess* m_pOut;
+	IOPCProcess* m_pIn;
 };
 
-class COPCProcessBase : public IOPCProcess{
+class COPCProcessBase : public IOPCProcess
+{
 public:
 	COPCProcessBase();
 	virtual ~COPCProcessBase();
@@ -187,17 +195,17 @@ public:
 public:
 	virtual int GetNodeSize() = 0;
 protected:
-	virtual NodeItem *GetNodeItem(int nIndex0Base) = 0;
+	virtual NodeItem* GetNodeItem(int nIndex0Base) = 0;
 
 protected:
-	BOOL USM_ReadData(BYTE *pData, int nSize, int nOffset = 0);
-	BOOL USM_ReadAOIData(BYTE *pData, int nSize, int nOffset = 0);
-	BOOL USM_WriteData(BYTE *pData, int nSize, int nOffset = 0);
+	BOOL USM_ReadData(BYTE* pData, int nSize, int nOffset = 0);
+	BOOL USM_ReadAOIData(BYTE* pData, int nSize, int nOffset = 0);
+	BOOL USM_WriteData(BYTE* pData, int nSize, int nOffset = 0);
 	void NotifyAOI(WPARAM wp, LPARAM lp);
 private:
 	void Init();
 	void Finalize();
 private:
-	usm<unsigned char> *m_pOPCUsm;
-	usm<unsigned char> *m_pAOIUsm;
+	usm<unsigned char>* m_pOPCUsm;
+	usm<unsigned char>* m_pAOIUsm;
 };

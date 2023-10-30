@@ -7,14 +7,15 @@
 
 COPCController* pThis;
 
-UINT OPC_SERVER_THREAD(LPVOID lp) {
+UINT OPC_SERVER_THREAD(LPVOID lp)
+{
 	COPCController* pThis = (COPCController*)lp;
-	if (pThis) {
+	if (pThis)
+	{
 		pThis->RunOPCServer();
 	}
 	return 0;
 }
-
 COPCController::COPCController()
 {
 	Init();
@@ -32,7 +33,8 @@ void COPCController::Init()
 void COPCController::Finalize()
 {
 	m_bOPCRunning = FALSE;
-	if (m_pOPCThread) {
+	if (m_pOPCThread)
+	{
 		::WaitForSingleObject(m_pOPCThread->m_hThread, INFINITE);
 		delete m_pOPCThread;
 		m_pOPCThread = NULL;
@@ -68,7 +70,8 @@ void COPCController::LIB_FREE()
 	m_p__UA_Server_addNode = NULL;
 	m_pUA_TYPES = NULL;
 	m_pUA_VariableAttributes = NULL;
-	if (m_hDL_Dll_OPEN62541) {
+	if (m_hDL_Dll_OPEN62541)
+	{
 		::FreeLibrary(m_hDL_Dll_OPEN62541);
 		m_hDL_Dll_OPEN62541 = NULL;
 	}
@@ -76,7 +79,8 @@ void COPCController::LIB_FREE()
 UA_LocalizedText COPCController::UA_LOCALIZEDTEXT_ALLOC_(const char* locale, const char* text)
 {
 	UA_LocalizedText lt;
-	if (m_pUA_String_fromChars) {
+	if (m_pUA_String_fromChars)
+	{
 		lt.locale = m_pUA_String_fromChars(locale);
 		lt.text = m_pUA_String_fromChars(text);
 	}
@@ -87,7 +91,8 @@ UA_NodeId COPCController::UA_NODEID_STRING_ALLOC_(UA_UInt16 nsIndex, const char*
 	UA_NodeId id;
 	id.namespaceIndex = nsIndex;
 	id.identifierType = UA_NODEIDTYPE_STRING;
-	if (m_pUA_String_fromChars) {
+	if (m_pUA_String_fromChars)
+	{
 		id.identifier.string = m_pUA_String_fromChars(chars);
 	}
 	return id;
@@ -115,7 +120,8 @@ void COPCController::LIB_LOAD()
 	CString strLog;
 	strLog.Format(L"Load %s ", DLL_OPEN62541);
 	m_hDL_Dll_OPEN62541 = ::LoadLibrary(strFile);
-	if (m_hDL_Dll_OPEN62541) {
+	if (m_hDL_Dll_OPEN62541)
+	{
 		m_pUA_TYPES = reinterpret_cast<UA_DataType*>(GetProcAddress(m_hDL_Dll_OPEN62541, "UA_TYPES"));
 		m_pUA_VariableAttributes = reinterpret_cast<UA_VariableAttributes*>(GetProcAddress(m_hDL_Dll_OPEN62541, "UA_VariableAttributes_default"));
 		m_pUA_Server_new = reinterpret_cast<pUA_Server_new>(GetProcAddress(m_hDL_Dll_OPEN62541, "UA_Server_new"));
@@ -130,7 +136,8 @@ void COPCController::LIB_LOAD()
 
 		ON_OPC_NOTIFY(strLog + L"Success");
 	}
-	else {
+	else
+	{
 		ON_OPC_NOTIFY(strLog + L"Fail");
 	}
 }
@@ -206,43 +213,45 @@ void COPCController::AddServerVariable()
 
 				switch (pItem->nType)
 				{
-				case UA_TYPES_STRING:
-				{
-					UA_String uaString;
-					int nTotalByte = pItem->nLen + 2;
-					BYTE* pTemp = new BYTE[nTotalByte];
-					memset(pTemp, 0, nTotalByte);
-					memcpy(pTemp, pItem->pValue, pItem->nLen);
-					int nRtn = wcstombs_s(&nConvert, szText, MAX_PATH, (TCHAR*)pTemp, nTotalByte);
-					delete[]pTemp;
-					if (m_pUA_String_fromChars) {
-						uaString = m_pUA_String_fromChars(szText);
+					case UA_TYPES_STRING:
+					{
+						UA_String uaString;
+						int nTotalByte = pItem->nLen + 2;
+						BYTE* pTemp = new BYTE[nTotalByte];
+						memset(pTemp, 0, nTotalByte);
+						memcpy(pTemp, pItem->pValue, pItem->nLen);
+						int nRtn = wcstombs_s(&nConvert, szText, MAX_PATH, (TCHAR*)pTemp, nTotalByte);
+						delete[]pTemp;
+						if (m_pUA_String_fromChars)
+						{
+							uaString = m_pUA_String_fromChars(szText);
+						}
+						if (m_pUA_Variant_setScalar && m_pUA_TYPES)
+						{
+							xAttr.dataType = (m_pUA_TYPES + UA_TYPES_STRING)->typeId;
+							m_pUA_Variant_setScalar(&xAttr.value, &uaString, m_pUA_TYPES + UA_TYPES_STRING);
+						}
 					}
-					if (m_pUA_Variant_setScalar && m_pUA_TYPES) {
-						xAttr.dataType = (m_pUA_TYPES + UA_TYPES_STRING)->typeId;
-						m_pUA_Variant_setScalar(&xAttr.value, &uaString, m_pUA_TYPES + UA_TYPES_STRING);
-					}
-				}
-				break;
-				case UA_TYPES_UINT16:
-				{
-					UA_UInt16 uaWord;
-					uaWord = *(short*)pItem->pValue;
-					xAttr.dataType = (m_pUA_TYPES + UA_TYPES_UINT16)->typeId;
-					m_pUA_Variant_setScalar(&xAttr.value, &uaWord, m_pUA_TYPES + UA_TYPES_UINT16);
-				}
-				break;
-				case UA_TYPES_BOOLEAN:
-				{
-					UA_Boolean uaBool;
-					uaBool = *(bool*)pItem->pValue;
-					xAttr.dataType = (m_pUA_TYPES + UA_TYPES_BOOLEAN)->typeId;
-					m_pUA_Variant_setScalar(&xAttr.value, &uaBool, m_pUA_TYPES + UA_TYPES_BOOLEAN);
-				}
-				break;
-				default:
-					ASSERT(FALSE);
 					break;
+					case UA_TYPES_UINT16:
+					{
+						UA_UInt16 uaWord;
+						uaWord = *(short*)pItem->pValue;
+						xAttr.dataType = (m_pUA_TYPES + UA_TYPES_UINT16)->typeId;
+						m_pUA_Variant_setScalar(&xAttr.value, &uaWord, m_pUA_TYPES + UA_TYPES_UINT16);
+					}
+					break;
+					case UA_TYPES_BOOLEAN:
+					{
+						UA_Boolean uaBool;
+						uaBool = *(bool*)pItem->pValue;
+						xAttr.dataType = (m_pUA_TYPES + UA_TYPES_BOOLEAN)->typeId;
+						m_pUA_Variant_setScalar(&xAttr.value, &uaBool, m_pUA_TYPES + UA_TYPES_BOOLEAN);
+					}
+					break;
+					default:
+						ASSERT(FALSE);
+						break;
 				}
 
 				/* Add the variable node to the information model */
@@ -260,17 +269,17 @@ void COPCController::AddServerVariable()
 				UA_NodeId typeDefinition = UA_NODEID_NUMERIC_(0, UA_NS0ID_BASEDATAVARIABLETYPE);
 				UA_DataType* pUA_TYPES_VARIABLEATTRIBUTES = NULL;
 				if (m_pUA_TYPES) pUA_TYPES_VARIABLEATTRIBUTES = m_pUA_TYPES + UA_TYPES_VARIABLEATTRIBUTES;
-				if (m_p__UA_Server_addNode) 
+				if (m_p__UA_Server_addNode)
 				{
-					m_p__UA_Server_addNode(m_pServer, UA_NODECLASS_VARIABLE, 
-										   &uaNodeId, 
-										   &parentNodeId,
-										   &parentReferenceNodeId, 
-										   qn,
-										   &typeDefinition, 
-										   (const UA_NodeAttributes*)&xAttr, pUA_TYPES_VARIABLEATTRIBUTES, 
-										   NULL, 
-										   NULL);
+					m_p__UA_Server_addNode(m_pServer, UA_NODECLASS_VARIABLE,
+						&uaNodeId,
+						&parentNodeId,
+						&parentReferenceNodeId,
+						qn,
+						&typeDefinition,
+						(const UA_NodeAttributes*)&xAttr, pUA_TYPES_VARIABLEATTRIBUTES,
+						NULL,
+						NULL);
 				}
 			}
 		}
@@ -294,9 +303,11 @@ void COPCController::AddServerMonitoredItem()
 
 	int nNodeSize = GetNodeSize();
 
-	for (int i = 0; i < nNodeSize; i++) {
+	for (int i = 0; i < nNodeSize; i++)
+	{
 		NodeItem* pItem = GetNodeItem(i);
-		if (pItem) {
+		if (pItem)
+		{
 			size_t nConvert = 0;
 			wcstombs_s(&nConvert, szText, MAX_PATH, pItem->strNodeId, MAX_PATH);
 			xNodeId = UA_NODEID_STRING_ALLOC_(1, szText);
@@ -310,7 +321,8 @@ void COPCController::AddServerMonitoredItem()
 			xRequest.requestedParameters.queueSize = 1;
 
 			xRequest.requestedParameters.samplingInterval = OPC_SAMPLING_INTERVAL; /* 100 ms interval */
-			if (m_pUA_Server_createDataChangeMonitoredItem) {
+			if (m_pUA_Server_createDataChangeMonitoredItem)
+			{
 				m_pUA_Server_createDataChangeMonitoredItem(m_pServer, UA_TIMESTAMPSTORETURN_SOURCE, xRequest, NULL, ServerCallback);
 			}
 		}

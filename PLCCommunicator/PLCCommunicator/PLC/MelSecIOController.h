@@ -4,6 +4,7 @@
 #include "ActProgType_i.h"
 #include "ActSupportMsg_i.h"
 #include "DataHandlerBase.h"
+#include <afxstr.h>
 
 #define BATCH_READ_WRITE	//§å¦¸Åª¼gaddress
 

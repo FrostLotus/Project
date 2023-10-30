@@ -1,4 +1,5 @@
-// PLCCommunicatorDlg.cpp : 實作檔
+//PLCCommunicatorDlg.cpp : 實作檔
+
 #include "stdafx.h"
 #include "PLCCommunicator.h"
 #include "PLCCommunicatorDlg.h"
@@ -21,7 +22,7 @@
 #endif
 #else
 #include "PLC\SystWebCooperProcessSocket.h"
-#include "PLC\SystCCLProcessSocket.h"
+//#include "PLC\SystCCLProcessSocket.h"
 #endif
 #include "usm.h"
 
@@ -286,9 +287,11 @@ LRESULT CPLCCommunicatorDlg::OnCmdGPIO(WPARAM wParam, LPARAM lParam)
 	switch (wParam)
 	{
 		case WM_CUSTOMERTYPE_INIT:
+
+#ifndef _DEBUG
 			m_xParam.eCustomerType = (AOI_CUSTOMERTYPE_)(lParam >> 15 & 0xFF);
 			m_xParam.eSubCustomerType = (AOI_SUBCUSTOMERTYPE_)(lParam & 0xFF);
-#ifdef _DEBUG
+#else
 			//m_xParam.eCustomerType = AOI_CUSTOMERTYPE_::CUSTOMER_SYST_CCL;
 #endif
 			InitPLCProcess();
@@ -565,18 +568,18 @@ void CPLCCommunicatorDlg::OnTimer(UINT_PTR nEventId)
 {
 	if (nEventId == m_tTimerReconnect)
 	{
-		if (ON_OPEN_PLC(NULL) != 0)
-		{
-			CString strLog;
-			strLog.Format(L"open plc fail, reconnect in 3 sec");
-			theApp.InsertDebugLog(strLog, LOG_SYSTEM);
-			AddInfoText(strLog);
-		}
-		else
-		{
-			KillTimer(m_tTimerReconnect);
-			m_tTimerReconnect = NULL;
-		}
+		//if (ON_OPEN_PLC(NULL) != 0)
+		//{
+		//	CString strLog;
+		//	strLog.Format(L"open plc fail, reconnect in 3 sec");
+		//	theApp.InsertDebugLog(strLog, LOG_SYSTEM);
+		//	AddInfoText(strLog);
+		//}
+		//else
+		//{
+		//	KillTimer(m_tTimerReconnect);
+		//	m_tTimerReconnect = NULL;
+		//}
 	}
 	else if (nEventId == m_tTimer)
 	{
@@ -601,7 +604,31 @@ void CPLCCommunicatorDlg::Init()
 #endif
 	InitUiRectPos();//UI POSITION初始化
 	InitUI(); //初始化UI
+
+#ifdef USE_MC_PROTOCOL
+#ifdef _DEBUG
+	m_xParam.strPLCIp = L"192.168.2.99";
+	m_xParam.nPLCPort = 5582;
+	m_xParam.eCustomerType = CUSTOMER_SYST_WEB_COPPER;
+	m_xParam.eSubCustomerType = SUB_CUSTOMER_NONE;
+	m_xParam.nFormat = 0;
+	m_xParam.eFrameType = (PLC_FRAME_TYPE)FRAME_4E;
+
+	OpPLC(OP_CREATE);
+#ifdef OFF_LINE
+	m_xParam.eCustomerType = CUSTOMER_SYST_WEB_COPPER;//(AOI_CUSTOMERTYPE_)(lParam >> 8 & 0xFF);
+	m_xParam.eSubCustomerType = SUB_CUSTOMER_NONE;//(AOI_SUBCUSTOMERTYPE_)(lParam & 0xFF);
+	//OnCmdGPIO(WM_CUSTOMERTYPE_INIT, m_xParam.eCustomerType >> 3 | m_xParam.eSubCustomerType);//設置客製
+	OnCmdGPIO(WM_AOI_RESPONSE_CMD, WM_SYST_PARAMINIT_CMD);///刷新第一次PLC回傳下發訊號資料
+	//InitPLCProcess();
+	//theApp.InsertDebugLog(L"init customer type done");
+	//ON_OPEN_PLC();
+#endif
+#endif
+
+#endif
 #ifndef USE_MC_PROTOCOL
+
 #ifdef OFF_LINE
 	m_xParam.eCustomerType = CUSTOMER_EVERSTRONG;//(AOI_CUSTOMERTYPE_)(lParam >> 8 & 0xFF);
 	m_xParam.eSubCustomerType = SUB_CUSTOMER_NONE;//(AOI_SUBCUSTOMERTYPE_)(lParam & 0xFF);
@@ -1012,6 +1039,15 @@ void CPLCCommunicatorDlg::HandleAOIResponse(LPARAM lParam)
 				m_xParam.nFormat = xData.nFormat;
 				m_xParam.eFrameType = (PLC_FRAME_TYPE)xData.nFrameType;
 
+#ifdef OFF_LINE
+				m_xParam.strPLCIp = L"192.168.2.99";
+				m_xParam.nPLCPort = 5582;
+				m_xParam.eCustomerType = CUSTOMER_SYST_WEB_COPPER;
+				m_xParam.eSubCustomerType = SUB_CUSTOMER_NONE;
+				m_xParam.nFormat = 0;
+				m_xParam.eFrameType = (PLC_FRAME_TYPE)FRAME_4E;
+
+#endif
 				OpPLC(OP_CREATE);
 				CMelsecPlcSocket::PLC_MODE eMode = CMelsecPlcSocket::PLC_MODE::MODE_BINARY;
 				switch (m_xParam.nFormat)

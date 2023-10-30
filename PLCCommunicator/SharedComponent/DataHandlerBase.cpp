@@ -93,7 +93,7 @@ void CDataHandlerBase::SetSharedMemoryData(void *pData, size_t size, CString str
 		}
 	}
 }
-//------------------------------------------------------------------------
+//=================================================================================
 CString CDataHandlerBase::MakeFloatLog(CString strDes, float fData)
 {
 	CString strRtn;

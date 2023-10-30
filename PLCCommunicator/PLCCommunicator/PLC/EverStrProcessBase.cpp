@@ -105,7 +105,7 @@ void CEverStrProcessBase::ProcessAOIResponse(LPARAM lp)
 	{
 		case WM_SYST_PARAMCCL_CMD: //PLC 101
 		{
-			//WORD wReceive = _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCD_COMMAND_RECEIVED));//給上位機PLC回應狀態
+			WORD wReceive = _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCD_COMMAND_RECEIVED));//給上位機PLC回應狀態
 			WORD wCommand = _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCL_COMMAND));//PLC回應狀態
 			if (wCommand == CCL_NOTIFYVALUE_COMMAND)//若目前回應狀態為101  狀況:上位機(PLC)下發資料完成
 			{
@@ -263,14 +263,11 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 					WideCharToMultiByte(CP_ACP, 0, GET_PLC_FIELD_VALUE(FIELD_SN), -1, xResult.cAssign, GET_PLC_FIELD_VALUE(FIELD_SN).GetLength(), NULL, NULL);
 					WideCharToMultiByte(CP_ACP, 0, GET_PLC_FIELD_VALUE(FIELD_MATERIAL), -1, xResult.cMaterial, GET_PLC_FIELD_VALUE(FIELD_MATERIAL).GetLength(), NULL, NULL);
 
-
 					//SET_PLC_FIELD_DATA(FIELD_ORDER_1, sizeof((BYTE*)xResult.cName), (BYTE*)xResult.cName);
 					//SET_PLC_FIELD_DATA(FIELD_MATERIAL_1, sizeof((BYTE*)xResult.cMaterial), (BYTE*)xResult.cMaterial);
 					//SET_PLC_FIELD_DATA(FIELD_SN_1, sizeof((BYTE*)xResult.cAssign), (BYTE*)xResult.cAssign); 
 					
 					ON_GPIO_NOTIFY(WM_SYST_EXTRA_CMD, NULL);
-
-
 					PushResult(xResult);
 
 					//SetInfoField(xInfo);
