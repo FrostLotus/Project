@@ -80,7 +80,6 @@ void CEverStrProcessBase::ON_GPIO_NOTIFY(WPARAM wp, LPARAM lp)
 				SetInfoField(xInfo);
 			}
 			break;
-
 	}
 }
 ///<summary>初始項目</summary>
@@ -106,6 +105,7 @@ void CEverStrProcessBase::ProcessAOIResponse(LPARAM lp)
 		case WM_SYST_PARAMCCL_CMD: //PLC 101
 		{
 			WORD wReceive = _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCD_COMMAND_RECEIVED));//給上位機PLC回應狀態
+			//WORD wCommand = _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCL_COMMAND));//目前回應狀態
 			WORD wCommand = _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCL_COMMAND));//PLC回應狀態
 			if (wCommand == CCL_NOTIFYVALUE_COMMAND)//若目前回應狀態為101  狀況:上位機(PLC)下發資料完成
 			{
@@ -129,6 +129,7 @@ void CEverStrProcessBase::ProcessAOIResponse(LPARAM lp)
 void CEverStrProcessBase::ProcessResult()
 {
 	//參數初始化
+	//BATCH_SHARE_SYST_RESULTCCL xResult;
 	BATCH_SHARE_SYST_RESULT_EVERSTR xResult;
 	memset(&xResult, 0, sizeof(xResult));
 	DWORD dwFlag = 0;
@@ -165,6 +166,7 @@ void CEverStrProcessBase::ProcessResult()
 	//Log
 	theApp.InsertDebugLog(L"ProcessResult", LOG_DEBUG);
 
+	//if (USM_ReadData((unsigned char*)&dwFlag, sizeof(dwFlag)))
 	if (USM_ReadData((unsigned char*)&dwFlag, sizeof(dwFlag),0))
 	{
 		nOffset += sizeof(DWORD);
@@ -218,6 +220,8 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 #ifdef USE_TEST_TIMER
 				case TIMER_TEST://[測試]上傳寫入
 				{
+					//BATCH_SHARE_SYST_RESULTCCL xResult;
+					//memset(&xResult, 0, sizeof(BATCH_SHARE_SYST_RESULTCCL));
 					BATCH_SHARE_SYST_RESULT_EVERSTR xResult;
 					memset(&xResult, 0, sizeof(BATCH_SHARE_SYST_RESULT_EVERSTR));
 					static int nCount = 0;
@@ -237,7 +241,7 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 
 					xResult.wFrontLevel = 7;
 					xResult.wBackLevel = 9;
-
+					//xResult.wBackLocation = 10;
 					xResult.wSize_G10 = 11;
 					xResult.wSize_G12 = 12;
 					xResult.wSize_G14 = 13;
@@ -267,8 +271,7 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 					//SET_PLC_FIELD_DATA(FIELD_MATERIAL_1, sizeof((BYTE*)xResult.cMaterial), (BYTE*)xResult.cMaterial);
 					//SET_PLC_FIELD_DATA(FIELD_SN_1, sizeof((BYTE*)xResult.cAssign), (BYTE*)xResult.cAssign); 
 					
-					ON_GPIO_NOTIFY(WM_SYST_EXTRA_CMD, NULL);
-					PushResult(xResult);
+					ON_GPIO_NOTIFY(WM_SYST_EXTRA_CMD, NULL);					PushResult(xResult);
 
 					//SetInfoField(xInfo);
 				}
@@ -295,15 +298,6 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 								GET_PLC_FIELD_DATA(i);//更新  一筆一筆更新
 							}
 						}
-
-						//Set
-						//wcscpy_s(xResult.cName, GET_PLC_FIELD_VALUE(FIELD_ORDER));
-						//wcscpy_s(xResult.cAssign, GET_PLC_FIELD_VALUE(FIELD_MATERIAL));
-						//wcscpy_s(xResult.cMaterial, GET_PLC_FIELD_VALUE(FIELD_SN));
-						
-						//int length = _tcslen(cName);
-						//BYTE* byteArray = new BYTE[length];
-						//memcpy(byteArray, (LPCTSTR)cName, length);
 
 #ifdef SHOW_PERFORMANCE
 						QueryPerformanceCounter(&xEnd);
@@ -466,6 +460,7 @@ void CEverStrProcessBase::ON_C10_CHANGE(WORD wC10)
 	NotifyAOI(WM_SYST_C10CHANGE_CMD, wC10);
 }
 
+//void CEverStrProcessBase::PushResult(BATCH_SHARE_SYST_RESULTCCL& xResult)
 void CEverStrProcessBase::PushResult(BATCH_SHARE_SYST_RESULT_EVERSTR& xResult)
 {
 	std::lock_guard< std::mutex > lock(m_oMutex);
@@ -482,6 +477,8 @@ DWORD CEverStrProcessBase::Thread_Result(void* pvoid)
 			case CASE_WRITE:
 			{
 				::ResetEvent(pThis->m_hEvent[EV_WRITE]);
+				//BATCH_SHARE_SYST_RESULTCCL* pData = NULL;
+				//static BATCH_SHARE_SYST_RESULTCCL xData;
 				BATCH_SHARE_SYST_RESULT_EVERSTR* pData = NULL;
 				static BATCH_SHARE_SYST_RESULT_EVERSTR xData;
 				{
@@ -518,6 +515,7 @@ DWORD CEverStrProcessBase::Thread_Result(void* pvoid)
 	}
 	return NULL;
 }
+//void CEverStrProcessBase::WriteResult(BATCH_SHARE_SYST_RESULTCCL& xData)
 void CEverStrProcessBase::WriteResult(BATCH_SHARE_SYST_RESULT_EVERSTR& xData)
 {
 #ifdef USE_IN_COMMUNICATOR
@@ -545,6 +543,7 @@ void CEverStrProcessBase::WriteResult(BATCH_SHARE_SYST_RESULT_EVERSTR& xData)
 
 	//write flag
 	WORD wResult = 200;
+
 	SET_PLC_FIELD_DATA(FIELD_CCD_RESULT, 2, (BYTE*)&wResult);
 
 #ifdef USE_IN_COMMUNICATOR

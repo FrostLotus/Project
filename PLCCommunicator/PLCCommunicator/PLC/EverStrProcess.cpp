@@ -158,8 +158,7 @@ void CEverStrProcess::DoWriteResult(BATCH_SHARE_SYST_RESULT_EVERSTR& xData)
 
 	SET_PLC_FIELD_DATA(FIELD_ORDER_1, (int)sizeof(xData.cName), (BYTE*)&xData.cName);
 	SET_PLC_FIELD_DATA(FIELD_SN_1, (int)sizeof(xData.cAssign), (BYTE*)&xData.cAssign);
-	SET_PLC_FIELD_DATA(FIELD_MATERIAL_1, (int)sizeof(xData.cMaterial), (BYTE*)&xData.cMaterial);
-}
+	SET_PLC_FIELD_DATA(FIELD_MATERIAL_1, (int)sizeof(xData.cMaterial), (BYTE*)&xData.cMaterial);}
 
 void CEverStrProcess::DoSetInfoField(BATCH_SHARE_SYST_INFO& xInfo)
 {
