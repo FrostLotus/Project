@@ -443,7 +443,7 @@ namespace PLC_Data_Access
         public int GetCombineByte(string sDevice,short[] arrDeviceData,int iOrderCount,out byte[] total, out int iDeviceSize)
         {
             GetCombineSize_int(sDevice, out int _iDeviceSize);
-            iDeviceSize = _iDeviceSize;//
+            iDeviceSize = _iDeviceSize;
             total = System.BitConverter.GetBytes(arrDeviceData[iOrderCount]);
             iOrderCount++;
             //區間byte聯合
