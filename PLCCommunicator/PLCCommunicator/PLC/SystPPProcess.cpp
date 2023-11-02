@@ -43,7 +43,6 @@ void CSystPPProcess::DoWatchDogCheck()
 		{
 			SetInspStatus(NULL, TRUE);
 		}
-
 		::Sleep(ctWatchDogInterval);
 	}
 }
@@ -62,7 +61,8 @@ void CSystPPProcess::Init()
 	m_xParam.nWatchDogTimeOut = ctWatchDogCountDown;
 
 	m_this = this;
-	const PLC_DATA_ITEM_ ctSYST_PLC_FIELD[FIELD_MAX] = {
+	const PLC_DATA_ITEM_ ctSYST_PLC_FIELD[FIELD_MAX] =
+	{
 		{ L"WatchDog",						FIELD_WATCHDOG,						PLC_TYPE_DWORD,	ACTION_BATCH,	4, L"D",	0			},
 		{ L"ち传",						FIELD_SWITCH_SHEET_WEB,				PLC_TYPE_BIT,	ACTION_BATCH,	2, L"M",	1			},//0:/1:
 		{ L"筿家Α",					FIELD_WS_POTENTIAL,					PLC_TYPE_BIT,	ACTION_BATCH,	2, L"M",	3,			},
@@ -71,14 +71,13 @@ void CSystPPProcess::Init()
 		{ L"B禸",							FIELD_B_AXIS,						PLC_TYPE_BIT,	ACTION_BATCH,	2, L"D",	201, 2, 2	},
 		{ L"NewBatch",					FIELD_SHEET_NEWBATCH,				PLC_TYPE_BIT,	ACTION_BATCH,	2, L"D",	201, 5, 5	},
 		{ L"獶浪代い",						FIELD_INSP_STOP,					PLC_TYPE_BIT,	ACTION_BATCH,	2, L"Y",	0	},
-		{ L"浪代い",						FIELD_INSP_START,					PLC_TYPE_BIT,	ACTION_BATCH,	2, L"Y",	1	},
+		{ L"浪代い",						    FIELD_INSP_START,					PLC_TYPE_BIT,	ACTION_BATCH,	2, L"Y",	1	},
 	};
 	m_pPLC_FIELD_INFO = new PLC_DATA_ITEM_ * [FIELD_MAX];
 	for (int i = 0; i < FIELD_MAX; i++)
 	{
 		m_pPLC_FIELD_INFO[i] = new PLC_DATA_ITEM;
 		memset(m_pPLC_FIELD_INFO[i], 0, sizeof(PLC_DATA_ITEM));
-
 		memcpy(m_pPLC_FIELD_INFO[i], &ctSYST_PLC_FIELD[i], sizeof(PLC_DATA_ITEM));
 	}
 	for (int i = 0; i < TIMER_MAX; i++)

@@ -8,7 +8,8 @@ public:
 	virtual ~CTGProcess();
 	virtual int GetFieldSize();
 
-	enum PLC_FIELD_{
+	enum PLC_FIELD_
+	{
 		FIELD_BEGIN = 0,
 		FIELD_REVERSE_DIST = FIELD_BEGIN,
 		FIELD_REVERSE_BEGIN,
