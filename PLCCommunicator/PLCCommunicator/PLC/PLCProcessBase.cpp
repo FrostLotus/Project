@@ -50,7 +50,7 @@ long CPLCProcessBase::ON_OPEN_PLC(LPARAM lp)
 	if (m_pPLCInitData == NULL)
 	{ //first open, read data from shared memory
 		int nDataSize = 0;
-
+		CString str = L"192.168.2.99";
 		switch (lp)
 		{
 			case(WM_SYST_PARAMINIT_CMD): //CCL把计ミ
@@ -58,9 +58,8 @@ long CPLCProcessBase::ON_OPEN_PLC(LPARAM lp)
 				BATCH_SHARE_SYSTCCL_INITPARAM* pData = new BATCH_SHARE_SYSTCCL_INITPARAM;//CCL砰把计
 				memset(pData, 0, sizeof(BATCH_SHARE_SYSTCCL_INITPARAM));
 #ifdef OFF_LINE
-				CString str = L"192.168.2.99";
-				_tcscpy_s(pData->cPLCIP, str.GetLength() + 1, str);
-				//memcpy(pData->cPLCIP, str.GetBuffer(), str.GetLength() * 2);
+				//_tcscpy_s(pData->cPLCIP, str.GetLength() + 1, str);
+				memcpy(pData->cPLCIP, str.GetBuffer(), str.GetLength() * 2);
 				pData->lTargetNetworkNo = 0;
 				pData->lTargetStationNo = 0xFF;
 #endif
@@ -73,10 +72,11 @@ long CPLCProcessBase::ON_OPEN_PLC(LPARAM lp)
 				BATCH_SHARE_SYSTPP_INITPARAM* pData = new BATCH_SHARE_SYSTPP_INITPARAM;//PP砰把计
 				memset(pData, 0, sizeof(BATCH_SHARE_SYSTPP_INITPARAM));
 #ifdef OFF_LINE
-				CString str = L"192.168.2.99";
+				//_tcscpy_s(pData->cPLCIP, str.GetLength() + 1, str);
 				memcpy(pData->cPLCIP, str.GetBuffer(), str.GetLength() * 2);
 				pData->lTargetNetworkNo = 0;
 				pData->lTargetStationNo = 0xFF;
+				pData->bFX5U = TRUE;
 #endif
 				m_pPLCInitData = (BYTE*)pData;//龄
 				nDataSize = sizeof(BATCH_SHARE_SYSTPP_INITPARAM);//へ
@@ -96,8 +96,21 @@ long CPLCProcessBase::ON_OPEN_PLC(LPARAM lp)
 			if (USM_ReadData(m_pPLCInitData, nDataSize))
 #endif
 			{
-				SET_INIT_PARAM(lp, m_pPLCInitData);//?
-				ON_SET_PLCPARAM(*(BATCH_SHARE_SYSTCCL_INITPARAM*)m_pPLCInitData);//?
+				switch (lp)
+				{
+					case(WM_SYST_PARAMINIT_CMD):
+					{
+						SET_INIT_PARAM(lp, m_pPLCInitData);//?
+						ON_SET_PLCPARAM(*(BATCH_SHARE_SYSTCCL_INITPARAM*)m_pPLCInitData);//?
+					}
+					break;
+					case(WM_SYST_PP_PARAMINIT_CMD):
+					{
+						SET_INIT_PARAM(lp, m_pPLCInitData);//?
+						ON_SET_PLCPARAM(*(BATCH_SHARE_SYSTPP_INITPARAM*)m_pPLCInitData);//?
+					}
+					break;
+				}
 			}	
 		}
 	}

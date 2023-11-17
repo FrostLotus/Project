@@ -81,6 +81,7 @@
 #define BATCH_AOI2MX_MEM_ID			        _T("BATCH_AOI2MX_MEM")				//AOI->MX_Communicator
 #define BATCH_MX2AOI_MEM_ID			        _T("BATCH_MX2AOI_MEM")				//MX_Communicator->AOI
 #define BATCH_SQL2AOI_MEM_ID		        _T("SQL_AGENT_MEM")					
+
 #include <vector> using namespace std;
 
 #ifndef USE_IN_SLAVE

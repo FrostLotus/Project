@@ -11,8 +11,6 @@ const int ctWatchDogInterval = 1 * 1000; //write field every second
 #endif
 const int ctWatchDogCountDown = 3600;//PLC firmware數到3600就會發出訊號
 
-
-
 UINT THREAD_WATCHDOG(LPVOID lp)
 {
 	CSystPPProcess* pThis = (CSystPPProcess*)lp;
@@ -23,27 +21,27 @@ UINT THREAD_WATCHDOG(LPVOID lp)
 }
 void CSystPPProcess::DoWatchDogCheck()
 {
-	while (!m_bExit)
+	while (!m_bExit)//沒關視窗前
 	{
 		//if AOI exist and slave checkalive ok, then reset PLC watchdog timer
-		HWND hWnd = ::FindWindow(NULL, AOI_MASTER_NAME);
-		if (hWnd)
+		HWND hWnd = ::FindWindow(NULL, AOI_MASTER_NAME);//找AOI視窗
+		if (hWnd)//視窗存在下
 		{
-			LRESULT nResult = ::SendMessageTimeout(hWnd, WM_NULL, 0, 0, SMTO_NORMAL, ctHungTime, NULL);
+			LRESULT nResult = ::SendMessageTimeout(hWnd, WM_NULL, 0, 0, SMTO_NORMAL, ctHungTime, NULL);//對AOI發送帶超時的視窗訊息
 			if (nResult != 0)
 			{ //send ok
-				TriggerWatchDog(FALSE, FALSE);
+				TriggerWatchDog(FALSE, FALSE);//重製timer
 			}
 			else
 			{//AOI hung
-				TriggerWatchDog(TRUE, TRUE);
+				TriggerWatchDog(TRUE, TRUE); //觸發watchdog
 			}
 		}
-		else
+		else//AOI沒開
 		{
-			SetInspStatus(NULL, TRUE);
+			SetInspStatus(NULL, TRUE);//停止
 		}
-		::Sleep(ctWatchDogInterval);
+		::Sleep(ctWatchDogInterval);//凍結執行續
 	}
 }
 CSystPPProcess::CSystPPProcess()
@@ -278,7 +276,7 @@ void CSystPPProcess::SetMXParam(IActProgType* pParam, BATCH_SHARE_SYSTCCL_INITPA
 		pParam->put_ActStopBits(0x00);
 		pParam->put_ActSumCheck(0x00);
 		pParam->put_ActThroughNetworkType(0x01);
-		pParam->put_ActTimeOut(3000);							//100ms timeout
+		pParam->put_ActTimeOut(0x100);							//100ms timeout
 		pParam->put_ActUnitNumber(0x00);
 
 		pParam->put_ActUnitType(UNIT_FXVETHER);
@@ -286,7 +284,7 @@ void CSystPPProcess::SetMXParam(IActProgType* pParam, BATCH_SHARE_SYSTCCL_INITPA
 	else
 	{
 #ifdef _DEBUG
-		pParam->put_ActHostAddress(L"192.168.2.99");
+		//pParam->put_ActHostAddress(L"192.168.2.99");
 #endif
 		//pParam->put_ActCpuType(CPU_FX5UCPU);
 		//pParam->put_ActUnitType(UNIT_FXETHER);
@@ -361,15 +359,15 @@ void CSystPPProcess::ON_GPIO_NOTIFY(WPARAM wp, LPARAM lp)
 }
 void CSystPPProcess::TriggerWatchDog(BOOL bOutput, BOOL bLog)// TRUE:直接觸發PLC發送watchdog邏輯, FALSE:reset PLC watchdog timer
 {
-	if (bOutput)
+	if (bOutput)//True 回應WatchDog訊號
 	{
 		DWORD dw = 1;
 		SET_PLC_FIELD_DATA(FIELD_WATCHDOG, 4, (BYTE*)&dw);
 		if (bLog) theApp.InsertDebugLog(L"Output WatchDog signal", LOG_SYSTEM);
 	}
-	else
+	else//Flase 
 	{
-		DWORD dw = (ctWatchDogCountDown - m_xParam.nWatchDogTimeOut) << 16;
+		DWORD dw = (ctWatchDogCountDown - m_xParam.nWatchDogTimeOut) << 16;// = > (3600-3600)<<16 左移16位
 		SET_PLC_FIELD_DATA(FIELD_WATCHDOG, 4, (BYTE*)&dw);
 		if (bLog) theApp.InsertDebugLog(L"reset WatchDog signal", LOG_SYSTEM);
 	}
@@ -391,7 +389,7 @@ long CSystPPProcess::ON_OPEN_PLC(LPARAM lp)
 		if (m_xParam.nVersion != nVersion)
 		{
 			//alert aoi
-			NotifyAOI(WM_PLC_PP_CMD, (PM_VERSION_ERROR << 24 | nVersion));
+			NotifyAOI(WM_PLC_PP_CMD, (PM_VERSION_ERROR << 24 | nVersion));//??
 			CString strLog;
 			strLog.Format(L"Version error! PLC Version:%d AOI Version:%d", nVersion, m_xParam.nVersion);
 			theApp.InsertDebugLog(strLog, LOG_SYSTEM);
@@ -401,7 +399,6 @@ long CSystPPProcess::ON_OPEN_PLC(LPARAM lp)
 		GET_PLC_FIELD_DATA(FIELD_SWITCH_SHEET_WEB);
 		int nCur = _ttoi(GET_PLC_FIELD_VALUE(FIELD_SWITCH_SHEET_WEB));
 		NotifyAOI(WM_PLC_PP_CMD, (PM_SWITCH_WEB_SHEET << 24) | nCur);
-
 
 		SET_PLC_FIELD_DATA(FIELD_WS_POTENTIAL, 2, (BYTE*)&m_xParam.nWSMode);
 

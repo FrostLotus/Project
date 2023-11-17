@@ -630,10 +630,19 @@ void CPLCCommunicatorDlg::Init()
 #ifndef USE_MC_PROTOCOL
 
 #ifdef OFF_LINE
-	m_xParam.eCustomerType = CUSTOMER_EVERSTRONG;//(AOI_CUSTOMERTYPE_)(lParam >> 8 & 0xFF);
+
+	m_xParam.eCustomerType = CUSTOMER_TG;//(AOI_CUSTOMERTYPE_)(lParam >> 8 & 0xFF);
 	m_xParam.eSubCustomerType = SUB_CUSTOMER_NONE;//(AOI_SUBCUSTOMERTYPE_)(lParam & 0xFF);
-	OnCmdGPIO(WM_CUSTOMERTYPE_INIT, m_xParam.eCustomerType << 15 | m_xParam.eSubCustomerType);//設置客製
-	OnCmdGPIO(WM_AOI_RESPONSE_CMD, WM_SYST_PARAMINIT_CMD);///刷新第一次PLC回傳下發訊號資料
+	OnCmdGPIO(WM_CUSTOMERTYPE_INIT, m_xParam.eCustomerType << 12 | m_xParam.eSubCustomerType);//設置客製
+	OnCmdGPIO(WM_AOI_RESPONSE_CMD, WM_SYST_PP_PARAMINIT_CMD);///刷新第一次PLC回傳下發訊號資料
+
+
+	//m_xParam.eCustomerType = CUSTOMER_EVERSTRONG;//(AOI_CUSTOMERTYPE_)(lParam >> 8 & 0xFF);
+	//m_xParam.eSubCustomerType = SUB_CUSTOMER_NONE;//(AOI_SUBCUSTOMERTYPE_)(lParam & 0xFF);
+	//OnCmdGPIO(WM_CUSTOMERTYPE_INIT, m_xParam.eCustomerType << 15 | m_xParam.eSubCustomerType);//設置客製
+	//OnCmdGPIO(WM_AOI_RESPONSE_CMD, WM_SYST_PARAMINIT_CMD);///刷新第一次PLC回傳下發訊號資料
+
+
 	//InitPLCProcess();
 	//theApp.InsertDebugLog(L"init customer type done");
 	//ON_OPEN_PLC();
