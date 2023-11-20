@@ -21,7 +21,8 @@ namespace SocketConnect
         None,
         UnP,
         FuP,
-        Act
+        Act,
+        Thread_Act
     }
     public partial class Form1 : Form
     {
@@ -31,19 +32,19 @@ namespace SocketConnect
         string Connect_IP = "192.168.2.99";
         string Local_IP = "192.168.2.104";
 
-        Client_Socket m_client_UnP_Socket = new Client_Socket();
-        int UnP_Connect_Port = 4096;
-        int Unp_Local_Port = 62000;//非必要 UnPassive 接受任意外Port連線
 
-        Client_Socket m_client_FuP_Socket = new Client_Socket();
+        Socket_Client m_Socket_client_UnP = new Socket_Client();
+        int UnP_Connect_Port = 4096;
+        int Unp_Local_Port = 61000;//非必要 UnPassive 接受任意外Port連線
+
+        Socket_Client m_Socket_client_FuP = new Socket_Client();
         int FuP_Connect_Port = 8192;
         int Fup_Local_Port = 62000;//必要 FullPassive 接受單一Port連線
 
-        Server_Socket m_Server_Act_Socket = new Server_Socket();
-        int Act_Client_Port = 8192;
-        int Act_Server_Port = 62000;//必要 Active 以SERVER連線必須有端口
-
-
+        Socket_Server m_Socket_Server_Act = new Socket_Server();
+        TCP_Socket_Listener m_TCP_Socket_Listener_Act = new TCP_Socket_Listener();
+        int Act_Client_Port = 7168;
+        int Act_Server_Port = 60000;//必要 Active 以SERVER連線必須有端口
 
         string[] byte_to_string;
         protected System.Timers.Timer Timer_Timeout = new System.Timers.Timer();
@@ -62,10 +63,10 @@ namespace SocketConnect
         {
             try
             {
-                m_client_UnP_Socket.Host = Connect_IP;
-                m_client_UnP_Socket.Port = UnP_Connect_Port;
-                m_client_UnP_Socket.Local_Port = Unp_Local_Port;
-                m_client_UnP_Socket.Connect();
+                m_Socket_client_UnP.Host = Connect_IP;
+                m_Socket_client_UnP.Port = UnP_Connect_Port;
+                m_Socket_client_UnP.Local_Port = Unp_Local_Port;
+                m_Socket_client_UnP.Connect();
 
                 Timer_Timeout.Enabled = false;
                 Timer_Timeout.Interval = 30000;
@@ -75,9 +76,9 @@ namespace SocketConnect
                 Timer_Heart_Beat.Interval = 5000;
                 Timer_Heart_Beat.Elapsed += On_Heart_Beat;
 
-                m_client_UnP_Socket.OnRecive += PLC_OnRecive;
-                m_client_UnP_Socket.OnConnect += PLC_OnConnect;
-                m_client_UnP_Socket.OnDisconnect += PLC_OnDisconnect;
+                m_Socket_client_UnP.OnRecive += PLC_OnRecive;
+                m_Socket_client_UnP.OnConnect += PLC_OnConnect;
+                m_Socket_client_UnP.OnDisconnect += PLC_OnDisconnect;
 
             }
             catch (Exception ex)
@@ -89,10 +90,10 @@ namespace SocketConnect
         {
             try
             {
-                if (m_client_UnP_Socket.Connected)
+                if (m_Socket_client_UnP.Connected)
                 {
                     string tmpstr = Txt_UnP_WriteData.Text;
-                    m_client_UnP_Socket.Write_Clean_CMD(tmpstr);
+                    m_Socket_client_UnP.Write_Clean_CMD(tmpstr);
                 }
             }
             catch (Exception ex)
@@ -108,10 +109,10 @@ namespace SocketConnect
                 Timer_Heart_Beat.Elapsed -= On_Heart_Beat;
                 //Timer_Recive.Elapsed -= On_Recive;
 
-                m_client_UnP_Socket.OnRecive -= PLC_OnRecive;
-                m_client_UnP_Socket.OnConnect -= PLC_OnConnect;
-                m_client_UnP_Socket.OnDisconnect -= PLC_OnDisconnect;
-                m_client_UnP_Socket.Disconnect();
+                m_Socket_client_UnP.OnRecive -= PLC_OnRecive;
+                m_Socket_client_UnP.OnConnect -= PLC_OnConnect;
+                m_Socket_client_UnP.OnDisconnect -= PLC_OnDisconnect;
+                m_Socket_client_UnP.Disconnect();
             }
             catch (Exception ex)
             {
@@ -121,10 +122,10 @@ namespace SocketConnect
         //----------
         private void Btn_FuP_Connect_Click(object sender, EventArgs e)
         {
-            m_client_FuP_Socket.Host = Connect_IP;
-            m_client_FuP_Socket.Port = FuP_Connect_Port;
-
-            m_client_FuP_Socket.Connect();
+            m_Socket_client_FuP.Host = Connect_IP;
+            m_Socket_client_FuP.Port = FuP_Connect_Port;
+            m_Socket_client_FuP.Local_Port = Fup_Local_Port;
+            m_Socket_client_FuP.Connect();
 
             Timer_Timeout.Enabled = false;
             Timer_Timeout.Interval = 30000;//30
@@ -134,19 +135,19 @@ namespace SocketConnect
             Timer_Heart_Beat.Interval = 5000;
             Timer_Heart_Beat.Elapsed += On_Heart_Beat;
 
-            m_client_FuP_Socket.OnRecive += PLC_OnRecive;
-            m_client_FuP_Socket.OnConnect += PLC_OnConnect;
-            m_client_FuP_Socket.OnDisconnect += PLC_OnDisconnect;
+            m_Socket_client_FuP.OnRecive += PLC_OnRecive;
+            m_Socket_client_FuP.OnConnect += PLC_OnConnect;
+            m_Socket_client_FuP.OnDisconnect += PLC_OnDisconnect;
 
         }
         private void Btn_FuP_Write_Click(object sender, EventArgs e)
         {
             try
             {
-                if (m_client_FuP_Socket.Connected)
+                if (m_Socket_client_FuP.Connected)
                 {
                     string tmpstr = Txt_FuP_WriteData.Text;
-                    m_client_FuP_Socket.Write_Clean_CMD(tmpstr);
+                    m_Socket_client_FuP.Write_Clean_CMD(tmpstr);
                 }
             }
             catch (Exception ex)
@@ -162,24 +163,23 @@ namespace SocketConnect
                 Timer_Heart_Beat.Elapsed -= On_Heart_Beat;
                 //Timer_Recive.Elapsed -= On_Recive;
 
-                m_client_FuP_Socket.OnRecive -= PLC_OnRecive;
-                m_client_FuP_Socket.OnConnect -= PLC_OnConnect;
-                m_client_FuP_Socket.OnDisconnect -= PLC_OnDisconnect;
-                m_client_FuP_Socket.Disconnect();
+                m_Socket_client_FuP.OnRecive -= PLC_OnRecive;
+                m_Socket_client_FuP.OnConnect -= PLC_OnConnect;
+                m_Socket_client_FuP.OnDisconnect -= PLC_OnDisconnect;
+                m_Socket_client_FuP.Disconnect();
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
             }
         }
+
         //----------
         private void Btn_Act_Connect_Click(object sender, EventArgs e)
         {
-
-
-            m_Server_Act_Socket.Host = Local_IP;
-            m_Server_Act_Socket.Port = Act_Server_Port;
-            m_Server_Act_Socket.StartServer();
+            m_Socket_Server_Act.Host = Local_IP;
+            m_Socket_Server_Act.Port = Act_Server_Port;
+            m_Socket_Server_Act.StartServer();
 
             Timer_Timeout.Enabled = false;
             Timer_Timeout.Interval = 30000;//30
@@ -189,21 +189,18 @@ namespace SocketConnect
             Timer_Heart_Beat.Interval = 5000;
             Timer_Heart_Beat.Elapsed += On_Heart_Beat;
 
-            m_Server_Act_Socket.OnClientRecive += PLC_OnRecive;
-            m_Server_Act_Socket.OnClientConnect += PLC_OnConnect;
-            m_Server_Act_Socket.OnClientDisconnect += PLC_OnDisconnect;
-
+            m_Socket_Server_Act.OnClientRecive += PLC_OnRecive;
+            m_Socket_Server_Act.OnClientConnect += PLC_OnConnect;
+            m_Socket_Server_Act.OnClientDisconnect += PLC_OnDisconnect;
         }
         private void Btn_Act_Write_Click(object sender, EventArgs e)
         {
             try
             {
-                if (m_Server_Act_Socket.Client_List[0].Connected)
+                if (m_Socket_Server_Act.Client_List[0].Connected)
                 {
                     string tmpstr = Txt_Act_WriteData.Text;
-                    m_Server_Act_Socket.Write_Clean_CMD(m_Server_Act_Socket.Client_List[0], tmpstr);
-
-                    m_Server_Act_Socket.Client_List[0].Write_Clean_CMD( tmpstr);
+                    m_Socket_Server_Act.Client_List[0].Write_Clean_CMD(tmpstr);
                 }
                 else
                 {
@@ -222,20 +219,39 @@ namespace SocketConnect
                 Timer_Timeout.Elapsed -= On_Timeout;
                 Timer_Heart_Beat.Elapsed -= On_Heart_Beat;
                 //Timer_Recive.Elapsed -= On_Recive;
-                m_Server_Act_Socket.StopServer();
-                //m_Server_Act_Socket.Disconnect();
-
-                //m_Server_Act_Socket.OnClientRecive -= PLC_OnRecive;
-                //m_Server_Act_Socket.OnClientConnect -= PLC_OnConnect;
-                //m_Server_Act_Socket.OnClientDisconnect -= PLC_OnDisconnect;
-
-
+                m_Socket_Server_Act.StopServer();
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
             }
+        }
+        //----------
+        private void Btn_Act_Thread_Connect_Click(object sender, EventArgs e)
+        {
+            m_TCP_Socket_Listener_Act.Host = Local_IP;
+            m_TCP_Socket_Listener_Act.Port = Act_Server_Port;
+            m_TCP_Socket_Listener_Act.StartServer();
 
+            Timer_Timeout.Enabled = false;
+            Timer_Timeout.Interval = 30000;//30
+            Timer_Timeout.Elapsed += On_Timeout;
+
+            Timer_Heart_Beat.Enabled = true;
+            Timer_Heart_Beat.Interval = 5000;
+            Timer_Heart_Beat.Elapsed += On_Heart_Beat;
+
+            m_TCP_Socket_Listener_Act.OnTCPClientRecive += PLC_OnTCPRecive;
+            //m_TCP_Socket_Listener_Act.OnTCPClientConnect += PLC_OnTCPConnect;
+            //m_TCP_Socket_Listener_Act.OnTCPClientDisconnect += PLC_OnTCPDisconnect;
+        }
+        private void Btn_Act_Thread_Write_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void Btn_Act_Thread_Disconnect_Click(object sender, EventArgs e)
+        {
+            m_TCP_Socket_Listener_Act.StopServer();
         }
         //timer-------------------------------------------------------------------
         private void On_Timeout(object sender, EventArgs e)
@@ -259,37 +275,36 @@ namespace SocketConnect
             Timer_Recive.Enabled = true;
         }
         //OnEvent-----------------------------------------------------------------
-        public void PLC_OnConnect(Base_Socket s_socket)
+        public void PLC_OnConnect(Socket_Base s_socket)
         {
             string read_str = "";
             read_str = s_socket.Recive_String();
             Recive_Code = read_str;
-
             Console.WriteLine($"NEW PLCConnect");
         }
-        public void PLC_OnDisconnect(Base_Socket s_socket)
+        public void PLC_OnDisconnect(Socket_Base s_socket)
         {
             switch (((IPEndPoint)s_socket.m_socket.RemoteEndPoint).Port)
             {
                 case 4096:
                     Btn_Choice = Connect_Data_Flag.UnP;
 
-                    m_client_UnP_Socket.Disconnect();
-                    if (!m_client_UnP_Socket.Connected)
+                    m_Socket_client_UnP.Disconnect();
+                    if (!m_Socket_client_UnP.Connected)
                     {
-                        m_client_UnP_Socket.Connect();//斷線後重新連線
+                        m_Socket_client_UnP.Connect();//斷線後重新連線
                     }
                     break;
                 case 8192:
                     Btn_Choice = Connect_Data_Flag.FuP;
 
-                    m_client_FuP_Socket.Disconnect();
-                    if (!m_client_FuP_Socket.Connected)
+                    m_Socket_client_FuP.Disconnect();
+                    if (!m_Socket_client_FuP.Connected)
                     {
-                        m_client_FuP_Socket.Connect();//斷線後重新連線
+                        m_Socket_client_FuP.Connect();//斷線後重新連線
                     }
                     break;
-                case 7777:
+                case 7168:
                     //Btn_Choice = Connect_Data_Flag.Act;
 
                     //m_Server_Act_Socket.Disconnect();
@@ -300,12 +315,12 @@ namespace SocketConnect
                     break;
             }
         }
-        public void PLC_OnRecive(Base_Socket s_socket)
+        public void PLC_OnRecive(Socket_Base s_socket)
         {
             Timer_Recive.Enabled = false;
             string read_str = "";
             byte[] read_byte;
-            
+
             read_byte = s_socket.Recive_Byte();
             read_str = s_socket.Recive_String();
 
@@ -335,10 +350,10 @@ namespace SocketConnect
                 //其他Code
                 //RIC_Recive = true;
                 Recive_Code = read_str;
-               
-                for(int i=0,j=0;i< read_byte.Length; i += 2,j++)
+
+                for (int i = 0, j = 0; i < read_byte.Length; i += 2, j++)
                 {
-                    ushort tmp_word = (ushort)((read_byte[i+1]<<8) | read_byte[i]);
+                    ushort tmp_word = (ushort)((read_byte[i + 1] << 8) | read_byte[i]);
                     byte_to_string[j] = tmp_word.ToString();
                     Console.WriteLine(tmp_word.ToString());
                 }
@@ -346,8 +361,41 @@ namespace SocketConnect
             }
             Timer_Recive.Enabled = true;
         }
-        //---------
-       
+
+        public void PLC_OnTCPRecive(byte[] m_byte,int byte_length)
+        {
+            Timer_Recive.Enabled = false;
+            byte[] read_byte;
+
+            read_byte = m_byte;
+            Btn_Choice = Connect_Data_Flag.Thread_Act;
+            //switch (((IPEndPoint)s_socket.m_socket.RemoteEndPoint).Port)
+            //{
+            //    case 4096:
+            //        Btn_Choice = Connect_Data_Flag.UnP;
+            //        break;
+            //    case 8192:
+            //        Btn_Choice = Connect_Data_Flag.FuP;
+            //        break;
+            //    case 7168:
+            //        Btn_Choice = Connect_Data_Flag.Act;
+            //        break;
+            //}
+            //Console.WriteLine($"PLC Address:{((IPEndPoint)s_socket.m_socket.RemoteEndPoint).Address}");
+            //Console.WriteLine($"PLC Port:{((IPEndPoint)s_socket.m_socket.RemoteEndPoint).Port}");
+
+            byte_to_string = new string[byte_length / 2];
+
+            for (int i = 0, j = 0; i < byte_length; i += 2, j++)
+            {
+                ushort tmp_word = (ushort)((read_byte[i + 1] << 8) | read_byte[i]);
+                byte_to_string[j] = tmp_word.ToString();
+                Console.WriteLine(tmp_word.ToString());
+            }
+            UpdateTextBoxInvoke();
+
+            Timer_Recive.Enabled = true;
+        }
 
 
         //UpdateInvoke------------------------------------------------------------
@@ -375,6 +423,10 @@ namespace SocketConnect
                 case Connect_Data_Flag.Act:
                     Add_New_Recive(Txt_Act_ReadData);
                     break;
+                case Connect_Data_Flag.Thread_Act:
+                    Add_New_Recive(Txt_Act_Thread_ReadData);
+                    break;
+
             }
         }
         private void Add_New_Recive(TextBox Txt_ReadData)
@@ -393,10 +445,7 @@ namespace SocketConnect
             }
             arrData[arrData.Length - 1] = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
             Txt_ReadData.Lines = arrData;
-        } 
-
-
-
+        }
         public bool Is_Link_Test(string read_str)
         {
             bool result = false;
@@ -408,6 +457,6 @@ namespace SocketConnect
             return result;
         }
 
-        
+
     }
 }
