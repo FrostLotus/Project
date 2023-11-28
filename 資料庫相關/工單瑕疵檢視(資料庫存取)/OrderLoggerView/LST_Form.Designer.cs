@@ -283,7 +283,7 @@ namespace OrderLoggerView
             this.Controls.Add(this.label1);
             this.Name = "LST_Form";
             this.Text = "檢測表單列表";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LST_Form_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.LST_Form_FormClosed);
             this.Load += new System.EventHandler(this.LST_Form_Load);
             this.Grb_Search.ResumeLayout(false);
             this.panel1.ResumeLayout(false);

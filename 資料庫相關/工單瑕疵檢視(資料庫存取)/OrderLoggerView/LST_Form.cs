@@ -164,8 +164,7 @@ namespace OrderLoggerView
         }
         private void Btn_Search_Click(object sender, EventArgs e)
         {
-
-            string search = Txt_Search.Text;
+            string search = Txt_Search.Text;//搜尋工單名稱
 
             if (!string.IsNullOrWhiteSpace(search))
             {
@@ -207,7 +206,7 @@ namespace OrderLoggerView
             }
 
         }
-        private void LST_Form_FormClosing(object sender, FormClosingEventArgs e)
+        private void LST_Form_FormClosed(object sender, FormClosedEventArgs e)
         {
             Remove_KeyAndDisk();
         }
@@ -243,7 +242,7 @@ namespace OrderLoggerView
                 FileName = "cmd.exe", // 指定要運行的程式
                 UseShellExecute = false, // 使用 shell 執行
                 RedirectStandardOutput = true, // 重定向標準輸出
-                //psi.CreateNoWindow = true,// 不創建新視窗
+                CreateNoWindow = true,// 不創建新視窗
                 Verb = "runas" // 以管理員權限運行
             };
             //創建新的 ProcessStartInfo
@@ -267,7 +266,7 @@ namespace OrderLoggerView
                 FileName = "cmd.exe", // 指定要運行的程式
                 UseShellExecute = false, // 使用 shell 執行
                 RedirectStandardOutput = true, // 重定向標準輸出
-                //psi.CreateNoWindow = true,// 不創建新視窗
+                CreateNoWindow = true,// 不創建新視窗
                 Verb = "runas" // 以管理員權限運行
             }; //創建新的 ProcessStartInfo
             Process m_process = new Process();
@@ -280,7 +279,5 @@ namespace OrderLoggerView
             // 輸出結果
             Console.WriteLine(output);
         }
-
-        
     }
 }
