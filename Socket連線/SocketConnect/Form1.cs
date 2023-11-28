@@ -247,7 +247,22 @@ namespace SocketConnect
         }
         private void Btn_Act_Thread_Write_Click(object sender, EventArgs e)
         {
-
+            try
+            {
+                if (m_TCP_Socket_Listener_Act.connectedClients[0].Connected)
+                {
+                    string tmpstr = Txt_Act_WriteData.Text;
+                    m_TCP_Socket_Listener_Act.Write_Clean_CMD(m_TCP_Socket_Listener_Act.connectedClients[0].Client, tmpstr);
+                }
+                else
+                {
+                    Console.WriteLine("Client尚未連接");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
         }
         private void Btn_Act_Thread_Disconnect_Click(object sender, EventArgs e)
         {

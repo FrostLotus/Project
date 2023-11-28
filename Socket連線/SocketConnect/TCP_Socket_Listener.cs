@@ -12,7 +12,7 @@ namespace SocketConnect
     class TCP_Socket_Listener
     {
         public TcpListener m_tcplistener;
-        private List<TcpClient> connectedClients = new List<TcpClient>();
+        public List<TcpClient> connectedClients = new List<TcpClient>();
 
         public TCPSocketEvent OnTCPAccept = null;
         public TCPSocketEvent OnTCPClientConnect = null;
@@ -138,6 +138,23 @@ namespace SocketConnect
                 connectedClients.Remove(client);
             }
         }
-        
+
+        public void Send_String(Socket m_socket, string str)
+        {
+            byte[] buffer;
+            buffer = Encoding.GetEncoding("Big5").GetBytes(str);
+            if (m_socket.Connected) m_socket.Send(buffer);
+        }
+        public bool Write_Clean_CMD(Socket socket, string cmd, string tmp_STX = "", string tmp_ETX = "")
+        {
+            bool result = false;
+            //改為Client端是否連接
+
+            Send_String(socket, tmp_STX + cmd + tmp_ETX);
+            result = true;
+
+            return result;
+        }
+
     }
 }
