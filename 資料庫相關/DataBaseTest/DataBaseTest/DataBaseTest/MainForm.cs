@@ -24,6 +24,13 @@ namespace DataBaseTest
             {
                 TParam.CopyTreeNodes(TParam.treeView.Nodes, Tv_DataBaseList.Nodes);
             }
+            else
+            {
+                form.Close();
+                //this.Close();
+                System.Environment.Exit(0);
+                
+            }
         }
         /// <summary>
         /// 鍵入資料表進 DataSet中
