@@ -51,8 +51,6 @@ namespace OrderLoggerView
             this.Lab_Area = new System.Windows.Forms.Label();
             this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel10 = new System.Windows.Forms.TableLayoutPanel();
-            this.label1 = new System.Windows.Forms.Label();
-            this.Lab_Num = new System.Windows.Forms.Label();
             this.tableLayoutPanel11 = new System.Windows.Forms.TableLayoutPanel();
             this.label5 = new System.Windows.Forms.Label();
             this.Lab_Point = new System.Windows.Forms.Label();
@@ -86,7 +84,6 @@ namespace OrderLoggerView
             this.tableLayoutPanel7.SuspendLayout();
             this.tableLayoutPanel10.SuspendLayout();
             this.tableLayoutPanel11.SuspendLayout();
-            this.tableLayoutPanel12.SuspendLayout();
             this.tableLayoutPanel8.SuspendLayout();
             this.tableLayoutPanel13.SuspendLayout();
             this.SuspendLayout();
@@ -209,8 +206,8 @@ namespace OrderLoggerView
             this.tableLayoutPanel4.ColumnCount = 1;
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel4.Controls.Add(this.label4, 0, 0);
-            this.tableLayoutPanel4.Controls.Add(this.Lab_Speed, 0, 1);
+            this.tableLayoutPanel4.Controls.Add(this.Lab_FlawType, 0, 1);
+            this.tableLayoutPanel4.Controls.Add(this.label6, 0, 0);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel4.Location = new System.Drawing.Point(403, 3);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
@@ -237,17 +234,17 @@ namespace OrderLoggerView
             this.Lab_Speed.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.Lab_Speed.Location = new System.Drawing.Point(3, 24);
             this.Lab_Speed.Name = "Lab_Speed";
-            this.Lab_Speed.Size = new System.Drawing.Size(50, 21);
+            this.Lab_Speed.Size = new System.Drawing.Size(48, 21);
             this.Lab_Speed.TabIndex = 1;
-            this.Lab_Speed.Text = "6m/s";
+            this.Lab_Speed.Text = "?m/s";
             // 
             // tableLayoutPanel5
             // 
             this.tableLayoutPanel5.ColumnCount = 1;
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel5.Controls.Add(this.label3, 0, 0);
-            this.tableLayoutPanel5.Controls.Add(this.Lab_Length, 0, 1);
+            this.tableLayoutPanel5.Controls.Add(this.Lab_Speed, 0, 1);
+            this.tableLayoutPanel5.Controls.Add(this.label4, 0, 0);
             this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel5.Location = new System.Drawing.Point(203, 3);
             this.tableLayoutPanel5.Name = "tableLayoutPanel5";
@@ -274,17 +271,17 @@ namespace OrderLoggerView
             this.Lab_Length.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.Lab_Length.Location = new System.Drawing.Point(3, 24);
             this.Lab_Length.Name = "Lab_Length";
-            this.Lab_Length.Size = new System.Drawing.Size(69, 21);
+            this.Lab_Length.Size = new System.Drawing.Size(33, 21);
             this.Lab_Length.TabIndex = 1;
-            this.Lab_Length.Text = "10.20m";
+            this.Lab_Length.Text = "?m";
             // 
             // tableLayoutPanel6
             // 
             this.tableLayoutPanel6.ColumnCount = 1;
             this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel6.Controls.Add(this.label6, 0, 0);
-            this.tableLayoutPanel6.Controls.Add(this.Lab_FlawType, 0, 1);
+            this.tableLayoutPanel6.Controls.Add(this.Lab_Area, 0, 1);
+            this.tableLayoutPanel6.Controls.Add(this.label7, 0, 0);
             this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel6.Location = new System.Drawing.Point(203, 57);
             this.tableLayoutPanel6.Name = "tableLayoutPanel6";
@@ -311,17 +308,17 @@ namespace OrderLoggerView
             this.Lab_FlawType.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.Lab_FlawType.Location = new System.Drawing.Point(3, 24);
             this.Lab_FlawType.Name = "Lab_FlawType";
-            this.Lab_FlawType.Size = new System.Drawing.Size(58, 21);
+            this.Lab_FlawType.Size = new System.Drawing.Size(34, 21);
             this.Lab_FlawType.TabIndex = 1;
-            this.Lab_FlawType.Text = "M黑點";
+            this.Lab_FlawType.Text = "???";
             // 
             // tableLayoutPanel7
             // 
             this.tableLayoutPanel7.ColumnCount = 1;
             this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel7.Controls.Add(this.label7, 0, 0);
-            this.tableLayoutPanel7.Controls.Add(this.Lab_Area, 0, 1);
+            this.tableLayoutPanel7.Controls.Add(this.Lab_DetectTime, 0, 1);
+            this.tableLayoutPanel7.Controls.Add(this.label8, 0, 0);
             this.tableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel7.Location = new System.Drawing.Point(403, 57);
             this.tableLayoutPanel7.Name = "tableLayoutPanel7";
@@ -348,9 +345,9 @@ namespace OrderLoggerView
             this.Lab_Area.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.Lab_Area.Location = new System.Drawing.Point(3, 24);
             this.Lab_Area.Name = "Lab_Area";
-            this.Lab_Area.Size = new System.Drawing.Size(95, 21);
+            this.Lab_Area.Size = new System.Drawing.Size(67, 21);
             this.Lab_Area.TabIndex = 1;
-            this.Lab_Area.Text = "1.234mm² ";
+            this.Lab_Area.Text = "??mm² ";
             // 
             // tableLayoutPanel9
             // 
@@ -371,8 +368,8 @@ namespace OrderLoggerView
             this.tableLayoutPanel10.ColumnCount = 1;
             this.tableLayoutPanel10.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel10.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel10.Controls.Add(this.label1, 0, 0);
-            this.tableLayoutPanel10.Controls.Add(this.Lab_Num, 0, 1);
+            this.tableLayoutPanel10.Controls.Add(this.Lab_Length, 0, 1);
+            this.tableLayoutPanel10.Controls.Add(this.label3, 0, 0);
             this.tableLayoutPanel10.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel10.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel10.Name = "tableLayoutPanel10";
@@ -381,28 +378,6 @@ namespace OrderLoggerView
             this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel10.Size = new System.Drawing.Size(194, 48);
             this.tableLayoutPanel10.TabIndex = 6;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label1.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.label1.Location = new System.Drawing.Point(3, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(48, 24);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "編號";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // Lab_Num
-            // 
-            this.Lab_Num.AutoSize = true;
-            this.Lab_Num.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.Lab_Num.Location = new System.Drawing.Point(3, 24);
-            this.Lab_Num.Name = "Lab_Num";
-            this.Lab_Num.Size = new System.Drawing.Size(20, 21);
-            this.Lab_Num.TabIndex = 1;
-            this.Lab_Num.Text = "1";
             // 
             // tableLayoutPanel11
             // 
@@ -437,17 +412,15 @@ namespace OrderLoggerView
             this.Lab_Point.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.Lab_Point.Location = new System.Drawing.Point(3, 24);
             this.Lab_Point.Name = "Lab_Point";
-            this.Lab_Point.Size = new System.Drawing.Size(40, 21);
+            this.Lab_Point.Size = new System.Drawing.Size(18, 21);
             this.Lab_Point.TabIndex = 1;
-            this.Lab_Point.Text = "300";
+            this.Lab_Point.Text = "?";
             // 
             // tableLayoutPanel12
             // 
             this.tableLayoutPanel12.ColumnCount = 1;
             this.tableLayoutPanel12.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel12.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel12.Controls.Add(this.label8, 0, 0);
-            this.tableLayoutPanel12.Controls.Add(this.Lab_DetectTime, 0, 1);
             this.tableLayoutPanel12.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel12.Location = new System.Drawing.Point(3, 111);
             this.tableLayoutPanel12.Name = "tableLayoutPanel12";
@@ -474,9 +447,9 @@ namespace OrderLoggerView
             this.Lab_DetectTime.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.Lab_DetectTime.Location = new System.Drawing.Point(3, 24);
             this.Lab_DetectTime.Name = "Lab_DetectTime";
-            this.Lab_DetectTime.Size = new System.Drawing.Size(78, 21);
+            this.Lab_DetectTime.Size = new System.Drawing.Size(66, 21);
             this.Lab_DetectTime.TabIndex = 1;
-            this.Lab_DetectTime.Text = "11:22:33";
+            this.Lab_DetectTime.Text = "??:??:??";
             this.Lab_DetectTime.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // Btn_ReTracert
@@ -673,8 +646,6 @@ namespace OrderLoggerView
             this.tableLayoutPanel10.PerformLayout();
             this.tableLayoutPanel11.ResumeLayout(false);
             this.tableLayoutPanel11.PerformLayout();
-            this.tableLayoutPanel12.ResumeLayout(false);
-            this.tableLayoutPanel12.PerformLayout();
             this.tableLayoutPanel8.ResumeLayout(false);
             this.tableLayoutPanel13.ResumeLayout(false);
             this.tableLayoutPanel13.PerformLayout();
@@ -694,14 +665,12 @@ namespace OrderLoggerView
         private System.Windows.Forms.Label Lab_FlawType;
         private System.Windows.Forms.Label Lab_DetectTime;
         private System.Windows.Forms.Label Lab_Point;
-        private System.Windows.Forms.Label Lab_Num;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.PictureBox Pcb_Defect;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;

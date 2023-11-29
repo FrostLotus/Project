@@ -19,15 +19,14 @@ namespace OrderLoggerView
         private string User;// = "postgres";//Account
         private string Password;// = "AOIuser80689917";
 
-        private string PartDisk = "K";//暫用網路磁碟代號
-        private string sharedFolder = "aoishare";//目標資料夾
-        private static string DBname = "aoi_lst_db";//資料庫名稱
-        private static string DBtable_Lst = "lst";//資料表名稱
+        private readonly string PartDisk = "K";//暫用網路磁碟代號
+        private readonly string sharedFolder = "aoishare";//目標資料夾
+        private readonly string DBname = "aoi_lst_db";//資料庫名稱
+        private readonly string DBtable_Lst = "lst";//資料表名稱
 
-        DataSet dataSet = new DataSet(); //資料表單組
+        DataSet dataSet;  //資料表單組
         string connString;//連線命令字串
         NpgsqlDataAdapter dataAdapter;
-
 
         private int LstUid;
         private string LstOrder;
@@ -37,80 +36,11 @@ namespace OrderLoggerView
         public LST_Form()
         {
             InitializeComponent();
+            dataSet = new DataSet();
         }
         private void LST_Form_Load(object sender, EventArgs e)
         {
 
-        }
-        private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-        {
-            if (e.ColumnIndex >= 0 && e.RowIndex >= 0)
-            {
-                DataGridViewColumn column = Dgv_Order.Columns[e.ColumnIndex];
-                if (column.Name == "starttime") // 對 "starttime" 欄位做處理
-                {
-                    if (e.Value != null && long.TryParse(e.Value.ToString(), out long unixTime))
-                    {
-                        DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(unixTime);
-                        dateTimeOffset = dateTimeOffset.ToOffset(TimeSpan.FromHours(8));
-                        DateTime dateTime = dateTimeOffset.DateTime;
-                        e.Value = dateTime.ToString(); // 將值轉換為 DateTime 字串
-                        e.FormattingApplied = true; // 表示格式化已應用
-                    }
-                }
-                if (column.Name == "endtime") // 對 "endtime" 欄位做處理
-                {
-                    if (e.Value != null && long.TryParse(e.Value.ToString(), out long unixTime))
-                    {
-                        DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(unixTime);
-                        dateTimeOffset = dateTimeOffset.ToOffset(TimeSpan.FromHours(8));
-                        DateTime dateTime = dateTimeOffset.DateTime;
-                        e.Value = dateTime.ToString(); // 將值轉換為 DateTime 字串
-                        e.FormattingApplied = true; // 表示格式化已應用
-                    }
-                }
-            }
-        }
-        private void Dgv_Order_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex >= 0)
-            {
-                DataGridViewRow selectedRow = Dgv_Order.Rows[e.RowIndex];
-                selectedRow.Selected = true;
-            }
-        }
-        private void Dgv_Order_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex >= 0)
-            {
-                DataGridViewRow selectedRow = Dgv_Order.Rows[e.RowIndex];
-                selectedRow.Selected = true;
-
-                //工單條件
-                LstUid = Convert.ToInt32(Dgv_Order.Rows[e.RowIndex].Cells["uid"].Value);
-                LstOrder = Dgv_Order.Rows[e.RowIndex].Cells["name"].Value.ToString();
-                DetectLength = Convert.ToDouble(Dgv_Order.Rows[e.RowIndex].Cells["detectlength"].Value);
-                PartNum = Dgv_Order.Rows[e.RowIndex].Cells["partnum"].Value.ToString();
-                OrderTime = Dgv_Order.Rows[e.RowIndex].Cells["starttime"].Value.ToString();
-
-                //this.DialogResult = DialogResult.OK;
-
-                //選取工單 顯示主視窗
-                MainForm form = new MainForm();
-                MainForm.SetLogin(Host, Port, User, Password);
-                MainForm.SetParam(LstUid, LstOrder, DetectLength, PartNum, OrderTime);
-                if (form.ShowDialog() == DialogResult.OK)
-                {
-                    form.Dispose();
-                }
-                else
-                {
-                    Remove_KeyAndDisk();
-
-                    form.Close();
-                    System.Environment.Exit(0);
-                }
-            }
         }
         private void Btn_Login_Click(object sender, EventArgs e)
         {
@@ -144,7 +74,7 @@ namespace OrderLoggerView
                             Btn_Login.Text = "登入成功";
                             Btn_Login.Enabled = false;
 
-                            //參數建立
+                            //登入成功參數建立
                             Host = tmp_host;
                             Port = tmp_port;
                             User = tmp_user;
@@ -204,7 +134,80 @@ namespace OrderLoggerView
                     Dgv_Order.DataSource = dataSet.Tables[DBtable_Lst];
                 }
             }
+        }
+        private void Dgv_Order_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.ColumnIndex >= 0 && e.RowIndex >= 0)
+            {
+                DataGridViewColumn column = Dgv_Order.Columns[e.ColumnIndex];
+                if (column.Name == "starttime") // 對 "starttime" 欄位做處理
+                {
+                    if (e.Value != null)
+                    {
+                        if (long.TryParse(e.Value.ToString(), out long unixTime))
+                        {
+                            DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(unixTime);
+                            dateTimeOffset = dateTimeOffset.ToOffset(TimeSpan.FromHours(8));//GMT+8
+                            e.Value = dateTimeOffset.DateTime.ToString(); // 將值轉換為 DateTime 字串
+                            e.FormattingApplied = true; // 表示格式化已應用
+                        }
+                    }
+                        
+                }
+                if (column.Name == "endtime") // 對 "endtime" 欄位做處理
+                {
+                    if (e.Value != null)
+                    {
+                        if (long.TryParse(e.Value.ToString(), out long unixTime))
+                        {
+                            DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(unixTime);
+                            dateTimeOffset = dateTimeOffset.ToOffset(TimeSpan.FromHours(8));//GMT+8
+                            e.Value = dateTimeOffset.DateTime.ToString(); // 將值轉換為 DateTime 字串
+                            e.FormattingApplied = true; // 表示格式化已應用
+                        }
+                    }
+                }
+            }
+        }
+        private void Dgv_Order_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                DataGridViewRow selectedRow = Dgv_Order.Rows[e.RowIndex];
+                selectedRow.Selected = true;
+            }
+        }
+        private void Dgv_Order_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                DataGridViewRow selectedRow = Dgv_Order.Rows[e.RowIndex];
+                selectedRow.Selected = true;
 
+                //工單條件
+                if (int.TryParse(Dgv_Order.Rows[e.RowIndex].Cells["uid"].Value.ToString(), out int tmp_int)) LstUid = tmp_int;
+                LstOrder = Dgv_Order.Rows[e.RowIndex].Cells["name"].Value.ToString();
+                if (double.TryParse(Dgv_Order.Rows[e.RowIndex].Cells["detectlength"].Value.ToString(), out double result)) DetectLength = result;
+                PartNum = Dgv_Order.Rows[e.RowIndex].Cells["partnum"].Value.ToString();
+                OrderTime = Dgv_Order.Rows[e.RowIndex].Cells["starttime"].Value.ToString();
+
+                //this.DialogResult = DialogResult.OK;
+
+                //選取工單 顯示主視窗
+                MainForm form = new MainForm();
+                form.SetLogin(Host, Port, User, Password);
+                form.SetParam(LstUid, LstOrder, DetectLength, PartNum, OrderTime);
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    form.Dispose();
+                }
+                else
+                {
+                    Remove_KeyAndDisk();
+                    form.Close();
+                    System.Environment.Exit(0);
+                }
+            }
         }
         private void LST_Form_FormClosed(object sender, FormClosedEventArgs e)
         {

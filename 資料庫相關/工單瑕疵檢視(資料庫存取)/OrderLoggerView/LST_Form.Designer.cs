@@ -152,7 +152,7 @@ namespace OrderLoggerView
             this.Dgv_Order.TabIndex = 1;
             this.Dgv_Order.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.Dgv_Order_CellClick);
             this.Dgv_Order.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.Dgv_Order_CellDoubleClick);
-            this.Dgv_Order.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dataGridView1_CellFormatting);
+            this.Dgv_Order.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.Dgv_Order_CellFormatting);
             // 
             // groupBox3
             // 
