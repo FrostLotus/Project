@@ -1,4 +1,5 @@
 ﻿using ActProgTypeLib;
+using ClassLibrary.DataHeader;
 using ClassLibrary.PLC.Base;
 using System;
 using System.Collections.Generic;

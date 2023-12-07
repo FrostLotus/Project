@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClassLibrary
+namespace ClassLibrary.DataHeader
 {
     #region [enum]定義視窗傳值、Flag、Type、客戶代碼
     /// <summary>[enum]視窗訊息參數</summary>
@@ -127,7 +127,7 @@ namespace ClassLibrary
     {
         LOG_FLOAT,
         LOG_WORD,
-        LOG_CSTRING,
+        LOG_string,
         LOG_NONE
     };
     /// <summary>[enum]系統資訊參數</summary>
@@ -227,12 +227,12 @@ namespace ClassLibrary
     /// <summary>[struct]PLC_CCL初始化參數</summary>
     public struct BATCH_SHARE_SYSTCCL_INITPARAM
     {
-        string[] PLCIP;
-        long ConnectedStationNo;       //連接站側模組站號
-        long TargetNetworkNo;          //物件站側模組網路No
-        long TargetStationNo;          //物件站側模組站號
-        long PCNetworkNo;              //計算機側網路No
-        long PCStationNo;              //計算機側站號
+        public string PLCIP;
+        public long ConnectedStationNo;       //連接站側模組站號
+        public long TargetNetworkNo;          //物件站側模組網路No
+        public long TargetStationNo;          //物件站側模組站號
+        public long PCNetworkNo;              //計算機側網路No
+        public long PCStationNo;              //計算機側站號
     }
     /// <summary>[struct]PLC_PP初始化參數</summary>
     struct BATCH_SHARE_SYSTPP_INITPARAM

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ClassLibrary.PLC.Base;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -249,7 +250,7 @@ namespace ClassLibrary.PLC.Process
         }
         public virtual long GET_PLC_FIELD_DATA(List<int> vField)
         {
-            long lRtn = ERR_DLL_NOT_LOAD;
+            long lRtn = (long)ErrorCode.ERR_DLL_NOT_LOAD;
             string strField="", strTemp="";
             int nTotal = 0;
             GET_PLC_RANDOM_DATA(vField, strField, nTotal);

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClassLibrary.PLC
+namespace ClassLibrary.PLC.Base
 {
     enum WINBASE
     {
@@ -18,9 +18,10 @@ namespace ClassLibrary.PLC
         ONE5STOPBITS       =1,
         TWOSTOPBITS        =2
     }
+
     enum PLC_CPU_CODE
     {
-        /// CPU TYPE
+        /// CPU TYPE--------------------------------------------------------------------
         // QnACPU
         CPU_Q2ACPU								=0x0011,	            // Q2A
         CPU_Q2AS1CPU							=0x0012,	            // Q2AS1
@@ -65,8 +66,7 @@ namespace ClassLibrary.PLC
         CPU_Q04UDVCPU							=0x00D2,	            // Q04UDVCPU
         CPU_Q06UDVCPU							=0x00D3,	            // Q06UDVCPU
         CPU_Q13UDVCPU							=0x00D4,	            // Q13UDVCPU
-        CPU_Q26UDVCPU							=0x00D5,	            // Q26UDVCPU
-                      
+        CPU_Q26UDVCPU							=0x00D5,	            // Q26UDVCPU         
         // ACPU                             
         CPU_A0J2HCPU							=0x0102,	            // A0J2H
         CPU_A1FXCPU								=0x0103,	            // A1FX
@@ -126,8 +126,7 @@ namespace ClassLibrary.PLC
         CPU_A273UHCPU							=0x0603,	            // A273UH
         CPU_A173UHCPU							=0x0604,	            // A173UH
         // GOT                                 
-        CPU_A900GOT								=0x0701,	            // A900GOT
-                                             
+        CPU_A900GOT								=0x0701,	            // A900GOT                                
         // iQ-R CPU                         
         CPU_R04CPU								=0x1001,	            // R04CPU
         CPU_R08CPU								=0x1002,	            // R08CPU
@@ -136,46 +135,37 @@ namespace ClassLibrary.PLC
         CPU_R120CPU								=0x1005,	            // R120CPU
         CPU_R00CPU								=0x1201,	            // R00CPU
         CPU_R01CPU								=0x1202,	            // R01CPU
-        CPU_R02CPU								=0x1203,	            // R02CPU
-                                         
+        CPU_R02CPU								=0x1203,	            // R02CPU                             
         // iQ-R Motion                    
         CPU_R16MTCPU							=0x1011,	            // R16MTCPU.
-        CPU_R32MTCPU							=0x1012,	            // R32MTCPU.
-                                   
+        CPU_R32MTCPU							=0x1012,	            // R32MTCPU.                      
         // iQ-R PROCESS CPU                
         CPU_R08PCPU								=0x1102,	            // R08PCPU
         CPU_R16PCPU								=0x1103,	            // R16PCPU
         CPU_R32PCPU								=0x1104,	            
-
         // R32PCPU
-        CPU_R120PCPU							=0x1105,	            // R120PCPU
-                                       
+        CPU_R120PCPU							=0x1105,	            // R120PCPU                          
         // iQ-R SAFE CPU                       
         CPU_R08SFCPU							=0x1122	,	            // R08SFCPU
         CPU_R16SFCPU							=0x1123	,	            // R16SFCPU
         CPU_R32SFCPU							=0x1124	,	            // R32SFCPU
-        CPU_R120SFCPU							=0x1125	,	            // R120SFCPU
-                                              
+        CPU_R120SFCPU							=0x1125	,	            // R120SFCPU                               
         // iQ-R EN CPU            
         CPU_R04ENCPU							=0x1008,	            // R04ENCPU
         CPU_R08ENCPU							=0x1009,	            // R08ENCPU
         CPU_R16ENCPU							=0x100A,	            // R32ENCPU
         CPU_R32ENCPU							=0x100B,	            // R64ENCPU
-        CPU_R120ENCPU							=0x100C,	            // R120ENCPU
-                                     
+        CPU_R120ENCPU							=0x100C,	            // R120ENCPU                         
         // iQ-R CCONTROLLER                 
-        CPU_R12CCPU_V							=0x1021,	            // R12CCPU-V
-                                    
+        CPU_R12CCPU_V							=0x1021,	            // R12CCPU-V                        
         // iQ-R PSF CPU                 
         CPU_R08PSFCPU							=0x1111,	            // R08PSFCPU
         CPU_R16PSFCPU							=0x1112,	            // R16PSFCPU
         CPU_R32PSFCPU							=0x1113,	            // R32PSFCPU
-        CPU_R120PSFCPU							=0x1114,	            // R120PSFCPU
-                                        
+        CPU_R120PSFCPU							=0x1114,	            // R120PSFCPU                           
         // iQ-F CPU                     
-        CPU_FX5UCPU								=0x0210,	            // FX5U CPU
-                                
-        /// PORT                                
+        CPU_FX5UCPU								=0x0210,	            // FX5U CPU                    
+        // PORT----------------------------------------------------------------------------------                              
         PORT_1								    =0x01,	                // CommunicationPort1
         PORT_2								    =0x02,	                // CommunicationPort2
         PORT_3								    =0x03,	                // CommunicationPort3
@@ -185,10 +175,8 @@ namespace ClassLibrary.PLC
         PORT_7								    =0x07,	                // CommunicationPort7
         PORT_8								    =0x08,	                // CommunicationPort8
         PORT_9								    =0x09,	                // CommunicationPort9
-        PORT_10								    =0x0A,			        // CommunicationPort10
-                                         
-                            
-        /// BAUDRATE                          
+        PORT_10								    =0x0A,			        // CommunicationPort10                                           
+        // BAUDRATE-------------------------------------------------------------------------------                         
         BAUDRATE_300						    =300   ,                // 300bps
         BAUDRATE_600							=600   ,  	            // 600bps
         BAUDRATE_1200							=1200  , 	            // 1200bps
@@ -198,43 +186,33 @@ namespace ClassLibrary.PLC
         BAUDRATE_19200							=19200 , 	            // 19200bps
         BAUDRATE_38400							=38400 , 	            // 38400bps
         BAUDRATE_57600							=57600 , 	            // 57600bps
-        BAUDRATE_115200						    =115200,                // 115200bps
-                            
-                                  
-        /// DATA BIT                          
+        BAUDRATE_115200						    =115200,                // 115200bps                               
+        // DATA BIT-------------------------------------------------------------------------------                          
         DATABIT_7								=7,	                    // DATA BIT 7
-        DATABIT_8								=8,	                    // DATA BIT 8
-                                    
-                                     
-        /// PARITY                          
+        DATABIT_8								=8,	                    // DATA BIT 8                                              
+        // PARITY---------------------------------------------------------------------------------                        
         NO_PARRITY                              = WINBASE.NOPARITY  , 	// NO PARITY
         ODD_PARITY                              = WINBASE.ODDPARITY , 	// ODD PARITY
-        EVEN_PARITY								= WINBASE.EVENPARITY,   // EVEN PARITY
-                                                                             
-        /// STOP BITS       
+        EVEN_PARITY								= WINBASE.EVENPARITY,   // EVEN PARITY                                                          
+        // STOP BITS------------------------------------------------------------------------------       
         STOPBIT_ONE								= WINBASE.ONESTOPBIT ,  // 1 STOP BIT
-        STOPBIT_TWO								= WINBASE.TWOSTOPBITS,  // 2 STOP BIT
-                                                                  
-        /// SERIAL CONTROL                 
+        STOPBIT_TWO								= WINBASE.TWOSTOPBITS,  // 2 STOP BIT                                              
+        // SERIAL CONTROL-------------------------------------------------------------------------                
         TRC_DTR									=0x01,		            // DTR
         TRC_RTS									=0x02,		            // RTS
         TRC_DTR_AND_RTS							=0x07,		            // DTR and RTS 
-        TRC_DTR_OR_RTS							=0x08,	                // DTR or RTS
-                                          
-        /// SUM CHECK                   
+        TRC_DTR_OR_RTS							=0x08,	                // DTR or RTS                                 
+        // SUM CHECK------------------------------------------------------------------------------                   
         SUM_CHECK								=1,		                // Sum Check
-        NO_SUM_CHECK							=0,		                // No Sum Check
-                                                                         
-        ///PACKET TYPE                                          
+        NO_SUM_CHECK							=0,		                // No Sum Check                                                            
+        //PACKET TYPE-----------------------------------------------------------------------------                                          
         PACKET_ASCII							=0x02,	                //PACKET TYPE ASCII
-        PACKET_BINARY							=0x03,	                //PACKET TYPE BINARY
-                                      
-        ///DELIMITER  
+        PACKET_BINARY							=0x03,	                //PACKET TYPE BINARY                           
+        //DELIMITER------------------------------------------------------------------------------- 
         CRLF_NONE								=0,	                    // CR/LF None
         CRLF_CR									=1,		                // CR ONLY
-        CRLF_CRLF								=2,	                    // CR/LF
-                                      
-        ///CONNECT WAY  
+        CRLF_CRLF								=2,	                    // CR/LF                         
+        //CONNECT WAY-----------------------------------------------------------------------------  
         TEL_AUTO_CONNECT						=0x00,	                // AUTO LINE CONNECT
         TEL_AUTO_CALLBACK						=0x01,	                // AUTO LINE CONNECT(CALLBACK FIXATION)
         TEL_AUTO_CALLBACK_NUMBER				=0x02,	                // AUTO LINE CONNECT(CALLBACK NUMBER SPECIFICATION)
@@ -242,19 +220,16 @@ namespace ClassLibrary.PLC
         TEL_CALLBACK_NUMBER					    =0x04,                  // CALLBACK CONNECT(NUMBER SPECIFICATION)
         TEL_CALLBACK_REQUEST					=0x05,	                // CALLBACK REQUEST(FIXATION)
         TEL_CALLBACK_REQUEST_NUMBER			    =0x06,	                // CALLBACK REQUEST(NUMBER SPECIFICATION)
-        TEL_CALLBACK_WAIT						=0x07,	                // CALLBACK RECEPTION WAITING
-                                              
-        ///LINE TYPE                   
+        TEL_CALLBACK_WAIT						=0x07,	                // CALLBACK RECEPTION WAITING                                  
+        //LINE TYPE-------------------------------------------------------------------------------                   
         LINETYPE_PULSE							=0x00,	                // PULSE
         LINETYPE_TONE							=0x01,	                // TONE
         LINETYPE_ISDN							=0x02,	                // ISDN
-        
-        ///GOT TRANSPARENT PC IF
+        //GOT TRANSPARENT PC IF-------------------------------------------------------------------
         GOT_PCIF_USB			                =1,		                // USB
         GOT_PCIF_SERIAL			                =2,		                // SERIAL
         GOT_PCIF_ETHERNET		                =3,		                // ETHERNET
-        
-        ///GOT TRANSPARENT PLC IF
+        //GOT TRANSPARENT PLC IF------------------------------------------------------------------
         GOT_PLCIF_SERIAL_QCPUQ		            =1,	                    // SERIAL-QCPU Q
         GOT_PLCIF_SERIAL_QCPUA		            =2,	                    // SERIAL-QCPU A
         GOT_PLCIF_SERIAL_QNACPU	                =3,	                    // SERIAL-QnACPU
@@ -268,10 +243,7 @@ namespace ClassLibrary.PLC
         GOT_PLCIF_ETHERNET_QCPU		            =70,	                // ETHERNET-QCPU
         GOT_PLCIF_ETHERNET_LCPU		            =71,	                // ETHERNET-LCPU
         GOT_PLCIF_BUS				            =90,	                // BUS
-        
-        
-        
-        ///ACTPROGTYPE UNITTYPE
+        //ACTPROGTYPE UNITTYPE--------------------------------------------------------------------
         UNIT_QNCPU				                =0x13,	                // SERIAL(RS232C)-QCPU Q
         UNIT_FXCPU				                =0x0F,	                // SERIAL(RS232C)-FXCPU
         UNIT_LNCPU				                =0x50,	                // SERIAL(RS232C)-LCPU
@@ -298,7 +270,7 @@ namespace ClassLibrary.PLC
         UNIT_CCIEFBOARD		                    =0x2F,	                // CC-Link IE Field Board 
         UNIT_SIMULATOR			                =0x0B,	                // GX Simulator
         UNIT_SIMULATOR2		                    =0x30,	                // GX Simulator2
-        
+        //GOT UNITTYPE----------------------------------------------------------------------------
         UNIT_QBF                                =0x1F,	                // QBF
         UNIT_QSS				                =0x20,	                // Qn SoftLogic
         UNIT_A900GOT			                =0x21,	                // GOT
@@ -331,8 +303,7 @@ namespace ClassLibrary.PLC
         UNIT_LJ71E71			                =0x5C,                  // Ethernet(LJ71E71)
         UNIT_GOT_LJ71E71		                =0x5D,                  // GOT Transparent LJ71E71
         UNIT_GOTETHER_QN_ETHER	                =0x6F,                  // GOT Transparent(Ether-GOT-Ether-QnCPU)
-        
-        ///ACTPROGTYPE PROTOCOLTYPE
+        //ACTPROGTYPE PROTOCOLTYPE----------------------------------------------------------------
         PROTOCOL_SERIAL		                    =0x04,	                // Protocol Serial
         PROTOCOL_USB			                =0x0D,	                // Protocol USB
         PROTOCOL_TCPIP			                =0x05,	                // Protocol TCP/IP 
@@ -347,19 +318,13 @@ namespace ClassLibrary.PLC
         PROTOCOL_QSS			                =0x11,	                // Protocol QSS
         PROTOCOL_USBGOT		                    =0x13,	                // Protocol GOT TRANSPARENT USB
         PROTOCOL_SHAREDMEMORY	                =0x06,	                // Protocol Simulator
-        
-        ///ACTPROGTYPE INVERTER PROTOCOLTYPE
+        //ACTPROGTYPE INVERTER PROTOCOLTYPE-------------------------------------------------------
         COMM_RS232C		                        =0x00,	                // Serial INVERTER
         COMM_USB				                =0x01,	                // USB INVERTER
-        
-        ///ACTPROGTYPE ROBOTCONTROLLER PROTOCOLTYPE
+        //ACTPROGTYPE ROBOTCONTROLLER PROTOCOLTYPE------------------------------------------------
         RC_PROTOCOL_SERIAL		                =0x01,	                // Serial Robot Controller
         RC_PROTOCOL_USB		                    =0x04,	                // USB Robot Controller                                                                                                                                                                                      0x04	// USB Robot Controller
         RC_PROTOCOL_TCPIP		                =0x02	                // TCP/IP Robot Controller
 
-    }
-
-    class ActDefine
-    {
     }
 }
