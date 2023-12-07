@@ -372,7 +372,7 @@ namespace SocketConnect
                     byte_to_string[j] = tmp_word.ToString();
                     Console.WriteLine(tmp_word.ToString());
                 }
-                UpdateTextBoxInvoke();
+                UpdateListBoxInvoke();
             }
             Timer_Recive.Enabled = true;
         }
@@ -407,18 +407,18 @@ namespace SocketConnect
                 byte_to_string[j] = tmp_word.ToString();
                 Console.WriteLine(tmp_word.ToString());
             }
-            UpdateTextBoxInvoke();
+            UpdateListBoxInvoke();
 
             Timer_Recive.Enabled = true;
         }
 
 
         //UpdateInvoke------------------------------------------------------------
-        public void UpdateTextBoxInvoke()
+        public void UpdateListBoxInvoke()
         {
             if (this.InvokeRequired)
             {
-                Invoke(new Action(() => { UpdateTextBoxInvoke(); }));
+                Invoke(new Action(() => { UpdateListBoxInvoke(); }));
             }
             else
             {
