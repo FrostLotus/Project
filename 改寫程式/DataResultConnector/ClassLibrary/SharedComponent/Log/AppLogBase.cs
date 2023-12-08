@@ -8,6 +8,11 @@ using System.Threading.Tasks;
 namespace ClassLibrary.SharedComponent.Log
 {
     /// <summary>Sizes for buffers MAX</summary>
+    enum WM_LOG
+    {
+        WM_LOG_PROCESS		=(0x8000 + 10),
+        WM_LOG_TERMINATE	=(0x8000 + 11)
+    }
     enum MAX_VALUE
     {
         MAX_PATH = 260,
@@ -34,14 +39,14 @@ namespace ClassLibrary.SharedComponent.Log
     {
         public AOI_LOG_TYPE xType;
         public string strFile;
-        public uint nLimitSize;
+        public int nLimitSize;//uint
     }
-    class AppLogBase
+    public class AppLogBase
     {
         string m_workingDir;
         int m_nFileCount;
 
-        LOG_ITEM_INFO[] ctLOG_INFO = new LOG_ITEM_INFO[]
+        public LOG_ITEM_INFO[] ctLOG_INFO = new LOG_ITEM_INFO[]
         {
             new LOG_ITEM_INFO {xType = AOI_LOG_TYPE.LOG_SYSTEM,    strFile = "PLCCommunicator.PLC",        nLimitSize = 1024 * 1024 },
             new LOG_ITEM_INFO {xType = AOI_LOG_TYPE.LOG_DEBUG,     strFile = "PLCCommunicator_DEBUG.PLC",  nLimitSize = 1024 * 1024 },
@@ -54,26 +59,27 @@ namespace ClassLibrary.SharedComponent.Log
             new LOG_ITEM_INFO {xType = AOI_LOG_TYPE.LOG_MSSQL,     strFile = "MSSQL_PROCESS.log",          nLimitSize = 1024 * 1024 }
         };
 
-        AppLogBase()
+        public AppLogBase()
         {
             m_workingDir = Environment.CurrentDirectory;//取得當前目錄的字串
             m_nFileCount = ctLOG_INFO.Length;
         }
-        int LogFileCount()
+        public int LogFileCount()
         {
             return m_nFileCount;
         }
-        void InsertLog(ref string xMsg, AOI_LOG_TYPE xType = AOI_LOG_TYPE.LOG_SYSTEM)
+        public void InsertLog(string xMsg, AOI_LOG_TYPE xLogType = AOI_LOG_TYPE.LOG_SYSTEM)
         {
             //路徑搜索
-            uint szBuffer = 0;
+            int szBuffer = 0;
             string MySysLogFileName;
-            MySysLogFileName = $"{m_workingDir}\\{ctLOG_INFO[(int)AOI_LOG_TYPE.LOG_SYSTEM].strFile}";
+            MySysLogFileName = $"{m_workingDir}\\{ctLOG_INFO[(int)xLogType].strFile}";
             int nSize = m_nFileCount;
-            LOG_ITEM_INFO xTarget = ctLOG_INFO[(int)AOI_LOG_TYPE.LOG_SYSTEM];
+            LOG_ITEM_INFO xTarget = ctLOG_INFO[(int)xLogType];//初始化
+
             for (int i = 0; i < nSize; i++)
             {
-                if (ctLOG_INFO[i].xType == xType)
+                if (ctLOG_INFO[i].xType == xLogType)
                 {
                     MySysLogFileName = $"{m_workingDir}\\{ctLOG_INFO[i].strFile}";
                     xTarget = ctLOG_INFO[i];
@@ -81,7 +87,7 @@ namespace ClassLibrary.SharedComponent.Log
                 }
             }
             //若訊息沒超過最大值
-            if (xMsg.Length < (int)xTarget.nLimitSize)
+            if (xMsg.Length < xTarget.nLimitSize)
             {
                 //若無檔案則建立
                 if (!File.Exists(MySysLogFileName))
@@ -105,9 +111,9 @@ namespace ClassLibrary.SharedComponent.Log
 #else
                 int szLogSize = newLog.Length;
 #endif
-                uint szNewSize = (uint)fileLog.Length + (uint)szLogSize;
+                int szNewSize = fileLog.Length + szLogSize;
                 //若整體緩存大於極限SIZE 則保持極限SIZE (231207新增:減1保持最後能填空字符空間)
-                szBuffer = (uint)((szNewSize > xTarget.nLimitSize) ? xTarget.nLimitSize -1 : szNewSize + 1);
+                szBuffer = ((szNewSize > xTarget.nLimitSize) ? xTarget.nLimitSize -1 : szNewSize + 1);
                 char[] pBuffer = new char[szBuffer];
 
                 for (int i = 0; i < szBuffer; i++)
@@ -128,7 +134,7 @@ namespace ClassLibrary.SharedComponent.Log
                 //    pBuffer[i] = newLog[i];
                 //}
 
-                //231207 將所有Log鍵回加新的Log
+                //231207 將所有Log鍵回新的Log
                 fileLog.CopyTo(0, pBuffer, 0, fileLog.Length);
                 newLog.CopyTo(0, pBuffer, fileLog.Length, newLog.Length);
 #endif //_UNICODE
@@ -141,12 +147,10 @@ namespace ClassLibrary.SharedComponent.Log
                     //    VERIFY(fileLog.Read(pLog, szLog) == szLog);
                     //    fileLog.SeekToBegin();
                     //}
-                    
-
                     using (StreamWriter fileStream = new StreamWriter(MySysLogFileName))
                     {
                         //fileStream.Write(fileLog + newLog);//將Log總體寫入
-                        fileStream.WriteLine(newLog);//將Log總體寫入
+                        fileStream.WriteLine(newLog);//將Log新增寫入
                     }
                     //fileLog.Write(pBuffer, szBuffer);
                     //fileLog.SetLength(szBuffer);
@@ -168,9 +172,6 @@ namespace ClassLibrary.SharedComponent.Log
                 //    Console.WriteLine($"Error[InsertLog]檔案關閉有問題: {ex.Message}");
                 //}
             }
-
-
-
         }
     }
 }

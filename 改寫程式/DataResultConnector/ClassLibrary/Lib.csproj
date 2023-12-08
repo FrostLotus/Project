@@ -53,6 +53,7 @@
     <Compile Include="PLC\Process\PLCProcessBase.cs" />
     <Compile Include="DataHeader\ActDefine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SharedComponent\Log\AoiLogThread.cs" />
     <Compile Include="SharedComponent\Log\AppLogBase.cs" />
     <Compile Include="SharedComponent\Log\AppLogProcess.cs" />
   </ItemGroup>
