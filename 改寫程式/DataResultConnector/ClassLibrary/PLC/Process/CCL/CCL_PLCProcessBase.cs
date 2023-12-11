@@ -178,14 +178,14 @@ namespace ClassLibrary.PLC.Process.CCL
         void WriteResult(ref BATCH_SHARE_SYST_RESULTCCL xData);
 
     }
-    class CCLProcessBase : PLCProcessBase, ICCLProcessBase
+    class CCL_PLCProcessBase : PLCProcessBase, ICCLProcessBase
     {
 		public override int GetFieldSize() { return (int)PLC_FIELD.FIELD_MAX; }
 		public override void Init()
 		{
 			throw new NotImplementedException();
 		}
-		public override long ON_OPEN_PLC(IntPtr lparam)
+		public override int ON_OPEN_PLC(IntPtr lparam)
         {
 			//long re = 0;
 			//return re;

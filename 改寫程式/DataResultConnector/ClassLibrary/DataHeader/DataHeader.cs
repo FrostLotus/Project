@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.OLE.Interop;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClassLibrary.DataHeader
+namespace ClassLibrary
 {
     #region [enum]定義視窗傳值、Flag、Type、客戶代碼
     /// <summary>[enum]視窗訊息參數</summary>
@@ -185,7 +187,7 @@ namespace ClassLibrary.DataHeader
     };
     #endregion
 
-    #region [struct]部屬系統參數
+    #region [struct]部屬PLC系統參數
     /// <summary>[struct]OPC初始化參數</summary>
     struct BATCH_SHARE_OPC_INITPARAM
     {
@@ -468,13 +470,310 @@ namespace ClassLibrary.DataHeader
         BATCH_SHARE_SYST_INFO1 Info1;
         BATCH_SHARE_SYST_INFO2 Info2;
     };
-
-
-
     #endregion
 
-   
-    class DataHeader
+
+    public class DataHeader
     {
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern IntPtr CreateEvent(IntPtr lpEventAttributes, bool bManualReset, bool bInitialState, string lpName);
+
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr GetConsoleWindow();
+        // 假設有一個顯示視窗的方法
+        [DllImport("user32.dll")]
+        public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        /// <summary>使用互斥鎖</summary>
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern IntPtr OpenMutex(uint dwDesiredAccess, bool bInheritHandle, string lpName);
+        /// <summary>創建了一個互斥鎖</summary>
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern IntPtr CreateMutex(IntPtr lpMutexAttributes, bool bInitialOwner, string lpName);
+        /// <summary>打開一個文件映射物件</summary>
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern IntPtr OpenFileMapping(uint dwDesiredAccess, bool bInheritHandle, string lpName);
+        /// <summary>創建一個文件映射物件</summary>
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern IntPtr CreateFileMapping(IntPtr hFile, IntPtr lpAttributes, uint flProtect, uint dwMaximumSizeHigh, uint dwMaximumSizeLow, string lpName);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern IntPtr MapViewOfFile(IntPtr hFileMappingObject, uint dwDesiredAccess, uint dwFileOffsetHigh, uint dwFileOffsetLow, UIntPtr dwNumberOfBytesToMap);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool UnmapViewOfFile(IntPtr lpBaseAddress);
+
+        public const string AOI_MASTER_NAME = "AOI Master";
+        public const string EMC_COMMUNICATOR_NAME = "EMCCommunicator";
+        public const string MX_COMMUNICATOR_NAME = "MXComponentCommunicator";
+        public const string BATCH_COMMUNICATOR_MEM_ID = "BATCH_COMMUNICATOR_MEM";
+        public const string BATCH_AOI_MEM_ID = "BATCH_AOI_MEM";
+        public const string BATCH_AOI2EMC_MEM_ID = "BATCH_AOI2EMC_MEM";
+        public const string BATCH_EMC2AOI_MEM_ID = "BATCH_EMC2AOI_MEM";
+        public const string BATCH_AOI2MX_MEM_ID = "BATCH_AOI2MX_MEM";
+        public const string BATCH_MX2AOI_MEM_ID = "BATCH_MX2AOI_MEM";
+        public const string BATCH_SQL2AOI_MEM_ID = "SQL_AGENT_MEM";
+
+        public const uint MUTEX_MODIFY_STATE = 0x0001;
+        public const uint SYNCHRONIZE = 0x00100000;
+
+        public const uint FILE_MAP_READ = 0x0004;
+        public const uint FILE_MAP_WRITE = 0x0002;
+
+        public static readonly IntPtr INVALID_HANDLE_VALUE = IntPtr.Zero;
+        public const uint PAGE_READWRITE = 0x04;
+
+    }
+
+
+    public class usm<T>
+    {
+        string cwmn;
+        string fmn;
+        string evrn;
+        string evwn;
+
+        string stringid;
+
+        struct USMHEADER
+        {
+        };
+        struct USMTHREAD
+        {
+            ulong id;
+            int evidx;
+        };
+
+#if NETCOREAPP3_1
+	bool WasFirst;
+        HANDLE hEventWrote;
+        HANDLE hMutexWriting;
+        HANDLE hEventMeReading;
+        HANDLE hFM;
+        unsigned long long ClientSZ;
+        DWORD MaxThreads;
+        PVOID Buff;
+        void InitParam()
+        {
+            WasFirst = false;
+            hEventWrote = 0;
+            hMutexWriting = 0;
+            hEventMeReading = 0;
+            hFM = 0;
+            ClientSZ = 0;
+            MaxThreads = 0;
+            Buff = 0;
+        }
+#else //_MSC_VER
+        bool WasFirst = false;
+        IntPtr hEventWrote = IntPtr.Zero;
+        IntPtr hMutexWriting = IntPtr.Zero;
+        IntPtr hEventMeReading = IntPtr.Zero;
+        IntPtr hFM = IntPtr.Zero;
+        ulong ClientSZ = 0;
+        ulong MaxThreads = 0;
+        IntPtr Buff = IntPtr.Zero;
+#endif
+        IntPtr CreateEvR(int idx)
+        {
+            string n = $"{evrn}{idx}";
+            IntPtr hX = DataHeader.CreateEvent(IntPtr.Zero, true, true, n);
+            return hX;
+        }
+        IntPtr CreateEvW()
+        {
+            string n = $"{evrn}";
+            IntPtr hX = DataHeader.CreateEvent(IntPtr.Zero, false, false, n);
+            return hX;
+        }
+        IntPtr CreateCWM()
+        {
+            IntPtr hX = DataHeader.OpenMutex(DataHeader.MUTEX_MODIFY_STATE | DataHeader.SYNCHRONIZE, false, cwmn);
+            if (hX != IntPtr.Zero)
+                return hX;
+            hX = DataHeader.CreateMutex(hX, false, cwmn);
+            return hX;
+        }
+        IntPtr CreateFM()
+        {
+            // Try to open the map , or else create it
+            WasFirst = true;
+            IntPtr hX = DataHeader.OpenFileMapping(DataHeader.FILE_MAP_READ | DataHeader.FILE_MAP_WRITE, false, fmn);
+            if (hX != IntPtr.Zero)
+            {
+                WasFirst = false;
+                return hX;
+            }
+
+            ulong FinalSize = ClientSZ * (ulong)Marshal.SizeOf(typeof(T)) + MaxThreads * (ulong)Marshal.SizeOf(typeof(USMTHREAD)) + (ulong)Marshal.SizeOf(typeof(USMHEADER));
+            ULARGE_INTEGER ulx;
+            ulx.QuadPart = FinalSize;
+            //有分高低位問題
+            hX = DataHeader.CreateFileMapping(DataHeader.INVALID_HANDLE_VALUE, IntPtr.Zero, DataHeader.PAGE_READWRITE, (uint)(ulx.QuadPart >> 32), (uint)(ulx.QuadPart & 0xFFFFFFFF), fmn);
+            if (hX != IntPtr.Zero)
+            {
+                IntPtr Buff = DataHeader.MapViewOfFile(hFM, DataHeader.FILE_MAP_READ | DataHeader.FILE_MAP_WRITE, 0, 0, UIntPtr.Zero);
+                if (Buff != IntPtr.Zero)
+                {
+
+                    byte[] buffer = new byte[FinalSize]; // 创建一个和您的 FinalSize 大小相等的字節組
+                    // 使用 Marshal.Copy 填滿緩衝區
+                    Marshal.Copy(buffer, 0, Buff, buffer.Length);
+
+                    DataHeader.UnmapViewOfFile(Buff);
+                }
+            }
+            return hX;
+        }
+
+        void End()
+        {
+            // Remove the ID from the thread
+            if (Buff!= IntPtr.Zero)
+            {
+                USMTHREAD th = (USMTHREAD)(char)((char)Buff + Marshal.SizeOf(typeof(USMHEADER)));
+                WaitForSingleObject(hMutexWriting, INFINITE);
+                // Find 
+                for (unsigned int y = 0; y < MaxThreads; y++)
+                {
+                    USMTHREAD & tt = th[y];
+                    DWORD myid = GetCurrentThreadId();
+                    if (tt.id == myid)
+                    {
+                        tt.id = 0;
+                        tt.evidx = 0;
+                        break;
+                    }
+                }
+                UnmapViewOfFile(Buff);
+                ReleaseMutex(hMutexWriting);
+            }
+            if (hEventWrote)
+            {
+                CloseHandle(hEventWrote);
+            }
+            hEventWrote = 0;
+            if (hFM)
+            {
+                CloseHandle(hFM);
+            }  
+            hFM = 0;
+            if (hEventMeReading)
+            {
+                CloseHandle(hEventMeReading);
+            }
+            hEventMeReading = 0;
+            if (hMutexWriting)
+            {
+                CloseHandle(hMutexWriting);
+            }
+            hMutexWriting = 0;
+        }
+        bool IsFirst() 
+        { 
+            return WasFirst;
+        }
+
+        public usm(string string_id = "", bool Init = false, ulong csz = 1048576, ulong MaxTh = 100)
+        {
+#if NETCOREAPP3_1
+		    InitParam();
+#endif
+            if (string_id=="")
+            {
+                return;
+            }
+            CreateInit(string_id, Init, csz, MaxTh);
+        }
+        void CreateInit(string string_id, bool Init = false, ulong csz = 1048576, ulong MaxTh = 100)
+        {
+            if (string_id == "")
+                return;
+            if (string_id.Length== 0)
+                return;
+
+            string xup;
+            stringid = string_id;
+
+            cwmn = $"{stringid}_cwmn";
+            evrn = $"{stringid}_evrn";
+            evwn = $"{stringid}_evwn";
+            fmn = $"{stringid}_fmn";
+
+            if (csz!= 1048576)
+                csz = 1048576;
+            ClientSZ = csz;
+            if (MaxTh!= 100)
+                MaxTh = 100;
+            MaxThreads = MaxTh;
+            if (Init)
+            {
+                int iv = Initialize();
+                if (iv <= 0)
+                {
+                    End();
+                    //throw iv;//不用
+
+                }
+            }
+        }
+        ~usm()
+        {
+            End();
+        }
+        int Initialize()
+        {
+            hEventWrote =IntPtr.Zero;
+            hMutexWriting = IntPtr.Zero;
+            hFM = IntPtr.Zero;
+            Buff = IntPtr.Zero;
+            hEventMeReading = IntPtr.Zero;
+
+            if (hMutexWriting == IntPtr.Zero)
+                hMutexWriting = CreateCWM();
+            if (hMutexWriting == IntPtr.Zero)
+                return -1;
+            if (hFM == IntPtr.Zero)
+                hFM = CreateFM();
+            if (hFM == IntPtr.Zero)
+                return -1;
+            if (hEventWrote == IntPtr.Zero)
+                hEventWrote = CreateEvW();
+            if (hEventWrote == IntPtr.Zero)
+                return -1;
+            if (Buff == IntPtr.Zero)
+                Buff = DataHeader.MapViewOfFile(hFM, DataHeader.FILE_MAP_READ | DataHeader.FILE_MAP_WRITE, 0, 0, IntPtr.Zero);
+            if (Buff!= IntPtr.Zero)
+                return -1;
+
+            // Acquire lock for Count variable
+            // USMHEADER* h = (USMHEADER*)Buff;
+            USMTHREAD th = (USMTHREAD*)((char*)((char*)Buff + sizeof(USMHEADER)));
+            WaitForSingleObject(hMutexWriting, INFINITE);
+            // Find 
+            for (unsigned int y = 0; y < MaxThreads; y++)
+            {
+                USMTHREAD & tt = th[y];
+                if (tt.id == 0)
+                {
+                    tt.id = GetCurrentThreadId();
+                    tt.evidx = (y + 1);
+                    hEventMeReading = CreateEvR(y + 1);
+                    break;
+                }
+            }
+            ReleaseMutex(hMutexWriting);
+
+            if (!hEventMeReading)
+                return -1;
+
+            return 1;
+
+        }
+
     }
 }
+
+

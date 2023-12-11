@@ -11,7 +11,7 @@ namespace ClassLibrary.SharedComponent.Log
     {
         AoiLogThread m_pLogThread;
 
-        AppLogProcess()
+        public AppLogProcess()
         {
             Init();
         }
@@ -27,11 +27,11 @@ namespace ClassLibrary.SharedComponent.Log
         {
             OpLogThread((int)OP_THREAD.OP_THREAD_DESTROY);
         }
-        void StartLogServer() 
+        public void StartLogServer() 
         {
             OpLogThread((int)OP_THREAD.OP_THREAD_CREATE); 
         }
-        void StopLogServer() 
+        public void StopLogServer() 
         {
             OpLogThread((int)OP_THREAD.OP_THREAD_DESTROY);
         }
@@ -70,7 +70,7 @@ namespace ClassLibrary.SharedComponent.Log
                 }
             }
         }
-        void InsertDebugLog(string xMsg, AOI_LOG_TYPE xType)
+        public void InsertDebugLog(string xMsg, AOI_LOG_TYPE xType)
         {
             if (m_pLogThread!=null)
             {

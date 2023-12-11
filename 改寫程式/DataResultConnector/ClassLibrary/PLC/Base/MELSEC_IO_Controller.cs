@@ -1,7 +1,6 @@
 ﻿#define BATCH_READ_WRITE    //批次讀寫address
 using ActProgTypeLib;
 using ActSupportMsgLib;
-using ClassLibrary.DataHeader;
 using ClassLibrary.SharedComponent.Log;
 using System;
 using System.Collections.Generic;
@@ -29,20 +28,33 @@ namespace ClassLibrary.PLC.Base
         MAX_SERIES,
         DEFAULT
     };
-
     public struct GPIO_ITEM
     {
         public uint Address;
         public byte DeviceCode;
         public byte Value;
     };
-    public class IPLCProcess
+    public class PLC_IO
     {
-        public IPLCProcess m_pIn;// { get; set; }
-        public IPLCProcess m_pOut;// { get; set; }
-        public IPLCProcess() { m_pIn = null; m_pOut = null; }
-        void AttachIn(IPLCProcess pLink) { m_pIn = pLink; }
-        void AttachOut(IPLCProcess pLink) { m_pOut = pLink; }
+        public PLC_IO m_pIn;// { get; set; }
+        public PLC_IO m_pOut;// { get; set; }
+        public PLC_IO() { m_pIn = null; m_pOut = null; }
+        void AttachIn(PLC_IO pLink) { m_pIn = pLink; }
+        void AttachOut(PLC_IO pLink) { m_pOut = pLink; }
+        //=====================================================================================
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern IntPtr CreateEvent(IntPtr lpEventAttributes, bool bManualReset, bool bInitialState, string lpName);
+
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr GetConsoleWindow();
+
+        // 假設有一個顯示視窗的方法
+        [DllImport("user32.dll")]
+        public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        //=====================================================================================
         //in
         public void ON_GPIO_NOTIFY(IntPtr wparam, IntPtr lparam)
         {
@@ -78,7 +90,7 @@ namespace ClassLibrary.PLC.Base
                 m_pOut.ON_BATCH_PLCDATA_CHANGE(nFieldFirst, nFieldLast);
         }
     };
-    public interface IMELSECController
+    public interface IMELSEC_IO_Controller
     {
         IActProgType IProgType { get; set; }
         IActSupportMsg ISupportMsg { get; set; }
@@ -99,11 +111,11 @@ namespace ClassLibrary.PLC.Base
         int ReadRandom(string strList, int nSize, ref short[] pData);
         int ReadOneAddress(string strDevType, int nStartDeviceNumber, ref short[] pValue);
 
-        int WriteAddress(string strDevType, int nDeviceNumber, int nSizeInByte, ushort[] pWrite);
-        int WriteAddress(string strDevType, int nDeviceNumber, int nSizeInByte, float[] pWrite);
-        int WriteAddress(string strDevType, int nDeviceNumber, int nSizeInByte, char[] pWrite);
-        int WriteRandom(ref string strList, int nSize, short[] pData);
-        int WriteOneAddress(string strDevice, short nValue);
+        int WriteAddress(string strDevType, int nDeviceNumber, int nSizeInByte, ref ushort[] pWrite);
+        int WriteAddress(string strDevType, int nDeviceNumber, int nSizeInByte, ref float[] pWrite);
+        int WriteAddress(string strDevType, int nDeviceNumber, int nSizeInByte, ref char[] pWrite);
+        int WriteRandom(ref string strList, int nSize, ref short[] pData);
+        int WriteOneAddress(string strDevice, ref short nValue);
         string GetErrorMessage(int lErrCode);
 #endif
         string GetPLCIP();// { return m_strIp; }
@@ -119,28 +131,31 @@ namespace ClassLibrary.PLC.Base
         void ListAllIP();
 #if BATCH_READ_WRITE
         int ReadAddress(string strDevType, int nStartDeviceNumber, int nSizeInWord, ref short[] ppValue); // must delete after use
-        int WriteAddress(string strDevType, int nStartDeviceNumber, int nSizeInWord, short[] pValue);
+        int WriteAddress(string strDevType, int nStartDeviceNumber, int nSizeInWord, ref short[] pValue);
 #endif
     }
-    public class MELSECController : IPLCProcess, IMELSECController
+    public class MELSEC_IO_Controller : PLC_IO, IMELSEC_IO_Controller
     {
+        //add log
+        private AppLogProcess m_LogProcess;
 
         private IActProgType m_pIProgType;
         private IActSupportMsg m_pISupportMsg;
+        
         private string m_strIp;
         private bool m_bInit;
         private object m_Lock;
-        public IActProgType IProgType { get { return m_pIProgType; } set { m_pIProgType = value; } }
-        public IActSupportMsg ISupportMsg { get { return m_pISupportMsg; } set { m_pISupportMsg = value; } }
-        public string strIp { get { return m_strIp; } set { m_strIp = value; } }
-        public bool bInit { get { return m_bInit; } set { m_bInit = value; } }
-        public object Lock { get { return m_Lock; } }
+        public virtual IActProgType IProgType { get { return m_pIProgType; } set { m_pIProgType = value; } }
+        public virtual IActSupportMsg ISupportMsg { get { return m_pISupportMsg; } set { m_pISupportMsg = value; } }
+        public virtual string strIp { get { return m_strIp; } set { m_strIp = value; } }
+        public virtual bool bInit { get { return m_bInit; } set { m_bInit = value; } }
+        public virtual object Lock { get { return m_Lock; } }
         //---------------------------------------------------------------
-        public CPU_SERIES GetCPU()
+        public virtual CPU_SERIES GetCPU()
         {
             return CPU_SERIES.Q_SERIES;
         }
-        public string GetCPUType()
+        public virtual string GetCPUType()
         {
             switch (GetCPU())
             {
@@ -156,13 +171,13 @@ namespace ClassLibrary.PLC.Base
                     return "Q Series(OR Wrong)";
             }
         }
-        public string GetDevicestring(ref GPIO_ITEM xItem)
+        public virtual string GetDevicestring(ref GPIO_ITEM xItem)
         {
             string strRtn;
             strRtn = $"{xItem.DeviceCode}{xItem.Address}";
             return strRtn;
         }
-        public string GetErrorMessage(int lErrCode)
+        public virtual string GetErrorMessage(int lErrCode)
         {
             string strRtn = "";
             switch (lErrCode)
@@ -197,11 +212,11 @@ namespace ClassLibrary.PLC.Base
             }
             return strRtn;
         }
-        public string GetPLCIP()
+        public virtual string GetPLCIP()
         {
             return m_strIp;
         }
-        public void Init()
+        public virtual void Init()
         {
             lock (m_Lock)
             {
@@ -210,8 +225,13 @@ namespace ClassLibrary.PLC.Base
                 m_pISupportMsg = null;
             }
         }
-        public void LIB_FREE()
+        public virtual void LIB_FREE()
         {
+            if (m_LogProcess != null)
+            {
+                m_LogProcess.StopLogServer();
+                m_LogProcess = null;
+            }
             if (m_pIProgType != null)
             {
                 //m_pIProgType.Release();
@@ -220,43 +240,45 @@ namespace ClassLibrary.PLC.Base
             }
             //Marshal.CoUninitialize();
         }
-        public void LIB_LOAD()
+        public virtual void LIB_LOAD()
         {
             //CoInitialize(NULL);
-            if (m_pIProgType == null)
+            //開啟線程Log寫入
+            if(m_LogProcess == null)
             {
-                //HRESULT hr = CoCreateInstance(CLSID_ActProgType,
-                //NULL,
-                //CLSCTX_INPROC_SERVER,
-                //IID_IActProgType,
-                //(LPVOID*)&m_pIProgType);
-                //if (!SUCCEEDED(hr))
-                //{
-                //    ON_PLC_NOTIFY("Load ActProgType.dll Fail");
-                //}
-                //else
-                //{
-                //    ON_PLC_NOTIFY("Load ActProgType.dll ok");
-                //}
+                m_LogProcess = new AppLogProcess();
+                m_LogProcess.StartLogServer();
             }
-            if (m_pISupportMsg == null)
-            {
-                //HRESULT hr = CoCreateInstance(CLSID_ActSupportMsg,
-                //    NULL,
-                //    CLSCTX_INPROC_SERVER,
-                //    IID_IActSupportMsg,
-                //    (LPVOID*)&m_pISupportMsg);
-                //if (!SUCCEEDED(hr))
-                //{
-                //    ON_PLC_NOTIFY(L"Load ActSupportMsg.dll Fail");
-                //}
-                //else
-                //{
-                //    ON_PLC_NOTIFY(L"Load ActSupportMsg.dll ok");
-                //}
-            }
+            //開啟
+            //if (m_pIProgType == null)
+            //{
+            //    if (!SUCCEEDED(hr))
+            //    {
+            //        ON_PLC_NOTIFY("Load ActProgType.dll Fail");
+            //    }
+            //    else
+            //    {
+            //        ON_PLC_NOTIFY("Load ActProgType.dll ok");
+            //    }
+            //}
+            //if (m_pISupportMsg == null)
+            //{
+            //    HRESULT hr = CoCreateInstance(CLSID_ActSupportMsg,
+            //        NULL,
+            //        CLSCTX_INPROC_SERVER,
+            //        IID_IActSupportMsg,
+            //        (LPVOID*)&m_pISupportMsg);
+            //    if (!SUCCEEDED(hr))
+            //    {
+            //        ON_PLC_NOTIFY(L"Load ActSupportMsg.dll Fail");
+            //    }
+            //    else
+            //    {
+            //        ON_PLC_NOTIFY(L"Load ActSupportMsg.dll ok");
+            //    }
+            //}
         }
-        public void ListAllIP()
+        public virtual void ListAllIP()
         {
             //IP_ADAPTER_INFO* pAdptInfo = null;
             //IP_ADAPTER_INFO* pNextAd = null;
@@ -286,7 +308,7 @@ namespace ClassLibrary.PLC.Base
             //}
             //delete(BYTE *)pAdptInfo;
         }
-        public int OpenDevice(BATCH_SHARE_SYSTCCL_INITPARAM xData)
+        public virtual int OpenDevice(BATCH_SHARE_SYSTCCL_INITPARAM xData)
         {
             LIB_LOAD();
 
@@ -303,7 +325,7 @@ namespace ClassLibrary.PLC.Base
                 if (bLog)
                 {
                     strMsg = $"{strInfo}: {lData}";
-                    InsertDebugLog(strMsg, AOI_LOG_TYPE.LOG_SYSTEM);
+                    m_LogProcess.InsertDebugLog(strMsg, AOI_LOG_TYPE.LOG_SYSTEM);//這邊會是
                     ON_PLC_NOTIFY(strMsg);
                 }
             };
@@ -349,7 +371,7 @@ namespace ClassLibrary.PLC.Base
         /// <param name="nSize">軟元件資料長度</param>
         /// <param name="pValue"></param>
         /// <returns></returns>
-        public int ReadAddress(string strDevType, int nStartDeviceNumber, int nSize, ref ushort[] pValue)
+        public virtual int ReadAddress(string strDevType, int nStartDeviceNumber, int nSize, ref ushort[] pValue)
         {
             int nReadSize = nSize;
             if (nReadSize <= 0 || pValue.Length > 0)
@@ -363,9 +385,9 @@ namespace ClassLibrary.PLC.Base
 
             return lRtn;
         }
-        public int ReadAddress(string strDevType, int nStartDeviceNumber, int nSize, ref float[] pValue)
+        public virtual int ReadAddress(string strDevType, int nStartDeviceNumber, int nSize, ref float[] pValue)
         {
-            int nReadSize = nSize*2;
+            int nReadSize = nSize * 2;
             if (nReadSize <= 0 || pValue.Length > 0)
             {
                 return 0;
@@ -377,7 +399,7 @@ namespace ClassLibrary.PLC.Base
 
             return lRtn;
         }
-        public int ReadAddress(string strDevType, int nStartDeviceNumber, int nLength, ref char[] pValue)
+        public virtual int ReadAddress(string strDevType, int nStartDeviceNumber, int nLength, ref char[] pValue)
         {
             int nReadSize = nLength / 2;
             if (nReadSize <= 0 || pValue.Length > 0)
@@ -391,11 +413,11 @@ namespace ClassLibrary.PLC.Base
 
             return lRtn;
         }
-        public int ReadAddress(string strDevType, int nStartDeviceNumber, int nSizeInWord, ref short[] ppValue)
+        public virtual int ReadAddress(string strDevType, int nStartDeviceNumber, int nSizeInWord, ref short[] ppValue)
         {
             int lRtn = (int)ErrorCode.ERR_DLL_NOT_LOAD;
 //# if SUPPORT_AOI
-            if (nSizeInWord>0)
+            if (nSizeInWord > 0)
             {
                 if (m_pIProgType!=null)//連線
                 {
@@ -410,7 +432,7 @@ namespace ClassLibrary.PLC.Base
 //#endif
             return lRtn;
         }
-        public int ReadOneAddress(string strDevType, int nStartDeviceNumber, ref short[] pValue)
+        public virtual int ReadOneAddress(string strDevType, int nStartDeviceNumber, ref short[] pValue)
         {
             int lRtn = (int)ErrorCode.ERR_DLL_NOT_LOAD;
             if (m_pIProgType!=null)
@@ -423,7 +445,7 @@ namespace ClassLibrary.PLC.Base
             }
             return lRtn;
         }
-        public int ReadRandom(string strList, int nSize, ref short[] pData)
+        public virtual int ReadRandom(string strList, int nSize, ref short[] pData)
         {
             int lRtn = (int)ErrorCode.ERR_DLL_NOT_LOAD;
             if (m_pIProgType!=null)
@@ -435,33 +457,112 @@ namespace ClassLibrary.PLC.Base
             }
             return lRtn;
         }
-        public void SetMXParam(IActProgType pParam, BATCH_SHARE_SYSTCCL_INITPARAM xData)
+        public virtual void SetMXParam(IActProgType pParam, BATCH_SHARE_SYSTCCL_INITPARAM xData)
         {
-            throw new NotImplementedException();
+            return;
         }
-        public int WriteAddress(string strDevType, int nDeviceNumber, int nSizeInByte, ushort[] pWrite)
+        public virtual int WriteAddress(string strDevType, int nDeviceNumber, int nSizeInByte, ref ushort[] pWrite)
         {
-            throw new NotImplementedException();
+            int nWriteSize = nSizeInByte / 2;
+            int nWordCount = nSizeInByte / sizeof(ushort);
+            if (nWriteSize <= 0)
+                return 0;
+
+            short[] short_Write = new short[pWrite.Length];
+            for (int i = 0; i < nSizeInByte; i++)
+            {
+                if(!short.TryParse(pWrite[i].ToString(),out short_Write[i]))
+                {
+                    return (int)ErrorCode.ERR_PARAM_ERROR;
+                }
+            }
+
+            int lRtn = WriteAddress(strDevType, nDeviceNumber, nWriteSize, ref short_Write);
+
+            return lRtn;
         }
-        public int WriteAddress(string strDevType, int nDeviceNumber, int nSizeInByte, float[] pWrite)
+        public virtual int WriteAddress(string strDevType, int nDeviceNumber, int nSizeInByte, ref float[] pWrite)
         {
-            throw new NotImplementedException();
+            int nWriteSize = nSizeInByte / 2;
+            int nWordCount = nSizeInByte / sizeof(float);
+            if (nWriteSize <= 0)
+                return 0;
+
+            short[] short_Write = new short[pWrite.Length];
+            for (int i = 0; i < nSizeInByte; i++)
+            {
+                if (!short.TryParse(pWrite[i].ToString(), out short_Write[i]))
+                {
+                    return (int)ErrorCode.ERR_PARAM_ERROR;
+                }
+            }
+
+            int lRtn = WriteAddress(strDevType, nDeviceNumber, nWriteSize, ref short_Write);
+
+            return lRtn;
         }
-        public int WriteAddress(string strDevType, int nDeviceNumber, int nSizeInByte, char[] pWrite)
+        public virtual int WriteAddress(string strDevType, int nDeviceNumber, int nSizeInByte, ref char[] pWrite)
         {
-            throw new NotImplementedException();
+            int nWriteSize = nSizeInByte / 2;
+            if (nWriteSize <= 0)
+                return 0;
+
+            short[] short_Write = new short[pWrite.Length];
+            for (int i = 0; i < nSizeInByte; i++)
+            {
+                if (!short.TryParse(pWrite[i].ToString(), out short_Write[i]))
+                {
+                    return (int)ErrorCode.ERR_PARAM_ERROR;
+                }
+            }
+
+            int lRtn = WriteAddress(strDevType, nDeviceNumber, nWriteSize, ref short_Write);
+
+            return lRtn;
         }
-        public int WriteAddress(string strDevType, int nStartDeviceNumber, int nSizeInWord, short[] pValue)
+        public virtual int WriteAddress(string strDevType, int nStartDeviceNumber, int nSizeInWord, ref short[] pValue)
         {
-            throw new NotImplementedException();
+            int lRtn = (int)ErrorCode.ERR_DLL_NOT_LOAD;
+//# if SUPPORT_AOI
+            if (nSizeInWord > 0)
+            {
+                if (m_pIProgType != null)
+                {
+                    lock (m_Lock)
+                    {
+                        string strDevice = $"{strDevType}{nStartDeviceNumber}";
+                        lRtn = m_pIProgType.WriteDeviceBlock2(strDevice, nSizeInWord, ref pValue[0]);
+                    }
+                }
+            }
+//#endif
+            return lRtn;
         }
-        public int WriteOneAddress(string strDevice, short nValue)
+        public virtual int WriteOneAddress(string strDevice, ref short nValue)
         {
-            throw new NotImplementedException();
+            int lRtn = (int)ErrorCode.ERR_DLL_NOT_LOAD;
+//# if SUPPORT_AOI
+            if (m_pIProgType!=null)
+            {
+                lock (m_Lock)
+                {
+                    lRtn =  m_pIProgType.SetDevice2(strDevice, nValue);
+                }
+            }
+//#endif
+            return lRtn;
         }
-        public int WriteRandom(ref string strList, int nSize, short[] pData)
+        public virtual int WriteRandom(ref string strList, int nSize, ref short[] pData)
         {
-            throw new NotImplementedException();
+            int lRtn = (int)ErrorCode.ERR_DLL_NOT_LOAD;
+            if (m_pIProgType!=null)
+            {
+                lock (m_Lock)
+                {
+                    lRtn =  m_pIProgType.WriteDeviceRandom2(strList, nSize,ref pData[0]);
+                }
+            }
+            return lRtn;
         }
     }
 }

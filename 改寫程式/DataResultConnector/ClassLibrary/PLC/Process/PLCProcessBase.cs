@@ -1,4 +1,5 @@
 ﻿using ClassLibrary.PLC.Base;
+using ClassLibrary.DataHeader;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -69,8 +70,9 @@ namespace ClassLibrary.PLC.Process
 
     }
     #endregion
-    //PLCProcessBase
-    public interface IPLCrocessBase
+
+    //PLCProcessBase=====================================================================================
+    public interface IPLCProcessBase : IMELSEC_IO_Controller
     {
         //usm<unsigned char>* m_pAOIUsm;
         //usm<unsigned char>* m_pPLCUsm;
@@ -78,7 +80,7 @@ namespace ClassLibrary.PLC.Process
         ///<summary>PLC資料</summary>
         PLCDATA[] PLCData { get; set; }
         bool FlushAnyway { get; set; }
-        long LastRtn { get; set; }
+        int LastRtn { get; set; }
         IntPtr Wnd_AOI { get; set; }
         byte[] PLCInitData { get; set; }
         //--------------------------------------------------------------
@@ -87,7 +89,7 @@ namespace ClassLibrary.PLC.Process
         void NotifyAOI(IntPtr wparam, IntPtr lparam);
 
         int GetFieldSize();
-	    PLC_DATA_ITEM GetPLCAddressInfo(int nFieldId, bool bSkip);
+        PLC_DATA_ITEM GetPLCAddressInfo(int nFieldId, bool bSkip);
 
         void DO_CUSTOM_TEST();//change it in inherit class if needed
         bool HAS_CUSTOM_TEST();// { return FALSE; }
@@ -99,46 +101,44 @@ namespace ClassLibrary.PLC.Process
         string GET_PLC_FIELD_NAME(int nFieldId);
         PLC_ACTION_TYPE GET_PLC_FIELD_ACTION(int nFieldId);
 
-        long GET_PLC_FIELD_DATA(int nFieldId);
-        long GET_PLC_FIELD_DATA(List<int> vField);
-        long SET_PLC_FIELD_DATA(int nFieldId, int nSizeInByte, byte[] pData);
-        long SET_PLC_FIELD_DATA(List<int> vField, byte[] pData);
-        long SET_PLC_FIELD_DATA_BIT(int nFieldStart, int nFieldEnd, int nSizeInByte, byte[] pData);
-        long SET_PLC_FIELD_DATA_BIT(int nField, int nBitPosition, bool bValue);
+        int GET_PLC_FIELD_DATA(int nFieldId);
+        int GET_PLC_FIELD_DATA(List<int> vField);
+        int SET_PLC_FIELD_DATA(int nFieldId, int nSizeInByte, byte[] pData);
+        int SET_PLC_FIELD_DATA(List<int> vField, byte[] pData);
+        int SET_PLC_FIELD_DATA_BIT(int nFieldStart, int nFieldEnd, int nSizeInByte, byte[] pData);
+        int SET_PLC_FIELD_DATA_BIT(int nField, int nBitPosition, bool bValue);
 
         void SET_FLUSH_ANYWAY(bool bFlushAnyway); //{ m_bFlushAnyway = bFlushAnyway; };
         bool GET_FLUSH_ANYWAY(); //{ return m_bFlushAnyway; };
-        //-------------------
-	    void INIT_PLCDATA();
+                                 //-------------------
+        void INIT_PLCDATA();
         void DESTROY_PLC_DATA();
 
         bool USM_ReadData(byte[] pData, int nSize, int nOffset = 0);
         bool USM_WriteData(byte[] pData, int nSize, int nOffset = 0);
 
         //IPLCProcess
-        long ON_OPEN_PLC(IntPtr lparam);
+        int ON_OPEN_PLC(IntPtr lparam);
 
         void SET_INIT_PARAM(IntPtr lparam, byte[] pData);// { };
-        //-------------------------------
-	    void Init();
+                                                         //-------------------------------
+        void Init();
         //void Finalize();
-        long GET_PLC_FIELD_DATA(int nFieldId, byte[] pData);
+        int GET_PLC_FIELD_DATA(int nFieldId, byte[] pData);
         void GET_PLC_RANDOM_DATA(List<int> vField, string strField, int nSizeInWord);
     }
-    //CCL
-
-    class PLCProcessBase : IPLCrocessBase
+    class PLCProcessBase : MELSEC_IO_Controller, IPLCProcessBase
     {
         //私有項目
         private PLCDATA[] m_PLCData;
         private bool m_FlushAnyway;
-        private long m_LastRtn;
+        private int m_LastRtn;
         private IntPtr m_Wnd_AOI;
         private byte[] m_PLCInitData;
         //變換項目
         public virtual PLCDATA[] PLCData { get { return m_PLCData; } set { m_PLCData = value; } }
         public virtual bool FlushAnyway { get { return m_FlushAnyway; } set { m_FlushAnyway = value; } }
-        public virtual long LastRtn { get { return m_LastRtn; } set { m_LastRtn = value; } }
+        public virtual int LastRtn { get { return m_LastRtn; } set { m_LastRtn = value; } }
         public virtual IntPtr Wnd_AOI { get { return m_Wnd_AOI; } set { m_Wnd_AOI = value; } }
         public virtual byte[] PLCInitData { get { return m_PLCInitData; } set { m_PLCInitData = value; } }
         //--------------------------------------------------------------------------------------------------
@@ -148,12 +148,12 @@ namespace ClassLibrary.PLC.Process
         }
         public virtual void DESTROY_PLC_DATA()
         {
-            if (PLCData!=null)
+            if (PLCData != null)
             {
                 int nFieldSize = GetFieldSize();
                 for (int i = 0; i < nFieldSize; i++)
                 {
-                    if (PLCData[i].pData!=null)
+                    if (PLCData[i].pData != null)
                     {
                         PLCData[i].pData = null;
                     }
@@ -163,6 +163,7 @@ namespace ClassLibrary.PLC.Process
         }
         public virtual void DO_CUSTOM_TEST()
         {
+            return;//父類不定義 根據後面表單[BATCH]實作override取得實際表單參數數量
         }
         public virtual int GetFieldSize()
         {
@@ -170,9 +171,8 @@ namespace ClassLibrary.PLC.Process
         }
         public virtual PLC_DATA_ITEM GetPLCAddressInfo(int nFieldId, bool bSkip)
         {
-            return null;//父類不定義 
+            return null;//父類不定義 根據後面表單[BATCH]實作override取得實際表單參數數量
         }
-        
         public virtual bool GET_FLUSH_ANYWAY()
         {
             return m_FlushAnyway;
@@ -181,8 +181,6 @@ namespace ClassLibrary.PLC.Process
         {
             m_FlushAnyway = bFlushAnyway;
         }
-
-
         public virtual PLC_ACTION_TYPE GET_PLC_FIELD_ACTION(int nFieldId)
         {
             int nFieldSize = GetFieldSize();
@@ -190,7 +188,7 @@ namespace ClassLibrary.PLC.Process
             if (nFieldId >= 0 && nFieldId < nFieldSize)
             {
                 PLC_DATA_ITEM pCur = GetPLCAddressInfo(nFieldId, false);
-                if (pCur!=null)
+                if (pCur != null)
                 {
                     eType = pCur.Action;//僅提取單一的所以為0
                 }
@@ -205,18 +203,17 @@ namespace ClassLibrary.PLC.Process
             if (nFieldId >= 0 && nFieldId < nFieldSize)
             {
                 PLC_DATA_ITEM pCur = GetPLCAddressInfo(nFieldId, false);
-                if (pCur!=null)
+                if (pCur != null)
                 {
                     if (pCur.ValType == PLC_VALUE_TYPE.PLC_TYPE_BIT && pCur.DevType == "D")
                     {
                         //special case for D. ex:200.F
                         if (pCur.StartBit != 0xFFFFFFFF && pCur.StartBit == pCur.EndBit)
                         {
-                            strDes = $"{pCur.DevType}{ pCur.Address}.{ pCur.StartBit}";
+                            strDes = $"{pCur.DevType}{pCur.Address}.{pCur.StartBit}";
                         }
                         else
                         {
-                            //Assert(false);
 #if DEBUG
                             Debug.Assert(false);
 #endif
@@ -237,54 +234,60 @@ namespace ClassLibrary.PLC.Process
             if (nFieldId >= 0 && nFieldId < nFieldSize)//範圍內
             {
                 PLC_DATA_ITEM pCur = GetPLCAddressInfo(nFieldId, false);
-                if (pCur!=null) //取得
+                if (pCur != null) //取得
                 {
                     return m_PLCData[nFieldId].pData;
                 }
             }
             return null;
         }
-        public virtual long GET_PLC_FIELD_DATA(int nFieldId)
+        public virtual int GET_PLC_FIELD_DATA(int nFieldId)
         {
             return GET_PLC_FIELD_DATA(nFieldId, m_PLCData[nFieldId].pData);
         }
-        public virtual long GET_PLC_FIELD_DATA(List<int> vField)
+        public virtual int GET_PLC_FIELD_DATA(List<int> vField)
         {
-            long lRtn = (long)ErrorCode.ERR_DLL_NOT_LOAD;
-            string strField="", strTemp="";
+            int lRtn = (int)ErrorCode.ERR_DLL_NOT_LOAD;
+            string strField = "", strTemp = "";
             int nTotal = 0;
             GET_PLC_RANDOM_DATA(vField, strField, nTotal);
 
-            if (nTotal!=null)
+            if (nTotal > 0)
             {
                 short[] pData = new short[nTotal];
                 //memset(pData, 0, sizeof(short) * nTotal);
-                Array.Resize(ref pData, sizeof(short));//裡面會是0嗎
+                //Array.Resize(ref pData, sizeof(short));//裡面會是0嗎
                 for (int i = 0; i < pData.Length; i++) pData[i] = 0;
 
-                lRtn = ReadRandom(strField, nTotal, pData);
+                lRtn = ReadRandom(strField, nTotal, ref pData);
 
                 if (lRtn == 0)
                 {
-                    BYTE* pCur = (BYTE*)pData;
-                    for (auto & i : vField)
+
+                    byte[] pCur = new byte[pData.Length * sizeof(short)]; //= (byte[])pData;
+                    //填入
+                    Buffer.BlockCopy(pData, 0, pCur, 0, pCur.Length);
+
+                    foreach (var i in vField)
                     {
-                        PLC_DATA_ITEM_* pItem = GetPLCAddressInfo(i, FALSE);
-                        if (pItem)
+                        PLC_DATA_ITEM pItem = GetPLCAddressInfo(i, false);
+                        if (pItem != null)
                         {
                             //update time and data
-                            m_pPLCData[i].xTime = CTime::GetCurrentTime().GetTime();
-                            memcpy(m_pPLCData[i].pData, pCur, pItem->cLen);
-                            pCur += pItem->cLen;
+                            m_PLCData[i].xTime = DateTime.Now;
+                            Buffer.BlockCopy(pCur, 0, m_PLCData[i].pData, 0, pItem.Len);
+                            pCur = pCur.Skip(pItem.Len).ToArray();// Move pointer to next pData section
                         }
                     }
+                    //刷新PLC顯示控制項  先關閉
+#if Draw_Component
                     ON_BATCH_PLCDATA_CHANGE(*vField.begin(), *vField.rbegin());
+#endif
                 }
-                delete[] pData;
             }
             return lRtn;
         }
-        public virtual long GET_PLC_FIELD_DATA(int nFieldId, byte[] pData)
+        public virtual int GET_PLC_FIELD_DATA(int nFieldId, byte[] pData)
         {
             throw new NotImplementedException();
         }
@@ -303,7 +306,51 @@ namespace ClassLibrary.PLC.Process
         ///<summary>[READ_RANDOM2]取得對應ID之PLC資料</summary>
         public virtual void GET_PLC_RANDOM_DATA(List<int> vField, string strField, int nSizeInWord)
         {
-            throw new NotImplementedException();
+            string strTemp = "wrong value";
+            foreach (var i in vField)
+            {
+                PLC_DATA_ITEM pItem = GetPLCAddressInfo(i, false);
+                if (pItem != null)
+                {
+                    switch (pItem.ValType)
+                    {
+                        case PLC_VALUE_TYPE.PLC_TYPE_WORD:
+                        case PLC_VALUE_TYPE.PLC_TYPE_BIT:
+                        case PLC_VALUE_TYPE.PLC_TYPE_FLOAT:
+                        case PLC_VALUE_TYPE.PLC_TYPE_DWORD:
+                        case PLC_VALUE_TYPE.PLC_TYPE_STRING:
+                            int nSize = pItem.Len / 2;
+                            nSizeInWord += nSize;
+                            for (int j = 0; j < nSize; j++)
+                            {
+                                if (pItem.ValType == PLC_VALUE_TYPE.PLC_TYPE_BIT && pItem.DevType == "D")
+                                { //special case for D. ex:200.F
+                                    if (pItem.StartBit != 0xFFFFFFFF && pItem.StartBit == pItem.EndBit)
+                                    {
+                                        strTemp = $"{pItem.DevType}{pItem.Address + j}.{pItem.StartBit}";
+                                    }
+                                    else
+                                    {
+                                        Trace.Assert(false);
+                                    }
+                                }
+                                else
+                                {
+                                    strTemp =$"{pItem.DevType}{pItem.Address}";
+                                } 
+                                //-------------------------------------
+                                if (strField.Length == 0)
+                                    strField = strTemp;
+                                else
+                                    strField += $"\n{strTemp}";
+                            }
+                            break;
+                        default:
+                            Trace.Assert(false);
+                            break;
+                    }
+                }
+            }
         }
         public virtual bool HAS_CUSTOM_TEST()
         {
@@ -311,7 +358,13 @@ namespace ClassLibrary.PLC.Process
         }
         public virtual void Init()
         {
-            throw new NotImplementedException();
+            m_PLCInitData = null;
+            m_PLCData = null;
+            m_LastRtn = 0;
+
+            m_Wnd_AOI = FindWindow(null, DataHeader.AOI_MASTER_NAME);
+            m_AOIUsm = new usm<byte>(BATCH_AOI_MEM_ID, true);
+            m_PLCUsm = new usm<byte>(BATCH_COMMUNICATOR_MEM_ID, true);
         }
         public virtual void INIT_PLCDATA()
         {
@@ -321,28 +374,28 @@ namespace ClassLibrary.PLC.Process
         {
             throw new NotImplementedException();
         }
-        public virtual long ON_OPEN_PLC(IntPtr lparam)
+        public virtual int ON_OPEN_PLC(IntPtr lparam)
         {
             throw new NotImplementedException();
         }
-        
+
         public virtual void SET_INIT_PARAM(IntPtr lparam, byte[] pData)
         {
             throw new NotImplementedException();
         }
-        public virtual long SET_PLC_FIELD_DATA(int nFieldId, int nSizeInByte, byte[] pData)
+        public virtual int SET_PLC_FIELD_DATA(int nFieldId, int nSizeInByte, byte[] pData)
         {
             throw new NotImplementedException();
         }
-        public virtual long SET_PLC_FIELD_DATA(List<int> vField, byte[] pData)
+        public virtual int SET_PLC_FIELD_DATA(List<int> vField, byte[] pData)
         {
             throw new NotImplementedException();
         }
-        public virtual long SET_PLC_FIELD_DATA_BIT(int nFieldStart, int nFieldEnd, int nSizeInByte, byte[] pData)
+        public virtual int SET_PLC_FIELD_DATA_BIT(int nFieldStart, int nFieldEnd, int nSizeInByte, byte[] pData)
         {
             throw new NotImplementedException();
         }
-        public virtual long SET_PLC_FIELD_DATA_BIT(int nField, int nBitPosition, bool bValue)
+        public virtual int SET_PLC_FIELD_DATA_BIT(int nField, int nBitPosition, bool bValue)
         {
             throw new NotImplementedException();
         }

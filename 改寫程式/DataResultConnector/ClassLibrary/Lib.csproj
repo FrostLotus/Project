@@ -36,6 +36,13 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <HintPath>..\DLL\ActSupportMsgLib.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.VisualStudio.Interop, Version=17.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.VisualStudio.Interop.17.8.37221\lib\net472\Microsoft.VisualStudio.Interop.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.OLE.Interop, Version=17.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.VisualStudio.OLE.Interop.17.8.37221\lib\net472\Microsoft.VisualStudio.OLE.Interop.dll</HintPath>
+    </Reference>
+    <Reference Include="netstandard" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -47,8 +54,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataHeader\DataHeader.cs" />
-    <Compile Include="PLC\Base\MELSECController.cs" />
-    <Compile Include="PLC\Process\CCL\CCLProcessBase.cs" />
+    <Compile Include="PLC\Base\MELSEC_IO_Controller.cs" />
+    <Compile Include="PLC\Process\CCL\CCL_PLCProcessBase.cs" />
     <Compile Include="PLC\Process\CCL\Customer\CCLProcessDONGGUAN_SONG8.cs" />
     <Compile Include="PLC\Process\PLCProcessBase.cs" />
     <Compile Include="DataHeader\ActDefine.cs" />
@@ -68,6 +75,8 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

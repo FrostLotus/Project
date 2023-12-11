@@ -24,7 +24,7 @@ namespace ClassLibrary.PLC.Process.CCL.Customer
 		void DoCustomAction(); //客製化行為
 	}
 
-    class CCLProcessDONGGUAN_SONG8 : CCLProcessBase, ICCLProcessDONGGUAN_SONG8
+    class CCLProcessDONGGUAN_SONG8 : CCL_PLCProcessBase, ICCLProcessDONGGUAN_SONG8
     {
         public virtual PLC_DATA_ITEM[] m_pPLC_FIELD_INFO { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         //---------------------------------------------------------------
