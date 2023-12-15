@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace ClassLibrary.SharedComponent.Log
 {
+
     public class AppLogProcess : AppLogBase
     {
         AoiLogThread m_pLogThread;
-
         public AppLogProcess()
         {
             Init();
@@ -27,11 +27,11 @@ namespace ClassLibrary.SharedComponent.Log
         {
             OpLogThread((int)OP_THREAD.OP_THREAD_DESTROY);
         }
-        public void StartLogServer() 
+        public void StartLogServer()
         {
-            OpLogThread((int)OP_THREAD.OP_THREAD_CREATE); 
+            OpLogThread((int)OP_THREAD.OP_THREAD_CREATE);
         }
-        public void StopLogServer() 
+        public void StopLogServer()
         {
             OpLogThread((int)OP_THREAD.OP_THREAD_DESTROY);
         }
@@ -55,7 +55,7 @@ namespace ClassLibrary.SharedComponent.Log
             if (nOpCode == (int)OP_THREAD.OP_THREAD_CREATE)
             {
                 //若null
-                if (m_pLogThread!=null)
+                if (m_pLogThread != null)
                 {
                     m_pLogThread.StartThreadedTask(m_pLogThread.LogExit);
                 }
@@ -70,11 +70,11 @@ namespace ClassLibrary.SharedComponent.Log
                 }
             }
         }
-        public void InsertDebugLog(string xMsg, AOI_LOG_TYPE xType)
+        public void InsertDebugLog(string xMsg, AOI_LOG_TYPE xType = AOI_LOG_TYPE.LOG_SYSTEM)
         {
-            if (m_pLogThread!=null)
+            if (m_pLogThread != null)
             {
-                m_pLogThread.StartThreadedTask(m_pLogThread.LogMessage,xMsg, xType);
+                m_pLogThread.StartThreadedTask(m_pLogThread.LogMessage, xMsg, xType);
             }
             else
             {

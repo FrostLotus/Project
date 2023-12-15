@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.OLE.Interop;
+﻿using ClassLibrary.SharedComponent.Log;
+using Microsoft.VisualStudio.OLE.Interop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,11 +7,11 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClassLibrary
+namespace ClassLibrary.DataHeader
 {
     #region [enum]定義視窗傳值、Flag、Type、客戶代碼
     /// <summary>[enum]視窗訊息參數</summary>
-    public enum WM_APP_CMD : long
+    public enum WM_APP_CMD
     {
         //AOI = Area of interest
         //DRL = Data Result Linker
@@ -71,8 +72,13 @@ namespace ClassLibrary
         WM_PLC_REVERSE_END = (0x8000 + 43),
 
         WM_GPIO_MSG = (0x8000 + 990)
-
     }
+    /// <summary>[enum]視窗訊息參數</summary>
+    enum WM_Status
+    {
+        WM_CREATE = 0,
+        WM_DESTROY,
+    };
     /// <summary>[enum]PLC訊息參數</summary>
     enum PLC_MESSAGE
     {
@@ -187,16 +193,16 @@ namespace ClassLibrary
     };
     #endregion
 
-    #region [struct]部屬PLC系統參數
+    #region [struct]部屬系統參數
     /// <summary>[struct]OPC初始化參數</summary>
-    struct BATCH_SHARE_OPC_INITPARAM
+    public struct BATCH_SHARE_OPC_INITPARAM
     {
         string[] OPCIP;
         int RootIdNamespace;
         string[] ROOTID;
     }
     /// <summary>[struct]MC-Protocol初始化參數</summary>
-    struct BATCH_SHARE_SYST_INITPARAM
+    public struct BATCH_SHARE_SYST_INITPARAM
     {
         int CustomerType;
         int SubCustomerType;
@@ -206,20 +212,20 @@ namespace ClassLibrary
         int FrameType;
     }
     /// <summary>[struct]MX初始化參數</summary>
-    struct BATCH_SHARE_MX_INITPARAM
+    public struct BATCH_SHARE_MX_INITPARAM
     {
         long CPU;
         string[] PLCIP;
         uint StartAddress;
     }
     /// <summary>[struct]MX訊號狀態</summary>
-    struct BATCH_SHARE_MX_PINSTATUS
+    public struct BATCH_SHARE_MX_PINSTATUS
     {
         int Index0Base;
         bool HighLeve;
     }
     /// <summary>[BATCH=>EMC]初始化參數</summary>
-    struct BATCH_SHARE_EMC_INITPARAM
+    public struct BATCH_SHARE_EMC_INITPARAM
     {
         string[] EMCIP;
         int EMCPort;
@@ -237,18 +243,18 @@ namespace ClassLibrary
         public long PCStationNo;              //計算機側站號
     }
     /// <summary>[struct]PLC_PP初始化參數</summary>
-    struct BATCH_SHARE_SYSTPP_INITPARAM
+    public struct BATCH_SHARE_SYSTPP_INITPARAM
     {
-        BATCH_SHARE_SYSTCCL_INITPARAM m_BATCH_SHARE_SYSTCCL_INITPARAM;
+        public BATCH_SHARE_SYSTCCL_INITPARAM m_BATCH_SHARE_SYSTCCL_INITPARAM;
         //---------------------------------------------------------
-        int WatchDogTimeout;           //WatchDog timeout(second)
-        int Version;
-        int WSMode;                    //0:模式一/1:模式二
-        bool FX5U;
-        int NewbatchDelay;				//
+        public int WatchDogTimeout;           //WatchDog timeout(second)
+        public int Version;
+        public int WSMode;                    //0:模式一/1:模式二
+        public bool FX5U;
+        public int NewbatchDelay;				//
     }
     /// <summary>[struct]系統工單額外項目</summary>
-    struct BATCH_SYST_EXTRA
+    public struct BATCH_SYST_EXTRA
     {
         //__time64_t xStart;
         //__time64_t xEnd;
@@ -258,18 +264,19 @@ namespace ClassLibrary
         char[] Insp;
         char[] Light;
     }
+
     #endregion
 
     #region [struct]定義工單參數
     //----------- PLC[MX] -----------------------------
     /// <summary>[struct]基礎系統工單項目</summary>
-    struct BATCH_SHARE_SYST_BASE
+    public struct BATCH_SHARE_SYST_BASE
     {
         string[] Name;       //工單號
         string[] Material;   //料號
     }
     /// <summary>[struct]CCL下發系統工單項目</summary>
-    struct BATCH_SHARE_SYST_PARAMCCL
+    public struct BATCH_SHARE_SYST_PARAMCCL
     {
         BATCH_SHARE_SYST_BASE m_BATCH_SHARE_SYST_BASE;
 
@@ -360,7 +367,7 @@ namespace ClassLibrary
         ushort Index;                    //小板編號, 僅東莞松八廠需回傳
     }
     /// <summary>[struct]甬強上傳系統工單項目</summary>
-    struct BATCH_SHARE_SYST_RESULT_EVERSTR
+    public struct BATCH_SHARE_SYST_RESULT_EVERSTR
     {
         BATCH_SHARE_SYST_RESULTCCL m_BATCH_SHARE_SYST_RESULTCCL;
 
@@ -370,7 +377,7 @@ namespace ClassLibrary
     }
     //-----------  EMC   -----------------------------
     /// <summary>[struct]EMC基礎系統工單項目</summary>
-    struct BATCH_SHARE_EMC_BASE
+    public struct BATCH_SHARE_EMC_BASE
     {
         string[] Station;        //設備號
         string[] MissionID;      //任務號
@@ -379,7 +386,7 @@ namespace ClassLibrary
         string[] Serial;         //批號
     }
     /// <summary>[struct]EMC_CCL下發系統工單項目</summary>
-    struct BATCH_SHARE_EMC_CCLPARAM
+    public struct BATCH_SHARE_EMC_CCLPARAM
     {
         BATCH_SHARE_EMC_BASE m_BATCH_SHARE_EMC_BASE;
 
@@ -397,13 +404,13 @@ namespace ClassLibrary
         int EndSheet;               //結束第幾張
     }
     /// <summary>[struct]EMC_CCL下發項目</summary>
-    struct CCLParam
+    public struct CCLParam
     {
         int Size;
         BATCH_SHARE_EMC_CCLPARAM[] Param;//[3]
     };
     /// <summary>[struct]EMC_CCL上傳系統工單項目</summary>
-    struct BATCH_SHARE_EMC_CCLRESULT
+    public struct BATCH_SHARE_EMC_CCLRESULT
     {
         BATCH_SHARE_EMC_BASE m_BATCH_SHARE_EMC_BASE;
         int Index;                                     //檢測張數序號
@@ -412,21 +419,20 @@ namespace ClassLibrary
         string[] DefectType;                           //[3]缺點代碼
     }
     /// <summary>[struct]EMC_CCL擴充基礎系統工單項目</summary>
-    struct BATCH_SHARE_EMC_CCLEND
+    public struct BATCH_SHARE_EMC_CCLEND
     {
         BATCH_SHARE_EMC_BASE m_BATCH_SHARE_EMC_BASE;
         int Index;                                     //檢測張數序號
     }
-
     /// <summary>[struct]EMC_PP下發系統工單項目</summary>
-    struct BATCH_SHARE_EMC_PPPARAM
+    public struct BATCH_SHARE_EMC_PPPARAM
     {
         BATCH_SHARE_EMC_BASE m_BATCH_SHARE_EMC_BASE;
         int Status;                                    //任務狀態(CLEAR/START/CLOSED)
         string[] EmpID;                //員工編號
     }
     /// <summary>[struct]EMC_PP上傳系統工單項目</summary>
-    struct BATCH_SHARE_EMC_PPRESULT
+    public struct BATCH_SHARE_EMC_PPRESULT
     {
         BATCH_SHARE_EMC_BASE m_BATCH_SHARE_EMC_BASE;
         float DefectBegin;                             //缺點開始米數
@@ -434,20 +440,20 @@ namespace ClassLibrary
         string[] DefectType;                           //[3]缺點代碼
     }
     /// <summary>[struct]EMC_PP擴充基礎系統工單項目</summary>
-    struct BATCH_SHARE_EMC_PPEND
+    public struct BATCH_SHARE_EMC_PPEND
     {
         BATCH_SHARE_EMC_BASE m_BATCH_SHARE_EMC_BASE;
         float Length;                                  //每卷米數
     }
     /// <summary>[struct]EMC_錯誤系統工單項目</summary>
-    struct BATCH_SHARE_EMC_ERRORINFO_
+    public struct BATCH_SHARE_EMC_ERRORINFO_
     {
         EMC_ERROR ErrorType;                               //錯誤代碼
         string[] ErrorMsg;               //錯誤訊息
     }
     //-----------  INFO  -----------------------------
     /// <summary>[struct]資訊1系統工單項目</summary>
-    struct BATCH_SHARE_SYST_INFO1
+    public struct BATCH_SHARE_SYST_INFO1
     {
         byte SizeReady;    //CCD尺寸檢測儀器準備好 1
         byte SizeRunning;  //CCD尺寸檢測儀器運行 1
@@ -457,7 +463,7 @@ namespace ClassLibrary
         byte Reserve2;     //保留欄位
     }
     /// <summary>[struct]資訊2系統工單項目</summary>
-    struct BATCH_SHARE_SYST_INFO2
+    public struct BATCH_SHARE_SYST_INFO2
     {
         byte CCDError1;    //CCD表現檢測儀器故障 1
         byte SizeError1;   //CCD尺寸檢測儀器故障 1
@@ -471,40 +477,53 @@ namespace ClassLibrary
         BATCH_SHARE_SYST_INFO2 Info2;
     };
     #endregion
+    //=================================================================================
 
-
-    public class DataHeader
+    //=================================================================================
+    public class DataHeadlerBase : AppLogProcess
     {
+        //視窗相關
+        /// <summary>尋找視窗</summary>
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
-
+        /// <summary>顯示視窗</summary>
+        [DllImport("user32.dll")]
+        public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        /// <summary>獲取控制台窗口的句柄</summary>
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr GetConsoleWindow();
+        //-------------------------------------------------------------------------------
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern IntPtr CreateEvent(IntPtr lpEventAttributes, bool bManualReset, bool bInitialState, string lpName);
 
-        [DllImport("kernel32.dll")]
-        public static extern IntPtr GetConsoleWindow();
-        // 假設有一個顯示視窗的方法
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool CloseHandle(IntPtr hObject);
+
         [DllImport("user32.dll")]
-        public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        public static extern bool PostMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
+
         /// <summary>使用互斥鎖</summary>
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern IntPtr OpenMutex(uint dwDesiredAccess, bool bInheritHandle, string lpName);
         /// <summary>創建了一個互斥鎖</summary>
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern IntPtr CreateMutex(IntPtr lpMutexAttributes, bool bInitialOwner, string lpName);
-        /// <summary>打開一個文件映射物件</summary>
+        /// <summary>打開一個檔案映射物件</summary>
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern IntPtr OpenFileMapping(uint dwDesiredAccess, bool bInheritHandle, string lpName);
-        /// <summary>創建一個文件映射物件</summary>
+        /// <summary>創建一個檔案映射物件</summary>
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern IntPtr CreateFileMapping(IntPtr hFile, IntPtr lpAttributes, uint flProtect, uint dwMaximumSizeHigh, uint dwMaximumSizeLow, string lpName);
-
+        /// <summary>映射檔案</summary>
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern IntPtr MapViewOfFile(IntPtr hFileMappingObject, uint dwDesiredAccess, uint dwFileOffsetHigh, uint dwFileOffsetLow, UIntPtr dwNumberOfBytesToMap);
-
+        /// <summary>解除映射的記憶體位址</summary>
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool UnmapViewOfFile(IntPtr lpBaseAddress);
 
+
+        //可以使用ShareMemory名稱清單
         public const string AOI_MASTER_NAME = "AOI Master";
         public const string EMC_COMMUNICATOR_NAME = "EMCCommunicator";
         public const string MX_COMMUNICATOR_NAME = "MXComponentCommunicator";
@@ -516,263 +535,141 @@ namespace ClassLibrary
         public const string BATCH_MX2AOI_MEM_ID = "BATCH_MX2AOI_MEM";
         public const string BATCH_SQL2AOI_MEM_ID = "SQL_AGENT_MEM";
 
-        public const uint MUTEX_MODIFY_STATE = 0x0001;
-        public const uint SYNCHRONIZE = 0x00100000;
+        public const string BATCH_PLCIP = "192.168.2.99";
 
-        public const uint FILE_MAP_READ = 0x0004;
-        public const uint FILE_MAP_WRITE = 0x0002;
-
-        public static readonly IntPtr INVALID_HANDLE_VALUE = IntPtr.Zero;
-        public const uint PAGE_READWRITE = 0x04;
-
-    }
-
-
-    public class usm<T>
-    {
-        string cwmn;
-        string fmn;
-        string evrn;
-        string evwn;
-
-        string stringid;
-
-        struct USMHEADER
-        {
-        };
-        struct USMTHREAD
-        {
-            ulong id;
-            int evidx;
-        };
-
-#if NETCOREAPP3_1
-	bool WasFirst;
-        HANDLE hEventWrote;
-        HANDLE hMutexWriting;
-        HANDLE hEventMeReading;
-        HANDLE hFM;
-        unsigned long long ClientSZ;
-        DWORD MaxThreads;
-        PVOID Buff;
-        void InitParam()
-        {
-            WasFirst = false;
-            hEventWrote = 0;
-            hMutexWriting = 0;
-            hEventMeReading = 0;
-            hFM = 0;
-            ClientSZ = 0;
-            MaxThreads = 0;
-            Buff = 0;
-        }
-#else //_MSC_VER
-        bool WasFirst = false;
-        IntPtr hEventWrote = IntPtr.Zero;
-        IntPtr hMutexWriting = IntPtr.Zero;
-        IntPtr hEventMeReading = IntPtr.Zero;
-        IntPtr hFM = IntPtr.Zero;
-        ulong ClientSZ = 0;
-        ulong MaxThreads = 0;
-        IntPtr Buff = IntPtr.Zero;
+        //------------------------------------------------------------------
+        private string m_strMemID;
+#if !USE_IN_SLAVE
+        private ShareMemory<byte> m_ShareMemory;//更換成C#版sharememory
 #endif
-        IntPtr CreateEvR(int idx)
+        //------------------------------------------------------------------
+        public DataHeadlerBase(string strMemID = "")
         {
-            string n = $"{evrn}{idx}";
-            IntPtr hX = DataHeader.CreateEvent(IntPtr.Zero, true, true, n);
-            return hX;
+            OpShareMemory((int)WM_Status.WM_CREATE);
+        } 
+        ~DataHeadlerBase()
+        {
+            OpShareMemory((int)WM_Status.WM_DESTROY);
         }
-        IntPtr CreateEvW()
+        //------------------------------------------------------------------
+        //預先實體化
+        //PLC
+        public virtual void SetInitParam(BATCH_SHARE_SYST_INITPARAM pData) { }
+        public virtual void GetInitParam(BATCH_SHARE_SYST_INITPARAM pData) { }
+        //WebCopper
+        public virtual void SetSYSTParam_WebCopper(BATCH_SHARE_SYST_BASE pData) { }
+        public virtual void GetSYSTParam_WebCopper(BATCH_SHARE_SYST_BASE pData) { }
+        //CCL
+        public virtual void SetSYSYParam_CCL(BATCH_SHARE_SYST_PARAMCCL pData) { }
+        public virtual void GetSYSTParam_CCL(BATCH_SHARE_SYST_PARAMCCL pData) { }
+        //Info
+        public virtual void GetSYSTInfo_CCL(BATCH_SHARE_SYST_INFO pInfo) { }
+        public virtual void SetSYSTInfo_CCL(ulong dwField, BATCH_SHARE_SYST_INFO xInfo) { }
+        //-------------------------------------------------------------------------------------
+        public void NotifyResponse(string strTarget, IntPtr lparam)
         {
-            string n = $"{evrn}";
-            IntPtr hX = DataHeader.CreateEvent(IntPtr.Zero, false, false, n);
-            return hX;
-        }
-        IntPtr CreateCWM()
-        {
-            IntPtr hX = DataHeader.OpenMutex(DataHeader.MUTEX_MODIFY_STATE | DataHeader.SYNCHRONIZE, false, cwmn);
-            if (hX != IntPtr.Zero)
-                return hX;
-            hX = DataHeader.CreateMutex(hX, false, cwmn);
-            return hX;
-        }
-        IntPtr CreateFM()
-        {
-            // Try to open the map , or else create it
-            WasFirst = true;
-            IntPtr hX = DataHeader.OpenFileMapping(DataHeader.FILE_MAP_READ | DataHeader.FILE_MAP_WRITE, false, fmn);
-            if (hX != IntPtr.Zero)
+            IntPtr hWnd = FindWindow(null, strTarget);
+            if (hWnd != IntPtr.Zero)
             {
-                WasFirst = false;
-                return hX;
+                PostMessage(hWnd, (int)WM_APP_CMD.WM_GPIO_MSG, (IntPtr)WM_APP_CMD.WM_AOI_RESPONSE_CMD, lparam);
             }
-
-            ulong FinalSize = ClientSZ * (ulong)Marshal.SizeOf(typeof(T)) + MaxThreads * (ulong)Marshal.SizeOf(typeof(USMTHREAD)) + (ulong)Marshal.SizeOf(typeof(USMHEADER));
-            ULARGE_INTEGER ulx;
-            ulx.QuadPart = FinalSize;
-            //有分高低位問題
-            hX = DataHeader.CreateFileMapping(DataHeader.INVALID_HANDLE_VALUE, IntPtr.Zero, DataHeader.PAGE_READWRITE, (uint)(ulx.QuadPart >> 32), (uint)(ulx.QuadPart & 0xFFFFFFFF), fmn);
-            if (hX != IntPtr.Zero)
-            {
-                IntPtr Buff = DataHeader.MapViewOfFile(hFM, DataHeader.FILE_MAP_READ | DataHeader.FILE_MAP_WRITE, 0, 0, UIntPtr.Zero);
-                if (Buff != IntPtr.Zero)
-                {
-
-                    byte[] buffer = new byte[FinalSize]; // 创建一个和您的 FinalSize 大小相等的字節組
-                    // 使用 Marshal.Copy 填滿緩衝區
-                    Marshal.Copy(buffer, 0, Buff, buffer.Length);
-
-                    DataHeader.UnmapViewOfFile(Buff);
-                }
-            }
-            return hX;
         }
-
-        void End()
+        public void WriteResponse(IntPtr pData, int nSize, string strTargetName, IntPtr wparam, IntPtr lparam) { }
+        //----------------------------------------------------
+        private void OpShareMemory(int nOpCode)
         {
-            // Remove the ID from the thread
-            if (Buff!= IntPtr.Zero)
+            //初始化
+            if (nOpCode == (int)WM_Status.WM_CREATE)
             {
-                USMTHREAD th = (USMTHREAD)(char)((char)Buff + Marshal.SizeOf(typeof(USMHEADER)));
-                WaitForSingleObject(hMutexWriting, INFINITE);
-                // Find 
-                for (unsigned int y = 0; y < MaxThreads; y++)
+                //若不存在
+                if (!m_ShareMemory.Get_Status())
                 {
-                    USMTHREAD & tt = th[y];
-                    DWORD myid = GetCurrentThreadId();
-                    if (tt.id == myid)
+                    if (m_strMemID.Length == 0)
                     {
-                        tt.id = 0;
-                        tt.evidx = 0;
-                        break;
+                        m_ShareMemory = new ShareMemory<byte>(BATCH_COMMUNICATOR_MEM_ID);//預設
+                    }
+                    else
+                    {
+                        m_ShareMemory = new ShareMemory<byte>(m_strMemID);//客制名稱
                     }
                 }
-                UnmapViewOfFile(Buff);
-                ReleaseMutex(hMutexWriting);
-            }
-            if (hEventWrote)
-            {
-                CloseHandle(hEventWrote);
-            }
-            hEventWrote = 0;
-            if (hFM)
-            {
-                CloseHandle(hFM);
-            }  
-            hFM = 0;
-            if (hEventMeReading)
-            {
-                CloseHandle(hEventMeReading);
-            }
-            hEventMeReading = 0;
-            if (hMutexWriting)
-            {
-                CloseHandle(hMutexWriting);
-            }
-            hMutexWriting = 0;
-        }
-        bool IsFirst() 
-        { 
-            return WasFirst;
-        }
-
-        public usm(string string_id = "", bool Init = false, ulong csz = 1048576, ulong MaxTh = 100)
-        {
-#if NETCOREAPP3_1
-		    InitParam();
-#endif
-            if (string_id=="")
-            {
-                return;
-            }
-            CreateInit(string_id, Init, csz, MaxTh);
-        }
-        void CreateInit(string string_id, bool Init = false, ulong csz = 1048576, ulong MaxTh = 100)
-        {
-            if (string_id == "")
-                return;
-            if (string_id.Length== 0)
-                return;
-
-            string xup;
-            stringid = string_id;
-
-            cwmn = $"{stringid}_cwmn";
-            evrn = $"{stringid}_evrn";
-            evwn = $"{stringid}_evwn";
-            fmn = $"{stringid}_fmn";
-
-            if (csz!= 1048576)
-                csz = 1048576;
-            ClientSZ = csz;
-            if (MaxTh!= 100)
-                MaxTh = 100;
-            MaxThreads = MaxTh;
-            if (Init)
-            {
-                int iv = Initialize();
-                if (iv <= 0)
+                //若存在
+                else
                 {
-                    End();
-                    //throw iv;//不用
-
+                    //目前暫時相同
+                    if (m_strMemID.Length == 0)
+                    {
+                        m_ShareMemory = new ShareMemory<byte>(BATCH_COMMUNICATOR_MEM_ID);//預設
+                    }
+                    else
+                    {
+                        m_ShareMemory = new ShareMemory<byte>(m_strMemID);//客制名稱
+                    }
+                }
+            }
+            //處置
+            else if (nOpCode == (int)WM_Status.WM_DESTROY)
+            {
+                //若名稱存在
+                if (m_ShareMemory.Get_Status())
+                {
+                    //解構
+                    m_ShareMemory.Dispose();
                 }
             }
         }
-        ~usm()
+        protected void GetSharedMemoryData(string strMemID, ref byte pShare)
         {
-            End();
+            ShareMemory<byte> xShareMem = new ShareMemory<byte>(strMemID);
+            pShare = xShareMem.ReadData();
         }
-        int Initialize()
+        protected void SetSharedMemoryData(byte writedata, string strTargetName, IntPtr wparam, IntPtr lparam)
         {
-            hEventWrote =IntPtr.Zero;
-            hMutexWriting = IntPtr.Zero;
-            hFM = IntPtr.Zero;
-            Buff = IntPtr.Zero;
-            hEventMeReading = IntPtr.Zero;
-
-            if (hMutexWriting == IntPtr.Zero)
-                hMutexWriting = CreateCWM();
-            if (hMutexWriting == IntPtr.Zero)
-                return -1;
-            if (hFM == IntPtr.Zero)
-                hFM = CreateFM();
-            if (hFM == IntPtr.Zero)
-                return -1;
-            if (hEventWrote == IntPtr.Zero)
-                hEventWrote = CreateEvW();
-            if (hEventWrote == IntPtr.Zero)
-                return -1;
-            if (Buff == IntPtr.Zero)
-                Buff = DataHeader.MapViewOfFile(hFM, DataHeader.FILE_MAP_READ | DataHeader.FILE_MAP_WRITE, 0, 0, IntPtr.Zero);
-            if (Buff!= IntPtr.Zero)
-                return -1;
-
-            // Acquire lock for Count variable
-            // USMHEADER* h = (USMHEADER*)Buff;
-            USMTHREAD th = (USMTHREAD*)((char*)((char*)Buff + sizeof(USMHEADER)));
-            WaitForSingleObject(hMutexWriting, INFINITE);
-            // Find 
-            for (unsigned int y = 0; y < MaxThreads; y++)
+            if (m_ShareMemory != null)
             {
-                USMTHREAD & tt = th[y];
-                if (tt.id == 0)
+                //寫入memory
+                m_ShareMemory.WriteData(writedata);
+                //通知視窗
+                IntPtr hWnd = FindWindow(null, strTargetName);
+                if (hWnd!=IntPtr.Zero)
                 {
-                    tt.id = GetCurrentThreadId();
-                    tt.evidx = (y + 1);
-                    hEventMeReading = CreateEvR(y + 1);
-                    break;
+                    PostMessage(hWnd, (int)WM_APP_CMD.WM_GPIO_MSG, wparam, lparam);
                 }
             }
-            ReleaseMutex(hMutexWriting);
-
-            if (!hEventMeReading)
-                return -1;
-
-            return 1;
-
         }
-
+        //=====================================================================================
+        protected string MakeFloatLog(string strDes, float fData)
+        {
+            string strRtn;
+            strRtn = $"{strDes}: {fData}\r\n";
+            return strRtn;
+        }
+        protected string MakeWordLog(string strDes, uint wData)
+        {
+            string strRtn;
+            strRtn = $"{strDes}: {wData}\r\n";
+            return strRtn;
+        }
+        protected string MakestringLog(string strDes, string pData)
+        {
+            string strRtn;
+            strRtn = $"{strDes}: {pData}\r\n";
+            return strRtn;
+        }
+        protected string MakeByteLog(string strDes, byte cData)
+        {
+            string strRtn;
+            strRtn = $"{strDes}: {cData}\r\n";
+            return strRtn;
+        }
+        protected void NotifyAOI(IntPtr wparam, IntPtr lparam, string windowname = AOI_MASTER_NAME)
+        {
+            IntPtr hWnd = FindWindow(null, windowname);
+            if (hWnd != IntPtr.Zero)
+            {
+                PostMessage(hWnd, (int)WM_APP_CMD.WM_GPIO_MSG, wparam, lparam);
+            }
+        }
     }
 }
 
