@@ -21,7 +21,7 @@ namespace ClassLibrary.SharedComponent.Log
         MAX_FNAME = 256,
         MAX_EXT = 256
     }
-    public enum AOI_LOG_TYPE
+    public enum AOI_LOG_Result
     {
         LOG_TYPE_BEGIN = 0,
         LOG_SYSTEM = 0,
@@ -37,7 +37,7 @@ namespace ClassLibrary.SharedComponent.Log
     };
     public struct LOG_ITEM_INFO
     {
-        public AOI_LOG_TYPE xType;
+        public AOI_LOG_Result xType;
         public string strFile;
         public int nLimitSize;//uint
     }
@@ -48,15 +48,15 @@ namespace ClassLibrary.SharedComponent.Log
 
         public LOG_ITEM_INFO[] ctLOG_INFO = new LOG_ITEM_INFO[]
         {
-            new LOG_ITEM_INFO {xType = AOI_LOG_TYPE.LOG_SYSTEM,    strFile = "PLCCommunicator.PLC",        nLimitSize = 1024 * 1024 },
-            new LOG_ITEM_INFO {xType = AOI_LOG_TYPE.LOG_DEBUG,     strFile = "PLCCommunicator_DEBUG.PLC",  nLimitSize = 1024 * 1024 },
-            new LOG_ITEM_INFO {xType = AOI_LOG_TYPE.LOG_PLCSOCKET, strFile = "PLCCommunicator_Socket.PLC", nLimitSize = 1024 * 1024 },
-            new LOG_ITEM_INFO {xType = AOI_LOG_TYPE.LOG_PLCC10,    strFile = "PLCCommunicator_C10.PLC",    nLimitSize = 1024 * 1024 },
-            new LOG_ITEM_INFO {xType = AOI_LOG_TYPE.LOG_EMCDEBUG,  strFile = "EMCCommunicator_DEBUG.log",  nLimitSize = 1024 * 1024 },
-            new LOG_ITEM_INFO {xType = AOI_LOG_TYPE.LOG_EMCSYSTEM, strFile = "EMCCommunicator_System.log", nLimitSize = 1024 * 1024 },
-            new LOG_ITEM_INFO {xType = AOI_LOG_TYPE.LOG_OPC,       strFile = "OPCCommunicator.log",        nLimitSize = 1024 * 1024 },
-            new LOG_ITEM_INFO {xType = AOI_LOG_TYPE.LOG_THICK,     strFile = "LK-Communicator.log",        nLimitSize = 1024 * 1024 },
-            new LOG_ITEM_INFO {xType = AOI_LOG_TYPE.LOG_MSSQL,     strFile = "MSSQL_PROCESS.log",          nLimitSize = 1024 * 1024 }
+            new LOG_ITEM_INFO {xType = AOI_LOG_Result.LOG_SYSTEM,    strFile = "PLCCommunicator.PLC",        nLimitSize = 1024 * 1024 },
+            new LOG_ITEM_INFO {xType = AOI_LOG_Result.LOG_DEBUG,     strFile = "PLCCommunicator_DEBUG.PLC",  nLimitSize = 1024 * 1024 },
+            new LOG_ITEM_INFO {xType = AOI_LOG_Result.LOG_PLCSOCKET, strFile = "PLCCommunicator_Socket.PLC", nLimitSize = 1024 * 1024 },
+            new LOG_ITEM_INFO {xType = AOI_LOG_Result.LOG_PLCC10,    strFile = "PLCCommunicator_C10.PLC",    nLimitSize = 1024 * 1024 },
+            new LOG_ITEM_INFO {xType = AOI_LOG_Result.LOG_EMCDEBUG,  strFile = "EMCCommunicator_DEBUG.log",  nLimitSize = 1024 * 1024 },
+            new LOG_ITEM_INFO {xType = AOI_LOG_Result.LOG_EMCSYSTEM, strFile = "EMCCommunicator_System.log", nLimitSize = 1024 * 1024 },
+            new LOG_ITEM_INFO {xType = AOI_LOG_Result.LOG_OPC,       strFile = "OPCCommunicator.log",        nLimitSize = 1024 * 1024 },
+            new LOG_ITEM_INFO {xType = AOI_LOG_Result.LOG_THICK,     strFile = "LK-Communicator.log",        nLimitSize = 1024 * 1024 },
+            new LOG_ITEM_INFO {xType = AOI_LOG_Result.LOG_MSSQL,     strFile = "MSSQL_PROCESS.log",          nLimitSize = 1024 * 1024 }
         };
 
         public AppLogBase()
@@ -68,7 +68,7 @@ namespace ClassLibrary.SharedComponent.Log
         {
             return m_nFileCount;
         }
-        public void InsertLog(string xMsg, AOI_LOG_TYPE xLogType = AOI_LOG_TYPE.LOG_SYSTEM)
+        public void InsertLog(string xMsg, AOI_LOG_Result xLogType = AOI_LOG_Result.LOG_SYSTEM)
         {
             //路徑搜索
             int szBuffer = 0;

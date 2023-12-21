@@ -131,12 +131,14 @@ namespace ClassLibrary.DataHeader
         EMC_TIMEOUT,            //TIMEOUT
     };
     /// <summary>[enum]紀錄格式參數</summary>
-    enum LOG_TYPE
+    enum LOG_STRUCT_TYPE
     {
+        LOG_FLOAT_ARRAY,
         LOG_FLOAT,
-        LOG_WORD,
-        LOG_string,
-        LOG_NONE
+        LOG_WORD,  //short
+        LOG_STRING,
+        LOG_CHAR,
+        LOG_NONE//log不紀錄
     };
     /// <summary>[enum]系統資訊參數</summary>
     enum SYST_INFO_FIELD
@@ -245,7 +247,7 @@ namespace ClassLibrary.DataHeader
     /// <summary>[struct]PLC_PP初始化參數</summary>
     public struct BATCH_SHARE_SYSTPP_INITPARAM
     {
-        public BATCH_SHARE_SYSTCCL_INITPARAM m_BATCH_SHARE_SYSTCCL_INITPARAM;
+        public BATCH_SHARE_SYSTCCL_INITPARAM m_CCL_INITPARAM;
         //---------------------------------------------------------
         public int WatchDogTimeout;           //WatchDog timeout(second)
         public int Version;
@@ -256,9 +258,6 @@ namespace ClassLibrary.DataHeader
     /// <summary>[struct]系統工單額外項目</summary>
     public struct BATCH_SYST_EXTRA
     {
-        //__time64_t xStart;
-        //__time64_t xEnd;
-
         DateTime Start;
         DateTime End;
         char[] Insp;
@@ -272,100 +271,101 @@ namespace ClassLibrary.DataHeader
     /// <summary>[struct]基礎系統工單項目</summary>
     public struct BATCH_SHARE_SYST_BASE
     {
-        string[] Name;       //工單號
-        string[] Material;   //料號
+        public char[] Name;       //工單號
+        public char[] Material;   //料號
     }
     /// <summary>[struct]CCL下發系統工單項目</summary>
     public struct BATCH_SHARE_SYST_PARAMCCL
     {
-        BATCH_SHARE_SYST_BASE m_BATCH_SHARE_SYST_BASE;
+        public BATCH_SHARE_SYST_BASE m_BATCH_SHARE_SYST_BASE;
 
-        string[] Model;      //模號
-        string[] Assign;     //分發號
-        ushort AssignNum;                        //分發號數量
-        ushort SplitNum;                         //一開幾
+        public char[] Model;                        //模號
+        public char[] Assign;                       //分發號
+        public short AssignNum;                        //分發號數量
+        public short SplitNum;                         //一開幾
 
-        ushort Split_One_X;                      //第一張大小板寬
-        ushort Split_One_Y;                      //第一張大小板長
-        ushort Split_Two_X;                      //第二張大小板寬
-        ushort Split_Two_Y;                      //第二張大小板長
-        ushort Split_Three_X;                    //第三張大小板寬
-        ushort Split_Three_Y;                    //第三張大小板長
+        public float Split_One_X;                      //第一張大小板寬
+        public float Split_One_Y;                      //第一張大小板長
+        public float Split_Two_X;                      //第二張大小板寬
+        public float Split_Two_Y;                      //第二張大小板長
+        public float Split_Three_X;                    //第三張大小板寬
+        public float Split_Three_Y;                    //第三張大小板長
 
-        float ThickSize;                       //板材厚度
-        float ThickCCL;                        //銅箔厚度
-        string[] CCLType;                      //銅箔特性
-        ushort GrayScale;                        //灰度值
-        ushort Pixel_AA;                         //點值要求AA
-        ushort Pixel_A;                          //點值要求A
-        ushort Pixel_P;                          //點值要求P
+        public float ThickSize;                        //板材厚度
+        public float ThickCCL;                         //銅箔厚度
+        public char[] CCLType;                         //銅箔特性
+        public short GrayScale;                          //灰度值
+        public short Pixel_AA;                         //點值要求AA
+        public short Pixel_A;                          //點值要求A
+        public short Pixel_P;                          //點值要求P
 
-        ushort Diff_One_Y;                       //第一個大小板公差(長)
-        ushort Diff_One_X;                       //第一個大小板公差(寬)
-        ushort Diff_One_XY;                      //第一個大小板公差(對角線)
+        public float Diff_One_Y;                       //第一個大小板公差(長)
+        public float Diff_One_X;                       //第一個大小板公差(寬)
+        public float Diff_One_XY;                      //第一個大小板公差(對角線)
 
-        ushort Diff_One_X_Min;                   //第一個大小版緯向公差下限
-        ushort Diff_One_X_Max;                   //第一個大小版緯向公差上限
-        ushort Diff_One_Y_Min;                   //第一個大小版經向公差下限
-        ushort Diff_One_Y_Max;                   //第一個大小版經向公差上限
-        ushort Diff_One_XY_Min;                  //第一個大小版對角線公差下限
-        ushort Diff_One_XY_Max;                  //第一個大小版對角線公差上限
+        public float Diff_One_X_Min;                   //第一個大小版緯向公差下限
+        public float Diff_One_X_Max;                   //第一個大小版緯向公差上限
+        public float Diff_One_Y_Min;                   //第一個大小版經向公差下限
+        public float Diff_One_Y_Max;                   //第一個大小版經向公差上限
+        public float Diff_One_XY_Min;                  //第一個大小版對角線公差下限
+        public float Diff_One_XY_Max;                  //第一個大小版對角線公差上限
 
-        ushort Diff_Two_X_Min;                   //第二個大小版緯向公差下限
-        ushort Diff_Two_X_Max;                   //第二個大小版緯向公差上限
-        ushort Diff_Two_Y_Min;                   //第二個大小版經向公差下限
-        ushort Diff_Two_Y_Max;                   //第二個大小版經向公差上限
-        ushort Diff_Two_XY_Min;                  //第二個大小版對角線公差下限
-        ushort Diff_Two_XY_Max;                  //第二個大小版對角線公差上限
+        public float Diff_Two_X_Min;                   //第二個大小版緯向公差下限
+        public float Diff_Two_X_Max;                   //第二個大小版緯向公差上限
+        public float Diff_Two_Y_Min;                   //第二個大小版經向公差下限
+        public float Diff_Two_Y_Max;                   //第二個大小版經向公差上限
+        public float Diff_Two_XY_Min;                  //第二個大小版對角線公差下限
+        public float Diff_Two_XY_Max;                  //第二個大小版對角線公差上限
 
-        ushort Diff_Three_X_Min;                 //第三個大小版緯向公差下限
-        ushort Diff_Three_X_Max;                 //第三個大小版緯向公差上限
-        ushort Diff_Three_Y_Min;                 //第三個大小版經向公差下限
-        ushort Diff_Three_Y_Max;                 //第三個大小版經向公差上限
-        ushort Diff_Three_XY_Min;                //第三個大小版對角線公差下限
-        ushort Diff_Three_XY_Max;                //第三個大小版對角線公差上限
+        public float Diff_Three_X_Min;                 //第三個大小版緯向公差下限
+        public float Diff_Three_X_Max;                 //第三個大小版緯向公差上限
+        public float Diff_Three_Y_Min;                 //第三個大小版經向公差下限
+        public float Diff_Three_Y_Max;                 //第三個大小版經向公差上限
+        public float Diff_Three_XY_Min;                //第三個大小版對角線公差下限
+        public float Diff_Three_XY_Max;                //第三個大小版對角線公差上限
 
-        ushort Num_AA;                           //小版AA級數量
+        public short Num_AA;                           //小版AA級數量
 
-        ushort NO_C06;                           //C06小板剪切編號
-        ushort NO_C10;                           //C10小板剪切編號
-        ushort NO_C12;                           //C12小板剪切編號
+        public short NO_C06;                           //C06小板剪切編號
+        public short NO_C10;                           //C10小板剪切編號
+        public short NO_C12;                           //C12小板剪切編號
     }
     /// <summary>[struct]CCL上傳系統工單項目</summary>
     public struct BATCH_SHARE_SYST_RESULTCCL
     {
-        float Real_One_Y;              //小板實際長度1
-        float Real_Two_Y;              //小板實際長度2
-        float Real_One_X;              //小板實際寬度1
-        float Real_Two_X;              //小板實際寬度2
+        public float Real_One_Y;              //小板實際長度1
+        public float Real_Two_Y;              //小板實際長度2
+        public float Real_One_X;              //小板實際寬度1
+        public float Real_Two_X;              //小板實際寬度2
 
-        ushort Diff_One_Y;               //小板長度實際公差1
-        ushort Diff_Two_Y;               //小板長度實際公差2
-        ushort Diff_One_X;               //小板寬度實際公差1
-        ushort Diff_Two_X;               //小板寬度實際公差2
-        ushort Diff_One_XY;              //小板對角線實際公差1
-        ushort Diff_Two_XY;              //小板對角線實際公差2
+        public short Diff_One_Y;               //小板長度實際公差1
+        public short Diff_Two_Y;               //小板長度實際公差2
+        public short Diff_One_X;               //小板寬度實際公差1
+        public short Diff_Two_X;               //小板寬度實際公差2
+        public short Diff_One_XY;              //小板對角線實際公差1
+        public short Diff_Two_XY;              //小板對角線實際公差2
 
-        ushort FrontLevel;               //正面判斷級別
-        char[] FrontCode;            //[30]正面判斷代碼, 字串需要為2的倍數(回寫最小單位為WORD)
-        ushort BackLevel;                //反面判斷級別
-        char[] BackCode;             //[30]反面判斷代碼, 字串需要為2的倍數(回寫最小單位為WORD)
-        ushort Size_G10;                 //尺寸判斷級別(G10)
-        ushort Size_G12;                 //尺寸判斷級別(G12)
-        ushort Size_G14;                 //尺寸判斷級別(G14)
+        public short FrontLevel;               //正面判斷級別
+        public char[] FrontCode;            //[30]正面判斷代碼, 字串需要為2的倍數(回寫最小單位為WORD)
+        public short BackLevel;                //反面判斷級別
+        public char[] BackCode;             //[30]反面判斷代碼, 字串需要為2的倍數(回寫最小單位為WORD)
+        public short Size_G10;                 //尺寸判斷級別(G10)
+        public short Size_G12;                 //尺寸判斷級別(G12)
+        public short Size_G14;                 //尺寸判斷級別(G14)
 
-        ushort ResultLevel;              //小版物料級別
-        ushort Num_AA;                   //小版AA級數量
-        ushort Num_A;                    //小版A級數量
-        ushort Num_P;                    //小版P級數量
-        ushort QualifyRate;              //訂單合格率
-        ushort Diff_XY;                  //級差實際檢測值
-        float[] FrontDefectSize;      //[5]九宮格中正面前五大缺陷大小1~5
-        float[] BackDefectSize;       //[5]九宮格中反面前五大缺陷大小1~5
-        ushort[] FrontDefectLocation;   //[5]九宮格中正面前五大缺陷位置1~5
-        ushort[] BackDefectLocation;    //[5]九宮格中反面前五大缺陷位置1~5
-        ushort Index;                    //小板編號, 僅東莞松八廠需回傳
+        public short ResultLevel;              //小版物料級別
+        public short Num_AA;                   //小版AA級數量
+        public short Num_A;                    //小版A級數量
+        public short Num_P;                    //小版P級數量
+        public short QualifyRate;              //訂單合格率
+        public short Diff_XY;                  //級差實際檢測值
+        public float[] FrontDefectSize;      //[5]九宮格中正面前五大缺陷大小1~5
+        public float[] BackDefectSize;       //[5]九宮格中反面前五大缺陷大小1~5
+        public short[] FrontDefectLocation;   //[5]九宮格中正面前五大缺陷位置1~5
+        public short[] BackDefectLocation;    //[5]九宮格中反面前五大缺陷位置1~5
+        public short Index;                    //小板編號, 僅東莞松八廠需回傳
     }
+   
     /// <summary>[struct]甬強上傳系統工單項目</summary>
     public struct BATCH_SHARE_SYST_RESULT_EVERSTR
     {
@@ -455,31 +455,32 @@ namespace ClassLibrary.DataHeader
     /// <summary>[struct]資訊1系統工單項目</summary>
     public struct BATCH_SHARE_SYST_INFO1
     {
-        byte SizeReady;    //CCD尺寸檢測儀器準備好 1
-        byte SizeRunning;  //CCD尺寸檢測儀器運行 1
-        byte CCDReady;     //CCD表現檢測儀器準備好 1
-        byte CCDRunning;   //CCD表現檢測儀器運行 1
-        byte Reserve1;     //保留欄位 4
-        byte Reserve2;     //保留欄位
+        public byte SizeReady;    //CCD尺寸檢測儀器準備好 1
+        public byte SizeRunning;  //CCD尺寸檢測儀器運行 1
+        public byte CCDReady;     //CCD表現檢測儀器準備好 1
+        public byte CCDRunning;   //CCD表現檢測儀器運行 1
+        public byte Reserve1;     //保留欄位 4
+        public byte Reserve2;     //保留欄位
     }
     /// <summary>[struct]資訊2系統工單項目</summary>
     public struct BATCH_SHARE_SYST_INFO2
     {
-        byte CCDError1;    //CCD表現檢測儀器故障 1
-        byte SizeError1;   //CCD尺寸檢測儀器故障 1
-        byte Reserve1;     //保留欄位 6
-        byte Reserve2;         //保留欄位
+        public byte CCDError1;    //CCD表現檢測儀器故障 1
+        public byte SizeError1;   //CCD尺寸檢測儀器故障 1
+        public byte Reserve1;     //保留欄位 6
+        public byte Reserve2;         //保留欄位
     }
     /// <summary>[struct]資訊總系統工單項目</summary>
     public struct BATCH_SHARE_SYST_INFO
     {
-        BATCH_SHARE_SYST_INFO1 Info1;
-        BATCH_SHARE_SYST_INFO2 Info2;
+        public BATCH_SHARE_SYST_INFO1 Info1;
+        public BATCH_SHARE_SYST_INFO2 Info2;
     };
     #endregion
-    //=================================================================================
 
-    //=================================================================================
+    //=================================================================
+    //Interface
+    //=================================================================
     public class DataHeadlerBase : AppLogProcess
     {
         //視窗相關
@@ -521,7 +522,7 @@ namespace ClassLibrary.DataHeader
         /// <summary>解除映射的記憶體位址</summary>
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool UnmapViewOfFile(IntPtr lpBaseAddress);
-
+        //---------------------------------------------------------------------------------------
 
         //可以使用ShareMemory名稱清單
         public const string AOI_MASTER_NAME = "AOI Master";
@@ -536,7 +537,6 @@ namespace ClassLibrary.DataHeader
         public const string BATCH_SQL2AOI_MEM_ID = "SQL_AGENT_MEM";
 
         public const string BATCH_PLCIP = "192.168.2.99";
-
         //------------------------------------------------------------------
         private string m_strMemID;
 #if !USE_IN_SLAVE
@@ -546,25 +546,27 @@ namespace ClassLibrary.DataHeader
         public DataHeadlerBase(string strMemID = "")
         {
             OpShareMemory((int)WM_Status.WM_CREATE);
-        } 
+        }
         ~DataHeadlerBase()
         {
             OpShareMemory((int)WM_Status.WM_DESTROY);
         }
         //------------------------------------------------------------------
-        //預先實體化
+        ///預先實體化
         //PLC
-        public virtual void SetInitParam(BATCH_SHARE_SYST_INITPARAM pData) { }
         public virtual void GetInitParam(BATCH_SHARE_SYST_INITPARAM pData) { }
+        public virtual void SetInitParam(BATCH_SHARE_SYST_INITPARAM pData) { }
         //WebCopper
-        public virtual void SetSYSTParam_WebCopper(BATCH_SHARE_SYST_BASE pData) { }
         public virtual void GetSYSTParam_WebCopper(BATCH_SHARE_SYST_BASE pData) { }
+        public virtual void SetSYSTParam_WebCopper(BATCH_SHARE_SYST_BASE pData) { }
         //CCL
-        public virtual void SetSYSYParam_CCL(BATCH_SHARE_SYST_PARAMCCL pData) { }
         public virtual void GetSYSTParam_CCL(BATCH_SHARE_SYST_PARAMCCL pData) { }
+        public virtual void SetSYSYParam_CCL(BATCH_SHARE_SYST_PARAMCCL pData) { }
+
         //Info
-        public virtual void GetSYSTInfo_CCL(BATCH_SHARE_SYST_INFO pInfo) { }
         public virtual void SetSYSTInfo_CCL(ulong dwField, BATCH_SHARE_SYST_INFO xInfo) { }
+        public virtual void GetSYSTInfo_CCL(BATCH_SHARE_SYST_INFO pInfo) { }
+        
         //-------------------------------------------------------------------------------------
         public void NotifyResponse(string strTarget, IntPtr lparam)
         {
@@ -618,20 +620,20 @@ namespace ClassLibrary.DataHeader
                 }
             }
         }
-        protected void GetSharedMemoryData(string strMemID, ref byte pShare)
+        protected void GetSharedMemoryData(string strMemID, int size, ref byte[] pShare)
         {
             ShareMemory<byte> xShareMem = new ShareMemory<byte>(strMemID);
-            pShare = xShareMem.ReadData();
+            pShare = xShareMem.ReadData(size);
         }
-        protected void SetSharedMemoryData(byte writedata, string strTargetName, IntPtr wparam, IntPtr lparam)
+        protected void SetSharedMemoryData(byte[] writedata, int size, string strTargetName, IntPtr wparam, IntPtr lparam)
         {
             if (m_ShareMemory != null)
             {
                 //寫入memory
-                m_ShareMemory.WriteData(writedata);
+                m_ShareMemory.WriteData(writedata, size);
                 //通知視窗
                 IntPtr hWnd = FindWindow(null, strTargetName);
-                if (hWnd!=IntPtr.Zero)
+                if (hWnd != IntPtr.Zero)
                 {
                     PostMessage(hWnd, (int)WM_APP_CMD.WM_GPIO_MSG, wparam, lparam);
                 }

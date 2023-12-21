@@ -12,7 +12,7 @@ using ClassLibrary.SharedComponent.Log;
 
 namespace ClassLibrary.PLC.Process
 {
-    #region [struct]PLC參數利用結構
+    #region PLC參數利用
     ///<summary>PLC資料結構</summary>
     public struct PLCDATA
     {
@@ -20,16 +20,16 @@ namespace ClassLibrary.PLC.Process
         public DateTime xTime;
     };
     ///<summary>項目數值格式</summary>
-    public enum PLC_VALUE_TYPE
+    public enum emPLC_DEVICE_TYPE
     {
-        PLC_TYPE_STRING,
-        PLC_TYPE_WORD,
-        PLC_TYPE_FLOAT,
-        PLC_TYPE_DWORD,
-        PLC_TYPE_BIT,
+        TYPE_STRING,
+        TYPE_WORD,
+        TYPE_FLOAT,
+        TYPE_DWORD,
+        TYPE_BIT,
     };
     ///<summary>項目處理模式</summary>
-    public enum PLC_ACTION_TYPE
+    public enum emPLC_ACTION_TYPE
     {
         ACTION_SKIP,
         ACTION_NOTIFY,
@@ -40,8 +40,8 @@ namespace ClassLibrary.PLC.Process
     {
         public string FieldName;
         public int FieldType;
-        public PLC_VALUE_TYPE ValType;
-        public PLC_ACTION_TYPE Action;
+        public emPLC_DEVICE_TYPE ValType;
+        public emPLC_ACTION_TYPE Action;
         public byte DataLength; //bytes
         public string DevType;
         public int Address;
@@ -53,7 +53,7 @@ namespace ClassLibrary.PLC.Process
 
         }
         public PLC_DATA_ITEM(string strFieldName, int nFieldType,
-                             PLC_VALUE_TYPE eValueType, PLC_ACTION_TYPE eActionType,
+                             emPLC_DEVICE_TYPE eValueType, emPLC_ACTION_TYPE eActionType,
                              byte cLen, string strDeviceType,
                              int uAddress,
                              uint uStartBit = 0xFFFFFFFF, uint uEndBit = 0xFFFFFFFF // 使用此值來表示 C++ 中的 -1
@@ -73,50 +73,10 @@ namespace ClassLibrary.PLC.Process
 
     }
     #endregion
-
-    //PLCProcessBase=====================================================================================
-    public interface IPLCProcessBase : IMELSECIOController
-    {
-        void NotifyAOI(IntPtr wparam, IntPtr lparam);
-        int GetFieldSize();
-        PLC_DATA_ITEM GetPLCAddressInfo(int nFieldId, bool bSkip);
-        void DO_CUSTOM_TEST();//change it in inherit class if needed
-        bool HAS_CUSTOM_TEST();// { return FALSE; }
-
-        byte[] GET_PLC_FIELD_BYTE_VALUE(int nFieldId);
-        string GET_PLC_FIELD_VALUE(int nFieldId);
-        string GET_PLC_FIELD_TIME(int nFieldId);
-        string GET_PLC_FIELD_ADDRESS(int nFieldId);
-        string GET_PLC_FIELD_NAME(int nFieldId);
-        PLC_ACTION_TYPE GET_PLC_FIELD_ACTION(int nFieldId);
-
-        int GET_PLC_FIELD_DATA(int nFieldId);
-        int GET_PLC_FIELD_DATA(List<int> vField);
-        int SET_PLC_FIELD_DATA(int nFieldId, int nSizeInByte, byte[] pData);
-        int SET_PLC_FIELD_DATA(List<int> vField, byte[] pData);
-        int SET_PLC_FIELD_DATA_BIT(int nFieldStart, int nFieldEnd, int nSizeInByte, byte[] pData);
-        int SET_PLC_FIELD_DATA_BIT(int nField, int nBitPosition, bool bValue);
-
-        void SET_FLUSH_ANYWAY(bool bFlushAnyway); //{ m_bFlushAnyway = bFlushAnyway; };
-        bool GET_FLUSH_ANYWAY(); //{ return m_bFlushAnyway; };
-                                 //-------------------
-        void INIT_PLCDATA();
-        void DESTROY_PLC_DATA();
-
-        bool ShareMemory_ReadData(ref byte[] pData, int nSize, int nOffset = 0);
-        bool ShareMemory_WriteData(byte[] pData, int nSize, int nOffset = 0);
-
-        //IPLCProcess
-        int ON_OPEN_PLC(IntPtr lparam);
-
-        void SET_INIT_PARAM(IntPtr lparam, byte[] pData);// { };
-                                                         //-------------------------------
-        void Init();
-        //void Finalize();
-        int GET_PLC_FIELD_DATA(int nFieldId, ref byte[] pData);
-        void GET_PLC_RANDOM_DATA(List<int> vField, ref string strField, ref int nSizeInWord);
-    }
-    class PLCProcessBase : MELSECIOController, IPLCProcessBase
+    //=================================================================
+    //Interface
+    //=================================================================
+    class PLCProcessBase : MELSECIOController
     {
         //私有項目
         private PLCDATA[] m_PLCData;
@@ -127,7 +87,7 @@ namespace ClassLibrary.PLC.Process
 
         private ShareMemory<byte> m_AOIShareMemory;
         private ShareMemory<byte> m_PLCShareMemory;
-        //--------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------
         public PLCProcessBase()
         {
             Init();
@@ -160,20 +120,20 @@ namespace ClassLibrary.PLC.Process
         }
         public override int ON_OPEN_PLC(IntPtr lparam)
         {
-            int lRtn = (int)ErrorCode.ERR_DLL_NOT_LOAD;
+            int lRtn = (int)emErrorCode.ERR_DLL_NOT_LOAD;
             if (m_PLCInitData == null)
             {
                 //first open, read data from shared memory
                 int nDataSize = 0;
-#if !OFF_LINE
-                string tmp_IP = DataHeadlerBase.BATCH_PLCIP;
+#if OFF_LINE
+                string tmp_IP = DataHeadlerBase.BATCH_PLCIP;//IP
 #endif
-                switch ((int)lparam)
+                switch ((int)lparam)//PLC環境參數建立
                 {
                     case (int)WM_APP_CMD.WM_SYST_PARAMINIT_CMD: //CCL參數建立
                         {
                             BATCH_SHARE_SYSTCCL_INITPARAM pData = new BATCH_SHARE_SYSTCCL_INITPARAM();//CCL站體參數
-#if !OFF_LINE
+#if OFF_LINE
                             pData.PLCIP = tmp_IP;
                             pData.TargetNetworkNo = 0;
                             pData.TargetStationNo = 0xFF;
@@ -185,29 +145,28 @@ namespace ClassLibrary.PLC.Process
                     case (int)WM_APP_CMD.WM_SYST_PP_PARAMINIT_CMD: //PP參數建立
                         {
                             BATCH_SHARE_SYSTPP_INITPARAM pData = new BATCH_SHARE_SYSTPP_INITPARAM();//PP站體參數
-#if !OFF_LINE            
-                            pData.m_BATCH_SHARE_SYSTCCL_INITPARAM.PLCIP = tmp_IP;
-                            pData.m_BATCH_SHARE_SYSTCCL_INITPARAM.TargetNetworkNo = 0;
-                            pData.m_BATCH_SHARE_SYSTCCL_INITPARAM.TargetStationNo = 0xFF;
+#if OFF_LINE            
+                            pData.m_CCL_INITPARAM.PLCIP = tmp_IP;
+                            pData.m_CCL_INITPARAM.TargetNetworkNo = 0;
+                            pData.m_CCL_INITPARAM.TargetStationNo = 0xFF;
                             pData.FX5U = true;
 #endif
                             m_PLCInitData = StructToBytes(pData);//鍵入
-
                             nDataSize = Marshal.SizeOf(typeof(BATCH_SHARE_SYSTPP_INITPARAM));//尺寸
                         }
                         break;
                 }
                 //-------------------------------------
-                if (m_PLCInitData != null && nDataSize != 0)//參數成立
+                if (m_PLCInitData != null && nDataSize != 0) //PLC環境參數建立成功
                 {
-                    InsertDebugLog("ON_OPEN_PLC", AOI_LOG_TYPE.LOG_DEBUG);//log
-# if! OFF_LINE
+                    InsertDebugLog("ON_OPEN_PLC", AOI_LOG_Result.LOG_DEBUG);//log
+# if OFF_LINE
                     //string str = L"192.168.2.29";
                     //wcscpy_s(xData.cPLCIP, str.GetBuffer());
                     //xData.lTargetNetworkNo = 0;
                     //xData.lTargetStationNo = 0xFF;*/
 #else
-                    if (USM_ReadData(m_pPLCInitData, nDataSize))
+                    if (AOI_ReadData(ref m_PLCInitData, nDataSize))
 #endif
                     {
                         switch ((int)lparam)
@@ -215,35 +174,39 @@ namespace ClassLibrary.PLC.Process
                             case ((int)WM_APP_CMD.WM_SYST_PARAMINIT_CMD):
                                 {
                                     SET_INIT_PARAM(lparam, m_PLCInitData);//空?
-                                    ON_SET_PLCPARAM(BytesToCCL(m_PLCInitData));//空?
+                                    //ON_SET_PLCPARAM(BytesToCCL(m_PLCInitData));//空?
+                                    ON_SET_PLCPARAM(BytesToInitParam<BATCH_SHARE_SYSTCCL_INITPARAM>(m_PLCInitData));
                                 }
                                 break;
                             case ((int)WM_APP_CMD.WM_SYST_PP_PARAMINIT_CMD):
                                 {
                                     SET_INIT_PARAM(lparam, m_PLCInitData);//空?
-                                    ON_SET_PLCPARAM(BytesToPP(m_PLCInitData).m_BATCH_SHARE_SYSTCCL_INITPARAM);//空?
+                                    //ON_SET_PLCPARAM(BytesToPP(m_PLCInitData).m_CCL_INITPARAM);//空?
+                                    ON_SET_PLCPARAM(BytesToInitParam<BATCH_SHARE_SYSTPP_INITPARAM>(m_PLCInitData).m_CCL_INITPARAM);
                                 }
                                 break;
                         }
                     }
                 }
             }
-            if (m_PLCInitData != null)
+            if (m_PLCInitData != null)//表單參數建立成功
             {
-                string strLog;
                 switch ((int)lparam)
                 {
                     case ((int)WM_APP_CMD.WM_SYST_PARAMINIT_CMD):
                         {
-                            lRtn = OpenDevice(BytesToCCL(m_PLCInitData));
+                            //lRtn = OpenDevice(BytesToCCL(m_PLCInitData));
+                            lRtn = OpenDevice(BytesToInitParam<BATCH_SHARE_SYSTCCL_INITPARAM>(m_PLCInitData));
                         }
                         break;
                     case ((int)WM_APP_CMD.WM_SYST_PP_PARAMINIT_CMD):
                         {
-                            lRtn = OpenDevice(BytesToPP(m_PLCInitData).m_BATCH_SHARE_SYSTCCL_INITPARAM);
+                            //lRtn = OpenDevice(BytesToPP(m_PLCInitData).m_BATCH_SHARE_SYSTCCL_INITPARAM);
+                            lRtn = OpenDevice(BytesToInitParam<BATCH_SHARE_SYSTPP_INITPARAM>(m_PLCInitData).m_CCL_INITPARAM);
                         }
                         break;
                 }
+                string strLog;
                 if (lRtn == 0)
                 {
                     strLog = "open plc success";
@@ -264,7 +227,7 @@ namespace ClassLibrary.PLC.Process
                 PostMessage(m_Wnd_AOI, (int)WM_APP_CMD.WM_GPIO_MSG, wparam, lparam);//PLC to AOI
             }
         }
-        //-----------------
+        //------------------------------------------------------------------------
         public virtual void SET_INIT_PARAM(IntPtr lparam, byte[] pData)
         {
 
@@ -274,15 +237,15 @@ namespace ClassLibrary.PLC.Process
             //將m_PLCData初始化
             int nMax = GetFieldSize();
             m_PLCData = new PLCDATA[nMax];
-            for (int i = 0; i < GetFieldSize(); i++)
+            for (int i = 0; i < nMax; i++)//
             {
                 PLC_DATA_ITEM pItem = GetPLCAddressInfo(i, false);
                 int nDataSize = pItem.DataLength;
-                if (pItem.ValType == PLC_VALUE_TYPE.PLC_TYPE_STRING)
+                if (pItem.ValType == emPLC_DEVICE_TYPE.TYPE_STRING)
                 {
                     nDataSize = pItem.DataLength + 1;//resize
                 }
-                m_PLCData[i].pData = new byte[nDataSize];//設置型別寬度
+                m_PLCData[i].pData = new byte[nDataSize];//設置型別寬度 先不用加入時間
             }
         }
         public virtual void DESTROY_PLC_DATA()
@@ -316,69 +279,50 @@ namespace ClassLibrary.PLC.Process
         {
             return null;//父類不定義 根據後面表單[BATCH]實作override取得實際表單參數數量
         }
-        //-------------------------------------------------------------------------
+        //-----------------------------------------------------------------------
         ///<summary>取得對應ID(field)之值(BYTE)</summary>
-        public virtual byte[] GET_PLC_FIELD_BYTE_VALUE(int nFieldId)
+        public virtual T GET_PLC_FIELD_VALUE<T>(int nFieldId)
         {
-            int nFieldSize = GetFieldSize();
+            int nFieldSize = GetFieldSize();//以最外層override呼叫為主
             if (nFieldId >= 0 && nFieldId < nFieldSize)//範圍內
             {
-                PLC_DATA_ITEM pCur = GetPLCAddressInfo(nFieldId, false);
+                PLC_DATA_ITEM pCur = GetPLCAddressInfo(nFieldId, false);//取得此ID的相關PLC DATA
                 if (pCur != null) //取得
                 {
-                    return m_PLCData[nFieldId].pData;
-                }
-            }
-            return null;
-        }
-        public virtual string GET_PLC_FIELD_VALUE(int nFieldId)
-        {
-            int nFieldSize = GetFieldSize();//最大值
-            string strDes = "";
-            if (nFieldId >= 0 && nFieldId < nFieldSize)//範圍內
-            {
-                PLC_DATA_ITEM pCur = GetPLCAddressInfo(nFieldId, false);
-                if (pCur != null)
-                {
-                    switch (pCur.ValType)//type
+                    switch (typeof(T).Name)
                     {
-                        case PLC_VALUE_TYPE.PLC_TYPE_STRING://string
-                            strDes = $"{(byte[])m_PLCData[nFieldId].pData}";
-                            break;
-                        case PLC_VALUE_TYPE.PLC_TYPE_WORD://word
-                            if (pCur.StartBit != 0xFFFFFFFF && pCur.EndBit != 0xFFFFFFFF)//不是預設值
+                        case "Byte[]":
+                            return (T)(object)m_PLCData[nFieldId].pData;
+                        case "String":
+                            return (T)(object)Encoding.ASCII.GetString(m_PLCData[nFieldId].pData);
+                        case "Int32":
+                            return (T)(object)BitConverter.ToInt32(m_PLCData[nFieldId].pData, 0);
+                        case "UInt32":
+                            return (T)(object)BitConverter.ToUInt32(m_PLCData[nFieldId].pData, 0);
+                        case "Int16":
+                            return (T)(object)BitConverter.ToInt16(m_PLCData[nFieldId].pData, 0);
+                        case "UInt16":
+                            return (T)(object)BitConverter.ToUInt16(m_PLCData[nFieldId].pData, 0);
+                        case "Single":
+                            return (T)(object)BitConverter.ToSingle(m_PLCData[nFieldId].pData, 0);
+                        case "Char[]":
+                            return (T)(object)Encoding.ASCII.GetChars(m_PLCData[nFieldId].pData);
+                        case "Single[]":
+                            //byte[] to float[]
+                            int floatCount = m_PLCData[nFieldId].pData.Length / 4;
+                            float[] floatArray = new float[floatCount];//每个 float 占用 4 个字节
+                            for (int i = 0; i < floatCount; i++)
                             {
-                                //int nValue = (int)*(unsigned short*)m_PLCData[nFieldId].pData;
-                                int nValue = BitConverter.ToUInt16(m_PLCData[nFieldId].pData, 0); // 假設 pData 是 ushort
-                                int nTemp = 0;
-                                for (uint i = pCur.StartBit; i <= pCur.EndBit; i++)
-                                {
-                                    nTemp |= (nValue & (ushort)1 << (int)i);
-                                }
-                                nTemp >>= (int)pCur.StartBit;
-                                strDes = $"{nTemp}";
+                                floatArray[i] = BitConverter.ToSingle(m_PLCData[nFieldId].pData, i * 4); // 每次转换 4 个字节为一个 float
                             }
-                            else
-                            {
-                                if (pCur.Signed)
-                                    strDes = BitConverter.ToInt16(m_PLCData[nFieldId].pData, 0).ToString();
-                                else
-                                    strDes = BitConverter.ToUInt16(m_PLCData[nFieldId].pData, 0).ToString();
-                            }
-                            break;
-                        case PLC_VALUE_TYPE.PLC_TYPE_FLOAT:
-                            strDes = BitConverter.ToSingle(m_PLCData[nFieldId].pData, 0).ToString("F2");
-                            break;
-                        case PLC_VALUE_TYPE.PLC_TYPE_DWORD:
-                            strDes = BitConverter.ToInt32(m_PLCData[nFieldId].pData, 0).ToString();
-                            break;
-                        case PLC_VALUE_TYPE.PLC_TYPE_BIT:
-                            strDes = BitConverter.ToInt16(m_PLCData[nFieldId].pData, 0).ToString();
-                            break;
+                            return (T)(object)floatArray;
+                        default:
+                            throw new ArgumentException("Unsupported type");
                     }
                 }
+                throw new ArgumentException("未取得");
             }
-            return strDes;
+            throw new ArgumentException("out of range");
         }
         public virtual string GET_PLC_FIELD_TIME(int nFieldId)
         {
@@ -404,7 +348,7 @@ namespace ClassLibrary.PLC.Process
                 PLC_DATA_ITEM pCur = GetPLCAddressInfo(nFieldId, false);
                 if (pCur != null)
                 {
-                    if (pCur.ValType == PLC_VALUE_TYPE.PLC_TYPE_BIT && pCur.DevType == "D")
+                    if (pCur.ValType == emPLC_DEVICE_TYPE.TYPE_BIT && pCur.DevType == "D")
                     {
                         //special case for D. ex:200.F
                         if (pCur.StartBit != 0xFFFFFFFF && pCur.StartBit == pCur.EndBit)
@@ -437,10 +381,10 @@ namespace ClassLibrary.PLC.Process
             }
             return strDes;
         }
-        public virtual PLC_ACTION_TYPE GET_PLC_FIELD_ACTION(int nFieldId)
+        public virtual emPLC_ACTION_TYPE GET_PLC_FIELD_ACTION(int nFieldId)
         {
             int nFieldSize = GetFieldSize();
-            PLC_ACTION_TYPE eType = PLC_ACTION_TYPE.ACTION_NOTIFY;
+            emPLC_ACTION_TYPE eType = emPLC_ACTION_TYPE.ACTION_NOTIFY;
             if (nFieldId >= 0 && nFieldId < nFieldSize)
             {
                 PLC_DATA_ITEM pCur = GetPLCAddressInfo(nFieldId, false);
@@ -452,16 +396,16 @@ namespace ClassLibrary.PLC.Process
             return eType;
         }
         //-----------------------------------------------------------------------
-        public virtual int GET_PLC_FIELD_DATA(int nFieldId)
+        public virtual int REFLASH_PLC_FIELD_DATA(int nFieldId)
         {
-            return GET_PLC_FIELD_DATA(nFieldId, ref m_PLCData[nFieldId].pData);
+            return REFLASH_PLC_FIELD_DATA(nFieldId, ref m_PLCData[nFieldId].pData);
         }
-        public virtual int GET_PLC_FIELD_DATA(List<int> vField)
+        public virtual int REFLASH_PLC_FIELD_DATA(List<int> vField)
         {
-            int lRtn = (int)ErrorCode.ERR_DLL_NOT_LOAD;
+            int lRtn = (int)emErrorCode.ERR_DLL_NOT_LOAD;
             string strField = "";
             int nTotal = 0;
-            GET_PLC_RANDOM_DATA(vField, ref strField, ref nTotal);
+            REFLASH_PLC_RANDOM_DATA(vField, ref strField, ref nTotal);
 
             if (nTotal > 0)
             {
@@ -498,38 +442,43 @@ namespace ClassLibrary.PLC.Process
             }
             return lRtn;
         }
-        public virtual int GET_PLC_FIELD_DATA(int nFieldId, ref byte[] pData)
+        public virtual int REFLASH_PLC_FIELD_DATA(int nFieldId, ref byte[] pData)
         {
-            int lRtn = (int)ErrorCode.ERR_DLL_NOT_LOAD;
+            int lRtn = (int)emErrorCode.ERR_DLL_NOT_LOAD;
             PLC_DATA_ITEM pItem = GetPLCAddressInfo(nFieldId, false);//整個對應ID資料讀回來
             if (pItem != null)//成功
             {
                 switch (pItem.ValType)
                 {
-                    case PLC_VALUE_TYPE.PLC_TYPE_FLOAT:
+                    case emPLC_DEVICE_TYPE.TYPE_FLOAT:
                         float[] tmp_floatData = new float[pItem.DataLength];
                         lRtn = ReadAddress(pItem.DevType, pItem.Address, 1, ref tmp_floatData);
-                        pData = FloatToByte(tmp_floatData);
+                        //pData = FloatToByte(tmp_floatData);
+                        pData = GetByteArray(tmp_floatData);
                         break;
-                    case PLC_VALUE_TYPE.PLC_TYPE_STRING:
+                    case emPLC_DEVICE_TYPE.TYPE_STRING:
                         char[] tmp_charData = new char[pItem.DataLength];
                         lRtn = ReadAddress(pItem.DevType, pItem.Address, pItem.DataLength, ref tmp_charData);
-                        pData = CharToByte(tmp_charData);
+                        //pData = CharToByte(tmp_charData);
+                        pData = GetByteArray(tmp_charData);
                         break;
-                    case PLC_VALUE_TYPE.PLC_TYPE_WORD:
+                    case emPLC_DEVICE_TYPE.TYPE_WORD:
                         char[] tmp_WORDData = new char[pItem.DataLength];
                         lRtn = ReadAddress(pItem.DevType, pItem.Address, 1, ref tmp_WORDData);
-                        pData = CharToByte(tmp_WORDData);
+                        //pData = CharToByte(tmp_WORDData);
+                        pData = GetByteArray(tmp_WORDData);
                         break;
-                    case PLC_VALUE_TYPE.PLC_TYPE_DWORD:
+                    case emPLC_DEVICE_TYPE.TYPE_DWORD:
                         char[] tmp_DWORDData = new char[pItem.DataLength];
                         lRtn = ReadAddress(pItem.DevType, pItem.Address, 2, ref tmp_DWORDData);
-                        pData = CharToByte(tmp_DWORDData);
+                        //pData = CharToByte(tmp_DWORDData);
+                        pData = GetByteArray(tmp_DWORDData);
                         break;
-                    case PLC_VALUE_TYPE.PLC_TYPE_BIT:
+                    case emPLC_DEVICE_TYPE.TYPE_BIT:
                         short[] tmp_shortData = new short[pItem.DataLength];
                         lRtn = ReadOneAddress(pItem.DevType, pItem.Address, ref tmp_shortData);
-                        pData = shortToByte(tmp_shortData);
+                        //pData = shortToByte(tmp_shortData);
+                        pData = GetByteArray(tmp_shortData);
                         break;
                 }
                 if (lRtn == 0)
@@ -540,33 +489,7 @@ namespace ClassLibrary.PLC.Process
             }
             return lRtn;
         }
-        private byte[] CharToByte(char[] tmp_charData)
-        {
-            byte[] byteArray = new byte[tmp_charData.Length * 4];
-            Buffer.BlockCopy(tmp_charData, 0, byteArray, 0, byteArray.Length);
-            return byteArray;
-        }
-        private byte[] FloatToByte(float[] tmp_floatData)
-        {
-            byte[] byteArray = new byte[tmp_floatData.Length * 4];
-            Buffer.BlockCopy(tmp_floatData, 0, byteArray, 0, byteArray.Length);
-            return byteArray;
-        }
-        private byte[] UshortToByte(ushort[] ushortData)
-        {
-            byte[] byteArray = new byte[ushortData.Length * 2]; // 每個 ushort 轉換為兩個字節
-            Buffer.BlockCopy(ushortData, 0, byteArray, 0, byteArray.Length);
-            return byteArray;
-        }
-        private byte[] shortToByte(short[] shortData)
-        {
-            byte[] byteArray = new byte[shortData.Length * 2]; // 每個 ushort 轉換為兩個字節
-            Buffer.BlockCopy(shortData, 0, byteArray, 0, byteArray.Length);
-            return byteArray;
-        }
-        //----------------------------------------------------------
-        ///<summary>[READ_RANDOM2][多數]取得對應ID之PLC資料</summary>
-        public virtual void GET_PLC_RANDOM_DATA(List<int> vField, ref string strField,ref  int nSizeInWord)
+        public virtual void REFLASH_PLC_RANDOM_DATA(List<int> vField, ref string strField, ref int nSizeInWord)
         {
             string strTemp = "wrong value";
             foreach (var i in vField)//共vField.length
@@ -576,16 +499,16 @@ namespace ClassLibrary.PLC.Process
                 {
                     switch (pItem.ValType)
                     {
-                        case PLC_VALUE_TYPE.PLC_TYPE_WORD:
-                        case PLC_VALUE_TYPE.PLC_TYPE_BIT:
-                        case PLC_VALUE_TYPE.PLC_TYPE_FLOAT:
-                        case PLC_VALUE_TYPE.PLC_TYPE_DWORD:
-                        case PLC_VALUE_TYPE.PLC_TYPE_STRING:
+                        case emPLC_DEVICE_TYPE.TYPE_WORD:
+                        case emPLC_DEVICE_TYPE.TYPE_BIT:
+                        case emPLC_DEVICE_TYPE.TYPE_FLOAT:
+                        case emPLC_DEVICE_TYPE.TYPE_DWORD:
+                        case emPLC_DEVICE_TYPE.TYPE_STRING:
                             int nSize = pItem.DataLength / 2;
                             nSizeInWord += nSize;//大小疊加
                             for (int j = 0; j < nSize; j++)
                             {
-                                if (pItem.ValType == PLC_VALUE_TYPE.PLC_TYPE_BIT && pItem.DevType == "D")
+                                if (pItem.ValType == emPLC_DEVICE_TYPE.TYPE_BIT && pItem.DevType == "D")
                                 { //special case for D. ex:200.F
                                     if (pItem.StartBit != 0xFFFFFFFF && pItem.StartBit == pItem.EndBit)
                                     {
@@ -617,44 +540,102 @@ namespace ClassLibrary.PLC.Process
             }
         }
         //-----------------------------------------------------------------------
-        public virtual int SET_PLC_FIELD_DATA(int nFieldId, int nSizeInByte, byte[] pData)
+        public virtual int SET_PLC_FIELD_DATA<T>(int nFieldId, int nSizeInByte, T pData)
         {
-            int lRtn = (int)ErrorCode.ERR_DLL_NOT_LOAD;
+            int lRtn = (int)emErrorCode.ERR_DLL_NOT_LOAD;
             int nFieldSize = GetFieldSize();
-            string strDes;
+
             if (nFieldId >= 0 && nFieldId < nFieldSize)
             {
                 PLC_DATA_ITEM pItem = GetPLCAddressInfo(nFieldId, false);
                 //初始化
                 byte[] pOldValue = new byte[nSizeInByte];
-
                 pOldValue = m_PLCData[nFieldId].pData;//先將原來資料複製一份
-
+                //--------------------------------------------------------------
+                //依類型轉換為byte[]
+                byte[] tmpByteArray;
+#if SHOW_PERFORMANCE
+                Stopwatch stopwatch = new Stopwatch();
+                long frequency = Stopwatch.Frequency;// 获取性能频率
+                stopwatch.Start();// 获取起始时间
+#endif
+                switch (typeof(T).Name)
+                {
+                    case "Byte[]":
+                        tmpByteArray = pData as byte[];
+                        break;
+                    case "String":
+                        string tmpString = pData as string;
+                        tmpByteArray = Encoding.UTF8.GetBytes(tmpString);
+                        break;
+                    case "Int32":
+                        int tmpInt = (int)(object)pData;
+                        tmpByteArray = BitConverter.GetBytes(tmpInt);
+                        break;
+                    case "UInt32":
+                        uint tmpUInt = (uint)(object)pData;
+                        tmpByteArray = BitConverter.GetBytes(tmpUInt);
+                        break;
+                    case "Int16":
+                        short tmpShort = (short)(object)pData;
+                        tmpByteArray = BitConverter.GetBytes(tmpShort);
+                        break;
+                    case "UInt16":
+                        ushort tmpUShort = (ushort)(object)pData;
+                        tmpByteArray = BitConverter.GetBytes(tmpUShort);
+                        break;
+                    case "Single":
+                        float tmpFloat = (float)(object)pData;
+                        tmpByteArray = BitConverter.GetBytes(tmpFloat);
+                        break;
+                    case "Char[]":
+                        char[] tmpCharArray = (char[])(object)pData;
+                        tmpByteArray = Encoding.ASCII.GetBytes(tmpCharArray);
+                        break;
+                    case "Single[]":
+                        float[] tmpfloatArray = (float[])(object)pData;
+                        tmpByteArray = new byte[tmpfloatArray.Length * sizeof(float)];//給大小
+                        Buffer.BlockCopy(tmpfloatArray, 0, tmpByteArray, 0, tmpByteArray.Length);
+                        break;
+                    default:
+                        throw new ArgumentException("Unsupported type 輸入型別未定義");
+                }
+                //--------------------------------------------------------------
+                //使直接轉WriteAddress(short[]型或short)
                 switch (pItem.ValType)
                 {
-                    case PLC_VALUE_TYPE.PLC_TYPE_STRING:
-                        if (TryPraseChar(pData, out char[] charArray))
-                        lRtn = WriteAddress(pItem.DevType, pItem.Address, nSizeInByte, ref charArray);
+                    case emPLC_DEVICE_TYPE.TYPE_STRING:
+                    case emPLC_DEVICE_TYPE.TYPE_WORD:
+                    case emPLC_DEVICE_TYPE.TYPE_DWORD:
+                    case emPLC_DEVICE_TYPE.TYPE_FLOAT:
+                        //組合byte[]轉為short[]
+                        if (TryPraseShort(tmpByteArray, out short[] shortArray))
+                        {
+                            lRtn = WriteAddress(pItem.DevType, pItem.Address, nSizeInByte, ref shortArray);
+                        }
                         break;
-                    case PLC_VALUE_TYPE.PLC_TYPE_WORD:
-                    case PLC_VALUE_TYPE.PLC_TYPE_DWORD:
-                        if (TryPraseShort(pData, out short[] shortArray))
-                        lRtn = WriteAddress(pItem.DevType, pItem.Address, nSizeInByte, ref shortArray);
-                        break;
-                    case PLC_VALUE_TYPE.PLC_TYPE_FLOAT:
-                        if (TryPraseFloat(pData, out float[] floatArray))
-                        lRtn = WriteAddress(pItem.DevType, pItem.Address, nSizeInByte, ref floatArray);
-                        break;
-                    case PLC_VALUE_TYPE.PLC_TYPE_BIT:
-                        string strDevice = GET_PLC_FIELD_ADDRESS(nFieldId);
-                        if(TryPraseSigleShort(pData, out short shortvalue))
-                        lRtn = WriteOneAddress(strDevice, ref shortvalue);
+                    case emPLC_DEVICE_TYPE.TYPE_BIT:
+                        //判斷short[]是否僅1位大小
+                        if (TryPraseShort(tmpByteArray, out short[] shortValue))
+                        {
+                            string strDevice = GET_PLC_FIELD_ADDRESS(nFieldId);
+                            if (shortValue.Length == 1)//僅一個
+                            {
+                                short tmpSingleShort = shortValue[0];
+                                lRtn = WriteOneAddress(strDevice, ref tmpSingleShort);
+                            }
+                        }
                         break;
                 }
-                if (lRtn == 0)
+#if SHOW_PERFORMANCE
+                stopwatch.Stop();// 获取结束时间
+                double elapsedTimeSeconds = stopwatch.ElapsedTicks / Stopwatch.Frequency;
+                Console.WriteLine($"write one field : {elapsedTimeSeconds} \n");
+#endif
+                if (lRtn == 0)//變更軟元件資料內容
                 {
                     m_PLCData[nFieldId].xTime = DateTime.Now;
-                    ON_PLCDATA_CHANGE(nFieldId, pData, pItem.DataLength);
+                    ON_PLCDATA_CHANGE(nFieldId, tmpByteArray, pItem.DataLength);
                 }
                 else
                 {
@@ -675,73 +656,16 @@ namespace ClassLibrary.PLC.Process
             }
             return lRtn;
         }
-        private bool TryPraseSigleShort(byte[] byteArray, out short shortvalue)
-        {
-            if (byteArray.Length != 2)
-            {
-                throw new ArgumentException("Byte array length must be 2 for a short.");
-            }
-            shortvalue = BitConverter.ToInt16(byteArray, 0);
-            return true;
-        }
-        private bool TryPraseFloat(byte[] byteArray, out float[] floatArray)
-        {
-            floatArray = new float[byteArray.Length / 4];
-            if (byteArray.Length % 4 != 0)
-            {
-                throw new ArgumentException("Byte array length must be a multiple of 4.");
-            }
-            for (int i = 0; i < floatArray.Length; i++)
-            {
-                floatArray[i] = BitConverter.ToSingle(byteArray, i * 4);
-            }
-            return true;
-        }
-        private bool TryPraseChar(byte[] byteArray, out char[] charArray)
-        {
-            charArray = System.Text.Encoding.ASCII.GetChars(byteArray);
-            return true;
-        }
-        private bool TryPraseShort(byte[] byteArray, out short[] shortArray)
-        {
-            shortArray = new short[byteArray.Length / 2];
-            if (byteArray.Length % 2 != 0)
-            {
-                throw new ArgumentException("Byte array length must be a multiple of 2.");
-            }
-            Buffer.BlockCopy(byteArray, 0, shortArray, 0, byteArray.Length);
-            return true;
-        }
-        private bool TryPraseUShort(byte[] byteArray, out ushort[] ushortArray)
-        {
-            ushortArray = new ushort[byteArray.Length / 2];
-            if (byteArray.Length % 2 != 0)
-            {
-                throw new ArgumentException("Byte array length must be a multiple of 2.");
-            }
-            Buffer.BlockCopy(byteArray, 0, ushortArray, 0, byteArray.Length);
-            return true;
-        }
-        private bool TryPraseUShort(byte[] byteArray, out ushort singleushort)
-        {
-            if (byteArray.Length % 2 != 0)
-            {
-                throw new ArgumentException("Byte array length must be a multiple of 2.");
-            }
-            singleushort = BitConverter.ToUInt16(byteArray, 0);
-            return true;
-        }
-
         public virtual int SET_PLC_FIELD_DATA(List<int> vField, byte[] pData)
         {
-            int lRtn = (int)ErrorCode.ERR_DLL_NOT_LOAD;
-            string strField="";
+            int lRtn = (int)emErrorCode.ERR_DLL_NOT_LOAD;
+            string strField = "";
             int nSizeInWord = 0;
             //                   List   D100 D101..  長度
-            GET_PLC_RANDOM_DATA(vField, ref strField, ref nSizeInWord);
-            if (nSizeInWord!=0&& TryPraseShort(pData,out short[] shortarray ))
+            REFLASH_PLC_RANDOM_DATA(vField, ref strField, ref nSizeInWord);
+            if (nSizeInWord != 0 && TryPraseShort(pData, out short[] shortarray))
             {
-                
+
                 lRtn = WriteRandom(ref strField, nSizeInWord, ref shortarray);
             }
             return lRtn;
@@ -749,11 +673,11 @@ namespace ClassLibrary.PLC.Process
         //-----------------------------------------------------------------------
         public virtual int SET_PLC_FIELD_DATA_BIT(int nFieldStart, int nFieldEnd, int nSizeInByte, byte[] pData)
         {
-            int lRtn = (int)ErrorCode.ERR_DLL_NOT_LOAD;
+            int lRtn = (int)emErrorCode.ERR_DLL_NOT_LOAD;
             int nFieldSize = GetFieldSize();
             PLC_DATA_ITEM pWriteItem = GetPLCAddressInfo(nFieldStart, false);
-            TryPraseUShort(pData, out ushort[] ushortArray);
-            lRtn = WriteAddress(pWriteItem.DevType, pWriteItem.Address, nSizeInByte, ref ushortArray);
+            TryPraseShort(pData, out short[] shortArray);
+            lRtn = WriteAddress(pWriteItem.DevType, pWriteItem.Address, nSizeInByte, ref shortArray);
 
             if (lRtn == 0)
             {
@@ -783,16 +707,16 @@ namespace ClassLibrary.PLC.Process
         }
         public virtual int SET_PLC_FIELD_DATA_BIT(int nField, int nBitPosition, bool bValue)
         {
-            int lRtn = (int)ErrorCode.ERR_DLL_NOT_LOAD;
+            int lRtn = (int)emErrorCode.ERR_DLL_NOT_LOAD;
 
             PLC_DATA_ITEM pCur = GetPLCAddressInfo(nField, false);
-            if (pCur!=null)
+            if (pCur != null)
             {
                 string strDevice;
                 strDevice = $"{pCur.DevType}{pCur.Address}.{nBitPosition}";
                 short myShort = bValue ? (short)1 : (short)0;
                 lRtn = WriteOneAddress(strDevice, ref myShort);
-                if (pCur.DataLength == 2) 
+                if (pCur.DataLength == 2)
                 {
                     throw new ArgumentException();
                 }
@@ -800,11 +724,11 @@ namespace ClassLibrary.PLC.Process
 
                 if (lRtn == 0)
                 {
-                    TryPraseUShort(m_PLCData[nField].pData, out ushort wValue);
+                    TryPraseShort(m_PLCData[nField].pData, out short wValue);
                     if (bValue)
-                        wValue |= (ushort)(1 << nBitPosition);
+                        wValue |= (short)(1 << nBitPosition);
                     else
-                        wValue &= (ushort)~(1 << nBitPosition);
+                        wValue &= (short)~(1 << nBitPosition);
 
                     m_PLCData[nField].pData = BitConverter.GetBytes(wValue);
                     ON_PLCDATA_CHANGE(nField, m_PLCData[nField].pData, pCur.DataLength);
@@ -822,77 +746,132 @@ namespace ClassLibrary.PLC.Process
             m_FlushAnyway = bFlushAnyway;
         }
         //-----------------------------------------------------------------------
-        public virtual bool ShareMemory_ReadData(ref byte[] pData, int nSize, int nOffset = 0)
+        public virtual bool AOI_ReadData(ref byte[] pData, int nSize, int nOffset = 0)
         {
-            if (m_AOIShareMemory!=null)//初始化有成功
+            if (m_AOIShareMemory != null)//初始化有成功
             {
-                pData = m_AOIShareMemory.ReadData(nSize, nOffset);
-                //m_AOIShareMemory.ReadData(pData, nSize, nOffset);//指標
+                pData = m_AOIShareMemory.ReadData(nSize, nOffset);//指標
                 return true;
             }
             return false;
         }
-        public virtual bool ShareMemory_WriteData(byte[] pData, int nSize, int nOffset = 0)
+        public virtual bool PLC_WriteData(byte[] pData, int nSize, int nOffset = 0)
         {
-            if (m_PLCShareMemory!=null)
+            if (m_PLCShareMemory != null)
             {
                 m_PLCShareMemory.WriteData(pData, nSize, nOffset);
-                //m_pPLCUsm->WriteData(pData, nSize, nOffset);
                 return true;
             }
             return false;
         }
-
-        //Batch <=> byte[]----------------------------------------------------
-        private byte[] StructToBytes(BATCH_SHARE_SYSTCCL_INITPARAM pData)
+        //Batch <=> byte[]-------------------------------------------------------
+        public byte[] StructToBytes<T>(T pData) where T : struct
         {
             int size = Marshal.SizeOf(pData);
             byte[] bytes = new byte[size];
             IntPtr ptr = Marshal.AllocHGlobal(size);
-
-            Marshal.StructureToPtr(pData, ptr, true);
-            Marshal.Copy(ptr, bytes, 0, size);
-            Marshal.FreeHGlobal(ptr);
-
+            try
+            {
+                Marshal.StructureToPtr(pData, ptr, true);
+                Marshal.Copy(ptr, bytes, 0, size);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(ptr);
+            }
             return bytes;
         }
-        private byte[] StructToBytes(BATCH_SHARE_SYSTPP_INITPARAM pData)
+        private byte[] GetByteArray<T>(T pData)
         {
-            int size = Marshal.SizeOf(pData);
-            byte[] bytes = new byte[size];
-            IntPtr ptr = Marshal.AllocHGlobal(size);
-
-            Marshal.StructureToPtr(pData, ptr, true);
-            Marshal.Copy(ptr, bytes, 0, size);
-            Marshal.FreeHGlobal(ptr);
-
-            return bytes;
+            byte[] byteArray;
+            switch (typeof(T).Name)
+            {
+                case "Char[]":
+                    {
+                        char[] charArray = pData as char[];
+                        //2個字節
+                        byteArray = new byte[charArray.Length * sizeof(char)];
+                        Buffer.BlockCopy(charArray, 0, byteArray, 0, byteArray.Length);
+                        return byteArray;
+                    }
+                case "Sing[]":
+                    {
+                        float[] floatArray = pData as float[];
+                        //2個字節
+                        byteArray = new byte[floatArray.Length * sizeof(float)];
+                        Buffer.BlockCopy(floatArray, 0, byteArray, 0, byteArray.Length);
+                        return byteArray;
+                    }
+                case "Int16[]":
+                    {
+                        short[] shortArray = pData as short[];
+                        //2個字節
+                        byteArray = new byte[shortArray.Length * sizeof(short)];
+                        Buffer.BlockCopy(shortArray, 0, byteArray, 0, byteArray.Length);
+                        return byteArray;
+                    }
+                default:
+                    throw new ArgumentException("Unsupported type 輸入型別未定義");
+            }
         }
-        private BATCH_SHARE_SYSTCCL_INITPARAM BytesToCCL(byte[] bytes)
+        private bool TryPraseShort(byte[] byteArray, out short[] shortArray)
         {
-            BATCH_SHARE_SYSTCCL_INITPARAM data;
-            int size = Marshal.SizeOf(typeof(BATCH_SHARE_SYSTCCL_INITPARAM));
-
-            IntPtr ptr = Marshal.AllocHGlobal(size);
-            Marshal.Copy(bytes, 0, ptr, size);
-
-            data = Marshal.PtrToStructure<BATCH_SHARE_SYSTCCL_INITPARAM>(ptr);
-            Marshal.FreeHGlobal(ptr);
-
-            return data;
+            shortArray = new short[byteArray.Length / 2];
+            if (byteArray.Length % 2 != 0)
+            {
+                return false;
+            }
+            for (int i = 0; i < shortArray.Length; i++)
+            {
+                shortArray[i] = (short)(byteArray[i * 2] | byteArray[i * 2 + 1] << 8); // 将两个字节合并为一个 short
+            }
+            return true;
         }
-        private BATCH_SHARE_SYSTPP_INITPARAM BytesToPP(byte[] bytes)
+        private bool TryPraseShort(byte[] byteArray, out short singleshort)
         {
-            BATCH_SHARE_SYSTPP_INITPARAM data;
-            int size = Marshal.SizeOf(typeof(BATCH_SHARE_SYSTPP_INITPARAM));
+            singleshort = new short();
+            if (byteArray.Length % 2 != 0)
+            {
+                return false;
+            }
+            singleshort = BitConverter.ToInt16(byteArray, 0);
+            return true;
+        }
+        //------------------------------------------------------------------------------------
+        private T BytesToInitParam<T>(byte[] bytes)
+        {
+            switch (typeof(T).Name)
+            {
+                case "BATCH_SHARE_SYSTCCL_INITPARAM":
+                    {
+                        //BATCH_SHARE_SYSTCCL_INITPARAM data;
+                        int size = Marshal.SizeOf(typeof(BATCH_SHARE_SYSTCCL_INITPARAM));
 
-            IntPtr ptr = Marshal.AllocHGlobal(size);
-            Marshal.Copy(bytes, 0, ptr, size);
+                        IntPtr ptr = Marshal.AllocHGlobal(size);
+                        Marshal.Copy(bytes, 0, ptr, size);
 
-            data = Marshal.PtrToStructure<BATCH_SHARE_SYSTPP_INITPARAM>(ptr);
-            Marshal.FreeHGlobal(ptr);
+                        var data = Marshal.PtrToStructure<BATCH_SHARE_SYSTCCL_INITPARAM>(ptr);
+                        Marshal.FreeHGlobal(ptr);
 
-            return data;
+                        return (T)(object)data;
+                    }
+                case "BATCH_SHARE_SYSTPP_INITPARAM":
+                    {
+                        BATCH_SHARE_SYSTPP_INITPARAM data;
+                        int size = Marshal.SizeOf(typeof(BATCH_SHARE_SYSTPP_INITPARAM));
+
+                        IntPtr ptr = Marshal.AllocHGlobal(size);
+                        Marshal.Copy(bytes, 0, ptr, size);
+
+                        data = Marshal.PtrToStructure<BATCH_SHARE_SYSTPP_INITPARAM>(ptr);
+                        Marshal.FreeHGlobal(ptr);
+
+                        return (T)(object)data;
+                    }
+                default:
+                    Console.WriteLine("不支援的表單格式");
+                    throw new ArgumentException("Unsupported Batch");
+            }
         }
     }
 

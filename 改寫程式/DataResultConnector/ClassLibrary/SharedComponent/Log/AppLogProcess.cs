@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace ClassLibrary.SharedComponent.Log
 {
-
     public class AppLogProcess : AppLogBase
     {
         AoiLogThread m_pLogThread;
@@ -70,7 +69,7 @@ namespace ClassLibrary.SharedComponent.Log
                 }
             }
         }
-        public void InsertDebugLog(string xMsg, AOI_LOG_TYPE xType = AOI_LOG_TYPE.LOG_SYSTEM)
+        public void InsertDebugLog(string xMsg, AOI_LOG_Result xType = AOI_LOG_Result.LOG_SYSTEM)
         {
             if (m_pLogThread != null)
             {

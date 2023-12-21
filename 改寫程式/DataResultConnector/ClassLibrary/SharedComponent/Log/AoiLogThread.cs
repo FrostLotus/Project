@@ -34,7 +34,7 @@ namespace ClassLibrary.SharedComponent.Log
 			taskThread.Start();
 		}
 		//-----------------------------------------------------------------------
-		public void LogMessage(string logMessage, AOI_LOG_TYPE xType)
+		public void LogMessage(string logMessage, AOI_LOG_Result xType)
 		{
 			string pMsg = logMessage;
 			InsertLog(pMsg, xType);

@@ -16,13 +16,13 @@ namespace ClassLibrary.PLC.Base
 {
     
     /// <summary>錯誤代碼</summary>
-    public enum ErrorCode
+    public enum emErrorCode
     {
         ERR_DLL_NOT_LOAD = 9999,
         ERR_PARAM_ERROR = 9998
     }
     /// <summary>CPU系列</summary>
-    public enum CPU_SERIES
+    public enum emCPU_SERIES
     {
         Q_SERIES,           //Q系列
         FX3U_SERIES,        //FX3U系列
@@ -37,61 +37,20 @@ namespace ClassLibrary.PLC.Base
         public byte DeviceCode;
         public byte Value;
     };
-    //==============================================================
-    public interface IMELSECIOController
-    {
-        string GetDevicestring(GPIO_ITEM xItem);
-        string GetCPUType();
-        string GetPLCIP();// { return m_strIp; }
-        int OpenDevice(BATCH_SHARE_SYSTCCL_INITPARAM xData);
-        void SetMXParam(IActProgType pParam, BATCH_SHARE_SYSTCCL_INITPARAM xData);// = 0;
-
-        //內部功能
-        //void Finalize();
-        //void Init();
-        //void LIB_LOAD();
-        //void LIB_FREE();
-        //void ListAllIP();
-        //CPU_SERIES GetCPU();// { return CPU_SERIES::Q_SERIES; }
-
-
-#if BATCH_READ_WRITE
-        int ReadAddress(string strDevType, int nStartDeviceNumber, int nSize, ref ushort[] pValue);
-        int ReadAddress(string strDevType, int nStartDeviceNumber, int nSize, ref float[] pValue);
-        int ReadAddress(string strDevType, int nStartDeviceNumber, int nLength, ref char[] pValue);
-        int ReadAddress(string strDevType, int nStartDeviceNumber, int nSizeInWord, ref short[] ppValue); // must delete after use
-        int ReadRandom(string strList, int nSize, ref short[] pData);
-        int ReadOneAddress(string strDevType, int nStartDeviceNumber, ref short[] pValue);
-
-        int WriteAddress(string strDevType, int nDeviceNumber, int nSizeInByte, ref ushort[] pWrite);
-        int WriteAddress(string strDevType, int nDeviceNumber, int nSizeInByte, ref float[] pWrite);
-        int WriteAddress(string strDevType, int nDeviceNumber, int nSizeInByte, ref char[] pWrite);
-        int WriteAddress(string strDevType, int nStartDeviceNumber, int nSizeInWord, ref short[] pValue);
-        int WriteRandom(ref string strList, int nSize, ref short[] pData);
-        int WriteOneAddress(string strDevice, ref short nValue);
-        string GetErrorMessage(int lErrCode);
-#endif
-        
-        
-
-        
-
-        
-    }
-    //---------------------------------------------------------------------------
-    public class MELSECIOController : IPLCProcess, IMELSECIOController
+    //=================================================================
+    //Interface
+    //=================================================================
+    public class MELSECIOController : IPLCProcess
     {
         private ShareMemory<byte> m_ShareMemory;
         private AppLogProcess m_LogProcess;
         private IActProgType m_pIProgType;
         private IActSupportMsg m_pISupportMsg;
-        private CPU_SERIES m_eCPU;
+        private emCPU_SERIES m_eCPU;
         private string m_strIp;
         private bool m_bInit;
         private object m_Lock;
         private GPIO_ITEM[] m_xGPIO;
-
-        
         //---------------------------------------------------------------
         public MELSECIOController()
         {
@@ -118,13 +77,13 @@ namespace ClassLibrary.PLC.Base
         {
             switch (GetCPU())
             {
-                case CPU_SERIES.FX3U_SERIES:
+                case emCPU_SERIES.FX3U_SERIES:
                     return "FX3U Series";
-                case CPU_SERIES.FX5U_SERIES:
+                case emCPU_SERIES.FX5U_SERIES:
                     return "FX5U Series";
-                case CPU_SERIES.R_SERIES:
+                case emCPU_SERIES.R_SERIES:
                     return "R Series";
-                case CPU_SERIES.Q_SERIES:
+                case emCPU_SERIES.Q_SERIES:
                     return "Q Series";
                 default:
                     return "Q Series(OR Wrong)";
@@ -140,9 +99,9 @@ namespace ClassLibrary.PLC.Base
                 m_pISupportMsg = null;
             }
         }
-        public virtual CPU_SERIES GetCPU()
+        public virtual emCPU_SERIES GetCPU()
         {
-            return CPU_SERIES.Q_SERIES;
+            return emCPU_SERIES.Q_SERIES;
         }
         public virtual void SetMXParam(IActProgType pParam, BATCH_SHARE_SYSTCCL_INITPARAM xData)
         {
@@ -155,7 +114,7 @@ namespace ClassLibrary.PLC.Base
             bool bLog = m_strIp.Length == 0; //only log information on first connect, igonre logging on reconnect event
             m_strIp = xData.PLCIP;
 # if _DEBUG
-            m_strIp = L"192.168.2.99";
+            m_strIp = "192.168.2.99";
 #endif
             //log Param
             string strMsg;
@@ -165,7 +124,7 @@ namespace ClassLibrary.PLC.Base
                 if (bLog)
                 {
                     strMsg = $"{strInfo}: {lData}";
-                    m_LogProcess.InsertDebugLog(strMsg, AOI_LOG_TYPE.LOG_SYSTEM);//這邊會是
+                    m_LogProcess.InsertDebugLog(strMsg, AOI_LOG_Result.LOG_SYSTEM);//這邊會是
                     ON_PLC_NOTIFY(strMsg);
                 }
             };
@@ -175,7 +134,7 @@ namespace ClassLibrary.PLC.Base
             LogData("PCNetworkNo", xData.PCNetworkNo);
             LogData("PCStationNo", xData.PCStationNo);
 
-            int lRtn = (int)ErrorCode.ERR_DLL_NOT_LOAD;
+            int lRtn = (int)emErrorCode.ERR_DLL_NOT_LOAD;
             if (m_pIProgType != null)
             {
                 m_pIProgType.ActHostAddress = m_strIp;//鍵入IP
@@ -223,10 +182,10 @@ namespace ClassLibrary.PLC.Base
                 case 0:
                     strRtn = "Success";
                     break;
-                case (int)ErrorCode.ERR_DLL_NOT_LOAD:
+                case (int)emErrorCode.ERR_DLL_NOT_LOAD:
                     strRtn = "DLL not Load";
                     break;
-                case (int)ErrorCode.ERR_PARAM_ERROR:
+                case (int)emErrorCode.ERR_PARAM_ERROR:
                     strRtn = "Parameter Error";
                     break;
                 default:
@@ -393,7 +352,7 @@ namespace ClassLibrary.PLC.Base
         }
         public int ReadAddress(string strDevType, int nStartDeviceNumber, int nSizeInWord, ref short[] ppValue)
         {
-            int lRtn = (int)ErrorCode.ERR_DLL_NOT_LOAD;
+            int lRtn = (int)emErrorCode.ERR_DLL_NOT_LOAD;
 //# if SUPPORT_AOI
             if (nSizeInWord > 0)
             {
@@ -412,7 +371,7 @@ namespace ClassLibrary.PLC.Base
         }
         public int ReadOneAddress(string strDevType, int nStartDeviceNumber, ref short[] pValue)
         {
-            int lRtn = (int)ErrorCode.ERR_DLL_NOT_LOAD;
+            int lRtn = (int)emErrorCode.ERR_DLL_NOT_LOAD;
             if (m_pIProgType!=null)
             {
                 lock (m_Lock)
@@ -425,7 +384,7 @@ namespace ClassLibrary.PLC.Base
         }
         public int ReadRandom(string strList, int nSize, ref short[] pData)
         {
-            int lRtn = (int)ErrorCode.ERR_DLL_NOT_LOAD;
+            int lRtn = (int)emErrorCode.ERR_DLL_NOT_LOAD;
             if (m_pIProgType!=null)
             {
                 lock (m_Lock)
@@ -448,7 +407,7 @@ namespace ClassLibrary.PLC.Base
             {
                 if(!short.TryParse(pWrite[i].ToString(),out short_Write[i]))
                 {
-                    return (int)ErrorCode.ERR_PARAM_ERROR;
+                    return (int)emErrorCode.ERR_PARAM_ERROR;
                 }
             }
 
@@ -468,7 +427,7 @@ namespace ClassLibrary.PLC.Base
             {
                 if (!short.TryParse(pWrite[i].ToString(), out short_Write[i]))
                 {
-                    return (int)ErrorCode.ERR_PARAM_ERROR;
+                    return (int)emErrorCode.ERR_PARAM_ERROR;
                 }
             }
 
@@ -487,7 +446,7 @@ namespace ClassLibrary.PLC.Base
             {
                 if (!short.TryParse(pWrite[i].ToString(), out short_Write[i]))
                 {
-                    return (int)ErrorCode.ERR_PARAM_ERROR;
+                    return (int)emErrorCode.ERR_PARAM_ERROR;
                 }
             }
 
@@ -497,7 +456,7 @@ namespace ClassLibrary.PLC.Base
         }
         public int WriteAddress(string strDevType, int nStartDeviceNumber, int nSizeInWord, ref short[] pValue)
         {
-            int lRtn = (int)ErrorCode.ERR_DLL_NOT_LOAD;
+            int lRtn = (int)emErrorCode.ERR_DLL_NOT_LOAD;
 //# if SUPPORT_AOI
             if (nSizeInWord > 0)
             {
@@ -515,7 +474,7 @@ namespace ClassLibrary.PLC.Base
         }
         public int WriteOneAddress(string strDevice, ref short nValue)
         {
-            int lRtn = (int)ErrorCode.ERR_DLL_NOT_LOAD;
+            int lRtn = (int)emErrorCode.ERR_DLL_NOT_LOAD;
 //# if SUPPORT_AOI
             if (m_pIProgType!=null)
             {
@@ -529,7 +488,7 @@ namespace ClassLibrary.PLC.Base
         }
         public int WriteRandom(ref string strList, int nSize, ref short[] pData)
         {
-            int lRtn = (int)ErrorCode.ERR_DLL_NOT_LOAD;
+            int lRtn = (int)emErrorCode.ERR_DLL_NOT_LOAD;
             if (m_pIProgType!=null)
             {
                 lock (m_Lock)

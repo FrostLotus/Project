@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace ClassLibrary.PLC.Base
 {
+    //=================================================================
+    //Interface
+    //=================================================================
     public class IPLCProcess : DataHeadlerBase
     {
         private IPLCProcess m_pIn;// { get; set; }
@@ -24,21 +27,9 @@ namespace ClassLibrary.PLC.Base
         {
             m_pOut = pLink;
         }
-        //=====================================================================================
-        //[DllImport("user32.dll", SetLastError = true)]
-        //public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
-
-        //[DllImport("kernel32.dll", SetLastError = true)]
-        //public static extern IntPtr CreateEvent(IntPtr lpEventAttributes, bool bManualReset, bool bInitialState, string lpName);
-
-        //[DllImport("kernel32.dll")]
-        //public static extern IntPtr GetConsoleWindow();
-
-        //// 假設有一個顯示視窗的方法
-        //[DllImport("user32.dll")]
-        //public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-        //=====================================================================================
-        public void ON_GPIO_NOTIFY(IntPtr wparam, IntPtr lparam)
+        ///=====================================================================================
+        //以下近似callback於視窗部分使用
+        public virtual void ON_GPIO_NOTIFY(IntPtr wparam, IntPtr lparam)
         {
             if (m_pIn != null)
                 m_pIn.ON_GPIO_NOTIFY(wparam, lparam);
