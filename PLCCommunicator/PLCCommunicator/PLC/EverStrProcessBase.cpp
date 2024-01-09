@@ -208,7 +208,7 @@ void CALLBACK CEverStrProcessBase::QueryTimer(HWND hwnd, UINT uMsg, UINT_PTR nEv
 		m_this->ProcessTimer(nEventId);
 	}
 }
-//Timer 刷新數據
+///<summary>Timer 刷新數據</summary>
 void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 {
 	for (int i = 0; i < TIMER_MAX; i++)
@@ -253,16 +253,6 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 					xResult.wQualifyRate = 5;
 					xResult.wDiff_XY = 6;
 
-					//BATCH_SHARE_SYST_INFO xInfo;
-					//memset(&xInfo, 0, sizeof(xInfo));
-					
-					//xInfo.xInfo1.cSizeReady = 1;
-					//xInfo.xInfo1.cSizeRunning = 1;
-					//xInfo.xInfo1.cCCDReady = 1;
-					//xInfo.xInfo1.cCCDRunning = 1;
-					//xInfo.xInfo2.cCCDError1 = 1;
-					//xInfo.xInfo2.cSizeError1 = 1;
-
 					WideCharToMultiByte(CP_ACP, 0, GET_PLC_FIELD_VALUE(FIELD_ORDER), -1, xResult.cName, GET_PLC_FIELD_VALUE(FIELD_ORDER).GetLength(), NULL, NULL);
 					WideCharToMultiByte(CP_ACP, 0, GET_PLC_FIELD_VALUE(FIELD_SN), -1, xResult.cAssign, GET_PLC_FIELD_VALUE(FIELD_SN).GetLength(), NULL, NULL);
 					WideCharToMultiByte(CP_ACP, 0, GET_PLC_FIELD_VALUE(FIELD_MATERIAL), -1, xResult.cMaterial, GET_PLC_FIELD_VALUE(FIELD_MATERIAL).GetLength(), NULL, NULL);
@@ -271,7 +261,8 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 					//SET_PLC_FIELD_DATA(FIELD_MATERIAL_1, sizeof((BYTE*)xResult.cMaterial), (BYTE*)xResult.cMaterial);
 					//SET_PLC_FIELD_DATA(FIELD_SN_1, sizeof((BYTE*)xResult.cAssign), (BYTE*)xResult.cAssign); 
 					
-					ON_GPIO_NOTIFY(WM_SYST_EXTRA_CMD, NULL);					PushResult(xResult);
+					ON_GPIO_NOTIFY(WM_SYST_EXTRA_CMD, NULL);					
+					PushResult(xResult);
 
 					//SetInfoField(xInfo);
 				}
@@ -298,7 +289,6 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 								GET_PLC_FIELD_DATA(i);//更新  一筆一筆更新
 							}
 						}
-
 #ifdef SHOW_PERFORMANCE
 						QueryPerformanceCounter(&xEnd);
 						double d = (xEnd.QuadPart - xStart.QuadPart) * 1000.0 / xFreq.QuadPart;
@@ -396,7 +386,7 @@ void CEverStrProcessBase::ProcessTimer(UINT_PTR nEventId)
 		}
 	}
 }
-
+///<summary>[無用]資訊軟元件寫入</summary>
 void CEverStrProcessBase::SetInfoField(BATCH_SHARE_SYST_INFO& xInfo)
 {
 	theApp.InsertDebugLog(L"Set Info Start", LOG_DEBUG);
@@ -409,41 +399,41 @@ void CEverStrProcessBase::ON_CCL_NEWBATCH()
 	BATCH_SHARE_SYST_PARAMCCL xData;
 	memset(&xData, 0, sizeof(BATCH_SHARE_SYST_PARAMCCL));
 	//下發  讀值
-	wcscpy_s(xData.cName, GET_PLC_FIELD_VALUE(FIELD_ORDER).GetBuffer());           //訂單號                               1
-	wcscpy_s(xData.cMaterial, GET_PLC_FIELD_VALUE(FIELD_MATERIAL).GetBuffer());    //訂單物料代碼                         14
-	wcscpy_s(xData.cAssign, GET_PLC_FIELD_VALUE(FIELD_SN).GetBuffer());			   //批號		                         2
-	xData.wAssignNum = _ttoi(GET_PLC_FIELD_VALUE(FIELD_QUANTITY));			       //工單產品數量                          3
+	wcscpy_s(xData.cName, GET_PLC_FIELD_VALUE(FIELD_ORDER).GetBuffer());             //訂單號                       01
+	wcscpy_s(xData.cMaterial, GET_PLC_FIELD_VALUE(FIELD_MATERIAL).GetBuffer());      //訂單物料代碼                 14
+	wcscpy_s(xData.cAssign, GET_PLC_FIELD_VALUE(FIELD_SN).GetBuffer());			     //批號		                    02
+	xData.wAssignNum =         _ttoi(GET_PLC_FIELD_VALUE(FIELD_QUANTITY));			 //工單產品數量                 03
+						       
+	xData.wSplitNum =          _ttoi(GET_PLC_FIELD_VALUE(FIELD_SPLITNUM));           //一開幾數					    04
+	xData.wSplit_One_Y =       _ttoi(GET_PLC_FIELD_VALUE(FIELD_SPLIT_ONE_Y));        //第一張大小板長			    05 
+	xData.wSplit_Two_Y =       _ttoi(GET_PLC_FIELD_VALUE(FIELD_SPLIT_TWO_Y));        //第二張大小板長			    06
+	xData.wSplit_Three_Y =     _ttoi(GET_PLC_FIELD_VALUE(FIELD_SPLIT_THREE_Y));      //第三張大小板長			    07
+	xData.wSplit_One_X =       _ttoi(GET_PLC_FIELD_VALUE(FIELD_SPLIT_ONE_X));        //第一張大小板寬			    08
+	xData.wSplit_Two_X =       _ttoi(GET_PLC_FIELD_VALUE(FIELD_SPLIT_TWO_X));	     //第二張大小板寬			    09
+	xData.wSplit_Three_X =     _ttoi(GET_PLC_FIELD_VALUE(FIELD_SPLIT_THREE_X));	     //第三張大小板寬			    10
+							   
+	xData.wDiff_One_Y_Min =    _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_Y_MIN));	 //第一個大小版經向公差下限		15
+	xData.wDiff_One_Y_Max =    _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_Y_MAX));	 //第一個大小版經向公差上限		16
+	xData.wDiff_One_X_Min =    _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_X_MIN));	 //第一個大小版緯向公差下限		17
+	xData.wDiff_One_X_Max =    _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_X_MAX));	 //第一個大小版緯向公差上限		18
+	xData.wDiff_One_XY_Min =   _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_XY_MIN));    //第一個大小版對角線公差下限	19
+	xData.wDiff_One_XY_Max =   _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_XY_MAX));    //第一個大小版對角線公差上限	20
+							   
+	xData.wDiff_Two_Y_Min =    _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_TWO_Y_MIN));	 //第二個大小版經向公差下限		21
+	xData.wDiff_Two_Y_Max =    _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_TWO_Y_MAX));	 //第二個大小版經向公差上限		22
+	xData.wDiff_Two_X_Min =    _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_TWO_X_MIN));	 //第二個大小版緯向公差下限		23
+	xData.wDiff_Two_X_Max =    _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_TWO_X_MAX));	 //第二個大小版緯向公差上限		24
+	xData.wDiff_Two_XY_Min =   _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_TWO_XY_MIN));    //第二個大小版對角線公差下限	25
+	xData.wDiff_Two_XY_Max =   _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_TWO_XY_MAX));    //第二個大小版對角線公差上限	26
 
-	xData.wSplitNum = _ttoi(GET_PLC_FIELD_VALUE(FIELD_SPLITNUM));                  //一開幾數					             4
-	xData.wSplit_One_Y = _ttoi(GET_PLC_FIELD_VALUE(FIELD_SPLIT_ONE_Y));            //第一張大小板長			             5 
-	xData.wSplit_Two_Y = _ttoi(GET_PLC_FIELD_VALUE(FIELD_SPLIT_TWO_Y));            //第二張大小板長			             6
-	xData.wSplit_Three_Y = _ttoi(GET_PLC_FIELD_VALUE(FIELD_SPLIT_THREE_Y));        //第三張大小板長			             7
-	xData.wSplit_One_X = _ttoi(GET_PLC_FIELD_VALUE(FIELD_SPLIT_ONE_X));            //第一張大小板寬			             8
-	xData.wSplit_Two_X = _ttoi(GET_PLC_FIELD_VALUE(FIELD_SPLIT_TWO_X));	           //第二張大小板寬			             9
-	xData.wSplit_Three_X = _ttoi(GET_PLC_FIELD_VALUE(FIELD_SPLIT_THREE_X));	       //第三張大小板寬			            10
+	xData.wDiff_Three_Y_Min =  _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_THREE_Y_MIN));   //第三個大小版經向公差下限		27
+	xData.wDiff_Three_Y_Max =  _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_THREE_Y_MAX));   //第三個大小版經向公差上限		28
+	xData.wDiff_Three_X_Min =  _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_THREE_X_MIN));   //第三個大小版緯向公差下限		29
+	xData.wDiff_Three_X_Max =  _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_THREE_X_MAX));   //第三個大小版緯向公差上限		30
+	xData.wDiff_Three_XY_Min = _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_THREE_XY_MIN));  //第三個大小版對角線公差下限	31
+	xData.wDiff_Three_XY_Max = _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_THREE_XY_MAX));  //第三個大小版對角線公差上限	32
 
-	xData.wDiff_One_Y_Min = _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_Y_MIN));	   //第一個大小版經向公差下限				15
-	xData.wDiff_One_Y_Max = _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_Y_MAX));	   //第一個大小版經向公差上限				16
-	xData.wDiff_One_X_Min = _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_X_MIN));	   //第一個大小版緯向公差下限				17
-	xData.wDiff_One_X_Max = _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_X_MAX));	   //第一個大小版緯向公差上限				18
-	xData.wDiff_One_XY_Min = _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_XY_MIN));    //第一個大小版對角線公差下限				19
-	xData.wDiff_One_XY_Max = _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_ONE_XY_MAX));    //第一個大小版對角線公差上限				20
-
-	xData.wDiff_Two_Y_Min = _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_TWO_Y_MIN));	   //第二個大小版經向公差下限				21
-	xData.wDiff_Two_Y_Max = _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_TWO_Y_MAX));	   //第二個大小版經向公差上限				22
-	xData.wDiff_Two_X_Min = _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_TWO_X_MIN));	   //第二個大小版緯向公差下限				23
-	xData.wDiff_Two_X_Max = _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_TWO_X_MAX));	   //第二個大小版緯向公差上限				24
-	xData.wDiff_Two_XY_Min = _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_TWO_XY_MIN));    //第二個大小版對角線公差下限				25
-	xData.wDiff_Two_XY_Max = _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_TWO_XY_MAX));    //第二個大小版對角線公差上限				26
-
-	xData.wDiff_Three_Y_Min = _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_THREE_Y_MIN));  //第三個大小版經向公差下限				27
-	xData.wDiff_Three_Y_Max = _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_THREE_Y_MAX));  //第三個大小版經向公差上限				28
-	xData.wDiff_Three_X_Min = _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_THREE_X_MIN));  //第三個大小版緯向公差下限				29
-	xData.wDiff_Three_X_Max = _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_THREE_X_MAX));  //第三個大小版緯向公差上限				30
-	xData.wDiff_Three_XY_Min = _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_THREE_XY_MIN));//第三個大小版對角線公差下限				31
-	xData.wDiff_Three_XY_Max = _ttoi(GET_PLC_FIELD_VALUE(FIELD_DIFF_THREE_XY_MAX));//第三個大小版對角線公差上限				32
-
-	xData.wNO_C10 = _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCL_NO_C10));  //上傳有需要這邊下發更新嗎
+	xData.wNO_C10 =            _ttoi(GET_PLC_FIELD_VALUE(FIELD_CCL_NO_C10));         //上傳有需要這邊下發更新嗎
 
 	if (USM_WriteData((BYTE*)&xData, sizeof(xData),0))
 	{
@@ -459,13 +449,13 @@ void CEverStrProcessBase::ON_C10_CHANGE(WORD wC10)
 	theApp.InsertDebugLog(strLog, LOG_PLCC10);
 	NotifyAOI(WM_SYST_C10CHANGE_CMD, wC10);
 }
-
-//void CEverStrProcessBase::PushResult(BATCH_SHARE_SYST_RESULTCCL& xResult)
+///<summary>更新工單回應</summary>
 void CEverStrProcessBase::PushResult(BATCH_SHARE_SYST_RESULT_EVERSTR& xResult)
 {
-	std::lock_guard< std::mutex > lock(m_oMutex);
+	std::lock_guard<std::mutex> lock(m_oMutex);
 	m_vResult.push_back(xResult);
 }
+///<summary>[線程]寫入工單回應</summary>
 DWORD CEverStrProcessBase::Thread_Result(void* pvoid)
 {
 	CEverStrProcessBase* pThis = (CEverStrProcessBase*)pvoid;
@@ -515,7 +505,7 @@ DWORD CEverStrProcessBase::Thread_Result(void* pvoid)
 	}
 	return NULL;
 }
-//void CEverStrProcessBase::WriteResult(BATCH_SHARE_SYST_RESULTCCL& xData)
+///<summary>寫入工單回應</summary>
 void CEverStrProcessBase::WriteResult(BATCH_SHARE_SYST_RESULT_EVERSTR& xData)
 {
 #ifdef USE_IN_COMMUNICATOR

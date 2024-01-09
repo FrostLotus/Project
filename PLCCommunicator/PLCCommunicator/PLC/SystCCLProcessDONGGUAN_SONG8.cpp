@@ -144,7 +144,7 @@ CSystCCLProcessDONGGUAN_SONG8::CSystCCLProcessDONGGUAN_SONG8()
 		memset(m_pPLC_FIELD_INFO[i], 0, sizeof(PLC_DATA_ITEM));//設定set
 		memcpy(m_pPLC_FIELD_INFO[i], &ctSYST_PLC_FIELD[i], sizeof(PLC_DATA_ITEM));//複製cpy
 	}
-	INIT_PLCDATA();
+	INIT_PLC_DATA();
 }
 ///<summary>[Constructor]終處置</summary>
 CSystCCLProcessDONGGUAN_SONG8::~CSystCCLProcessDONGGUAN_SONG8()

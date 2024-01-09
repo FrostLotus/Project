@@ -144,7 +144,7 @@ public:
 		FIELD_CUTTER_RETURN_X,			//CCD->測厚寬度
 		FIELD_CUTTER_RETURN_INDEX,		//CCD->測厚版編號
 
-		FIELD_MAX
+		FIELD_MAX                       //FIELD總數
 	};
 	
 protected:

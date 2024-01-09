@@ -25,7 +25,7 @@ public:
 	IPLCProcess() { m_pIn = NULL; m_pOut = NULL; }
 	void AttachIn(IPLCProcess* pLink) { m_pIn = pLink; };
 	void AttachOut(IPLCProcess* pLink) { m_pOut = pLink; };
-	//in
+	//in -> AOI 
 	virtual void ON_GPIO_NOTIFY(WPARAM wp, LPARAM lp)
 	{
 		if (m_pIn)
@@ -38,7 +38,7 @@ public:
 		else
 			return FALSE;
 	}
-	//out
+	//out -> PLC
 	virtual void ON_PLC_NOTIFY(CString strMsg)
 	{
 		if (m_pOut)
@@ -63,6 +63,8 @@ private:
 	IPLCProcess* m_pIn;
 	IPLCProcess* m_pOut;
 };
+//-------------------------------------------------------------------------
+
 class CMelSecIOController : public IPLCProcess
 {
 public:
@@ -71,17 +73,16 @@ public:
 	CString GetCPUType();
 #ifdef BATCH_READ_WRITE
 protected:
+	long ReadRandom(CString& strList, int nSize, short* pData);
 	long ReadAddress(CString strDevType, int nStartDeviceNumber, int nSize, WORD* pValue);
 	long ReadAddress(CString strDevType, int nStartDeviceNumber, int nSize, float* pValue);
 	long ReadAddress(CString strDevType, int nStartDeviceNumber, int nLength, char* pValue);
-
-	long ReadRandom(CString& strList, int nSize, short* pData);
 	long ReadOneAddress(CString strDevType, int nStartDeviceNumber, short* pValue);
 
+	long WriteRandom(CString& strList, int nSize, short* pData);
 	long WriteAddress(CString strDevType, int nDeviceNumber, int nSizeInByte, WORD* pWrite);
 	long WriteAddress(CString strDevType, int nDeviceNumber, int nSizeInByte, float* pWrite);
 	long WriteAddress(CString strDevType, int nDeviceNumber, int nSizeInByte, char* pWrite);
-	long WriteRandom(CString& strList, int nSize, short* pData);
 	long WriteOneAddress(CString strDevice, short nValue);
 	CString GetErrorMessage(long lErrCode);
 #endif
@@ -91,8 +92,8 @@ protected:
 	long OpenDevice(BATCH_SHARE_SYSTCCL_INITPARAM& xData);
 	virtual void SetMXParam(IActProgType* pParam, BATCH_SHARE_SYSTCCL_INITPARAM& xData) = 0;
 private:
-	void Finalize();
 	void Init();
+	void Finalize();
 	void LIB_LOAD();
 	void LIB_FREE();
 	void ListAllIP();

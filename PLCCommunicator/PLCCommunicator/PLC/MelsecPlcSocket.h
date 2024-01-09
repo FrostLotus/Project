@@ -155,9 +155,7 @@ public:
 	UINT uEndBit;
 }PLC_DATA_ITEM;
 
-class CMelsecPlcSocket :
-	public CBaseClientSocket
-	, public ISocketCallBack
+class CMelsecPlcSocket :public CBaseClientSocket, public ISocketCallBack
 {
 public:
 	enum PLC_MODE{

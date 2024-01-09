@@ -145,7 +145,7 @@ CSystCCLProcessDONGGUAN::CSystCCLProcessDONGGUAN()
 		memset(m_pPLC_FIELD_INFO[i], 0, sizeof(PLC_DATA_ITEM));
 		memcpy(m_pPLC_FIELD_INFO[i], &ctSYST_PLC_FIELD[i], sizeof(PLC_DATA_ITEM));
 	}
-	INIT_PLCDATA();
+	INIT_PLC_DATA();
 }
 CSystCCLProcessDONGGUAN::~CSystCCLProcessDONGGUAN()
 {

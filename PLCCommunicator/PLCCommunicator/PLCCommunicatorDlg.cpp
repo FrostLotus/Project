@@ -1,5 +1,4 @@
 //PLCCommunicatorDlg.cpp : 實作檔
-
 #include "stdafx.h"
 #include "PLCCommunicator.h"
 #include "PLCCommunicatorDlg.h"
@@ -40,8 +39,7 @@
 #define CLR_SKIP	RGB(0x80, 0, 0)
 //========================================================================================
 ///<summary>[Constructor]初始化</summary>
-CPLCCommunicatorDlg::CPLCCommunicatorDlg(BOOL bNoShow, CWnd* pParent /*=NULL*/)
-	: CDialogEx(CPLCCommunicatorDlg::IDD, pParent)
+CPLCCommunicatorDlg::CPLCCommunicatorDlg(BOOL bNoShow, CWnd* pParent /*=NULL*/): CDialogEx(CPLCCommunicatorDlg::IDD, pParent)
 {
 	char* p = "12";
 	WORD* p2 = (WORD*)p;
@@ -79,6 +77,7 @@ BEGIN_MESSAGE_MAP(CPLCCommunicatorDlg, CDialogEx)
 	ON_NOTIFY(LVN_GETDISPINFO, UI_LC_INFO, OnLvnGetdispinfoInfo)
 	ON_NOTIFY(NM_CUSTOMDRAW, UI_LC_PLCADDRESS, OnCustomdrawList)
 END_MESSAGE_MAP()
+//---------------------------------------------------------------------------------------
 #ifdef SHOW_DEBUG_BTN
 ///<summary>[Button]讀新狀態</summary>
 void CPLCCommunicatorDlg::OnQueryAll()
@@ -183,6 +182,7 @@ void CPLCCommunicatorDlg::OnFlushAll()
 #endif USE_MC_PROTOCOL
 }
 #endif SHOW_DEBUG_BTN
+///--------------------------------------------------------------------------------------
 // CPLCCommunicatorDlg 訊息處理常式
 BOOL CPLCCommunicatorDlg::OnInitDialog()
 {
@@ -631,10 +631,10 @@ void CPLCCommunicatorDlg::Init()
 
 #ifdef OFF_LINE
 
-	m_xParam.eCustomerType = CUSTOMER_TG;//(AOI_CUSTOMERTYPE_)(lParam >> 8 & 0xFF);
+	m_xParam.eCustomerType = CUSTOMER_EVERSTRONG;//(AOI_CUSTOMERTYPE_)(lParam >> 8 & 0xFF);
 	m_xParam.eSubCustomerType = SUB_CUSTOMER_NONE;//(AOI_SUBCUSTOMERTYPE_)(lParam & 0xFF);
-	OnCmdGPIO(WM_CUSTOMERTYPE_INIT, m_xParam.eCustomerType << 12 | m_xParam.eSubCustomerType);//設置客製
-	OnCmdGPIO(WM_AOI_RESPONSE_CMD, WM_SYST_PP_PARAMINIT_CMD);///刷新第一次PLC回傳下發訊號資料
+	OnCmdGPIO(WM_CUSTOMERTYPE_INIT, m_xParam.eCustomerType << 15 | m_xParam.eSubCustomerType);//設置客製
+	OnCmdGPIO(WM_AOI_RESPONSE_CMD, WM_SYST_PARAMINIT_CMD);///刷新第一次PLC回傳下發訊號資料
 
 
 	//m_xParam.eCustomerType = CUSTOMER_EVERSTRONG;//(AOI_CUSTOMERTYPE_)(lParam >> 8 & 0xFF);
@@ -841,10 +841,10 @@ void CPLCCommunicatorDlg::AddInfoText(CString& strInfo)
 	int nSize = 0;
 	EnterCriticalSection(&m_xLock[LOCK_INFO]);
 	if (m_vPLCInfo.size() >= INFO_MAX)
+	{
 		m_vPLCInfo.erase(m_vPLCInfo.begin());
-
+	}
 	m_vPLCInfo.push_back(xPair);
-
 	nSize = m_vPLCInfo.size();
 	LeaveCriticalSection(&m_xLock[LOCK_INFO]);
 
@@ -922,6 +922,7 @@ void CPLCCommunicatorDlg::InitPLCProcess()
 	}
 #endif
 }
+//-----------------------------------------------------------------------------
 #ifdef USE_MC_PROTOCOL
 void CPLCCommunicatorDlg::ConnStatusCallBack(AOI_SOCKET_STATE xState)
 {

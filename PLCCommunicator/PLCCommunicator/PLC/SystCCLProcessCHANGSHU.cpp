@@ -154,7 +154,7 @@ void CSystCCLProcessCHANGSHU::InitField()
 
 			memcpy(m_pPLC_FIELD_INFO[i], &ctSYST_PLC_FIELD[i], sizeof(PLC_DATA_ITEM));
 		}
-		INIT_PLCDATA();
+		INIT_PLC_DATA();
 }
 PLC_DATA_ITEM_* CSystCCLProcessCHANGSHU::GetPLCAddressInfo(int nFieldId, BOOL bSkip)
 {

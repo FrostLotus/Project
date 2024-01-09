@@ -1,7 +1,5 @@
-
 // OPCCommunicatorDlg.h : º–¿Y¿…
 //
-
 #pragma once
 #include <vector>
 #include "OPC\OPCProcessBase.h"

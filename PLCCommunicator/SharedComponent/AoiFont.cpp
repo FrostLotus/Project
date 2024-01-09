@@ -10,44 +10,54 @@ CAoiFontManager::~CAoiFontManager(void)
 {
 	Finalize();
 }
-void CAoiFontManager::DestroyFont()
+void CAoiFontManager::Init()
 {
-	for (int i=0;i<ctMaxFont;i++){
-		m_fFont[i].DeleteObject();
-	}
+	m_bInit = false;
+	CreateFont();
+}
+void CAoiFontManager::Finalize()
+{
+	DestroyFont();
 }
 void CAoiFontManager::CreateFont()
 {
-	if (!m_bInit){
-		CWnd *pWnd = AfxGetMainWnd();
-		if (pWnd){
+	if (!m_bInit)
+	{
+		CWnd* pWnd = AfxGetMainWnd();
+		if (pWnd)
+		{
 			CLogFont lf;
-			CFont *pFont = pWnd->GetFont();
+			CFont* pFont = pWnd->GetFont();
 			pFont->GetLogFont(&lf);
 
-			for (int i=0;i<ctMaxFont;i++){
+			for (int i = 0; i < ctMaxFont; i++)
+			{
 				m_fFont[i].SetFontColor(ctFont[i].nFontColor);
-				if (ctFont[i].nFontSubType == typeBold){
+				if (ctFont[i].nFontSubType == typeBold)
+				{
 					lf.lfWeight = FW_BOLD;
-				}else{
+				}
+				else
+				{
 					lf.lfWeight = FW_NORMAL;
 				}
 				lf.lfItalic = FALSE;
 				lf.lfUnderline = FALSE;
 				lf.lfHeight = -ctFont[i].nFontSize;
 				lf.lfEscapement = ctFont[i].nAngle * 10;
-				switch(ctFont[i].nFontId){
-				case typeSegoeUI: //SegoeUi.ttf
-					StringCchCopy(lf.lfFaceName, LF_FACESIZE,_T("Segoe UI"));
-					break;
-				case typeMicroSoftBlod: //msjhbd.ttf,msjh.ttf
-					StringCchCopy(lf.lfFaceName, LF_FACESIZE,_T("微軟正黑體"));
-					break;
-				case typeYuGothic: //Not Yet
-					StringCchCopy(lf.lfFaceName, LF_FACESIZE, _T("Segoe UI"));
-					break;
-				default:
-					break;
+				switch (ctFont[i].nFontId)
+				{
+					case typeSegoeUI: //SegoeUi.ttf
+						StringCchCopy(lf.lfFaceName, LF_FACESIZE, _T("Segoe UI"));
+						break;
+					case typeMicroSoftBlod: //msjhbd.ttf,msjh.ttf
+						StringCchCopy(lf.lfFaceName, LF_FACESIZE, _T("微軟正黑體"));
+						break;
+					case typeYuGothic: //Not Yet
+						StringCchCopy(lf.lfFaceName, LF_FACESIZE, _T("Segoe UI"));
+						break;
+					default:
+						break;
 				}
 				BOOL bFlag = m_fFont[i].CreateFontIndirect(&lf);
 			}
@@ -55,6 +65,13 @@ void CAoiFontManager::CreateFont()
 		}
 	}
 }
+void CAoiFontManager::DestroyFont()
+{
+	for (int i=0;i<ctMaxFont;i++){
+		m_fFont[i].DeleteObject();
+	}
+}
+
 CFont* CAoiFontManager::GetFont(FontDef xId)
 {
 	return GetFontType(xId);
@@ -76,15 +93,7 @@ void CAoiFontManager::SetWindowFont(CWnd *pWnd,FontDef xId,BOOL bRedraw)
 		}
 	}
 }
-void CAoiFontManager::Init()
-{
-	m_bInit = false;
-	CreateFont();
-}
-void CAoiFontManager::Finalize()
-{
-	DestroyFont();
-}
+
 CAoiFont *CAoiFontManager::GetFontType(FontDef xIdx)
 {
 	CreateFont();

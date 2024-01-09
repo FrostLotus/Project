@@ -29,8 +29,7 @@ public:
 };
 
 
-class CBaseClientSocket :
-	public CAsyncSocket
+class CBaseClientSocket :public CAsyncSocket
 {
 public:
 	CBaseClientSocket(ISocketCallBack *pParent);

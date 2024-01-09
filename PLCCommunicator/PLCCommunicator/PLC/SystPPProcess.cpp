@@ -309,7 +309,7 @@ void CSystPPProcess::SET_INIT_PARAM(LPARAM lp, BYTE* pData)
 {
 	if (lp == WM_SYST_PP_PARAMINIT_CMD)
 	{
-		INIT_PLCDATA();
+		INIT_PLC_DATA();
 
 		CString strMsg;
 		BATCH_SHARE_SYSTPP_INITPARAM_* pParam = (BATCH_SHARE_SYSTPP_INITPARAM_*)pData;

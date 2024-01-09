@@ -41,7 +41,7 @@ void CTechainProcess::Init()
 
 		memcpy(m_pPLC_FIELD_INFO[i], &ct_PLC_FIELD[i], sizeof(PLC_DATA_ITEM));
 	}
-	INIT_PLCDATA();
+	INIT_PLC_DATA();
 	NotifyMainProcess(WM_SYST_PP_PARAMINIT_CMD, NULL);
 
 	m_this = this;

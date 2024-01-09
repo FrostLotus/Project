@@ -62,7 +62,7 @@ void CScribdPPProcess::Init()
 			break;
 		}
 	}
-	INIT_PLCDATA();
+	INIT_PLC_DATA();
 
 	for (int i = 0; i < TIMER_MAX; i++){
 		m_tTimerEvent[i] = SetTimer(NULL, i, TIMER_INTERVAL, QueryTimer);

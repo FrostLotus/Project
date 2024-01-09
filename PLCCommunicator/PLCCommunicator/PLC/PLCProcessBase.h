@@ -66,7 +66,7 @@ public:
 	UINT uEndBit;
 	BOOL bSigned;
 }PLC_DATA_ITEM;
-
+//=============================================================================
 class CPLCProcessBase : public CMelSecIOController
 {
 public:
@@ -87,18 +87,20 @@ public:
 	CString GET_PLC_FIELD_ADDRESS(int nFieldId);
 	CString GET_PLC_FIELD_NAME(int nFieldId);
 	PLC_ACTION_TYPE_ GET_PLC_FIELD_ACTION(int nFieldId);
-
+	//-------
 	long GET_PLC_FIELD_DATA(int nFieldId);
 	long GET_PLC_FIELD_DATA(vector<int>& vField);
+	//-------
 	long SET_PLC_FIELD_DATA(int nFieldId, int nSizeInByte, BYTE* pData);
 	long SET_PLC_FIELD_DATA(vector<int>& vField, BYTE* pData);
+	//-------
 	long SET_PLC_FIELD_DATA_BIT(int nFieldStart, int nFieldEnd, int nSizeInByte, BYTE* pData);
 	long SET_PLC_FIELD_DATA_BIT(int nField, int nBitPosition, BOOL bValue);
 
 	void SET_FLUSH_ANYWAY(BOOL bFlushAnyway) { m_bFlushAnyway = bFlushAnyway; };
 	BOOL GET_FLUSH_ANYWAY() { return m_bFlushAnyway; };
 protected:
-	void INIT_PLCDATA();
+	void INIT_PLC_DATA();
 	void DESTROY_PLC_DATA();
 
 	BOOL USM_ReadData(BYTE* pData, int nSize, int nOffset = 0);
@@ -120,8 +122,8 @@ private:
 	///<summary>PLC資料結構</summary>
 	struct PLCDATA
 	{
-		BYTE* pData;
-		__time64_t xTime;
+		BYTE* pData;//一大串資料
+		__time64_t xTime;//時間
 	};
 	///<summary>PLC資料</summary>
 	PLCDATA* m_pPLCData;

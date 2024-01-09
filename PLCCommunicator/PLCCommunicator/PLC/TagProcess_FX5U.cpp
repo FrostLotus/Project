@@ -67,7 +67,7 @@ void CTagProcess_FX5U::Init()
 
 		memcpy(m_pPLC_FIELD_INFO[i], &ctSYST_PLC_FIELD[i], sizeof(PLC_DATA_ITEM));
 	}
-	INIT_PLCDATA();
+	INIT_PLC_DATA();
 
 	for (int i = 0; i < TIMER_MAX; i++) {
 		if (i == TIMER_WATCHDOG)

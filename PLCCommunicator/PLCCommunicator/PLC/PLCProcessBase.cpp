@@ -130,85 +130,8 @@ long CPLCProcessBase::ON_OPEN_PLC(LPARAM lp)
 	}
 	return lRtn;
 }
-///<summary>[READ_BLOCK2]取得對應ID之PLC資料</summary>
-long CPLCProcessBase::GET_PLC_FIELD_DATA(int nFieldId, void* pData)
-{
-	long lRtn = ERR_DLL_NOT_LOAD;
-	PLC_DATA_ITEM_* pItem = GetPLCAddressInfo(nFieldId, FALSE);//整個對應ID資料讀回來
-	if (pItem)//成功
-	{
-		switch (pItem->xValType)
-		{
-			case PLC_VALUE_TYPE_::PLC_TYPE_FLOAT:
-				lRtn = ReadAddress(pItem->cDevType, pItem->uAddress, 1, (float*)pData);
-				break;
-			case PLC_VALUE_TYPE_::PLC_TYPE_STRING:
-				lRtn = ReadAddress(pItem->cDevType, pItem->uAddress, pItem->cLen, (char*)pData);
-				break;
-			case PLC_VALUE_TYPE_::PLC_TYPE_WORD:
-				lRtn = ReadAddress(pItem->cDevType, pItem->uAddress, 1, (WORD*)pData);
-				break;
-			case PLC_VALUE_TYPE_::PLC_TYPE_DWORD:
-				lRtn = ReadAddress(pItem->cDevType, pItem->uAddress, 2, (WORD*)pData);
-				break;
-			case PLC_VALUE_TYPE_::PLC_TYPE_BIT:
-				lRtn = ReadOneAddress(pItem->cDevType, pItem->uAddress, (short*)pData);
-				break;
-		}
-		if (lRtn == 0)
-		{
-			m_pPLCData[nFieldId].xTime = CTime::GetCurrentTime().GetTime();
-			ON_PLCDATA_CHANGE(nFieldId, pData, pItem->cLen);
-		}
-	}
-	return lRtn;
-}
-///<summary>[READ_RANDOM2]取得對應ID之PLC資料</summary>
-void CPLCProcessBase::GET_PLC_RANDOM_DATA(vector<int>& vField, CString& strField, int& nSizeInWord)
-{
-	CString strTemp;
-	for (auto& i : vField)
-	{
-		PLC_DATA_ITEM_* pItem = GetPLCAddressInfo(i, FALSE);
-		if (pItem)
-		{
-			switch (pItem->xValType)
-			{
-				case PLC_VALUE_TYPE_::PLC_TYPE_WORD:
-				case PLC_VALUE_TYPE_::PLC_TYPE_BIT:
-				case PLC_VALUE_TYPE_::PLC_TYPE_FLOAT:
-				case PLC_VALUE_TYPE_::PLC_TYPE_DWORD:
-				case PLC_VALUE_TYPE_::PLC_TYPE_STRING:
-				{
-
-					int nSize = pItem->cLen / 2;
-					nSizeInWord += nSize;
-					for (int j = 0; j < nSize; j++)
-					{
-						if (pItem->xValType == PLC_VALUE_TYPE_::PLC_TYPE_BIT && CString(pItem->cDevType) == L"D")
-						{ //special case for D. ex:200.F
-							if (pItem->uStartBit != -1 && pItem->uStartBit == pItem->uEndBit)
-								strTemp.Format(L"%s%d.%X", pItem->cDevType, pItem->uAddress + j, pItem->uStartBit);
-							else
-								ASSERT(FALSE);
-						}
-						else
-							strTemp.Format(L"%s%d", pItem->cDevType, pItem->uAddress + j);
-						if (strField.GetLength() == 0)
-							strField = strTemp;
-						else
-							strField += L"\n" + strTemp;
-					}
-				}
-				break;
-				default:
-					ASSERT(FALSE);
-					break;
-			}
-		}
-	}
-}
-///<summary>取得對應ID(field)之值(BYTE)</summary>
+//--------------------
+///<summary>讀取目前未刷新對應ID(field)之值(BYTE)</summary>
 BYTE* CPLCProcessBase::GET_PLC_FIELD_BYTE_VALUE(int nFieldId)
 {
 	int nFieldSize = GetFieldSize();
@@ -222,7 +145,7 @@ BYTE* CPLCProcessBase::GET_PLC_FIELD_BYTE_VALUE(int nFieldId)
 	}
 	return NULL;
 }
-///<summary>讀取軟元件數值</summary>
+///<summary>讀取目前未刷新軟元件數值</summary>
 CString CPLCProcessBase::GET_PLC_FIELD_VALUE(int nFieldId)
 {
 	int nFieldSize = GetFieldSize();//最大值
@@ -271,6 +194,126 @@ CString CPLCProcessBase::GET_PLC_FIELD_VALUE(int nFieldId)
 	}
 	return strDes;
 }
+//--------------------
+///<summary>[READ_RANDOM2]取得對應ID之PLC資料</summary>
+void CPLCProcessBase::GET_PLC_RANDOM_DATA(vector<int>& vField, CString& strField, int& nSizeInWord)
+{
+	CString strTemp;
+	for (auto& i : vField)
+	{
+		PLC_DATA_ITEM_* pItem = GetPLCAddressInfo(i, FALSE);
+		if (pItem)
+		{
+			switch (pItem->xValType)
+			{
+				case PLC_VALUE_TYPE_::PLC_TYPE_WORD:
+				case PLC_VALUE_TYPE_::PLC_TYPE_BIT:
+				case PLC_VALUE_TYPE_::PLC_TYPE_FLOAT:
+				case PLC_VALUE_TYPE_::PLC_TYPE_DWORD:
+				case PLC_VALUE_TYPE_::PLC_TYPE_STRING:
+				{
+
+					int nSize = pItem->cLen / 2;
+					nSizeInWord += nSize;
+					for (int j = 0; j < nSize; j++)
+					{
+						if (pItem->xValType == PLC_VALUE_TYPE_::PLC_TYPE_BIT && CString(pItem->cDevType) == L"D")
+						{ //special case for D. ex:200.F
+							if (pItem->uStartBit != -1 && pItem->uStartBit == pItem->uEndBit)
+								strTemp.Format(L"%s%d.%X", pItem->cDevType, pItem->uAddress + j, pItem->uStartBit);
+							else
+								ASSERT(FALSE);
+						}
+						else
+							strTemp.Format(L"%s%d", pItem->cDevType, pItem->uAddress + j);
+						if (strField.GetLength() == 0)
+							strField = strTemp;
+						else
+							strField += L"\n" + strTemp;
+					}
+				}
+				break;
+				default:
+					ASSERT(FALSE);
+					break;
+			}
+		}
+	}
+}
+///<summary>[Vector]刷新軟元件狀態</summary>
+long CPLCProcessBase::GET_PLC_FIELD_DATA(vector<int>& vField)
+{
+	long lRtn = ERR_DLL_NOT_LOAD;
+	CString strField, strTemp;
+	int nTotal = 0;
+	GET_PLC_RANDOM_DATA(vField, strField, nTotal);
+
+	if (nTotal)
+	{
+		short* pData = new short[nTotal];
+		memset(pData, 0, sizeof(short) * nTotal);
+		lRtn = ReadRandom(strField, nTotal, pData);
+
+		if (lRtn == 0)
+		{
+			BYTE* pCur = (BYTE*)pData;
+			for (auto& i : vField)
+			{
+				PLC_DATA_ITEM_* pItem = GetPLCAddressInfo(i, FALSE);
+				if (pItem)
+				{
+					//update time and data
+					m_pPLCData[i].xTime = CTime::GetCurrentTime().GetTime();
+					memcpy(m_pPLCData[i].pData, pCur, pItem->cLen);
+					pCur += pItem->cLen;
+				}
+			}
+			ON_BATCH_PLCDATA_CHANGE(*vField.begin(), *vField.rbegin());
+		}
+		delete[]pData;
+	}
+	return lRtn;
+}
+///<summary>刷新新軟元件狀態</summary>
+long CPLCProcessBase::GET_PLC_FIELD_DATA(int nFieldId)
+{
+	return GET_PLC_FIELD_DATA(nFieldId, m_pPLCData[nFieldId].pData);
+}
+///<summary>[READ_BLOCK2]取得對應ID之PLC資料</summary>
+long CPLCProcessBase::GET_PLC_FIELD_DATA(int nFieldId, void* pData)
+{
+	long lRtn = ERR_DLL_NOT_LOAD;
+	PLC_DATA_ITEM_* pItem = GetPLCAddressInfo(nFieldId, FALSE);//整個對應ID資料讀回來
+	if (pItem)//成功
+	{
+		switch (pItem->xValType)
+		{
+			case PLC_VALUE_TYPE_::PLC_TYPE_FLOAT:
+				lRtn = ReadAddress(pItem->cDevType, pItem->uAddress, 1, (float*)pData);
+				break;
+			case PLC_VALUE_TYPE_::PLC_TYPE_STRING:
+				lRtn = ReadAddress(pItem->cDevType, pItem->uAddress, pItem->cLen, (char*)pData);
+				break;
+			case PLC_VALUE_TYPE_::PLC_TYPE_WORD:
+				lRtn = ReadAddress(pItem->cDevType, pItem->uAddress, 1, (WORD*)pData);
+				break;
+			case PLC_VALUE_TYPE_::PLC_TYPE_DWORD:
+				lRtn = ReadAddress(pItem->cDevType, pItem->uAddress, 2, (WORD*)pData);
+				break;
+			case PLC_VALUE_TYPE_::PLC_TYPE_BIT:
+				lRtn = ReadOneAddress(pItem->cDevType, pItem->uAddress, (short*)pData);
+				break;
+		}
+		if (lRtn == 0)
+		{
+			m_pPLCData[nFieldId].xTime = CTime::GetCurrentTime().GetTime();
+			ON_PLCDATA_CHANGE(nFieldId, pData, pItem->cLen);
+		}
+	}
+	return lRtn;
+}
+//-------------------
+///<summary>[Vector]寫入軟元件數值</summary>
 long CPLCProcessBase::SET_PLC_FIELD_DATA(vector<int>& vField, BYTE* pData)
 {
 	long lRtn = ERR_DLL_NOT_LOAD;
@@ -283,6 +326,7 @@ long CPLCProcessBase::SET_PLC_FIELD_DATA(vector<int>& vField, BYTE* pData)
 	}
 	return lRtn;
 }
+///<summary>[Device]寫入軟元件數值</summary>
 long CPLCProcessBase::SET_PLC_FIELD_DATA(int nFieldId, int nSizeInByte, BYTE* pData)
 {
 	long lRtn = ERR_DLL_NOT_LOAD;
@@ -333,6 +377,7 @@ long CPLCProcessBase::SET_PLC_FIELD_DATA(int nFieldId, int nSizeInByte, BYTE* pD
 #endif
 			memcpy(m_pPLCData[nFieldId].pData, pOldValue, nSizeInByte); //寫入失敗, 還原資料
 			CString strLog;
+			
 			strLog.Format(L"Address %d write failed, error code: %ld, %s", pItem->uAddress, lRtn, GetErrorMessage(lRtn));
 			TRACE(L"%s \n", strLog);
 			theApp.InsertDebugLog(strLog);
@@ -353,6 +398,7 @@ long CPLCProcessBase::SET_PLC_FIELD_DATA(int nFieldId, int nSizeInByte, BYTE* pD
 	}
 	return lRtn;
 }
+///<summary>[Bit]寫入軟元件數值</summary>
 long CPLCProcessBase::SET_PLC_FIELD_DATA_BIT(int nFieldStart, int nFieldEnd, int nSizeInByte, BYTE* pData)
 {
 	long lRtn = ERR_DLL_NOT_LOAD;
@@ -384,6 +430,7 @@ long CPLCProcessBase::SET_PLC_FIELD_DATA_BIT(int nFieldStart, int nFieldEnd, int
 	}
 	return lRtn;
 }
+///<summary>[Bit]寫入軟元件數值</summary>
 long CPLCProcessBase::SET_PLC_FIELD_DATA_BIT(int nField, int nBitPosition, BOOL bValue)
 {
 	long lRtn = ERR_DLL_NOT_LOAD;
@@ -409,6 +456,8 @@ long CPLCProcessBase::SET_PLC_FIELD_DATA_BIT(int nField, int nBitPosition, BOOL 
 	}
 	return lRtn;
 }
+//-------------------
+///<summary>讀取軟元件時間標籤數值</summary>
 CString CPLCProcessBase::GET_PLC_FIELD_TIME(int nFieldId)
 {
 	int nFieldSize = GetFieldSize();
@@ -422,6 +471,7 @@ CString CPLCProcessBase::GET_PLC_FIELD_TIME(int nFieldId)
 	}
 	return strDes;
 }
+///<summary>取得對應ID軟元件位址</summary>
 CString CPLCProcessBase::GET_PLC_FIELD_ADDRESS(int nFieldId)
 {
 	int nFieldSize = GetFieldSize();
@@ -446,6 +496,7 @@ CString CPLCProcessBase::GET_PLC_FIELD_ADDRESS(int nFieldId)
 	}
 	return strDes;
 }
+///<summary>取得對應ID軟元件名稱</summary>
 CString CPLCProcessBase::GET_PLC_FIELD_NAME(int nFieldId)
 {
 	int nFieldSize = GetFieldSize();
@@ -457,6 +508,7 @@ CString CPLCProcessBase::GET_PLC_FIELD_NAME(int nFieldId)
 	}
 	return strDes;
 }
+///<summary>取得對應ID軟元件處理模式</summary>
 PLC_ACTION_TYPE_ CPLCProcessBase::GET_PLC_FIELD_ACTION(int nFieldId)
 {
 	int nFieldSize = GetFieldSize();
@@ -471,46 +523,9 @@ PLC_ACTION_TYPE_ CPLCProcessBase::GET_PLC_FIELD_ACTION(int nFieldId)
 	}
 	return eType;
 }
-long CPLCProcessBase::GET_PLC_FIELD_DATA(vector<int>& vField)
-{
-	long lRtn = ERR_DLL_NOT_LOAD;
-	CString strField, strTemp;
-	int nTotal = 0;
-	GET_PLC_RANDOM_DATA(vField, strField, nTotal);
-
-	if (nTotal)
-	{
-		short* pData = new short[nTotal];
-		memset(pData, 0, sizeof(short) * nTotal);
-		lRtn = ReadRandom(strField, nTotal, pData);
-
-		if (lRtn == 0)
-		{
-			BYTE* pCur = (BYTE*)pData;
-			for (auto& i : vField)
-			{
-				PLC_DATA_ITEM_* pItem = GetPLCAddressInfo(i, FALSE);
-				if (pItem)
-				{
-					//update time and data
-					m_pPLCData[i].xTime = CTime::GetCurrentTime().GetTime();
-					memcpy(m_pPLCData[i].pData, pCur, pItem->cLen);
-					pCur += pItem->cLen;
-				}
-			}
-			ON_BATCH_PLCDATA_CHANGE(*vField.begin(), *vField.rbegin());
-		}
-		delete[]pData;
-	}
-	return lRtn;
-}
-///<summary>讀取新軟元件狀態</summary>
-long CPLCProcessBase::GET_PLC_FIELD_DATA(int nFieldId)
-{
-	return GET_PLC_FIELD_DATA(nFieldId, m_pPLCData[nFieldId].pData);
-}
+//-------------------
 ///<summary>初始化PLCDATA項目</summary>
-void CPLCProcessBase::INIT_PLCDATA()
+void CPLCProcessBase::INIT_PLC_DATA()
 {
 	//將m_pPLCData初始化
 	int nMax = GetFieldSize();
@@ -528,7 +543,7 @@ void CPLCProcessBase::INIT_PLCDATA()
 		memset(m_pPLCData[i].pData, 0, nDataSize);
 	}
 }
-
+///<summary>處置PLCDATA項目</summary>
 void CPLCProcessBase::DESTROY_PLC_DATA()
 {
 	if (m_pPLCData)
@@ -547,6 +562,7 @@ void CPLCProcessBase::DESTROY_PLC_DATA()
 		m_pPLCData = NULL;
 	}
 }
+///<summary>通知AOI視窗</summary>
 void CPLCProcessBase::NotifyAOI(WPARAM wp, LPARAM lp)
 {
 	if (m_hAOIWnd)//視窗存在
@@ -554,6 +570,7 @@ void CPLCProcessBase::NotifyAOI(WPARAM wp, LPARAM lp)
 		::PostMessage(m_hAOIWnd, WM_GPIO_MSG, wp, lp);//PLC to AOI
 	}
 }
+///<summary>ShareMemory讀取資料</summary>
 BOOL CPLCProcessBase::USM_ReadData(BYTE* pData, int nSize, int nOffset)
 {
 	if (m_pAOIUsm)//初始化有成功
@@ -563,6 +580,7 @@ BOOL CPLCProcessBase::USM_ReadData(BYTE* pData, int nSize, int nOffset)
 	}
 	return FALSE;
 }
+///<summary>ShareMemory寫入資料</summary>
 BOOL CPLCProcessBase::USM_WriteData(BYTE* pData, int nSize, int nOffset)
 {
 	if (m_pPLCUsm)

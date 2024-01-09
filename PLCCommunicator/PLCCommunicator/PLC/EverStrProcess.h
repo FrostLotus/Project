@@ -13,6 +13,7 @@ protected:
 	virtual void SetMXParam(IActProgType* pParam, BATCH_SHARE_SYSTCCL_INITPARAM& xData);
 	virtual void ON_GPIO_NOTIFY(WPARAM wp, LPARAM lp);
 
+	virtual CPU_SERIES GetCPU() { return CPU_SERIES::FX5U_SERIES; }
 	virtual BOOL IS_SUPPORT_CUSTOM_ACTION() { return FALSE; } //是否支援客製化行為
 	virtual void DoCustomAction(); //客製化行為
 private:

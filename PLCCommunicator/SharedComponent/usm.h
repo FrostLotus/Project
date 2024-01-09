@@ -24,7 +24,6 @@ namespace BATCH_SHARE_MEMORY
 		int nTotal;
 		BATCH_SHARE_ITEM xItem[1];
 	}BATCH_SHARE_DATA;
-
 }
 
 

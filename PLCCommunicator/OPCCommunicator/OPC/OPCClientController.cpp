@@ -310,7 +310,7 @@ void COPCClientController::ON_OPEN_OPC(LPARAM lp)
 	if (lp == WM_OPC_PARAMINIT_CMD){
 		LIB_LOAD();
 
-		BATCH_SHARE_OPC_INITPARAM_ xData;
+		BATCH_SHARE_OPC_INITPARAM xData;
 		memset(&xData, 0, sizeof(xData));
 #ifdef OFFLINE_DEBUG
 		xData.nRootIdNamespace = 1;

@@ -204,7 +204,7 @@ enum AOI_SUBCUSTOMERTYPE_
 	SUB_CUSTOMER_GUANYIN,		                            //觀音 (台光)
 	SUB_CUSTOMER_ITEQ_START = 7,                            //未來聯茂新增須把6~1代號依遞減方式補齊
 	SUB_CUSTOMER_WUXI = 7,                                  //無錫 (聯茂)
-	SUB_CUSTOMER_NANYA_START = 1,
+	SUB_CUSTOMER_NANYA_START = 1,							
 	SUB_CUSTOMER_NANYA_N4 = SUB_CUSTOMER_NANYA_START,       //江西南亞N4(N4和N5 ERP下發規格不同)
 	SUB_CUSTOMER_NANYA_N5							        //江西南亞N5
 };
@@ -376,6 +376,10 @@ typedef struct BATCH_SHARE_SYST_RESULTCCL_
 	WORD wBackDefectLocation[5];	//九宮格中反面前五大缺陷位置1~5
 	WORD wIndex;			        //小板編號, 僅東莞松八廠需回傳
 }BATCH_SHARE_SYST_RESULTCCL;
+
+//這裡寫甬強下發
+
+
 /// <summary>[struct]甬強上傳系統工單項目</summary>
 typedef struct BATCH_SHARE_SYST_RESULT_EVERSTR_: public BATCH_SHARE_SYST_RESULTCCL
 {
